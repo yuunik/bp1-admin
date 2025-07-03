@@ -3,11 +3,17 @@
 </script>
 
 <template>
-  <h1 class="text-red">Login</h1>
+  <div class="bg-container flex-between p-8 gap-8">
+    <div class="text-white">Left</div>
+    <div class="text-white">Right</div>
+  </div>
 </template>
 
 <style scoped lang="scss">
-.name {
-  color: $color-primary;
+.bg-container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-image: linear-gradient(to bottom, $branding-colours-gradient-b, $branding-colours-gradient-e);
 }
 </style>
