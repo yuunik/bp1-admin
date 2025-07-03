@@ -1,0 +1,42 @@
+{
+  "name": "pd1-admin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "local": "vite --mode .env.local",
+    "dev": "vite --mode dev",
+    "pro": "vite --mode pro",
+    "build:dev": "vite build --mode dev",
+    "build:pro": "vite build --mode pro",
+    "build:local": "vite build --mode .env.local",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "normalize.css": "^8.0.1",
+    "pinia": "^3.0.3",
+    "vite-plugin-vue-setup-extend": "^0.4.0",
+    "vue": "^3.5.17",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "eslint": "^9.30.1",
+    "postcss": "^8.5.6",
+    "postcss-html": "^1.8.0",
+    "postcss-scss": "^4.0.9",
+    "sass": "^1.89.2",
+    "sass-loader": "^16.0.5",
+    "stylelint": "^16.21.1",
+    "stylelint-config-prettier": "^9.0.5",
+    "stylelint-config-recess-order": "^7.1.0",
+    "stylelint-config-recommended-scss": "^15.0.1",
+    "stylelint-config-standard": "^38.0.0",
+    "stylelint-config-standard-scss": "^15.0.1",
+    "stylelint-config-standard-vue": "^1.0.0",
+    "stylelint-order": "^7.0.0",
+    "stylelint-scss": "^6.12.1",
+    "vite": "^7.0.0"
+  }
+}
