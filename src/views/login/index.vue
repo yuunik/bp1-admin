@@ -1,4 +1,9 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToHomepage = () => router.push("/")
 
 </script>
 
@@ -7,7 +12,7 @@
     <div class="p-32 h-full flex flex-col box-border gap-32 flex-1">
       <!-- Company Logo -->
       <img src="/src/assets/icons/company-logo.svg" alt="Logo" class="w-83 h-24" />
-      <article class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14-regular">
+      <article class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14-regular ml-auto mr-auto">
         <h2 class="heading-h2-20-medium">Our Solutions, Transforming</h2>
         <h2 class="heading-h2-20-medium">Businesses Bit by Bit</h2>
         <section class="flex items-center gap-16"><i
@@ -53,7 +58,7 @@
           </el-form>
           <p class="heading-body-body-12-medium">Forgot Password?</p>
         </div>
-        <el-button type="primary" class="primary-button">Log In</el-button>
+        <el-button type="primary" class="primary-button" @click="goToHomepage">Log In</el-button>
       </div>
     </main>
   </div>
