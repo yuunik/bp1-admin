@@ -3,16 +3,17 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const goToHomepage = () => router.push("/")
-
+const goToHomepage = () => router.push('/')
 </script>
 
 <template>
-  <div class="bg-container p-8 gap-8">
-    <div class="p-32 h-full flex flex-col box-border gap-32 flex-1">
+  <div class="bg-container">
+    <!-- description -->
+    <div class="flex-[1_1_464px] p-32 h-full flex flex-col box-border gap-32">
       <!-- Company Logo -->
       <img src="/src/assets/icons/company-logo.svg" alt="Logo" class="w-83 h-24" />
-      <article class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto">
+      <article
+        class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto">
         <h2 class="heading-h2-20px-medium">Our Solutions, Transforming</h2>
         <h2 class="heading-h2-20px-medium">Businesses Bit by Bit</h2>
         <section class="flex items-center gap-16"><i
@@ -34,11 +35,12 @@ const goToHomepage = () => router.push("/")
         discover, develop, deliver © Proteus 2024
       </footer>
     </div>
-    <main class="form-container rounded-8 h-full flex-1 flex justify-center items-center">
+    <!-- login form-->
+    <main class="flex-[1_1_592px] bg-neutrals-off-white rounded-8 h-full flex justify-center items-center">
       <div class="flex flex-col gap-48 text-align-left">
         <hgroup class="flex flex-col gap-24">
-          <h1 class="flex items-center gap-8 heading-h1-26px-medium">
-            <strong>Welcome Back! </strong>
+          <h1 class="flex items-center gap-8">
+            <strong class="heading-h1-26px-medium">Welcome Back! </strong>
             <img src="/src/assets/icons/waving-hand.svg" alt="Waving Hand" class="w-24 h-24" />
           </h1>
           <p class="heading-body-body-12px-regular">Welcome to OMS. Please enter your credentials to login.</p>
@@ -66,15 +68,8 @@ const goToHomepage = () => router.push("/")
 
 <style scoped lang="scss">
 .bg-container {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  background-image: linear-gradient(to bottom, $branding-colours-gradient-b, $branding-colours-gradient-e);
-  @apply flex justify-between;
-}
-
-.form-container {
-  background-color: $neutrals-off-white;
+  @extend %common-bg-style;
+  @apply flex justify-between p-8 gap-8;
 }
 
 .bottom-border-only :deep(.el-input__wrapper) {

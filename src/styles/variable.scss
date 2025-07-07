@@ -30,3 +30,11 @@ $status-colours-light-green: #E6F7F5;
 $status-colours-20-green: #E6F7F533;
 $status-colours-purple: #6B07EC;
 $status-colours-light-purple: #F5EAFB;
+
+// 公共背景样式
+%common-bg-style {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background-image: linear-gradient(to bottom, $branding-colours-gradient-b, $branding-colours-gradient-e);
+}

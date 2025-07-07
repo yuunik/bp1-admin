@@ -1,7 +1,7 @@
 @use "element-variables";
 
 :root {
-  font-family: "SourceSans3", sans-serif;
+  font-family: "Microsoft YaHei UI", sans-serif;
 }
 
 html,
@@ -19,6 +19,22 @@ h5,
 h6 {
   margin: 0;
   font-weight: normal;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  list-style: none;
+}
+
+i {
+  font-size: 16px;
+  color: $neutrals-grey-3;
+  font-style: normal;
 }
 
 .neutrals-off-white {
@@ -78,7 +94,7 @@ h6 {
 }
 
 .heading-body-body-12px-medium {
-  color: $neutrals-grey-4;
+  color: $neutrals-off-white;
   font-size: 12px;
   font-weight: 500;
 }
@@ -90,7 +106,7 @@ h6 {
 }
 
 .heading-caption-caption-10px-medium {
-  color: $neutrals-grey-4;
+  color: $neutrals-off-white;
   font-size: 10px;
   font-weight: 500;
 }
@@ -99,4 +115,15 @@ h6 {
   color: $neutrals-grey-4;
   font-size: 10px;
   font-weight: 400;
+}
+
+/// 背景色为 #neutrals-off-white
+.bg-neutrals-off-white {
+  background-color: $neutrals-off-white;
+}
+
+
+// 分割线样式
+.divider {
+  color: $neutrals-10-white;
 }

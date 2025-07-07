@@ -10,3 +10,14 @@
 .el-button--primary {
 
 }
+
+.el-menu-item,
+.el-sub-menu__title {
+  @apply flex gap-8 items-center !px-8;
+}
+
+.el-sub-menu {
+  .el-menu-item {
+    padding-left: 32px !important;
+  }
+}

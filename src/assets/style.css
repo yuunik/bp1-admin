@@ -1,0 +1,143 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?hw2ptu');
+  src:  url('fonts/icomoon.eot?hw2ptu#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?hw2ptu') format('truetype'),
+    url('fonts/icomoon.woff?hw2ptu') format('woff'),
+    url('fonts/icomoon.svg?hw2ptu#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-dashboard:before {
+  content: "\e917";
+  color: #99a0ae;
+}
+.icon-app-configuration:before {
+  content: "\e918";
+  color: #eff4f9;
+}
+.icon-database:before {
+  content: "\e919";
+  color: #99a0ae;
+}
+.icon-user-management:before {
+  content: "\e91a";
+  color: #99a0ae;
+}
+.icon-obd-management:before {
+  content: "\e91b";
+  color: #99a0ae;
+}
+.icon-order-management:before {
+  content: "\e91c";
+  color: #99a0ae;
+}
+.icon-typescollapsable:before {
+  content: "\e901";
+  color: #6f7788;
+}
+.icon-typeslink:before {
+  content: "\e902";
+  color: #99a0ae;
+}
+.icon-typesclose:before {
+  content: "\e903";
+  color: #99a0ae;
+}
+.icon-typesadd:before {
+  content: "\e904";
+  color: #99a0ae;
+}
+.icon-typesattachment:before {
+  content: "\e905";
+  color: #99a0ae;
+}
+.icon-typesdropdown:before {
+  content: "\e906";
+  color: #99a0ae;
+}
+.icon-typescalendar:before {
+  content: "\e907";
+  color: #99a0ae;
+}
+.icon-typesdot-line:before {
+  content: "\e908";
+  color: #99a0ae;
+}
+.icon-typesnote:before {
+  content: "\e909";
+  color: #99a0ae;
+}
+.icon-typestime:before {
+  content: "\e90a";
+  color: #99a0ae;
+}
+.icon-typeslist:before {
+  content: "\e90b";
+  color: #99a0ae;
+}
+.icon-typesline:before {
+  content: "\e90c";
+  color: #99a0ae;
+}
+.icon-typesarrow-right:before {
+  content: "\e90d";
+  color: #99a0ae;
+}
+.icon-typesarrow-up:before {
+  content: "\e90e";
+  color: #99a0ae;
+}
+.icon-typeslocaiton:before {
+  content: "\e90f";
+  color: #99a0ae;
+}
+.icon-typesdelivery:before {
+  content: "\e910";
+  color: #99a0ae;
+}
+.icon-typessetting:before {
+  content: "\e911";
+  color: #99a0ae;
+}
+.icon-typesnotification:before {
+  content: "\e912";
+  color: #99a0ae;
+}
+.icon-typessearch:before {
+  content: "\e913";
+  color: #99a0ae;
+}
+.icon-typespassword:before {
+  content: "\e914";
+  color: #99a0ae;
+}
+.icon-typesVacheckiant9:before {
+  content: "\e915";
+  color: #99a0ae;
+}
+.icon-typesDefault:before {
+  content: "\e916";
+  color: #99a0ae;
+}
+.icon-typescollapsable1:before {
+  content: "\e900";
+  color: #6f7788;
+}
