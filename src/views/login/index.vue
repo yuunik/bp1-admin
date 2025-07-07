@@ -12,9 +12,9 @@ const goToHomepage = () => router.push("/")
     <div class="p-32 h-full flex flex-col box-border gap-32 flex-1">
       <!-- Company Logo -->
       <img src="/src/assets/icons/company-logo.svg" alt="Logo" class="w-83 h-24" />
-      <article class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14-regular ml-auto mr-auto">
-        <h2 class="heading-h2-20-medium">Our Solutions, Transforming</h2>
-        <h2 class="heading-h2-20-medium">Businesses Bit by Bit</h2>
+      <article class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto">
+        <h2 class="heading-h2-20px-medium">Our Solutions, Transforming</h2>
+        <h2 class="heading-h2-20px-medium">Businesses Bit by Bit</h2>
         <section class="flex items-center gap-16"><i
           class="icon-typesline text-24" /><span>Boost Sales & Saves Time!</span></section>
         <section class="flex items-center gap-16"><i class="icon-typeslist text-24" />Easy project creation and
@@ -30,7 +30,7 @@ const goToHomepage = () => router.push("/")
           your business processes with comprehensive data insights,
         </section>
       </article>
-      <footer class="text-align-center heading-body-body-12-regular">
+      <footer class="text-align-center heading-body-body-12px-regular">
         discover, develop, deliver © Proteus 2024
       </footer>
     </div>
@@ -41,7 +41,7 @@ const goToHomepage = () => router.push("/")
             <strong>Welcome Back! </strong>
             <img src="/src/assets/icons/waving-hand.svg" alt="Waving Hand" class="w-24 h-24" />
           </h1>
-          <p class="heading-body-body-12-regular">Welcome to OMS. Please enter your credentials to login.</p>
+          <p class="heading-body-body-12px-regular">Welcome to OMS. Please enter your credentials to login.</p>
         </hgroup>
         <div class="text-align-right">
           <el-form label-width="112" label-position="left">
@@ -56,7 +56,7 @@ const goToHomepage = () => router.push("/")
               </el-input>
             </el-form-item>
           </el-form>
-          <p class="heading-body-body-12-medium">Forgot Password?</p>
+          <p class="heading-body-body-12px-medium">Forgot Password?</p>
         </div>
         <el-button type="primary" class="primary-button" @click="goToHomepage">Log In</el-button>
       </div>

@@ -29,32 +29,74 @@ h6 {
   color: $neutrals-grey-3;
 }
 
-.heading-h2-20-medium {
+.heading-h1-26px-medium {
+  color: $neutrals-off-black;
+  font-size: 26px;
+  font-weight: 500;
+}
+
+.heading-h1-26px-regular {
+  color: $neutrals-grey-4;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.heading-h2-20px-medium {
   color: $neutrals-off-white;
   font-size: 20px;
   font-weight: 500;
 }
 
-.heading-body-large-body-14-regular {
+.heading-h2-20px-regular {
+  color: $neutrals-grey-4;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.heading-h3-16px-medium {
+  color: $neutrals-grey-4;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.heading-h3-16px-regular {
+  color: $neutrals-grey-4;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.heading-body-large-body-14px-medium {
+  color: $neutrals-grey-4;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.heading-body-large-body-14px-regular {
   color: $neutrals-grey-3;
   font-size: 14px;
   font-weight: 400;
 }
 
-.heading-h1-26px-medium {
-  color: $neutrals-off-black;
-  font-size: 20px;
+.heading-body-body-12px-medium {
+  color: $neutrals-grey-4;
+  font-size: 12px;
   font-weight: 500;
 }
 
-.heading-body-body-12-regular {
-  color: $neutrals-grey-3;
+.heading-body-body-12px-regular {
+  color: $neutrals-grey-4;
   font-size: 12px;
   font-weight: 400;
 }
 
-.heading-body-body-12-medium {
-  color: $branding-colours-primary;
-  font-size: 12px;
+.heading-caption-caption-10px-medium {
+  color: $neutrals-grey-4;
+  font-size: 10px;
   font-weight: 500;
+}
+
+.heading-caption-caption-10px-regular {
+  color: $neutrals-grey-4;
+  font-size: 10px;
+  font-weight: 400;
 }
