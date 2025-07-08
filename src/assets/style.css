@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?hw2ptu');
-  src:  url('fonts/icomoon.eot?hw2ptu#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?hw2ptu') format('truetype'),
-    url('fonts/icomoon.woff?hw2ptu') format('woff'),
-    url('fonts/icomoon.svg?hw2ptu#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?hi7jgg');
+  src:  url('fonts/icomoon.eot?hi7jgg#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?hi7jgg') format('truetype'),
+    url('fonts/icomoon.woff?hi7jgg') format('woff'),
+    url('fonts/icomoon.svg?hi7jgg#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -31,7 +31,7 @@
 }
 .icon-app-configuration:before {
   content: "\e918";
-  color: #eff4f9;
+  color: #99a0ae;
 }
 .icon-database:before {
   content: "\e919";

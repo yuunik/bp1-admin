@@ -1,6 +1,7 @@
 <script setup>
 import MenuItem from './components/MenuItem/index.vue'
-
+import Breadcrumb from './components/Breadcrumb/index.vue'
+import routes from '@/router/routes/index.js'
 </script>
 
 <template>
@@ -11,13 +12,15 @@ import MenuItem from './components/MenuItem/index.vue'
       <img src="/src/assets/icons/company-logo.svg" alt="Logo" class="w-83 h-24 mt-8 ml-8" />
       <!-- menu -->
       <el-menu class="nav-menu" background-color="transparent" text-color="#99A0AE">
-        <menu-item />
+        <menu-item :user-menu-routes="routes" />
       </el-menu>
       <!-- user center -->
       <ul class="p-8 flex flex-col gap-16">
-        <li class="item-style">
+        <li class="flex items-center gap-8 cursor-pointer">
           <i class="icon-typesnotification text-16" />
-          <span>Notifications</span>
+          <span class="flex-1">Notifications</span>
+          <!-- notification dot -->
+          <i class="icon-typesnotification-dot heading-caption-caption-10px-medium">1</i>
         </li>
         <li class="item-style">
           <i class="icon-typessetting" />
@@ -44,7 +47,10 @@ import MenuItem from './components/MenuItem/index.vue'
       </div>
     </nav>
     <!-- content -->
-    <main class="content-container">内容区</main>
+    <main class="content-container">
+      <breadcrumb />
+      <router-view />
+    </main>
   </div>
 </template>
 
@@ -74,6 +80,11 @@ import MenuItem from './components/MenuItem/index.vue'
     background-color: $neutrals-10-white;
   }
 
+  .icon-typesnotification-dot {
+    @apply rounded-100 w-16 h-16 flex-center;
+    background-color: $status-colours-green;
+  }
+
   .expand-btn {
     @apply absolute w-16 h-72 rounded-200 flex-center cursor-pointer;
     border: 1px $neutrals-grey-2 solid;
@@ -84,6 +95,6 @@ import MenuItem from './components/MenuItem/index.vue'
 }
 
 .item-style {
-  @apply flex gap-8 items-center;
+  @apply flex gap-8 items-center cursor-pointer;
 }
 </style>

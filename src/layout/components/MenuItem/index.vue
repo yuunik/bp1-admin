@@ -1,56 +1,52 @@
-<script setup>
+<script setup lang="ts">
+import type { RouteRecordRaw } from 'vue-router'
 
+import MenuItem from '@/layout/components/MenuItem/index.vue'
+
+// 接收数据的类型申明
+interface MenuItemProp {
+  userMenuRoutes: RouteRecordRaw[]
+}
+
+// 定义数据类型
+defineProps<MenuItemProp>()
 </script>
 
 <template>
-  <el-menu-item index="1">
-    <i class="icon-dashboard"/>
-    <span>Dashboard</span>
-  </el-menu-item>
-  <el-menu-item index="2">
-    <i class="icon-order-management"/>
-    <span>Order Management</span>
-  </el-menu-item>
-  <el-sub-menu index="3">
-    <template #title>
-      <i class="icon-obd-management"/>
-      <span>OBD Management</span>
-    </template>
-    <el-menu-item index="3-1">
-      <span>OBD 1</span>
+  <!-- 菜单栏子元素 -->
+  <template v-for="route in userMenuRoutes" :key="route.path">
+    <!-- 路由没有子路由 -->
+    <el-menu-item :index="route.path" v-if="route.meta.isShow && !route.children">
+      <!-- 菜单图标 -->
+      <i :class="route.meta.icon" />
+      <!-- 菜单标题 -->
+      <template #title>
+        <span>{{ route.meta.title }}</span>
+      </template>
     </el-menu-item>
-    <el-menu-item index="3-2">
-      <span>OBD 2</span>
+    <!-- 路由有且仅有一个子路由 -->
+    <el-menu-item :index="route.children[0].path"
+                  v-if="route.children && route.children.length === 1 && route.children[0].meta.isShow  ">
+      <!-- 菜单图标 -->
+      <i :class="route.children[0].meta.icon" />
+      <!-- 菜单标题 -->
+      <template #title>
+        <span>{{ route.children[0].meta.title }}</span>
+      </template>
     </el-menu-item>
-  </el-sub-menu>
-  <el-sub-menu index="4">
-    <template #title>
-      <i class="icon-user-management"/>
-      <span>User Management</span>
-    </template>
-    <el-menu-item index="4-1">
-      <span>User 1</span>
-    </el-menu-item>
-    <el-menu-item index="4-2">
-      <span>User 2</span>
-    </el-menu-item>
-  </el-sub-menu>
-  <el-menu-item index="5">
-    <i class="icon-database"/>
-    <span>Database</span>
-  </el-menu-item>
-  <el-sub-menu index="6">
-    <template #title>
-      <i class="icon-app-configuration" />
-      <span>App Configuration</span>
-    </template>
-    <el-menu-item index="6-1">
-      <span>Version Control</span>
-    </el-menu-item>
-    <el-menu-item index="6-2">
-      <span>Brand & Model</span>
-    </el-menu-item>
-  </el-sub-menu>
+    <!-- 路由有多个子路由 -->
+    <el-sub-menu :index="route.path" v-if="route.children && route.children.length > 1">
+      <!-- 标题插槽 -->
+      <template #title>
+        <!-- 菜单图标 -->
+        <i :class="route.meta.icon" />
+        <!-- 菜单标题 -->
+        <span>{{ route.meta.title }}</span>
+      </template>
+      <!-- 子路由元素 -->
+      <menu-item :userMenuRoutes="route.children" />
+    </el-sub-menu>
+  </template>
 </template>
 
 <style scoped lang="scss">

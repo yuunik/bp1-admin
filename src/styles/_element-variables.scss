@@ -21,3 +21,12 @@
     padding-left: 32px !important;
   }
 }
+
+// 重置el-menu-item的hover样式
+.el-menu-item:hover,
+.el-sub-menu__title:hover,
+.el-menu-item.is-active {
+  background-color: #FFFFFF1A !important; // 示例颜色
+  color: #EFF4F9 !important;
+  border-radius: 8px;
+}

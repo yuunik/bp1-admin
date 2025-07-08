@@ -35,7 +35,7 @@ const goToHomepage = () => router.push('/')
         discover, develop, deliver © Proteus 2024
       </footer>
     </div>
-    <!-- login form-->
+    <!-- Login form-->
     <main class="flex-[1_1_592px] bg-neutrals-off-white rounded-8 h-full flex justify-center items-center">
       <div class="flex flex-col gap-48 text-align-left">
         <hgroup class="flex flex-col gap-24">
