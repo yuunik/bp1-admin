@@ -1,24 +1,13 @@
-<script setup>
-
-</script>
-
 <template>
   <el-breadcrumb separator=">" class="p-[24px_32px_16px_32px] heading-body-body-12px-medium">
     <el-breadcrumb-item>
       <img src="/src/assets/icons/logo.svg" alt="logo" />
     </el-breadcrumb-item>
-    <el-breadcrumb-item>
-      <router-link>App Management</router-link>
-    </el-breadcrumb-item>
-    <el-breadcrumb-item>
-      <router-link>Brand & Model</router-link>
-    </el-breadcrumb-item>
-    <el-breadcrumb-item>
-      <span>Create Brand</span>
+    <el-breadcrumb-item v-for="route in $route.matched" :key="route.path" :to="route.path" v-show="route.meta.isShow">
+      <!-- 面包屑标题 -->
+      <span class="heading-body-body-12px-medium"
+            :class="($route.path === route.path)? 'neutrals-off-black' : 'neutrals-grey-3'">{{ route.meta.title
+        }}</span>
     </el-breadcrumb-item>
   </el-breadcrumb>
 </template>
-
-<style scoped lang="scss">
-
-</style>
