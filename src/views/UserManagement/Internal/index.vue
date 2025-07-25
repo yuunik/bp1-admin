@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <h1>Internal Page</h1>
+  <h1 class="neutrals-off-black">Internal Page</h1>
 </template>
 
 <style scoped lang="scss">

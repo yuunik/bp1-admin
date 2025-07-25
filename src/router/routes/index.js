@@ -19,7 +19,7 @@ const constantRoutes = [
       {
         path: '/dashboard',
         name: 'Dashboard',
-        component: () => import('@/views/Homepage/index.vue'),
+        component: () => import('@/views/Dashboard/index.vue'),
         meta: {
           title: 'Dashboard',
           isShow: true,
@@ -44,11 +44,12 @@ const constantRoutes = [
   },
   {
     path: '/obd-management',
+    redirect: '/obd-management/obd-list',
     name: 'ObdManagement',
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: 'obd-list',
+        path: '/obd-management/obd-list',
         name: 'ObdList',
         component: () => import('@/views/ObdManagement/ObdList/index.vue'),
         meta: {
@@ -57,7 +58,7 @@ const constantRoutes = [
         },
       },
       {
-        path: 'inventory',
+        path: '/obd-management/inventory',
         name: 'Inventory',
         component: () => import('@/views/ObdManagement/Inventory/index.vue'),
         meta: {
@@ -74,11 +75,12 @@ const constantRoutes = [
   },
   {
     path: '/user-management',
+    redirect: '/user-management/internal',
     name: 'UserManagement',
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: 'internal',
+        path: '/user-management/internal',
         name: 'Internal',
         component: () => import('@/views/UserManagement/Internal/index.vue'),
         meta: {
@@ -87,7 +89,7 @@ const constantRoutes = [
         },
       },
       {
-        path: 'extern',
+        path: '/user-management/extern',
         name: 'Extern',
         component: () => import('@/views/UserManagement/Extern/index.vue'),
         meta: {
@@ -114,12 +116,12 @@ const constantRoutes = [
   },
   {
     path: '/app-configuration',
-    redirect: '/version-control',
+    redirect: '/app-configuration/version-control',
     name: 'AppConfiguration',
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: 'version-control',
+        path: '/app-configuration/version-control',
         name: 'VersionControl',
         component: () => import('@/views/AppConfiguration/VersionControl/index.vue'),
         meta: {
@@ -128,7 +130,7 @@ const constantRoutes = [
         },
       },
       {
-        path: 'brandAndModel',
+        path: '/app-configuration/brandAndModel',
         name: 'BrandAndModel',
         component: () => import('@/views/AppConfiguration/BrandModel/index.vue'),
         meta: {
@@ -137,7 +139,7 @@ const constantRoutes = [
         },
       },
       {
-        path: 'aiChatManagement',
+        path: '/app-configuration/aiChatManagement',
         name: 'AiChatManagement',
         component: () => import('@/views/AppConfiguration/AiChatManagement/index.vue'),
         meta: {

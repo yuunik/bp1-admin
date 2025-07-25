@@ -37,18 +37,6 @@ i {
   font-style: normal;
 }
 
-.neutrals-off-white {
-  color: $neutrals-off-white;
-}
-
-.neutrals-grey-3 {
-  color: $neutrals-grey-3;
-}
-
-.neutrals-off-black {
-  color: $neutrals-off-black;
-}
-
 .heading-h1-26px-medium {
   color: $neutrals-off-black;
   font-size: 26px;
@@ -118,6 +106,18 @@ i {
   color: $neutrals-grey-4;
   font-size: 10px;
   font-weight: 400;
+}
+
+.neutrals-off-white {
+  color: $neutrals-off-white;
+}
+
+.neutrals-grey-3 {
+  color: $neutrals-grey-3;
+}
+
+.neutrals-off-black {
+  color: $neutrals-off-black;
 }
 
 /// 背景色为 #neutrals-off-white

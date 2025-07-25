@@ -1,49 +1,80 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store'
 
 const router = useRouter()
+const userStore = useUserStore()
+const { login } = userStore
 
-const goToHomepage = () => router.push('/')
+// 登录表单数据
+const loginForm = reactive({
+  email: '',
+  password: '',
+})
+
+const handleLogin = async () => {
+  const res = await login()
+}
 </script>
 
 <template>
   <div class="bg-container">
     <!-- description -->
-    <div class="flex-[1_1_464px] p-32 h-full flex flex-col box-border gap-32">
+    <div class="flex-1 p-32 h-full flex flex-col box-border gap-32">
       <!-- Company Logo -->
-      <img src="/src/assets/icons/company-logo.svg" alt="Logo" class="w-83 h-24" />
+      <img
+        src="/src/assets/icons/company-logo.svg"
+        alt="Logo"
+        class="w-83 h-24"
+      />
       <article
-        class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto">
+        class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto"
+      >
         <h2 class="heading-h2-20px-medium">Our Solutions, Transforming</h2>
         <h2 class="heading-h2-20px-medium">Businesses Bit by Bit</h2>
-        <section class="flex items-center gap-16"><i
-          class="icon-typesline text-24" /><span>Boost Sales & Saves Time!</span></section>
-        <section class="flex items-center gap-16"><i class="icon-typeslist text-24" />Easy project creation and
-          assignment
+        <section class="flex items-center gap-16">
+          <i class="icon-typesline text-24" />
+          <span>Boost Sales & Saves Time!</span>
         </section>
-        <section class="flex items-center gap-16"><i class="icon-typestime text-24" />Real-time progress monitoring to
-          ensure timely delivery
+        <section class="flex items-center gap-16">
+          <i class="icon-typeslist text-24" />
+          Easy project creation and assignment
         </section>
-        <section class="flex items-center gap-16"><i class="icon-typesnote text-24" />Report generation for clear
-          decision making
+        <section class="flex items-center gap-16">
+          <i class="icon-typestime text-24" />
+          Real-time progress monitoring to ensure timely delivery
         </section>
-        <section class="flex items-center gap-16"><i class="icon-typesdot-line text-24" />Define, track and optimise
-          your business processes with comprehensive data insights,
+        <section class="flex items-center gap-16">
+          <i class="icon-typesnote text-24" />
+          Report generation for clear decision making
+        </section>
+        <section class="flex items-center gap-16">
+          <i class="icon-typesdot-line text-24" />
+          Define, track and optimise your business processes with comprehensive
+          data insights,
         </section>
       </article>
       <footer class="text-align-center heading-body-body-12px-regular">
         discover, develop, deliver © Proteus 2024
       </footer>
     </div>
-    <!-- Login form-->
-    <main class="flex-[1_1_592px] bg-neutrals-off-white rounded-8 h-full flex justify-center items-center">
+    <!-- Login form -->
+    <main
+      class="flex flex-shrink flex-grow-0 basis-auto min-w-592 max-w-800 bg-neutrals-off-white rounded-8 h-full flex justify-center items-center"
+    >
       <div class="flex flex-col gap-48 text-align-left">
         <hgroup class="flex flex-col gap-24">
           <h1 class="flex items-center gap-8">
-            <strong class="heading-h1-26px-medium">Welcome Back! </strong>
-            <img src="/src/assets/icons/waving-hand.svg" alt="Waving Hand" class="w-24 h-24" />
+            <strong class="heading-h1-26px-medium">Welcome Back!</strong>
+            <img
+              src="/src/assets/icons/waving-hand.svg"
+              alt="Waving Hand"
+              class="w-24 h-24"
+            />
           </h1>
-          <p class="heading-body-body-12px-regular">Welcome to OMS. Please enter your credentials to login.</p>
+          <p class="heading-body-body-12px-regular">
+            Welcome to OMS. Please enter your credentials to login.
+          </p>
         </hgroup>
         <div class="text-align-right">
           <el-form label-width="112" label-position="left">
@@ -60,7 +91,9 @@ const goToHomepage = () => router.push('/')
           </el-form>
           <p class="heading-body-body-12px-medium">Forgot Password?</p>
         </div>
-        <el-button type="primary" class="primary-button" @click="goToHomepage">Log In</el-button>
+        <el-button type="primary" class="primary-button" @click="handleLogin">
+          Log In
+        </el-button>
       </div>
     </main>
   </div>
