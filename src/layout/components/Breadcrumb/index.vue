@@ -1,13 +1,26 @@
 <template>
-  <el-breadcrumb separator=">" class="p-[24px_32px_16px_32px] heading-body-body-12px-medium">
+  <el-breadcrumb
+    separator=">"
+    class="p-[24px_32px_16px_32px] heading-body-body-12px-medium"
+  >
     <el-breadcrumb-item>
       <img src="/src/assets/icons/logo.svg" alt="logo" />
     </el-breadcrumb-item>
-    <el-breadcrumb-item v-for="route in $route.matched" :key="route.path" :to="route.path" v-show="route.meta.isShow">
+    <el-breadcrumb-item
+      v-for="route in $route.matched"
+      :key="route.path"
+      :to="route.path"
+      v-show="route?.meta?.isShow"
+    >
       <!-- 面包屑标题 -->
-      <span class="heading-body-body-12px-medium"
-            :class="($route.path === route.path)? 'neutrals-off-black' : 'neutrals-grey-3'">{{ route.meta.title
-        }}</span>
+      <span
+        class="heading-body-body-12px-medium"
+        :class="
+          $route.path === route.path ? 'neutrals-off-black' : 'neutrals-grey-3'
+        "
+      >
+        {{ route.meta.title }}
+      </span>
     </el-breadcrumb-item>
   </el-breadcrumb>
 </template>

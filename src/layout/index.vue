@@ -1,17 +1,36 @@
 <script setup>
+import { storeToRefs } from 'pinia'
+
+import routes from '@/router/routes/index.js'
+
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
-import routes from '@/router/routes/index.js'
+import { useUserStore } from '@/store/index.js'
+
+const userStore = useUserStore()
+// 获取用户相关信息
+const { username, userRole, usernameAbbr } = storeToRefs(userStore)
 </script>
 
 <template>
   <div class="bg-container">
     <!-- menu bar -->
-    <nav class="w-200 heading-body-body-12px-regular flex flex-col gap-16 box-border relative">
+    <nav
+      class="w-200 heading-body-body-12px-regular flex flex-col gap-16 box-border relative"
+    >
       <!-- Company Logo -->
-      <img src="/src/assets/icons/company-logo.svg" alt="Logo" class="w-83 h-24 mt-8 ml-8" />
+      <img
+        src="/src/assets/icons/company-logo.svg"
+        alt="Logo"
+        class="w-83 h-24 mt-8 ml-8"
+      />
       <!-- menu -->
-      <el-menu class="nav-menu" background-color="transparent" text-color="#99A0AE">
+      <el-menu
+        class="nav-menu"
+        background-color="transparent"
+        text-color="#99A0AE"
+        :default-active="$route.path"
+      >
         <menu-item :user-menu-routes="routes" />
       </el-menu>
       <!-- user center -->
@@ -20,7 +39,11 @@ import routes from '@/router/routes/index.js'
           <i class="icon-typesnotification text-16" />
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
-          <i class="icon-typesnotification-dot heading-caption-caption-10px-medium">1</i>
+          <i
+            class="icon-typesnotification-dot heading-caption-caption-10px-medium"
+          >
+            1
+          </i>
         </li>
         <li class="item-style">
           <i class="icon-typessetting" />
@@ -30,14 +53,21 @@ import routes from '@/router/routes/index.js'
         <li class="item-style">
           <!-- user avatar-->
           <i class="user-avatar">
-            <span class="heading-body-body-12px-medium">JW</span>
+            <!-- 用户名字缩写 -->
+            <span class="heading-body-body-12px-medium">
+              {{ usernameAbbr }}
+            </span>
           </i>
           <!-- user info -->
           <div class="flex flex-col gap-8">
             <!-- user name -->
-            <span class="heading-caption-caption-10px-medium">Jonathan</span>
+            <span class="heading-caption-caption-10px-medium">
+              {{ username }}
+            </span>
             <!-- user role -->
-            <span class="heading-caption-caption-10px-regular">Admin</span>
+            <span class="heading-caption-caption-10px-regular">
+              {{ userRole }}
+            </span>
           </div>
         </li>
       </ul>
