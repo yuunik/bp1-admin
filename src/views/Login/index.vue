@@ -1,10 +1,21 @@
 <script setup>
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
+
 import { useUserStore } from '@/store'
+
+// 静态资源
+import Logo from '@/assets/icons/company-logo.svg'
+import GreetingIcon from '@/assets/icons/waving-hand.svg'
 
 const router = useRouter()
 const userStore = useUserStore()
 const { login } = userStore
+
+// 是否显示密码
+const isShowPassword = ref(false)
 
 // 登录表单数据
 const loginForm = reactive({
@@ -12,9 +23,20 @@ const loginForm = reactive({
   password: '',
 })
 
-const handleLogin = async () => {
-  const res = await login()
-}
+// 用户登录
+const handleLogin = useDebounceFn(async () => {
+  try {
+    const res = await login(loginForm)
+    // 登录成功, 实现跳转
+    ElMessage.success('Login success')
+    // 路由跳转
+    await router.push('/')
+  } catch (error) {
+    const { message } = error
+    // 登录失败, 实现错误提示
+    ElMessage.error(message)
+  }
+}, 500)
 </script>
 
 <template>
@@ -22,11 +44,7 @@ const handleLogin = async () => {
     <!-- description -->
     <div class="flex-1 p-32 h-full flex flex-col box-border gap-32">
       <!-- Company Logo -->
-      <img
-        src="/src/assets/icons/company-logo.svg"
-        alt="Logo"
-        class="w-83 h-24"
-      />
+      <img :src="Logo" alt="Logo" class="w-83 h-24" />
       <article
         class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto"
       >
@@ -66,11 +84,7 @@ const handleLogin = async () => {
         <hgroup class="flex flex-col gap-24">
           <h1 class="flex items-center gap-8">
             <strong class="heading-h1-26px-medium">Welcome Back!</strong>
-            <img
-              src="/src/assets/icons/waving-hand.svg"
-              alt="Waving Hand"
-              class="w-24 h-24"
-            />
+            <img :src="GreetingIcon" alt="Waving Hand" class="w-24 h-24" />
           </h1>
           <p class="heading-body-body-12px-regular">
             Welcome to OMS. Please enter your credentials to login.
@@ -79,12 +93,22 @@ const handleLogin = async () => {
         <div class="text-align-right">
           <el-form label-width="112" label-position="left">
             <el-form-item label="Email" class="bottom-border-only">
-              <el-input placeholder="Enter your email" />
+              <el-input
+                placeholder="Enter your email"
+                v-model="loginForm.email"
+              />
             </el-form-item>
             <el-form-item label="Password" class="bottom-border-only">
-              <el-input placeholder="Enter your password">
+              <el-input
+                placeholder="Enter your password"
+                v-model="loginForm.password"
+                :type="isShowPassword ? 'text' : 'password'"
+              >
                 <template #suffix>
-                  <i class="icon-typespassword text-24" />
+                  <i
+                    :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword ' : 'icon-eye-off-line'}`"
+                    @click="isShowPassword = !isShowPassword"
+                  />
                 </template>
               </el-input>
             </el-form-item>

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const request = axios.create({
-  baseURL: import.meta.env.BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL_API,
   timeout: 10000,
 })
 
@@ -22,3 +22,5 @@ request.interceptors.response.use(
     return Promise.reject(error)
   },
 )
+
+export default request

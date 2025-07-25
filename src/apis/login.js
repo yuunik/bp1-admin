@@ -1,5 +1,5 @@
-import { request } from 'axios'
 import { md5Encrypt } from '@/utils/md5_util.js'
+import request from '@/utils/request.js'
 
 // 统一管理 API
 const LoginAPI = Object.freeze({
@@ -7,12 +7,12 @@ const LoginAPI = Object.freeze({
 })
 
 // 登录
-export const loginApi = (email, password) => {
+export const loginApi = (loginParams) => {
   // 封装 form data
   const formData = new FormData()
-  formData.append('email', email)
+  formData.append('email', loginParams.email)
   // 加密密码
-  password = md5Encrypt(password)
+  const password = md5Encrypt(loginParams.password)
   formData.append('password', password)
   return request({
     url: LoginAPI.LOGIN,

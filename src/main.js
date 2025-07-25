@@ -7,6 +7,7 @@ import debounce from '@/directives/debounce/index.js'
 
 import 'normalize.css'
 import '@/styles/index.scss'
+import 'element-plus/dist/index.css'
 // uno.css
 import 'virtual:uno.css'
 

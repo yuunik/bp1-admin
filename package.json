@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "local": "vite --mode .env.local",
+    "local": "vite --mode .env.local --port 3333",
     "dev": "vite --mode dev",
     "pro": "vite --mode pro",
     "build:dev": "vite build --mode dev",
@@ -13,6 +13,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^13.5.0",
     "axios": "^1.10.0",
     "crypto-js": "^4.2.0",
     "element-plus": "^2.10.2",
