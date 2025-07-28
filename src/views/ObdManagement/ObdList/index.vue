@@ -72,7 +72,7 @@ getObdList()
       </el-input>
     </div>
     <!-- 分割线 -->
-    <el-divider class="diver m-0!" />
+    <el-divider />
     <!-- OBD 表格容器 -->
     <div class="table-container">
       <!-- OBD 表格 -->
@@ -135,6 +135,7 @@ getObdList()
 
 <style scoped lang="scss">
 .obd-list-container {
+  width: 100%;
   height: 100%;
   // 使用视口高度
   display: flex;

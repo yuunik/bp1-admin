@@ -2,10 +2,10 @@
 import { storeToRefs } from 'pinia'
 
 import routes from '@/router/routes/index.js'
+import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
 import Content from './components/Content/index.vue'
-import { useUserStore } from '@/store/index.js'
 
 import CompanyLogo from '@/assets/icons/company-logo.svg'
 
@@ -17,9 +17,7 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
 <template>
   <div class="bg-container">
     <!-- menu bar -->
-    <nav
-      class="w-200 heading-body-body-12px-regular flex flex-col gap-16 box-border relative"
-    >
+    <nav class="heading-body-body-12px-regular flex flex-col gap-16 relative">
       <!-- Company Logo -->
       <img :src="CompanyLogo" alt="Company Logo" class="w-83 h-24 mt-8 ml-8" />
       <!-- menu -->
@@ -32,13 +30,13 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
         <menu-item :user-menu-routes="routes" />
       </el-menu>
       <!-- user center -->
-      <ul class="p-8 flex flex-col gap-16">
+      <ul class="p-8 flex flex-col gap-16 neutrals-grey-3">
         <li class="flex items-center gap-8 cursor-pointer">
           <i class="icon-typesnotification text-16" />
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
           <i
-            class="icon-typesnotification-dot heading-caption-caption-10px-medium"
+            class="icon-typesnotification-dot heading-caption-caption-10px-medium3 neutrals-grey-3"
           >
             1
           </i>
@@ -48,6 +46,7 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
           <span>Settings</span>
         </li>
         <el-divider class="divider" />
+        <!-- 底部用户信息相关设置 -->
         <li class="item-style">
           <!-- user avatar-->
           <i class="user-avatar">
@@ -86,35 +85,33 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
 
 <style scoped lang="scss">
 .bg-container {
+  // 公用背景色
   @extend %common-bg-style;
-  @apply h-full p-8 flex gap-8;
+  @apply p-8 flex gap-8;
 
-  .content-container {
-    @apply flex-1 w-872 flex-auto h-full rounded-8 flex flex-col;
-    background-color: $neutrals-off-white;
-  }
-
+  // 菜单栏
   .nav-menu {
-    border: none;
-    @apply flex-1 overflow-hidden;
+    @apply flex-1 overflow-hidden w-184 border-none;
   }
 
-  .divider {
-    border: 1px $neutrals-10-white solid;
-    margin: 0;
+  // 底部用户信息相关设置
+  .item-style {
+    @apply flex gap-8 items-center cursor-pointer;
+
+    // user avatar
+    .user-avatar {
+      @apply w-32 h-32 rounded-full flex-center;
+      background-color: $neutrals-10-white;
+    }
   }
 
-  // user avatar
-  .user-avatar {
-    @apply w-32 h-32 rounded-full flex-center;
-    background-color: $neutrals-10-white;
-  }
-
+  // 消息通知图标
   .icon-typesnotification-dot {
     @apply rounded-100 w-16 h-16 flex-center;
     background-color: $status-colours-green;
   }
 
+  // 展开按钮
   .expand-btn {
     @apply absolute w-16 h-72 rounded-200 flex-center cursor-pointer;
     border: 1px $neutrals-grey-2 solid;
@@ -122,9 +119,11 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
     top: 50%;
     right: -16px;
   }
-}
 
-.item-style {
-  @apply flex gap-8 items-center cursor-pointer;
+  // 内容区域
+  .content-container {
+    @apply flex-1 h-full rounded-8 flex flex-col;
+    background-color: $neutrals-off-white;
+  }
 }
 </style>

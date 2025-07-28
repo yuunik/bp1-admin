@@ -48,31 +48,37 @@ const handleLogin = useDebounceFn(async () => {
       <article
         class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto"
       >
-        <h2 class="heading-h2-20px-medium">Our Solutions, Transforming</h2>
-        <h2 class="heading-h2-20px-medium">Businesses Bit by Bit</h2>
-        <section class="flex items-center gap-16">
+        <h2 class="heading-h2-20px-medium neutrals-off-white">
+          Our Solutions, Transforming
+        </h2>
+        <h2 class="heading-h2-20px-medium neutrals-off-white">
+          Businesses Bit by Bit
+        </h2>
+        <section class="flex items-center gap-16 neutrals-grey-3">
           <i class="icon-typesline text-24" />
           <span>Boost Sales & Saves Time!</span>
         </section>
-        <section class="flex items-center gap-16">
+        <section class="flex items-center gap-16 neutrals-grey-3">
           <i class="icon-typeslist text-24" />
           Easy project creation and assignment
         </section>
-        <section class="flex items-center gap-16">
+        <section class="flex items-center gap-16 neutrals-grey-3">
           <i class="icon-typestime text-24" />
           Real-time progress monitoring to ensure timely delivery
         </section>
-        <section class="flex items-center gap-16">
+        <section class="flex items-center gap-16 neutrals-grey-3">
           <i class="icon-typesnote text-24" />
           Report generation for clear decision making
         </section>
-        <section class="flex items-center gap-16">
+        <section class="flex items-center gap-16 neutrals-grey-3">
           <i class="icon-typesdot-line text-24" />
           Define, track and optimise your business processes with comprehensive
           data insights,
         </section>
       </article>
-      <footer class="text-align-center heading-body-body-12px-regular">
+      <footer
+        class="text-align-center heading-body-body-12px-regular neutrals-grey-3"
+      >
         discover, develop, deliver © Proteus 2024
       </footer>
     </div>

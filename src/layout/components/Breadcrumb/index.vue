@@ -5,7 +5,7 @@ import Logo from '@/assets/icons/logo.svg'
 <template>
   <el-breadcrumb
     separator=">"
-    class="p-[24px_32px_16px_32px] heading-body-body-12px-medium"
+    class="p-[24px_32px_16px_32px] heading-body-body-12px-medium box-border"
   >
     <el-breadcrumb-item>
       <img :src="Logo" alt="logo" />

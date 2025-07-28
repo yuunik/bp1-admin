@@ -31,7 +31,7 @@ getBrandModelList()
       </el-input>
     </div>
     <!-- 分割线 -->
-    <el-divider class="diver m-0!" />
+    <el-divider class="diver" />
     <!-- todo: Brand Model 表格 -->
   </section>
 </template>

@@ -19,3 +19,9 @@
   color: #EFF4F9 !important;
   border-radius: 8px;
 }
+
+// 重置 el-divider 的样式
+.el-divider--horizontal,
+.el-divider--vertical {
+  margin: 0 !important;
+}
