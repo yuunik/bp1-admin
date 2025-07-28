@@ -58,7 +58,13 @@ const onPageChange = useDebounceFn((): void => {
     <!-- 总页数 -->
     <span class="heading-body-body-12px-regular neutrals-grey-3">
       of
-      {{ Math.ceil(pagination.total / pagination.pageSize) }}
+      {{
+        Math.ceil(
+          pagination.total / pagination.pageSize < 1
+            ? 1
+            : pagination.total / pagination.pageSize,
+        )
+      }}
       pages
     </span>
   </el-pagination>
