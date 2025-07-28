@@ -36,4 +36,13 @@ getBrandModelList()
   </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 搜索框
+.brand-model-container {
+  // 输入框样式重置
+  :deep(.el-input__wrapper) {
+    box-shadow: none;
+    background-color: transparent;
+  }
+}
+</style>

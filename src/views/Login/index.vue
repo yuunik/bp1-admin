@@ -3,6 +3,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
 
 import { useUserStore } from '@/store'
 
@@ -13,6 +14,8 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 const router = useRouter()
 const userStore = useUserStore()
 const { login } = userStore
+// 获取登录状态
+const { isLoading } = storeToRefs(userStore)
 
 // 是否显示密码
 const isShowPassword = ref(false)
@@ -121,7 +124,12 @@ const handleLogin = useDebounceFn(async () => {
           </el-form>
           <p class="heading-body-body-12px-medium">Forgot Password?</p>
         </div>
-        <el-button type="primary" class="primary-button" @click="handleLogin">
+        <el-button
+          type="primary"
+          class="primary-button"
+          @click="handleLogin"
+          :loading="isLoading"
+        >
           Log In
         </el-button>
       </div>

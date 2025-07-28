@@ -7,20 +7,26 @@ import { useLocalStorage } from '@vueuse/core'
 const useUserStore = defineStore('user', () => {
   // state
   const userInfo = ref({}) // 用户信息
-  const token = useLocalStorage('token', '') // 用
+  const token = useLocalStorage('token', '') // 用户令牌
+  const isLoading = ref(false) // 登录状态
 
   // actions
   const login = async (email, password) => {
+    isLoading.value = true
     const { code, data, msg } = await loginApi(email, password)
-    if (code === 0) {
-      // 登录成功
-      userInfo.value = data
-      // token 本地持久化
-      token.value = data.token
-      return 'login success'
-    } else {
-      // 抛处异常
-      return Promise.reject(new Error(msg))
+    try {
+      if (code === 0) {
+        // 登录成功
+        userInfo.value = data
+        // token 本地持久化
+        token.value = data.token
+        return 'login success'
+      } else {
+        // 抛处异常
+        return Promise.reject(new Error(msg))
+      }
+    } finally {
+      isLoading.value = false
     }
   }
 
@@ -32,13 +38,14 @@ const useUserStore = defineStore('user', () => {
   return {
     // state
     userInfo,
+    token,
+    isLoading,
     // actions
     login,
     // getters
     username,
     userRole,
     usernameAbbr,
-    token,
   }
 })
 
