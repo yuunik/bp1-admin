@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-import { loginApi } from '@/apis/login.js'
+import { loginApi } from '@/apis/loginApi.js'
 import { useLocalStorage } from '@vueuse/core'
 
 const useUserStore = defineStore('user', () => {

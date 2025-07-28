@@ -1,259 +1,173 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
+
+import BasePagination from '@/components/BasePagination/index.vue'
+import { getOBDListApi } from '@/apis/obdApi.js'
+import { getLastUsedDate, getWarrantyEndDate } from '@/utils/date_util.js'
 
 // 响应式数据
 const loading = ref(false)
+// 搜索文本
 const searchText = ref('')
-const selectedRows = ref([])
+// OBD 列表数据
+const tableData = reactive([])
 
 // 分页数据
 const pagination = reactive({
   currentPage: 1,
-  pageSize: 10,
-  total: 16
+  pageSize: 15,
+  total: 0,
 })
 
-// 表格数据
-const tableData = ref([
-  {
-    id: 1,
-    model: 'PD-1',
-    sn: 'A000001',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Ralph Edwards'
-  },
-  {
-    id: 2,
-    model: 'PD-1',
-    sn: 'A000002',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Kristin Watson'
-  },
-  {
-    id: 3,
-    model: 'PD-1',
-    sn: 'A000003',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Guy Hawkins'
-  },
-  {
-    id: 4,
-    model: 'PD-1',
-    sn: 'A000004',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Bessie Cooper'
-  },
-  {
-    id: 5,
-    model: 'PD-1',
-    sn: 'A000005',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Brooklyn Simmons'
-  },
-  {
-    id: 6,
-    model: 'PD-1',
-    sn: 'A000006',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Theresa Webb'
-  },
-  {
-    id: 7,
-    model: 'PD-1',
-    sn: 'A000007',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Cameron Williamson'
-  },
-  {
-    id: 8,
-    model: 'PD-1',
-    sn: 'A000008',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Jenny Wilson'
-  },
-  {
-    id: 9,
-    model: 'PD-1',
-    sn: 'A000009',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Courtney Henry'
-  },
-  {
-    id: 10,
-    model: 'PD-1',
-    sn: 'A000010',
-    lastUsed: '03 Apr 2026 (10 days ago)',
-    warrantyEnd: '03 Apr 2026',
-    user: 'Esther Howard'
+// 获取OBD 列表数据
+const getObdList = useDebounceFn(async () => {
+  loading.value = true
+  const { code, data, msg, count } = await getOBDListApi({
+    searchKey: searchText.value,
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+  })
+  if (code === 0) {
+    // 提示成功信息
+    ElMessage.success('Get OBD List Success')
+    // 更新分页数据
+    pagination.total = count
+    // 更新表格数据
+    Object.assign(tableData, data)
+  } else {
+    ElMessage.error(msg)
   }
-])
+  loading.value = false
+}, 500)
 
-// 方法
-const handleSelectionChange = (selection) => {
-  selectedRows.value = selection
-}
-
-const handleSearch = () => {
-  // 搜索逻辑
-  console.log('搜索:', searchText.value)
-}
-
-const handleExport = () => {
-  ElMessage.success('导出功能开发中...')
-}
-
-const handleCreate = () => {
-  ElMessage.success('创建功能开发中...')
-}
-
-const handlePageChange = (page) => {
-  pagination.currentPage = page
-  // 加载数据逻辑
-}
-
-const handleSizeChange = (size) => {
-  pagination.pageSize = size
-  pagination.currentPage = 1
-  // 加载数据逻辑
-}
-
-onMounted(() => {
-  // 初始化数据
-})
+// 网络请求
+getObdList()
 </script>
 
 <template>
-  <div class="obd-list-container p-6">
-    <!-- 面包屑导航 -->
-    <el-breadcrumb separator=">" class="mb-4">
-      <el-breadcrumb-item>
-        <el-icon class="mr-1">
-          <ArrowRight />
-        </el-icon>
-        OBD Management
-      </el-breadcrumb-item>
-      <el-breadcrumb-item>OBD List</el-breadcrumb-item>
-    </el-breadcrumb>
-
-    <!-- 页面头部 -->
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center">
-        <h1 class="text-2xl font-semibold text-gray-900 mr-3">OBD List</h1>
-        <el-badge :value="selectedRows.length" class="item" v-if="selectedRows.length > 0">
-          <div class="w-6 h-6"></div>
-        </el-badge>
+  <section class="obd-list-container">
+    <!-- OBD List Header -->
+    <div class="px-32 pb-16">
+      <!-- 标题栏 -->
+      <div class="flex-between">
+        <h3 class="heading-h2-20px-medium">OBD List</h3>
+        <div>
+          <el-button type="default" class="w-70 h-32">Export</el-button>
+          <el-button type="primary" class="w-70 h-32">Create</el-button>
+        </div>
       </div>
-      <div class="flex gap-3">
-        <el-button @click="handleExport">Export</el-button>
-        <el-button type="primary" @click="handleCreate">Create</el-button>
-      </div>
-    </div>
-
-    <!-- 搜索框 -->
-    <div class="mb-6">
-      <el-input v-model="searchText" placeholder="Search..." class="w-80" clearable @keyup.enter="handleSearch">
+      <!-- 搜索栏 -->
+      <el-input
+        placeholder="Search..."
+        class="mt-16 obd-list-search"
+        v-model="searchText"
+        @input="getObdList"
+      >
         <template #prefix>
-          <el-icon class="el-input__icon">
-            <Search />
-          </el-icon>
+          <!-- 前置搜索图标 -->
+          <i class="icon-typessearch w-16 h-16" />
         </template>
       </el-input>
     </div>
-
-    <!-- 数据表格 -->
-    <div class="bg-white rounded-lg shadow">
-      <el-table :data="tableData" v-loading="loading" @selection-change="handleSelectionChange" class="w-full"
-        header-row-class-name="bg-gray-50">
-        <el-table-column type="selection" width="55" />
-
-        <el-table-column prop="model" label="Model" min-width="100">
+    <!-- 分割线 -->
+    <el-divider class="diver m-0!" />
+    <!-- OBD 表格容器 -->
+    <div class="table-container">
+      <!-- OBD 表格 -->
+      <el-table class="obd-list-table" :data="tableData" height="100%">
+        <el-table-column type="selection" min-width="48" />
+        <!-- 设备 SN 码 -->
+        <el-table-column
+          prop="sn"
+          label="SN"
+          :sortable="true"
+          min-width="150"
+        />
+        <!-- 上次使用时间 -->
+        <el-table-column
+          prop="updateTime"
+          label="Last Used"
+          :sortable="true"
+          min-width="202"
+        >
           <template #default="{ row }">
-            <span class="font-medium text-gray-900">{{ row.model }}</span>
+            {{ getLastUsedDate(row.updateTime) }}
           </template>
         </el-table-column>
-
-        <el-table-column prop="sn" label="SN" min-width="120">
+        <!-- 保修期限 -->
+        <el-table-column
+          prop="createTime"
+          label="Warranty End"
+          :sortable="true"
+          min-width="150"
+        >
           <template #default="{ row }">
-            <span class="text-gray-700">{{ row.sn }}</span>
+            {{ getWarrantyEndDate(row.createTime) }}
           </template>
         </el-table-column>
-
-        <el-table-column prop="lastUsed" label="Last Used" min-width="180" sortable>
+        <!-- 使用者 -->
+        <el-table-column
+          prop="simpleUserDto?.name"
+          label="User"
+          min-width="100"
+        >
           <template #default="{ row }">
-            <span class="text-gray-600">{{ row.lastUsed }}</span>
+            {{ row.userDto?.name === '' ? 'Unnamed User' : row.userDto?.name }}
           </template>
         </el-table-column>
-
-        <el-table-column prop="warrantyEnd" label="Warranty End" min-width="140" sortable>
-          <template #default="{ row }">
-            <span class="text-gray-600">{{ row.warrantyEnd }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column prop="user" label="User" min-width="150">
-          <template #default="{ row }">
-            <span class="text-gray-700">{{ row.user }}</span>
+        <!-- 操作 -->
+        <el-table-column min-width="48" align="center">
+          <template #default>
+            <i class="icon-more-2-line" />
           </template>
         </el-table-column>
       </el-table>
-
       <!-- 分页 -->
-      <div class="flex justify-between items-center p-4 border-t border-gray-200">
-        <div class="text-sm text-gray-500">
-          {{ (pagination.currentPage - 1) * pagination.pageSize + 1 }} of {{ pagination.total }} pages
-        </div>
-        <el-pagination v-model:current-page="pagination.currentPage" v-model:page-size="pagination.pageSize"
-          :page-sizes="[10, 20, 50, 100]" :total="pagination.total" layout="sizes, prev, pager, next"
-          @size-change="handleSizeChange" @current-change="handlePageChange" class="justify-end" />
-      </div>
+      <base-pagination
+        :pagination="pagination"
+        :handle-page-change="getObdList"
+      />
     </div>
-  </div>
+  </section>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .obd-list-container {
-  min-height: 100vh;
-  background-color: #f8fafc;
-}
+  height: 100%;
+  // 使用视口高度
+  display: flex;
+  flex-direction: column;
 
-.el-table {
-  border-radius: 8px;
-}
+  // 搜索框
+  .obd-list-search {
+    // 输入框样式重置
+    :deep(.el-input__wrapper) {
+      box-shadow: none;
+      background-color: transparent;
+    }
+  }
 
-.el-table :deep(.el-table__header-wrapper) {
-  border-radius: 8px 8px 0 0;
-}
+  // 表格容器
+  .table-container {
+    padding: 8px 32px 38px;
+    flex: 1;
+    min-height: 0; // 确保 flex 子项可以收缩
+    display: flex;
+    flex-direction: column;
 
-.el-table :deep(.el-table__header th) {
-  background-color: #f8fafc;
-  color: #374151;
-  font-weight: 500;
-  border-bottom: 1px solid #e5e7eb;
-}
+    :deep(.el-table) {
+      background-color: rgb(252, 252, 252);
+    }
 
-.el-table :deep(.el-table__row:hover > td) {
-  background-color: #f9fafb;
-}
+    :deep(th) {
+      background-color: rgb(252, 252, 252);
+    }
 
-.el-pagination :deep(.el-pagination__sizes) {
-  margin-right: 16px;
-}
-
-.el-breadcrumb :deep(.el-breadcrumb__inner) {
-  color: #6b7280;
-}
-
-.el-breadcrumb :deep(.el-breadcrumb__inner:hover) {
-  color: #3b82f6;
+    :deep(tr) {
+      background-color: rgb(252, 252, 252);
+    }
+  }
 }
 </style>

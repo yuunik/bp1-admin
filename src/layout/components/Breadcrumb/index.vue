@@ -1,10 +1,14 @@
+<script setup>
+import Logo from '@/assets/icons/logo.svg'
+</script>
+
 <template>
   <el-breadcrumb
     separator=">"
     class="p-[24px_32px_16px_32px] heading-body-body-12px-medium"
   >
     <el-breadcrumb-item>
-      <img src="/src/assets/icons/logo.svg" alt="logo" />
+      <img :src="Logo" alt="logo" />
     </el-breadcrumb-item>
     <el-breadcrumb-item
       v-for="route in $route.matched"

@@ -1,5 +1,5 @@
 /**
- * @fileOverview md5加密工具类
+ * @description md5加密工具类
  */
 import md5 from 'crypto-js/md5'
 

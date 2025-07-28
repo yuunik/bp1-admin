@@ -1,7 +1,23 @@
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
+    // 主题白色
+    'white': #FCFCFC,
+    // 主题首要色
     'primary': (
       'base': #006BF7
     ),
+  ),
+  // default button的样式
+  $button: (
+    // Neutrals/Grey 3
+    'text-color': #99A0AE,
+    // Neutrals/Grey 2 (Disable)
+    'border-color': #CACFD8,
+  ),
+  // 按钮的圆角大小
+  $button-border-radius: (
+    'large': 12px,
+    'default': 8px,
+    'small': 4px,
   )
 );

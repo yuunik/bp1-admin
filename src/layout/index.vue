@@ -2,10 +2,12 @@
 import { storeToRefs } from 'pinia'
 
 import routes from '@/router/routes/index.js'
-
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
+import Content from './components/Content/index.vue'
 import { useUserStore } from '@/store/index.js'
+
+import CompanyLogo from '@/assets/icons/company-logo.svg'
 
 const userStore = useUserStore()
 // 获取用户相关信息
@@ -19,11 +21,7 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
       class="w-200 heading-body-body-12px-regular flex flex-col gap-16 box-border relative"
     >
       <!-- Company Logo -->
-      <img
-        src="/src/assets/icons/company-logo.svg"
-        alt="Logo"
-        class="w-83 h-24 mt-8 ml-8"
-      />
+      <img :src="CompanyLogo" alt="Company Logo" class="w-83 h-24 mt-8 ml-8" />
       <!-- menu -->
       <el-menu
         class="nav-menu"
@@ -78,8 +76,10 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
     </nav>
     <!-- content -->
     <main class="content-container">
+      <!-- breadcrumb -->
       <breadcrumb />
-      <router-view />
+      <!-- router view -->
+      <content />
     </main>
   </div>
 </template>
@@ -87,10 +87,10 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
 <style scoped lang="scss">
 .bg-container {
   @extend %common-bg-style;
-  @apply h-full p-8 flex gap-8 text-white;
+  @apply h-full p-8 flex gap-8;
 
   .content-container {
-    @apply flex-1 w-872 flex-auto h-full rounded-8;
+    @apply flex-1 w-872 flex-auto h-full rounded-8 flex flex-col;
     background-color: $neutrals-off-white;
   }
 

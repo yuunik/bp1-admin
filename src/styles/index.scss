@@ -38,49 +38,41 @@ i {
 }
 
 .heading-h1-26px-medium {
-  color: $neutrals-off-black;
   font-size: 26px;
   font-weight: 500;
 }
 
 .heading-h1-26px-regular {
-  color: $neutrals-grey-4;
   font-size: 26px;
   font-weight: 400;
 }
 
 .heading-h2-20px-medium {
-  color: $neutrals-off-white;
   font-size: 20px;
   font-weight: 500;
 }
 
 .heading-h2-20px-regular {
-  color: $neutrals-grey-4;
   font-size: 20px;
   font-weight: 400;
 }
 
 .heading-h3-16px-medium {
-  color: $neutrals-grey-4;
   font-size: 16px;
   font-weight: 500;
 }
 
 .heading-h3-16px-regular {
-  color: $neutrals-grey-4;
   font-size: 16px;
   font-weight: 400;
 }
 
 .heading-body-large-body-14px-medium {
-  color: $neutrals-grey-4;
   font-size: 14px;
   font-weight: 500;
 }
 
 .heading-body-large-body-14px-regular {
-  color: $neutrals-grey-3;
   font-size: 14px;
   font-weight: 400;
 }
@@ -91,19 +83,16 @@ i {
 }
 
 .heading-body-body-12px-regular {
-  color: $neutrals-grey-4;
   font-size: 12px;
   font-weight: 400;
 }
 
 .heading-caption-caption-10px-medium {
-  color: $neutrals-off-white;
   font-size: 10px;
   font-weight: 500;
 }
 
 .heading-caption-caption-10px-regular {
-  color: $neutrals-grey-4;
   font-size: 10px;
   font-weight: 400;
 }
@@ -114,6 +103,10 @@ i {
 
 .neutrals-grey-3 {
   color: $neutrals-grey-3;
+}
+
+.neutrals-grey-4 {
+  color: $neutrals-grey-4;
 }
 
 .neutrals-off-black {
