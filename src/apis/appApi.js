@@ -8,10 +8,12 @@ import { useAuthToken } from '@/composables/useAuthToken.js'
 const AppApi = Object.freeze({
   // 获取车辆品牌列表
   GET_BRAND_MODAL_LIST: '/vehicle/brands',
+  // 获取 AI 管理问题
+  GET_AI_MANAGE_QUESTION_LIST: '/manager/aichat/question',
 })
 
-// 获取车辆品牌列表
 /**
+ * 获取车辆品牌列表
  * @returns {Promise<ApiResponse<OBDItem[]>>}
  */
 export const getBrandModalListApi = () => {
@@ -22,6 +24,22 @@ export const getBrandModalListApi = () => {
 
   return request({
     url: AppApi.GET_BRAND_MODAL_LIST,
+    method: 'POST',
+    data: data,
+  })
+}
+
+/**
+ * 获取 AI 管理问题
+ * @returns {Promise<ApiResponse<AiQuestionItem[]>>}
+ */
+export const getAiManageQuestionListApi = () => {
+  const data = new FormData()
+  const { getToken } = useAuthToken()
+  data.append('token', getToken())
+
+  return request({
+    url: AppApi.GET_AI_MANAGE_QUESTION_LIST,
     method: 'POST',
     data: data,
   })

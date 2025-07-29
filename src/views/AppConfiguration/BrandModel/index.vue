@@ -121,7 +121,11 @@ getBrandModelList()
                 :src="getFullPath(row.logo)"
                 class="w-24 h-24 mr-8"
                 alt="brand icon"
-              />
+              >
+                <template #error>
+                  <i class="i-ep-picture" />
+                </template>
+              </el-image>
               <span>{{ row.brand }}</span>
             </div>
           </template>

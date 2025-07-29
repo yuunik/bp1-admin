@@ -61,3 +61,15 @@
  * @property {string} logo
  */
 /* end */
+
+/* ai 问题数据类型 */
+/**
+ * @typedef {Object} AiQuestionItem
+ * @property {string} id - 唯一标识符，UUID 格式
+ * @property {string} question - 提问内容，可能是用户的语音或查询语句
+ * @property {number} sort - 排序字段，越小越靠前
+ * @property {number} status - 状态值，例如 1 表示启用，0 表示禁用
+ * @property {number} useCount - 被调用的次数
+ * @property {number} createTime - 创建时间，毫秒时间戳
+ * @property {number} updateTime - 更新时间，毫秒时间戳
+ */

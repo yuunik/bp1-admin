@@ -7,6 +7,8 @@ import debounce from '@/directives/debounce/index.js'
 
 // 统一重置样式
 import 'normalize.css'
+// 图标库
+import '@/assets/style.css'
 // 全局样式
 import '@/styles/index.scss'
 // element-plus 样式
