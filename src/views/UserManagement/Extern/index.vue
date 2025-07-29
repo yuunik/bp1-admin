@@ -7,9 +7,10 @@ import { getMerchantListApi } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
 import { useDebounceFn } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 
 // 修理厂列表
-const merchantList = reactive([])
+const merchantList = ref([])
 
 // 分页数据
 const pagination = reactive({
@@ -26,13 +27,17 @@ const activeTab = ref(UserManagementTab.PERSON)
 
 // 获取修理厂列表
 const getMerchantList = useDebounceFn(async () => {
-  const { data } = await getMerchantListApi({
+  const { data, count } = await getMerchantListApi({
     searchKey: searchKey.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
-  // 处理返回数据
-  Object.assign(merchantList, data)
+  // 提示
+  ElMessage.success('Get Merchant List Success')
+  // 记录总数
+  pagination.total = count
+  // 记录修理厂列表
+  merchantList.value = data
 }, 500)
 
 // 处理tab切换
