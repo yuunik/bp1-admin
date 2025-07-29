@@ -102,17 +102,17 @@ getBrandModelList()
         height="100%"
         :loading="loading"
       >
-        <el-table-column type="selection" min-width="48" />
+        <!-- 勾选框 -->
+        <el-table-column type="selection" min-width="6%" />
         <!-- 排序 -->
         <el-table-column
           prop="sort"
           label="Sort"
           :sortable="true"
-          min-width="80"
-          align="center"
+          min-width="8%"
         />
         <!-- 品牌名称 -->
-        <el-table-column label="Brand" :sortable="true" min-width="200">
+        <el-table-column label="Brand" :sortable="true" min-width="43%">
           <template #default="{ row }">
             <div class="flex items-center">
               <el-image
@@ -135,8 +135,7 @@ getBrandModelList()
           prop="modelCount"
           label="Model Count"
           :sortable="true"
-          min-width="120"
-          align="center"
+          min-width="19%"
         >
           <template #default="{ row }">
             <span>{{ row?.vehicleModelDtos?.length || 0 }}</span>
@@ -147,7 +146,7 @@ getBrandModelList()
           prop="status"
           label="Status"
           :sortable="true"
-          min-width="100"
+          min-width="18%"
           align="center"
         >
           <template #default="{ row }">
@@ -157,7 +156,7 @@ getBrandModelList()
           </template>
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column min-width="48" align="center">
+        <el-table-column min-width="6%" align="center">
           <template #default>
             <i class="icon-more-2-line cursor-pointer" />
           </template>

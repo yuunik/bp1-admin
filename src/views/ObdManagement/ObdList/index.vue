@@ -77,20 +77,21 @@ getObdList()
     <div class="table-container">
       <!-- OBD 表格 -->
       <el-table class="obd-list-table" :data="tableData" height="100%">
-        <el-table-column type="selection" min-width="48" />
+        <!-- 勾选框 -->
+        <el-table-column type="selection" min-width="6%" />
         <!-- 设备 SN 码 -->
         <el-table-column
           prop="sn"
           label="SN"
           :sortable="true"
-          min-width="150"
+          min-width="26%"
         />
         <!-- 上次使用时间 -->
         <el-table-column
           prop="updateTime"
           label="Last Used"
           :sortable="true"
-          min-width="202"
+          min-width="25%"
         >
           <template #default="{ row }">
             {{ getLastUsedDate(row.updateTime) }}
@@ -101,7 +102,7 @@ getObdList()
           prop="createTime"
           label="Warranty End"
           :sortable="true"
-          min-width="150"
+          min-width="18%"
         >
           <template #default="{ row }">
             {{ getWarrantyEndDate(row.createTime) }}
@@ -111,14 +112,14 @@ getObdList()
         <el-table-column
           prop="simpleUserDto?.name"
           label="User"
-          min-width="100"
+          min-width="19%"
         >
           <template #default="{ row }">
             {{ row.userDto?.name === '' ? 'Unnamed User' : row.userDto?.name }}
           </template>
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column min-width="48" align="center">
+        <el-table-column min-width="6%" align="center">
           <template #default>
             <i class="icon-more-2-line" />
           </template>

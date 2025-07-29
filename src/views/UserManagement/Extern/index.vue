@@ -6,13 +6,14 @@ import BasePagination from '@/components/BasePagination/index.vue'
 import { getMerchantListApi } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import { useDebounceFn } from '@vueuse/core'
 
 // 修理厂列表
 const merchantList = reactive([])
 
 // 分页数据
 const pagination = reactive({
-  currentPage: 1,
+  currentPage: 0,
   pageSize: 15,
   total: 0,
 })
@@ -24,15 +25,15 @@ const searchKey = ref('')
 const activeTab = ref(UserManagementTab.PERSON)
 
 // 获取修理厂列表
-const getMerchantList = async () => {
+const getMerchantList = useDebounceFn(async () => {
   const { data } = await getMerchantListApi({
     searchKey: searchKey.value,
-    page: pagination.page,
+    page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
   // 处理返回数据
   Object.assign(merchantList, data)
-}
+}, 500)
 
 // 处理tab切换
 const handleTabChange = (tabName) => (activeTab.value = tabName)
@@ -66,10 +67,10 @@ getMerchantList()
       <div class="flex flex-between">
         <!-- 条件搜索 -->
         <el-input
+          v-model="searchKey"
+          @input="getMerchantList"
           placeholder="Search..."
           class="mt-16 extern-search"
-          v-debounce="getMerchantList"
-          v-model="searchKey"
         >
           <template #prefix>
             <!-- 前置搜索图标 -->
