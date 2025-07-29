@@ -135,11 +135,7 @@ getObdList()
 
 <style scoped lang="scss">
 .obd-list-container {
-  width: 100%;
-  height: 100%;
-  // 使用视口高度
-  display: flex;
-  flex-direction: column;
+  @apply flex flex-col;
 
   // 搜索框
   .obd-list-search {

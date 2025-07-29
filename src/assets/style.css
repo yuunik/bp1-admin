@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?kxa64n');
-  src:  url('fonts/icomoon.eot?kxa64n#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?kxa64n') format('truetype'),
-    url('fonts/icomoon.woff?kxa64n') format('woff'),
-    url('fonts/icomoon.svg?kxa64n#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?m1e30y');
+  src:  url('fonts/icomoon.eot?m1e30y#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?m1e30y') format('truetype'),
+    url('fonts/icomoon.woff?m1e30y') format('woff'),
+    url('fonts/icomoon.svg?m1e30y#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-fi_star:before {
+  content: "\e921";
+}
 .icon-delete-bin-line:before {
   content: "\e91f";
   color: #99a0ae;
@@ -35,15 +38,12 @@
 }
 .icon-more-2-line:before {
   content: "\e91e";
-  color: #99a0ae;
 }
 .icon-eye-off-line:before {
   content: "\e91d";
-  color: #99a0ae;
 }
 .icon-dashboard:before {
   content: "\e917";
-  color: #99a0ae;
 }
 .icon-app-configuration:before {
   content: "\e918";

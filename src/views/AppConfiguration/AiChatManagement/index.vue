@@ -157,7 +157,7 @@ onBeforeUnmount(() => {
       <!-- 标题 -->
       <h3 class="heading-h2-20px-medium">AI Chat Management</h3>
       <!-- tabs 栏 -->
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+      <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="my-16">
         <el-tab-pane
           :label="AIChatManagementTab.PRESET_QUESTIONS"
           :name="AIChatManagementTab.PRESET_QUESTIONS"
@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
       </el-tabs>
     </div>
     <!-- 分割线 -->
-    <el-divider class="diver m-0!" />
+    <el-divider class="diver" />
     <template v-if="activeTab === AIChatManagementTab.PRESET_QUESTIONS">
       <div class="h-full px-32 pt-16 pb-38">
         <!-- ai 问题表格 -->

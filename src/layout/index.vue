@@ -78,7 +78,7 @@ const { username, userRole, usernameAbbr } = storeToRefs(userStore)
       <!-- breadcrumb -->
       <breadcrumb />
       <!-- router view -->
-      <content />
+      <content class="flex-1" />
     </main>
   </div>
 </template>

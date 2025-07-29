@@ -1,3 +1,7 @@
+/**
+ * @description: 登录 API
+ */
+
 import { md5Encrypt } from '@/utils/md5Util.js'
 import request from '@/utils/request.js'
 
@@ -6,7 +10,11 @@ const LoginAPI = Object.freeze({
   LOGIN: '/manager/login',
 })
 
-// 登录
+/**
+ * 登录 API
+ * @param loginParams 登录参数
+ * @returns {Promise<ApiResponse<AdminUserItem>>}
+ */
 export const loginApi = (loginParams) => {
   // 封装 form data
   const formData = new FormData()

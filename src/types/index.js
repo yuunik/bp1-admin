@@ -73,3 +73,38 @@
  * @property {number} createTime - 创建时间，毫秒时间戳
  * @property {number} updateTime - 更新时间，毫秒时间戳
  */
+
+/* 修理厂数据类型 */
+/**
+ * @typedef {Object} ShopInfoItem
+ * @property {string} id - 店铺唯一标识符，UUID 格式
+ * @property {string} name - 店铺名称
+ * @property {string} logo - 店铺 Logo 图片地址，若为空表示未上传
+ * @property {string} businessHours - 营业时间信息，格式可为 "08:00 - 18:00"
+ * @property {string} shopAddress - 店铺地址，全量展示用于地图定位等
+ * @property {string} phoneCountry - 电话所属国家代码（例如 "+65"）
+ * @property {string} phoneNumber - 联系电话
+ * @property {number} isDelete - 删除状态，0 表示未删除，1 表示已删除
+ * @property {number} createTime - 创建时间，毫秒时间戳
+ * @property {number} updateTime - 更新时间，毫秒时间戳
+ * @property {string} userId - 店主或商户用户的 ID
+ * @property {number} rating - 店铺评分，例如 5 表示满分
+ * @property {string} UEN - 新加坡企业统一编号（Unique Entity Number）
+ * @property {Array<Object>} reviewDtos - 用户评论列表
+ * @property {Object} userDto - 关联用户信息
+ * @property {string} userDto.id - 用户 ID
+ * @property {string} userDto.name - 用户名
+ * @property {string} userDto.logo - 用户头像地址
+ */
+
+/* 用户数据类型 */
+/**
+ * @typedef {Object} AdminUserItem
+ * @property {string} id - 管理员唯一标识符，可为字符串型 ID
+ * @property {string} name - 管理员用户名
+ * @property {string} email - 管理员电子邮件地址
+ * @property {string} password - 用户密码（建议仅在后台使用，不在客户端暴露）
+ * @property {string} token - 登录或认证令牌，包含角色标识信息
+ * @property {number} createTime - 创建时间，毫秒时间戳。0 表示未设定
+ * @property {number} updateTime - 最近更新时间，毫秒时间戳
+ */
