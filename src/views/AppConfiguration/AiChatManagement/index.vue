@@ -153,7 +153,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="AI-chat-management-container">
+  <section class="h-full flex flex-col">
     <!-- AI Chat Management Header -->
     <div class="px-32 pb-16">
       <!-- 标题 -->
@@ -177,14 +177,26 @@ onBeforeUnmount(() => {
     <!-- 分割线 -->
     <el-divider class="diver m-0!" />
     <template v-if="activeTab === AIChatManagementTab.PRESET_QUESTIONS">
-      <div class="px-32 pt-16 pb-38">
+      <div class="h-full px-32 pt-16 pb-38">
         <!-- ai 问题表格 -->
-        <el-table :data="aiQuestionList" :span-method="handleTableSpan">
-          <el-table-column type="index" label="No." column-key="No." />
+        <el-table
+          :data="aiQuestionList"
+          :span-method="handleTableSpan"
+          class="w-full"
+        >
+          <!-- 序号 -->
+          <el-table-column
+            type="index"
+            label="No."
+            column-key="No."
+            min-width="7%"
+          />
+          <!-- 问题 -->
           <el-table-column
             prop="question"
             label="Question"
             column-key="question"
+            min-width="64%"
           >
             <template #default="{ row }">
               <template v-if="row.isDraft">
@@ -208,31 +220,34 @@ onBeforeUnmount(() => {
               </template>
             </template>
           </el-table-column>
+          <!-- 状态 -->
           <el-table-column
             prop="useCount"
             label="Times Asked"
             column-key="useCount"
+            min-width="11%"
+          />
+          <!-- 状态 -->
+          <el-table-column
+            label="Status"
+            :sortable="true"
+            column-key="status"
+            min-width="11%"
           >
-            <template #default="{ row }">
-              <el-text v-if="!row.isDraft && !row.isEdit">
-                {{ row.useCount }}
-              </el-text>
-            </template>
-          </el-table-column>
-          <el-table-column label="Status" :sortable="true" column-key="status">
             <!-- 月姐说了: 激活 1, 禁用 0 -->
             <template #default="{ row }">
               <el-switch
                 v-model="row.status"
-                :active-value="0"
-                active-text="On"
-                inactive-text="Off"
-                :inactive-value="1"
+                :active-value="1"
+                :active-text="row.status === 1 ? 'On' : ''"
+                :inactive-text="row.status === 0 ? 'Off' : ''"
+                :inactive-value="0"
                 @change="handleConfirmEdit(row, false)"
               />
             </template>
           </el-table-column>
-          <el-table-column min-width="64" column-key="actions">
+          <!-- 操作 -->
+          <el-table-column column-key="actions" min-width="7%">
             <template #default="{ row }">
               <template v-if="row.isDraft">
                 <el-button type="primary" @click="handleConfirmAdd">
@@ -290,5 +305,10 @@ onBeforeUnmount(() => {
 
 :deep(.el-input__wrapper) {
   border-radius: 12px;
+}
+
+// 重置激活状态的文字颜色
+:deep(.el-switch__label.is-active) {
+  color: $neutrals-grey-4;
 }
 </style>

@@ -151,8 +151,8 @@ getBrandModelList()
           align="center"
         >
           <template #default="{ row }">
-            <el-tag :type="row.isDelete === 0 ? 'success' : 'info'">
-              {{ row.isDelete === 0 ? 'Active' : 'Disabled' }}
+            <el-tag :type="row.isDelete === 0 ? 'info' : 'success'">
+              {{ row.isDelete === 0 ? 'Disabled' : 'Active' }}
             </el-tag>
           </template>
         </el-table-column>
