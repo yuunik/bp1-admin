@@ -1,4 +1,4 @@
-import { md5Encrypt } from '@/utils/md5_util.js'
+import { md5Encrypt } from '@/utils/md5Util.js'
 import request from '@/utils/request.js'
 
 // 统一管理 API

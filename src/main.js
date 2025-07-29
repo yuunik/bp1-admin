@@ -18,7 +18,7 @@ import 'virtual:uno.css'
 
 const app = createApp(App)
 
-// 自定义指令
+// 防抖指令
 app.directive('debounce', debounce)
 
 app.use(store)

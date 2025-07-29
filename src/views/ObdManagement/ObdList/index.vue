@@ -5,7 +5,7 @@ import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination/index.vue'
 import { getOBDListApi } from '@/apis/obdApi.js'
-import { getLastUsedDate, getWarrantyEndDate } from '@/utils/date_util.js'
+import { getLastUsedDate, getWarrantyEndDate } from '@/utils/dateUtil.js'
 
 // 响应式数据
 const loading = ref(false)
