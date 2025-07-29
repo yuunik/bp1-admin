@@ -25,3 +25,16 @@
 .el-divider--vertical {
   margin: 0 !important;
 }
+
+// 重置 el-table 的样式
+.el-table {
+  background-color: rgb(252, 252, 252) !important; // 示例颜色
+
+  th {
+    background-color: rgb(252, 252, 252)  !important; // 示例颜色
+  }
+
+  tr {
+    background-color: rgb(252, 252, 252)  !important;
+  }
+}

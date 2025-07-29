@@ -18,9 +18,7 @@ const aiQuestionList = reactive([])
 const addQuestion = ref('')
 
 // tab 点击事件
-const handleTabChange = (tab) => {
-  console.log(tab)
-}
+const handleTabChange = (tab) => (activeTab.value = tab)
 
 // 获取 ai 问题列表
 const getAiQuestionList = async () => {

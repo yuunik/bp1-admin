@@ -157,18 +157,6 @@ getObdList()
     min-height: 0; // 确保 flex 子项可以收缩
     display: flex;
     flex-direction: column;
-
-    :deep(.el-table) {
-      background-color: rgb(252, 252, 252);
-    }
-
-    :deep(th) {
-      background-color: rgb(252, 252, 252);
-    }
-
-    :deep(tr) {
-      background-color: rgb(252, 252, 252);
-    }
   }
 }
 </style>
