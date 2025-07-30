@@ -181,6 +181,11 @@ const constantRoutes = [
       icon: 'icon-app-configuration',
     },
   },
+  {
+    path: "/share",
+    name: "Share",
+    component: () => import("@/views/Share/index.vue")
+  }
 ]
 
 export default constantRoutes
