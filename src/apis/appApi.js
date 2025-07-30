@@ -7,7 +7,7 @@ import { useAuthToken } from '@/composables/useAuthToken.js'
 // 统一管理API接口
 const AppApi = Object.freeze({
   // 获取车辆品牌列表
-  GET_BRAND_MODAL_LIST: '/vehicle/brands',
+  GET_BRAND_MODEL_LIST: '/vehicle/brands',
   // 获取 AI 问题列表
   GET_AI_QUESTION_LIST: '/manager/aichat/question',
   // 添加 AI 问题
@@ -16,6 +16,8 @@ const AppApi = Object.freeze({
   DELETE_AI_QUESTION: '/manager/aichat/delete',
   // 修改 AI 问题
   MODIFY_AI_QUESTION: '/manager/aichat/edit',
+  // 获取车辆品牌详情
+  GET_BRAND_MODEL_INFO: '/manager/vehicle/brandinfo',
 })
 
 // 获取 token
@@ -23,14 +25,14 @@ const { getToken } = useAuthToken()
 
 /**
  * 获取车辆品牌列表
- * @returns {Promise<ApiResponse<OBDItem[]>>}
+ * @returns {Promise<ApiResponse<BrandInfo[]>>}
  */
 export const getBrandModalListApi = () => {
   const data = new FormData()
   data.append('token', getToken())
 
   return request({
-    url: AppApi.GET_BRAND_MODAL_LIST,
+    url: AppApi.GET_BRAND_MODEL_LIST,
     method: 'POST',
     data: data,
   })
@@ -101,6 +103,22 @@ export const modifyAiQuestionApi = (params) => {
 
   return request({
     url: AppApi.MODIFY_AI_QUESTION,
+    method: 'POST',
+    data: data,
+  })
+}
+
+/**
+ * 获取车辆品牌详情
+ * @param id 车辆品牌id
+ * @returns {Promise<ApiResponse<BrandInfo>>}
+ */
+export const getBrandModelInfoApi = (id) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', id)
+  return request({
+    url: AppApi.GET_BRAND_MODEL_INFO,
     method: 'POST',
     data: data,
   })

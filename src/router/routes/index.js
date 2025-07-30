@@ -123,25 +123,52 @@ const constantRoutes = [
       {
         path: '/app-configuration/version-control',
         name: 'VersionControl',
-        component: () => import('@/views/AppConfiguration/VersionControl/index.vue'),
+        component: () =>
+          import('@/views/AppConfiguration/VersionControl/index.vue'),
         meta: {
           title: 'Version Control',
           isShow: true,
         },
       },
       {
-        path: '/app-configuration/brandAndModel',
+        path: '/app-configuration/brand-Model',
         name: 'BrandAndModel',
-        component: () => import('@/views/AppConfiguration/BrandModel/index.vue'),
+        component: () =>
+          import('@/views/AppConfiguration/BrandModel/index.vue'),
+        children: [
+          // 车辆表格页面
+          {
+            path: '',
+            name: 'BrandAndModelTable',
+            component: () =>
+              import('@/views/AppConfiguration/BrandModel/BrandModelTable.vue'),
+            meta: {
+              // 是否隐藏面包屑
+              hideBreadcrumb: true,
+              isShow: true,
+            },
+          },
+          // 车辆管理页面
+          {
+            path: '/app-configuration/brand-Model/manage/:id',
+            name: 'BrandAndModelManagement',
+            component: () =>
+              import(
+                '@/views/AppConfiguration/BrandModel/BrandModelManage.vue'
+              ),
+            params: true,
+          },
+        ],
         meta: {
           title: 'Brand & Model',
           isShow: true,
         },
       },
       {
-        path: '/app-configuration/aiChatManagement',
+        path: '/app-configuration/ai-chat-management',
         name: 'AiChatManagement',
-        component: () => import('@/views/AppConfiguration/AiChatManagement/index.vue'),
+        component: () =>
+          import('@/views/AppConfiguration/AiChatManagement/index.vue'),
         meta: {
           title: 'AI Chat Management',
           isShow: true,

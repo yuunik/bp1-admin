@@ -10,11 +10,12 @@ import Logo from '@/assets/icons/logo.svg'
     <el-breadcrumb-item>
       <img :src="Logo" alt="logo" />
     </el-breadcrumb-item>
+    <!-- 默认显示面包屑, 若不需要显示面包屑, 则需要 meta 加 hideBreadcrumb -->
     <el-breadcrumb-item
       v-for="route in $route.matched"
       :key="route.path"
       :to="route.path"
-      v-show="route?.meta?.isShow"
+      v-show="!route?.meta?.hideBreadcrumb && route?.meta?.isShow"
     >
       <!-- 面包屑标题 -->
       <span

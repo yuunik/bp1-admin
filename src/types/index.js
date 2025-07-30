@@ -108,3 +108,22 @@
  * @property {number} createTime - 创建时间，毫秒时间戳。0 表示未设定
  * @property {number} updateTime - 最近更新时间，毫秒时间戳
  */
+
+/* 车辆型号数据类型 */
+/**
+ * @typedef {Object} VehicleModel
+ * @property {string} id
+ * @property {string} name
+ * @property {string} brandId
+ */
+
+/* 品牌数据类型 */
+/**
+ * @typedef {Object} BrandInfo
+ * @property {string} id
+ * @property {string} brand
+ * @property {string} logo
+ * @property {number} isDelete
+ * @property {number} sort
+ * @property {VehicleModel[]} vehicleModelDtos
+ */
