@@ -38,3 +38,26 @@
     background-color: rgb(252, 252, 252)  !important;
   }
 }
+
+// 重置 el-tab 的样式
+.el-tabs__nav-wrap::after {
+  // tabs 栏底部线隐藏
+  display: none;
+}
+
+.el-tabs {
+  // tabs 栏margin重置
+  margin: 16px 0;
+}
+
+.el-tabs__header {
+  // tabs 头部栏margin重置
+  margin: 0;
+}
+
+// 重置 el-button 的样式
+.el-button,
+.el-button--small,
+.el-button--large {
+  border-radius: 8px !important;
+}

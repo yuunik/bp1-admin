@@ -197,22 +197,6 @@ getMerchantList()
   }
 }
 
-// tabs 栏样式重置
-:deep(.el-tabs__nav-wrap::after) {
-  // tabs 栏底部线隐藏
-  display: none;
-}
-
-:deep(.el-tabs) {
-  // tabs 栏margin重置
-  margin: 16px 0;
-}
-
-:deep(.el-tabs__header) {
-  // tabs 头部栏margin重置
-  margin: 0;
-}
-
 // 评星图标样式
 .icon-fi_star {
   color: $status-colours-orange;

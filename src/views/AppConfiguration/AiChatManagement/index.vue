@@ -62,7 +62,7 @@ const handleConfirmAdd = async () => {
   const question = addQuestion.value.trim()
   if (question) {
     // 新增问题
-    const { data } = await addAiQuestionApi(question)
+    await addAiQuestionApi(question)
     // 新增问题成功
     ElMessage.success('Add AI Question List Success')
     // 刷新列表
@@ -204,13 +204,13 @@ onBeforeUnmount(() => {
                   class="question-input"
                   placeholder="Enter question..."
                   @blur="handleAddQuestionByBlur"
-                  @keydown="handleConfirmAdd"
+                  @keyup.enter.native="handleConfirmAdd"
                 />
               </template>
               <template v-else-if="row.isEdit">
                 <el-input
                   v-model="row.question"
-                  @keydown="handleConfirmEdit(row)"
+                  @keyup.enter.native="handleConfirmEdit(row)"
                 />
               </template>
               <template v-else>
@@ -253,12 +253,21 @@ onBeforeUnmount(() => {
                 </el-button>
               </template>
               <template v-else-if="row.isEdit">
-                <el-button @click="handleEditQuestionStatusChange(row)">
-                  Cancel
-                </el-button>
-                <el-button type="primary" @click="handleConfirmEdit(row)">
-                  Save
-                </el-button>
+                <div class="flex gap-8">
+                  <el-button
+                    @click="handleEditQuestionStatusChange(row)"
+                    size="small"
+                  >
+                    Cancel
+                  </el-button>
+                  <el-button
+                    type="primary"
+                    @click="handleConfirmEdit(row)"
+                    size="small"
+                  >
+                    Save
+                  </el-button>
+                </div>
               </template>
               <template v-else>
                 <!-- 编辑 -->
