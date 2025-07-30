@@ -1,5 +1,5 @@
 /**
- * @description User Management API文件
+ * @file User Management 模块的接口文件
  */
 
 import request from '@/utils/request.js'

@@ -1,5 +1,5 @@
 /**
- * @description OBD Manager 模块的接口文件
+ * @file OBD Management 模块的接口文件
  */
 
 // 统一接口管理
