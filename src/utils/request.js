@@ -23,6 +23,10 @@ request.interceptors.response.use(
     // 若不是成功状态码, 则提示错误信息
     if (code !== 0) {
       // 错误提示
+      if (code===401){
+        location.replace('/login');
+        return ;
+      }
       ElMessage.error(msg)
     }
     return response.data
@@ -33,7 +37,7 @@ request.interceptors.response.use(
     const status = error.response?.status
     switch (status) {
       case 401:
-        msg = 'Token expired'
+        msg = 'No access rights'
         break
       case 403:
         msg = 'No access rights'
