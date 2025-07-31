@@ -63,6 +63,10 @@ export default defineConfig({
       'transition-default': 'transition-[all] duration-250 ease-linear',
       // 绝对定位靠右
       'absolute-right': 'absolute right-20 bottom-10',
+      // 垂直分开两边
+      'flex-col-between': 'flex flex-col justify-between',
+      // 垂直居中
+      'row-items-center': 'flex items-center',
     },
   ],
   theme: {

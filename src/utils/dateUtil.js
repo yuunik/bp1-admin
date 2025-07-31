@@ -36,3 +36,39 @@ export const getWarrantyEndDate = (timestamp) => {
   const oneYearLater = dayjs(timestamp).add(1, 'year')
   return oneYearLater.format('DD MMM YYYY')
 }
+
+/**
+ * 格式化贴文发布的时间
+ * @param timestamp 贴文发布的时间戳
+ */
+export const getCommentTime = (timestamp) => {
+  if (timestamp === undefined) {
+    // 若时间戳为空，则返回空字符串
+    return ''
+  }
+  // 获取当前的时间戳
+  const now = Date.now()
+  // 距现在的时间戳的间隔
+  const diffMs = now - timestamp
+  // 时间间隔的秒数
+  const diffSeconds = Math.floor(diffMs / 1000)
+  // 时间间隔的分钟数
+  const diffMinutes = Math.floor(diffSeconds / 60)
+  // 时间间隔的小时数
+  const diffHours = Math.floor(diffMinutes / 60)
+  // 时间间隔的天数
+  const diffDays = Math.floor(diffMinutes / 60)
+
+  if (diffSeconds < 60) return 'just now'
+  if (diffMinutes <= 60) return `${diffMinutes} minutes ago`
+  if (diffHours <= 24) return `${diffHours} hours ago`
+  if (diffDays === 1) return 'yesterday'
+  if (diffDays <= 3) return `${diffDays} days ago`
+
+  // 格式化日期
+  const commentTime = new Date(timestamp)
+  const year = commentTime.getFullYear()
+  const month = String(commentTime.getMonth() + 1).padStart(2, '0')
+  const day = String(commentTime.getDate()).padStart(2, '0')
+  return `${day}/${month}/${year}`
+}

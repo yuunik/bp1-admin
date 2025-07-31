@@ -17,14 +17,14 @@ const LoginAPI = Object.freeze({
  */
 export const loginApi = (loginParams) => {
   // 封装 form data
-  const formData = new FormData()
-  formData.append('email', loginParams.email)
+  const data = new FormData()
+  data.append('email', loginParams.email)
   // 加密密码
   const password = md5Encrypt(loginParams.password)
-  formData.append('password', password)
+  data.append('password', password)
   return request({
     url: LoginAPI.LOGIN,
     method: 'POST',
-    data: formData,
+    data
   })
 }

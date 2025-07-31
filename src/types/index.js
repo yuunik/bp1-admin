@@ -12,7 +12,7 @@
  * @property {T} data
  */
 
-/* start OBD 数据类型 */
+/* OBD 数据类型 */
 /**
  * @typedef {Object} OBDItem
  * @property {string} id - OBD 唯一标识符
@@ -25,33 +25,34 @@
  * @property {SimpleUserDto} simpleUserDto - 简化的用户信息
  */
 
+/* 车辆型号数据类型 */
 /**
  * @typedef {Object} VehicleDto
- * @property {string} id
- * @property {string} licensePlate
- * @property {string} vin
- * @property {number} mileage
- * @property {string} brand
- * @property {string} linkBrand
- * @property {string} linkDevTop
- * @property {string} model
- * @property {number} year
- * @property {string} name
- * @property {number} selected
- * @property {string} cover
- * @property {number} createTime
- * @property {number} maintenanceDate
- * @property {OBDSubDto} OBDDto - 嵌套的 OBD 信息
+ * @property {string} id - 车辆 ID
+ * @property {string} licensePlate - 车牌号
+ * @property {string} vin - 车辆识别码
+ * @property {number} mileage - 当前里程数
+ * @property {string} brand - 品牌名称
+ * @property {string} linkBrand - 品牌链接信息
+ * @property {string} linkDevTop - 品牌设备链接
+ * @property {string} model - 车型
+ * @property {number} year - 生产年份
+ * @property {string} name - 车辆名称
+ * @property {number} selected - 是否选中标记
+ * @property {string} cover - 封面图路径
+ * @property {number} createTime - 创建时间（时间戳）
+ * @property {number} maintenanceDate - 下次维护日期（时间戳）
+ * @property {OBDDto} OBDDto - OBD 设备信息
  */
 
 /**
- * @typedef {Object} OBDSubDto
- * @property {string} id
- * @property {string} sn
- * @property {string} version
- * @property {string} userId
- * @property {number} bindingTime
- * @property {number} createTime
+ * @typedef {Object} OBDDto
+ * @property {string} id - OBD 设备 ID
+ * @property {string} sn - 序列号
+ * @property {string} version - 固件版本号
+ * @property {string} userId - 绑定用户 ID
+ * @property {number} bindingTime - 绑定时间（时间戳）
+ * @property {number} createTime - 创建时间（时间戳）
  */
 
 /**
@@ -103,7 +104,7 @@
  * @property {string} id - 管理员唯一标识符，可为字符串型 ID
  * @property {string} name - 管理员用户名
  * @property {string} email - 管理员电子邮件地址
- * @property {string} password - 用户密码（建议仅在后台使用，不在客户端暴露）
+ * @property {string} password - 是否有密码 (0 为 没有, 1 为有)
  * @property {string} token - 登录或认证令牌，包含角色标识信息
  * @property {number} createTime - 创建时间，毫秒时间戳。0 表示未设定
  * @property {number} updateTime - 最近更新时间，毫秒时间戳
@@ -126,4 +127,61 @@
  * @property {number} isDelete
  * @property {number} sort
  * @property {VehicleModel[]} vehicleModelDtos
+ */
+
+/* 论坛贴文详情数据类型 */
+/**
+ * @typedef {Object} ForumInfo
+ * @property {string} id - 帖子 ID
+ * @property {string} userId - 发帖用户 ID
+ * @property {number} type - 帖子类型（0 表示普通帖）
+ * @property {string} title - 帖子标题
+ * @property {string} content - 帖子正文内容
+ * @property {number} sort - 排序字段
+ * @property {number} favouriteCount - 收藏数量
+ * @property {number} commentCount - 评论数量
+ * @property {number} accepted - 是否已采纳（0 表示未采纳）
+ * @property {number} createTime - 创建时间（时间戳）
+ * @property {number} updateTime - 更新时间（时间戳）
+ * @property {AttachmentDto[]} attachmentDtos - 附件列表
+ * @property {UserDto} userDto - 用户信息
+ * @property {CommentDto} commentDto - 评论详情
+ * @property {VehicleDto} vehicleDto - 关联车辆信息
+ */
+
+/* 附件数据类型 */
+/**
+ * @typedef {Object} AttachmentDto
+ * @property {string} id - 附件 ID
+ * @property {string} category - 附件分类（如 "Forum"）
+ * @property {string} name - 文件名
+ * @property {string} type - 类型（如 "image"）
+ * @property {string} path - 文件路径
+ * @property {number} size - 文件大小（单位：字节）
+ * @property {number} createTime - 附件创建时间（时间戳）
+ */
+
+/**
+ * @typedef {Object} UserDto
+ * @property {string} id - 用户 ID
+ * @property {string} name - 用户名
+ * @property {string} email - 用户邮箱
+ * @property {string} logo - 用户头像地址
+ */
+
+/* 评论数据类型 */
+/**
+ * @typedef {Object} CommentDto
+ * @property {string} id - 评论 ID
+ * @property {string} parentId - 父级评论 ID
+ * @property {string} content - 评论内容
+ * @property {string} path - 评论路径层级
+ * @property {number} isAdopted - 是否被采纳
+ * @property {number} isAccepted - 是否接受
+ * @property {number} accepted - 是否采纳标记
+ * @property {number} rejected - 是否拒绝标记
+ * @property {number} createTime - 评论时间
+ * @property {CommentDto[] | null} commentDtos - 子评论数组（递归结构）
+ * @property {UserDto} userDto - 评论人信息
+ * @property {UserDto} byUserDto - 被评论人信息
  */

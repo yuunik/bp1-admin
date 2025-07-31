@@ -181,10 +181,27 @@ const constantRoutes = [
       icon: 'icon-app-configuration',
     },
   },
+  // 分享模块路由
   {
     path: "/share",
     name: "Share",
-    component: () => import("@/views/Share/index.vue")
+    component: () => import("@/share/index.vue"),
+    children: [
+        // 分享论坛详情页的路由
+      {
+        path: '/share/forum/:id',
+        name: 'ForumInfo',
+        component: () => import("@/share/ForumInfo.vue"),
+        meta: {
+          title: 'Forum Info',
+          isShow: false
+        }
+      }
+    ],
+    meta: {
+      title: "Share Page",
+      isShow: false,
+    }
   }
 ]
 
