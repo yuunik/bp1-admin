@@ -112,7 +112,10 @@ onBeforeUnmount(() => {
         </section>
         <!-- 内容 -->
         <section v-if="forumInfo?.content">
-          <p class="heading-h3-16px-regular">{{ forumInfo?.content }}</p>
+          <pre
+            class="heading-h3-16px-regular whitespace-pre-wrap break-words neutrals-off-black forum-content"
+            >{{ forumInfo?.content }}</pre
+          >
         </section>
         <!-- 图片 -->
         <section
@@ -214,4 +217,8 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.forum-content {
+  font-family: 'Roboto', sans-serif;
+}
+</style>
