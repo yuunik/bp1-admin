@@ -1,5 +1,6 @@
 <script setup>
 import { storeToRefs } from 'pinia'
+import { computed, provide } from 'vue'
 
 import routes from '@/router/routes/index.js'
 import { useUserStore } from '@/store/index.js'
@@ -8,10 +9,17 @@ import Breadcrumb from './components/Breadcrumb/index.vue'
 import Content from './components/Content/index.vue'
 
 import CompanyLogo from '@/assets/icons/company-logo.svg'
+import { useRoute } from 'vue-router'
 
 const userStore = useUserStore()
 // 获取用户相关信息
 const { username, userRole, usernameAbbr } = storeToRefs(userStore)
+const route = useRoute()
+const dynamicBreadcrumbList = computed(() =>
+  route.matched.map((item) => ({ ...item })),
+)
+
+provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 </script>
 
 <template>

@@ -10,3 +10,8 @@ export const UserManagementTab = Object.freeze({
   PERSON: 'Person',
   Workshop: 'Workshop',
 })
+
+// 事件常量定义
+export const EmitterEvent = Object.freeze({
+  UPDATE_BREADCRUMB_LIST: 'updateBreadcrumbList',
+})

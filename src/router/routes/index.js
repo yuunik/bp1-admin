@@ -143,9 +143,7 @@ const constantRoutes = [
             component: () =>
               import('@/views/AppConfiguration/BrandModel/BrandModelTable.vue'),
             meta: {
-              // 是否隐藏面包屑
-              hideBreadcrumb: true,
-              isShow: true,
+              isShow: false,
             },
           },
           // 车辆管理页面
@@ -157,6 +155,10 @@ const constantRoutes = [
                 '@/views/AppConfiguration/BrandModel/BrandModelManage.vue'
               ),
             params: true,
+            meta: {
+              isShow: true,
+              title: 'Info',
+            },
           },
         ],
         meta: {
@@ -183,26 +185,26 @@ const constantRoutes = [
   },
   // 分享模块路由
   {
-    path: "/share",
-    name: "Share",
-    component: () => import("@/share/index.vue"),
+    path: '/share',
+    name: 'Share',
+    component: () => import('@/share/index.vue'),
     children: [
-        // 分享论坛详情页的路由
+      // 分享论坛详情页的路由
       {
         path: '/share/forum/:id',
         name: 'ForumInfo',
-        component: () => import("@/share/ForumInfo.vue"),
+        component: () => import('@/share/ForumInfo.vue'),
         meta: {
           title: 'Forum Info',
-          isShow: false
-        }
-      }
+          isShow: false,
+        },
+      },
     ],
     meta: {
-      title: "Share Page",
+      title: 'Share Page',
       isShow: false,
-    }
-  }
+    },
+  },
 ]
 
 export default constantRoutes

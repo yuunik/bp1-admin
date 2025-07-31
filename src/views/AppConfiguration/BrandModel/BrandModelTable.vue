@@ -110,6 +110,7 @@ getBrandModelList()
         height="100%"
         :loading="loading"
         @row-click="viewVehicleDetail"
+        row-class-name="clickable-row"
       >
         <!-- 勾选框 -->
         <el-table-column type="selection" min-width="6%" />

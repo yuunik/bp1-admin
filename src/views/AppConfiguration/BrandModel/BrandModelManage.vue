@@ -4,6 +4,8 @@ import { reactive } from 'vue'
 
 import { getBrandModelInfoApi } from '@/apis/appApi.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import emitter from '@/utils/emitterUtil.js'
+import { EmitterEvent } from '@/utils/constantsUtil.js'
 
 // 车辆详情
 const brandModelInfo = reactive({})
@@ -13,6 +15,7 @@ const getBrandModelInfo = async (id) => {
   const { data } = await getBrandModelInfoApi(id)
   // 请求成功
   Object.assign(brandModelInfo, data)
+  emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.brand)
 }
 
 // 组件创建时
@@ -27,7 +30,9 @@ if (route.params.id) {
   <section class="h-full">
     <!-- header -->
     <div class="py-16 px-32 flex-between">
-      <h3 class="heading-h2-20px-medium neutrals-off-black">Audi</h3>
+      <h3 class="heading-h2-20px-medium neutrals-off-black">
+        {{ brandModelInfo.brand }}
+      </h3>
       <div class="flex gap-8">
         <el-button>Disable</el-button>
         <el-button>Sort</el-button>
@@ -104,8 +109,16 @@ if (route.params.id) {
         <!-- 分割线 -->
         <el-divider class="mt-8" />
         <!-- 型号列表 -->
-        <ul class="px-32 grid grid-cols-3 gap-x-24  [&>li]:border-b [&>li]:border-b-solid [&>li]:border-b-[#EAEEF4] [&>li]:h-[32px] [&>li]:pl-8 [&>li]:box-border [&>li]:flex [&>li]:items-center">
-          <li v-for="vehicleModel in brandModelInfo?.vehicleModelDtos" :key="vehicleModel.id" class="heading-body-body-12px-regular neutrals-off-black">{{ vehicleModel.name }}</li>
+        <ul
+          class="px-32 grid grid-cols-3 gap-x-24 [&>li]:border-b [&>li]:border-b-solid [&>li]:border-b-[#EAEEF4] [&>li]:h-[32px] [&>li]:pl-8 [&>li]:box-border [&>li]:flex [&>li]:items-center"
+        >
+          <li
+            v-for="vehicleModel in brandModelInfo?.vehicleModelDtos"
+            :key="vehicleModel.id"
+            class="heading-body-body-12px-regular neutrals-off-black"
+          >
+            {{ vehicleModel.name }}
+          </li>
         </ul>
       </div>
     </div>
