@@ -17,6 +17,9 @@ import FavoriteIcon from '@/assets/icons/fi_star_b.svg'
 // 获取路由
 const route = useRoute()
 
+// 修改该网页的标题
+document.title = route.meta.title
+
 // 贴文详情
 const forumInfo = reactive({})
 // 获取贴文详情
@@ -47,7 +50,7 @@ const handleOpenInApp = () => {
   window.location.href = 'diagnostics://open'
 
   // 未安装应用时(超时未唤起), 则跳转到应用市场
-  timer.current = setTimeout(() => {
+  timer.value = setTimeout(() => {
     // 如果用户没跳出页面，大概率是点击了“取消”
     if (!document.hidden) {
       return
@@ -67,8 +70,8 @@ const handleErrorImage = () => true
 // 组件销毁时
 onBeforeUnmount(() => {
   // 清除定时器
-  if (timer) {
-    clearTimeout(timer)
+  if (timer.value) {
+    clearTimeout(timer.value)
     timer.value = null
   }
 })
@@ -90,9 +93,9 @@ onBeforeUnmount(() => {
           <el-image :src="ErrorImage" fit="cover" alt="error image" />
         </el-avatar>
         <!-- 用户信息 -->
-        <div class="flex flex-col gap-4 items-start">
+        <div class="flex flex-col gap-4">
           <!-- 用户名 -->
-          <el-text>
+          <el-text class="w-full text-align-left">
             {{ forumInfo?.userDto?.name }}
           </el-text>
           <!-- 评论时间 -->
@@ -105,11 +108,11 @@ onBeforeUnmount(() => {
       <article>
         <!-- 标题 -->
         <section v-if="forumInfo?.title">
-          <h1>{{ forumInfo?.title }}</h1>
+          <h1 class="h2-20px-semibold">{{ forumInfo?.title }}</h1>
         </section>
         <!-- 内容 -->
         <section v-if="forumInfo?.content">
-          <p>{{ forumInfo?.content }}</p>
+          <p class="heading-h3-16px-regular">{{ forumInfo?.content }}</p>
         </section>
         <!-- 图片 -->
         <section
