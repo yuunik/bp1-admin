@@ -39,6 +39,15 @@ export default defineConfig({
     ['wf-menu-width', { width: '64px' }],
     // 默认盒子阴影
     ['shadow-default', { 'box-shadow': '0 0 12px rgba(0, 0, 0, 0.12)' }],
+    [
+      // flex 伸缩基准
+      /^flex-(\d+)-(\d+)$/,
+      ([, grow, basis]) => ({
+        flexGrow: +grow,
+        flexShrink: +grow, // grow 和 shrink 设为相同，保持对称
+        flexBasis: `${basis}px`,
+      }),
+    ]
   ],
   // 自定义属性 一个属性可以对应多个 unocss 类值
   shortcuts: [

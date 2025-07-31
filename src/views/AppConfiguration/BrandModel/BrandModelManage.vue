@@ -37,11 +37,12 @@ if (route.params.id) {
     <!-- divider -->
     <el-divider />
     <!-- content -->
-    <div class="px-32 py-16">
-      <!-- 车辆信息 -->
-      <div>
-        <div class="w-400 h-80 flex gap-24">
-          <!-- 车辆品牌 logo -->
+    <div>
+      <!-- 品牌信息 -->
+      <div class="px-32 pt-16 pb-24 flex gap-24">
+        <!-- 品牌 logo -->
+        <div class="flex-1 w-400 h-80 flex gap-24">
+          <!-- logo -->
           <el-image
             v-if="brandModelInfo"
             :src="getFullPath(brandModelInfo?.logo)"
@@ -56,6 +57,56 @@ if (route.params.id) {
             <el-button>Change</el-button>
           </div>
         </div>
+        <!-- 品牌名称 -->
+        <div class="flex-1 w-384 h-80 flex flex-col gap-4">
+          <!-- 名称 -->
+          <div class="flex gap-8">
+            <!-- 标签 -->
+            <label
+              class="w-112 h-32 heading-body-body-12px-medium neutrals-grey-3"
+            >
+              Brand
+            </label>
+            <!-- 值 -->
+            <el-text class="w-264 h-32">
+              {{ brandModelInfo?.brand ?? '-' }}
+            </el-text>
+          </div>
+          <!-- 状态 -->
+          <div class="flex gap-8">
+            <!-- 标签 -->
+            <label
+              class="w-112 h-32 heading-body-body-12px-medium neutrals-grey-3"
+            >
+              Status
+            </label>
+            <!-- 值 -->
+            <div class="w-264 h-32">
+              <el-tag
+                :type="brandModelInfo.isDelete === 0 ? 'success' : 'info'"
+              >
+                {{ brandModelInfo.isDelete === 0 ? 'Active' : 'Disabled' }}
+              </el-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 型号信息-->
+      <div>
+        <!-- 标签信息 -->
+        <div class="px-32 py-7 box-border flex items-center-safe gap-8">
+          <h4>Model List</h4>
+          <!-- 型号数量 -->
+          <el-text class="flex-1">
+            {{ brandModelInfo?.vehicleModelDtos?.length ?? 0 }}
+          </el-text>
+        </div>
+        <!-- 分割线 -->
+        <el-divider class="mt-8" />
+        <!-- 型号列表 -->
+        <ul class="px-32 grid grid-cols-3 gap-x-24  [&>li]:border-b [&>li]:border-b-solid [&>li]:border-b-[#EAEEF4] [&>li]:h-[32px] [&>li]:pl-8 [&>li]:box-border [&>li]:flex [&>li]:items-center">
+          <li v-for="vehicleModel in brandModelInfo?.vehicleModelDtos" :key="vehicleModel.id" class="heading-body-body-12px-regular neutrals-off-black">{{ vehicleModel.name }}</li>
+        </ul>
       </div>
     </div>
   </section>
