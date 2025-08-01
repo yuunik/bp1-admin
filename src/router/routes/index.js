@@ -217,6 +217,11 @@ const constantRoutes = [
       isShow: false,
     },
   },
+  // 任意路由
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/dashboard',
+  },
 ]
 
 export default constantRoutes

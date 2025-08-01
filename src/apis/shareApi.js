@@ -1,5 +1,6 @@
 /**
- * @file app 分享页面模块的接口文件
+ * @file shareApp.js
+ * @description app 分享页面模块的接口文件
  */
 import request from '@/utils/request.js'
 

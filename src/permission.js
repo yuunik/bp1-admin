@@ -23,13 +23,15 @@ NProgress.configure({ showSpinner: false })
 
 // 全局前置路由守卫
 router.beforeEach((to, from, next) => {
+  // 开启进度条
+  NProgress.start()
+
   // 获取用户token
   const userStore = useUserStore(store)
   const { token } = storeToRefs(userStore)
-  // 开启进度条
-  NProgress.start()
+
   // token 校验
-  if (token) {
+  if (token.value) {
     // 有 token
     if (to.path === '/login') {
       // 提示: 已经登录, 无需重复登录

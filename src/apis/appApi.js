@@ -1,5 +1,6 @@
 /**
- * @file App Configuration 模块的接口文件
+ * @file appApp.js
+ * @description App Configuration 模块的接口文件
  */
 import request from '@/utils/request.js'
 import { useAuthToken } from '@/composables/useAuthToken.js'

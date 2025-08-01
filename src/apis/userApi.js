@@ -1,5 +1,6 @@
 /**
- * @file User Management 模块的接口文件
+ * @file obdApi.js
+ * @description User Management 模块的接口文件
  */
 
 import request from '@/utils/request.js'

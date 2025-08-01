@@ -1,5 +1,6 @@
 /**
- * @file 用户登录模块的接口文件
+ * @file loginApi.js
+ * @description 用户登录模块的接口文件
  */
 
 import { md5Encrypt } from '@/utils/md5Util.js'
@@ -25,6 +26,6 @@ export const loginApi = (loginParams) => {
   return request({
     url: LoginAPI.LOGIN,
     method: 'POST',
-    data
+    data,
   })
 }

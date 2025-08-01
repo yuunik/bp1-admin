@@ -1,5 +1,6 @@
 /**
- * @file OBD Management 模块的接口文件
+ * @file obdApi.js
+ * @description OBD Management 模块的接口文件
  */
 
 // 统一接口管理
