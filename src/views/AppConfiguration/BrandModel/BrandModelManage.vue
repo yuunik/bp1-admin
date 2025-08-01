@@ -1,5 +1,5 @@
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { reactive } from 'vue'
 
 import { getBrandModelInfoApi } from '@/apis/appApi.js'
@@ -20,16 +20,21 @@ const getBrandModelInfo = async (id) => {
 
 // 组件创建时
 const route = useRoute()
+const router = useRouter()
+// id 字段校验
 if (route.params.id) {
   // 有 id , 则说明查看详情
   getBrandModelInfo(route.params.id)
+} else {
+  // 无 id , 则跳转至首页
+  router.push({ name: 'Dash' })
 }
 </script>
 
 <template>
   <section class="h-full">
     <!-- header -->
-    <div class="py-16 px-32 flex-between">
+    <div class="flex-between px-32 py-16">
       <h3 class="heading-h2-20px-medium neutrals-off-black">
         {{ brandModelInfo.brand }}
       </h3>
@@ -44,15 +49,15 @@ if (route.params.id) {
     <!-- content -->
     <div>
       <!-- 品牌信息 -->
-      <div class="px-32 pt-16 pb-24 flex gap-24">
+      <div class="flex gap-24 px-32 pb-24 pt-16">
         <!-- 品牌 logo -->
-        <div class="flex-1 w-400 h-80 flex gap-24">
+        <div class="w-400 flex h-80 flex-1 gap-24">
           <!-- logo -->
           <el-image
             v-if="brandModelInfo"
             :src="getFullPath(brandModelInfo?.logo)"
             fit="cover"
-            class="w-64 h-64"
+            class="h-64 w-64"
             loading="lazy"
           />
           <!-- desc -->
@@ -63,12 +68,12 @@ if (route.params.id) {
           </div>
         </div>
         <!-- 品牌名称 -->
-        <div class="flex-1 w-384 h-80 flex flex-col gap-4">
+        <div class="w-384 flex h-80 flex-1 flex-col gap-4">
           <!-- 名称 -->
           <div class="flex gap-8">
             <!-- 标签 -->
             <label
-              class="w-112 h-32 heading-body-body-12px-medium neutrals-grey-3"
+              class="w-112 heading-body-body-12px-medium neutrals-grey-3 h-32"
             >
               Brand
             </label>
@@ -81,7 +86,7 @@ if (route.params.id) {
           <div class="flex gap-8">
             <!-- 标签 -->
             <label
-              class="w-112 h-32 heading-body-body-12px-medium neutrals-grey-3"
+              class="w-112 heading-body-body-12px-medium neutrals-grey-3 h-32"
             >
               Status
             </label>
@@ -99,7 +104,7 @@ if (route.params.id) {
       <!-- 型号信息-->
       <div>
         <!-- 标签信息 -->
-        <div class="px-32 py-7 box-border flex items-center-safe gap-8">
+        <div class="items-center-safe box-border flex gap-8 px-32 py-7">
           <h4>Model List</h4>
           <!-- 型号数量 -->
           <el-text class="flex-1">
@@ -110,7 +115,7 @@ if (route.params.id) {
         <el-divider class="mt-8" />
         <!-- 型号列表 -->
         <ul
-          class="px-32 grid grid-cols-3 gap-x-24 [&>li]:border-b [&>li]:border-b-solid [&>li]:border-b-[#EAEEF4] [&>li]:h-[32px] [&>li]:pl-8 [&>li]:box-border [&>li]:flex [&>li]:items-center"
+          class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 px-32 [&>li]:box-border [&>li]:flex [&>li]:h-[32px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
         >
           <li
             v-for="vehicleModel in brandModelInfo?.vehicleModelDtos"

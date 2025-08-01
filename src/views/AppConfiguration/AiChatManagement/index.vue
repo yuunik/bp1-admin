@@ -21,7 +21,7 @@ const tabMap = Object.freeze({
 </script>
 
 <template>
-  <section class="h-full flex flex-col">
+  <section class="flex h-full flex-col">
     <!-- AI Chat Management Header -->
     <div class="px-32">
       <!-- 标题 -->

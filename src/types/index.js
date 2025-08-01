@@ -185,3 +185,24 @@
  * @property {UserDto} userDto - 评论人信息
  * @property {UserDto} byUserDto - 被评论人信息
  */
+
+/* 车辆型号数据类型 */
+/**
+ * @typedef {Object} BrandModel
+ * @property {string} id - 车辆品牌 ID
+ * @property {string} name - 车辆品牌名称
+ * @property {string} brandId - 品牌 ID
+ */
+
+/* 实时预警数据类型 */
+/**
+ * @typedef {Object} LiveWarningData
+ * @description 实时预警数据项，表示某个传感器或指标的当前状态及基础属性。
+ *
+ * @property {string} id - 唯一标识符，用于区分不同数据项。
+ * @property {string} name - 指标名称，例如“Intake Air Temp”。
+ * @property {number} value - 实时数值，可用于展示或分析。
+ * @property {string} groupKey - 分组标识，用于归类或逻辑分组。
+ * @property {string} obdKey - OBD（车载诊断）对应的键名，便于后端字段映射。
+ * @property {string} unit - 数值单位，例如摄氏度（℃）。
+ */

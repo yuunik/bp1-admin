@@ -19,6 +19,10 @@ const AppApi = Object.freeze({
   MODIFY_AI_QUESTION: '/manager/aichat/edit',
   // 获取车辆品牌详情
   GET_BRAND_MODEL_INFO: '/manager/vehicle/brandinfo',
+  // 新增车辆品牌型号
+  ADD_BRAND_MODEL: '/manager/model/add',
+  // 获取实时数据预警列表
+  GET_LIVE_DATA_WARNING_LIST: 'manager/vehiclewarn/list',
 })
 
 // 获取 token
@@ -35,7 +39,7 @@ export const getBrandModalListApi = () => {
   return request({
     url: AppApi.GET_BRAND_MODEL_LIST,
     method: 'POST',
-    data: data,
+    data,
   })
 }
 
@@ -50,7 +54,7 @@ export const getAiQuestionListApi = () => {
   return request({
     url: AppApi.GET_AI_QUESTION_LIST,
     method: 'POST',
-    data: data,
+    data,
   })
 }
 
@@ -67,7 +71,7 @@ export const addAiQuestionApi = (question) => {
   return request({
     url: AppApi.ADD_AI_QUESTION,
     method: 'POST',
-    data: data,
+    data,
   })
 }
 
@@ -84,7 +88,7 @@ export const deleteAiQuestionApi = (id) => {
   return request({
     url: AppApi.DELETE_AI_QUESTION,
     method: 'POST',
-    data: data,
+    data,
   })
 }
 
@@ -105,7 +109,7 @@ export const modifyAiQuestionApi = (params) => {
   return request({
     url: AppApi.MODIFY_AI_QUESTION,
     method: 'POST',
-    data: data,
+    data,
   })
 }
 
@@ -121,6 +125,40 @@ export const getBrandModelInfoApi = (id) => {
   return request({
     url: AppApi.GET_BRAND_MODEL_INFO,
     method: 'POST',
-    data: data,
+    data,
+  })
+}
+
+/**
+ * 新增车辆品牌型号
+ * @param params 新增车辆品牌型号参数
+ * @param params.brandId 车辆品牌id
+ * @param params.modelName 车辆品牌型号名称
+ * @returns {Promise<ApiResponse<BrandModel>>}
+ */
+export const addBrandModelApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', params.brandId)
+  data.append('name', params.modelName)
+  return request({
+    url: AppApi.ADD_BRAND_MODEL,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取实时数据预警列表
+ * @returns {*}
+ */
+export const getLiveWarningDataListApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  return request({
+    url: AppApi.GET_LIVE_DATA_WARNING_LIST,
+    method: 'POST',
+    data,
   })
 }

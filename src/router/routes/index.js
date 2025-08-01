@@ -1,11 +1,13 @@
+import { RouteName } from '@/utils/constantsUtil.js'
+
 const constantRoutes = [
   {
     path: '/login',
-    name: 'Login',
+    name: RouteName.LOGIN,
     component: () => import('@/views/Login/index.vue'),
     meta: {
       // 显示在菜单栏的标题
-      title: 'Login',
+      title: RouteName.LOGIN,
       // 控制是否显示在菜单栏
       isShow: false,
     },
@@ -13,31 +15,31 @@ const constantRoutes = [
   {
     path: '/',
     redirect: '/dashboard',
-    name: 'Layout',
+    name: RouteName.LAYOUT,
     component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/dashboard',
-        name: 'Dashboard',
+        name: RouteName.DASHBOARD,
         component: () => import('@/views/Dashboard/index.vue'),
         meta: {
-          title: 'Dashboard',
+          title: RouteName.DASHBOARD,
           isShow: true,
           icon: 'icon-dashboard',
         },
       },
     ],
     meta: {
-      title: 'Layout',
+      title: RouteName.LAYOUT,
       isShow: false,
     },
   },
   {
     path: '/order-management',
-    name: 'OrderManagement',
+    name: RouteName.ORDER_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     meta: {
-      title: 'Order management',
+      title: RouteName.ORDER_MANAGEMENT,
       isShow: true,
       icon: 'icon-order-management',
     },
@@ -45,30 +47,30 @@ const constantRoutes = [
   {
     path: '/obd-management',
     redirect: '/obd-management/obd-list',
-    name: 'ObdManagement',
+    name: RouteName.OBD_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/obd-management/obd-list',
-        name: 'ObdList',
+        name: RouteName.OBD_LIST,
         component: () => import('@/views/ObdManagement/ObdList/index.vue'),
         meta: {
-          title: 'ObdList',
+          title: RouteName.OBD_LIST,
           isShow: true,
         },
       },
       {
         path: '/obd-management/inventory',
-        name: 'Inventory',
+        name: RouteName.INVENTORY,
         component: () => import('@/views/ObdManagement/Inventory/index.vue'),
         meta: {
-          title: 'Inventory',
+          title: RouteName.INVENTORY,
           isShow: true,
         },
       },
     ],
     meta: {
-      title: 'OBD Management',
+      title: RouteName.OBD_MANAGEMENT,
       isShow: true,
       icon: 'icon-obd-management',
     },
@@ -76,40 +78,40 @@ const constantRoutes = [
   {
     path: '/user-management',
     redirect: '/user-management/internal',
-    name: 'UserManagement',
+    name: RouteName.USER_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/user-management/internal',
-        name: 'Internal',
+        name: RouteName.INTERNAL,
         component: () => import('@/views/UserManagement/Internal/index.vue'),
         meta: {
-          title: 'Internal',
+          title: RouteName.INTERNAL,
           isShow: true,
         },
       },
       {
         path: '/user-management/extern',
-        name: 'Extern',
+        name: RouteName.EXTERN,
         component: () => import('@/views/UserManagement/Extern/index.vue'),
         meta: {
-          title: 'Extern',
+          title: RouteName.EXTERN,
           isShow: true,
         },
       },
     ],
     meta: {
-      title: 'User Management',
+      title: RouteName.USER_MANAGEMENT,
       isShow: true,
       icon: 'icon-user-management',
     },
   },
   {
     path: '/database',
-    name: 'Database',
+    name: RouteName.DATABASE,
     component: () => import('@/layout/index.vue'),
     meta: {
-      title: 'Database',
+      title: RouteName.DATABASE,
       isShow: true,
       icon: 'icon-database',
     },
@@ -117,22 +119,22 @@ const constantRoutes = [
   {
     path: '/app-configuration',
     redirect: '/app-configuration/version-control',
-    name: 'AppConfiguration',
+    name: RouteName.APP_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/app-configuration/version-control',
-        name: 'VersionControl',
+        name: RouteName.VERSION_CONTROL,
         component: () =>
           import('@/views/AppConfiguration/VersionControl/index.vue'),
         meta: {
-          title: 'Version Control',
+          title: RouteName.VERSION_CONTROL,
           isShow: true,
         },
       },
       {
         path: '/app-configuration/brand-model',
-        name: 'BrandAndModel',
+        name: RouteName.BRAND_MODEL,
         component: () =>
           import('@/views/AppConfiguration/BrandModel/index.vue'),
         children: [
@@ -148,7 +150,7 @@ const constantRoutes = [
           },
           // 车辆管理页面
           {
-            path: '/app-configuration/brand-Model/manage/:id',
+            path: '/app-configuration/brand-model/manage/:id',
             name: 'BrandAndModelManagement',
             component: () =>
               import(
@@ -161,7 +163,7 @@ const constantRoutes = [
           },
           // 车辆品牌新增页面
           {
-            path: '/app-configuration/brand-Model/create',
+            path: '/app-configuration/brand-model/create',
             name: 'BrandAndModelCreate',
             component: () =>
               import(
@@ -174,23 +176,33 @@ const constantRoutes = [
           },
         ],
         meta: {
-          title: 'Brand & Model',
+          title: RouteName.BRAND_MODEL,
           isShow: true,
         },
       },
       {
         path: '/app-configuration/ai-chat-management',
-        name: 'AiChatManagement',
+        name: RouteName.AI_CHAT_MANAGEMENT,
         component: () =>
           import('@/views/AppConfiguration/AiChatManagement/index.vue'),
         meta: {
-          title: 'AI Chat Management',
+          title: RouteName.AI_CHAT_MANAGEMENT,
+          isShow: true,
+        },
+      },
+      {
+        path: '/app-configuration/interval-warning',
+        name: RouteName.INTERVAL_WARNING,
+        component: () =>
+          import('@/views/AppConfiguration/IntervalWarning/index.vue'),
+        meta: {
+          title: RouteName.INTERVAL_WARNING,
           isShow: true,
         },
       },
     ],
     meta: {
-      title: 'App Configuration',
+      title: RouteName.APP_MANAGEMENT,
       isShow: true,
       icon: 'icon-app-configuration',
     },
@@ -198,7 +210,7 @@ const constantRoutes = [
   // 分享模块路由
   {
     path: '/share',
-    name: 'Share',
+    name: RouteName.SHARE,
     component: () => import('@/share/index.vue'),
     children: [
       // 分享论坛详情页的路由
@@ -213,13 +225,14 @@ const constantRoutes = [
       },
     ],
     meta: {
-      title: 'Share Page',
+      title: RouteName.SHARE,
       isShow: false,
     },
   },
   // 任意路由
   {
     path: '/:pathMatch(.*)*',
+    name: RouteName.ANY,
     redirect: '/dashboard',
   },
 ]

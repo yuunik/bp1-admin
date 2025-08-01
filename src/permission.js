@@ -17,6 +17,7 @@ import 'nprogress/nprogress.css'
 
 import router from '@/router/index.js'
 import store, { useUserStore } from '@/store/index.js'
+import { RouteName } from '@/utils/constantsUtil.js'
 
 // 取消小圆圈图标
 NProgress.configure({ showSpinner: false })
@@ -37,7 +38,7 @@ router.beforeEach((to, from, next) => {
       // 提示: 已经登录, 无需重复登录
       ElMessage.warning('Already logged in')
       // 已登录, 则无法访问登录页, 跳转首页
-      next({ name: 'Dashboard' })
+      next({ name: RouteName.DASHBOARD })
     } else {
       // 已登录, 访问非登录页
       // if (hasUserInfo) {
@@ -58,7 +59,7 @@ router.beforeEach((to, from, next) => {
       // 提示
       ElMessage.error('No access rights')
       // 访问非登录, 则跳转登录
-      next({ name: 'Login' })
+      next({ name: RouteName.LOGIN })
     }
   }
 })
