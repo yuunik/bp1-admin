@@ -131,7 +131,7 @@ const constantRoutes = [
         },
       },
       {
-        path: '/app-configuration/brand-Model',
+        path: '/app-configuration/brand-model',
         name: 'BrandAndModel',
         component: () =>
           import('@/views/AppConfiguration/BrandModel/index.vue'),
@@ -157,7 +157,19 @@ const constantRoutes = [
             params: true,
             meta: {
               isShow: true,
-              title: 'Info',
+            },
+          },
+          // 车辆品牌新增页面
+          {
+            path: '/app-configuration/brand-Model/create',
+            name: 'BrandAndModelCreate',
+            component: () =>
+              import(
+                '@/views/AppConfiguration/BrandModel/BrandModelCreate.vue'
+              ),
+            meta: {
+              title: 'Create Brand',
+              isShow: true,
             },
           },
         ],

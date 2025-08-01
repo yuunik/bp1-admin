@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 import emitter from '@/utils/emitterUtil.js'
@@ -15,12 +15,19 @@ emitter.on(EmitterEvent.UPDATE_BREADCRUMB_LIST, (val) => {
     // 车辆品牌管理模块详情, 修改面包屑, 显示车辆品牌名称
     breadcrumbList.value.find((item) => {
       if (item.path.includes('/app-configuration/brand-Model/manage/')) {
-        console.log(val)
         item.meta.title = val
       }
     })
   }
 })
+
+// 路由变化时, 更新面包屑
+watch(
+  () => route.matched,
+  (val) => {
+    breadcrumbList.value = val
+  },
+)
 
 onBeforeUnmount(() => {
   emitter.off(EmitterEvent.UPDATE_BREADCRUMB_LIST)

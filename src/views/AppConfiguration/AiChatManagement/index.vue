@@ -2,9 +2,9 @@
 import { ref } from 'vue'
 import { AIChatManagementTab } from '@/utils/constantsUtil.js'
 
-import PresetQuestions from './components/PresetQuestions/index.vue'
-import UsageLimit from './components/UsageLimit/index.vue'
-import UserQuestionRecords from './components/UserQuestionRecords/index.vue'
+import PresetQuestions from './PresetQuestions.vue'
+import UsageLimit from './UsageLimit.vue'
+import UserQuestionRecords from './UserQuestionRecords.vue'
 
 // 当前的tab
 const activeTab = ref(AIChatManagementTab.PRESET_QUESTIONS)

@@ -4,6 +4,8 @@ import App from './App.vue'
 import store from '@/store/index.js'
 import router from '@/router/index.js'
 import debounce from '@/directives/debounce/index.js'
+// 路由鉴权
+import '@/permission.js'
 
 // 统一重置样式
 import 'normalize.css'

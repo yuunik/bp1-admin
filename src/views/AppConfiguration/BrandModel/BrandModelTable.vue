@@ -62,7 +62,13 @@ getBrandModelList()
       <div class="flex-between">
         <h3 class="heading-h2-20px-medium">Brand & Model</h3>
         <!-- 创建车辆按钮 -->
-        <el-button type="primary" class="w-70 h-32">Create</el-button>
+        <el-button
+          type="primary"
+          class="w-70 h-32"
+          @click="$router.push('/app-configuration/brand-Model/create')"
+        >
+          Create
+        </el-button>
       </div>
       <!-- 搜索栏 -->
       <div class="flex flex-between">
