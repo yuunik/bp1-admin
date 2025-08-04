@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 import { getBrandModelInfoApi } from '@/apis/appApi.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
@@ -10,16 +10,21 @@ import { EmitterEvent } from '@/utils/constantsUtil.js'
 // 车辆详情
 const brandModelInfo = reactive({})
 
+// 编辑模式
+const isEdit = ref(false)
+
 // 获取车辆品牌详情
 const getBrandModelInfo = async (id) => {
   const { data } = await getBrandModelInfoApi(id)
   // 请求成功
   Object.assign(brandModelInfo, data)
+  // 更新面包屑
   emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.brand)
 }
 
-// 组件创建时
+// 获取路由
 const route = useRoute()
+// 获取路由器
 const router = useRouter()
 // id 字段校验
 if (route.params.id) {
@@ -41,7 +46,7 @@ if (route.params.id) {
       <div class="flex gap-8">
         <el-button>Disable</el-button>
         <el-button>Sort</el-button>
-        <el-button type="primary">Edit</el-button>
+        <el-button type="primary" @click="isEdit = true">Edit</el-button>
       </div>
     </div>
     <!-- divider -->
