@@ -1,29 +1,128 @@
 <script setup>
-import { reactive } from 'vue'
-import { addBrandModelApi } from '@/apis/appApi.js'
+import { reactive, ref } from 'vue'
 
-// 待添加列表
-const addModelList = reactive([])
+import { addBrandModelApi } from '@/apis/appApi.js'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+// 待添加的车辆品牌
+const pendingBrand = reactive({
+  name: '',
+  editing: true,
+})
+
+// 待添加的车辆品牌logo
+const pendingBrandLogoUrl = ref('')
+
+// 待添加的车辆品牌型号列表, 初始默认添加三个
+const pendingBrandModelList = reactive([
+  { isChecked: false, brandModelName: '', editing: true },
+  { isChecked: false, brandModelName: '', editing: true },
+  { isChecked: false, brandModelName: '', editing: true },
+])
+
+// 待上传的logo 文件
+const logoFile = ref(null)
+
+// 上传车辆品牌logo
+const handleAvatarChange = (file) => {
+  // 校验文件格式
+  const raw = file.raw
+  const isImage = raw.type.startsWith('image/')
+  if (!isImage) {
+    return ElMessage.error('Please select an image file')
+  }
+  // 保存待上传的logo 文件
+  logoFile.value = raw
+
+  // 本地浏览
+  pendingBrandLogoUrl.value = URL.createObjectURL(raw)
+}
 
 // 新增待添加的车辆品牌
-const addPendingBrandModel = () =>
-  addModelList.push({ isChecked: false, brandModelName: '', editing: true })
+const handleAddPendingBrandModel = () =>
+  pendingBrandModelList.push({
+    isChecked: false,
+    brandModelName: '',
+    editing: true,
+  })
 
-// 新增车辆品牌型号
-const addBrandModel = async () => {
-  const { data } = await addBrandModelApi(addModelList)
+// 删除待添加车辆品牌型号
+const handleDeletePendingBrandModelItem = (index) =>
+  pendingBrandModelList.splice(index, 1)
+
+// logo 加载失败时的回退行为
+const errorAvatarHandler = () => true
+
+// 新增车辆品牌及型号
+const handleAddBrandModel = async () => {
+  // 品牌名非空校验
+  if (pendingBrand.name.trim() === '') {
+    // 提示
+    return ElMessage.error("Brand Name Can't Be Empty")
+  }
+
+  // 型号名非空校验
+  if (pendingBrandModelList.some((item) => item.brandModelName.trim() === '')) {
+    // 提示
+    return ElMessage.error('Please Fill In All Model Names')
+  }
+
+  // 添加车辆品牌及型号
+  await addBrandModelApi({
+    name: pendingBrand.name,
+    models: pendingBrandModelList
+      .filter((item) => item.brandModelName.trim() !== '')
+      .map((item) => item.brandModelName.trim())
+      .join(','),
+    logo: logoFile.value,
+  })
   // 添加成功
+  ElMessage.success('Add Brand Model Success')
+  // 跳转列表页
+  router.back()
+}
+
+// 处理输入品牌型号名的失焦事件
+const handleBrandModelInputBlur = (blurIndex) => {
+  // 非空校验
+  if (pendingBrandModelList[blurIndex].brandModelName.trim() === '') {
+    // 提示
+    return ElMessage.error("Brand Model Name Can't Be Empty")
+  }
+  // 去空
+  pendingBrandModelList[blurIndex].brandModelName =
+    pendingBrandModelList[blurIndex].brandModelName.trim()
+  // 修改编辑模式
+  pendingBrandModelList[blurIndex].editing = false
+}
+
+// 处理输入品牌名的失焦事件
+const handleBrandInputBlur = () => {
+  // 非空校验
+  if (pendingBrand.name.trim() === '') {
+    // 提示
+    return ElMessage.error("Brand Name Can't Be Empty")
+  }
+  // 去空
+  pendingBrand.name = pendingBrand.name.trim()
+  // 修改编辑模式
+  pendingBrand.editing = false
 }
 </script>
 
 <template>
   <section class="h-full">
     <!-- header -->
-    <div class="py-16 px-32 flex-between">
+    <div class="flex-between px-32 py-16">
       <h3 class="heading-h2-20px-medium neutrals-off-black">Create Brand</h3>
       <div class="flex gap-8">
-        <el-button>Cancel</el-button>
-        <el-button type="primary">Create</el-button>
+        <el-button @click="$router.go(-1)">Cancel</el-button>
+        <el-button type="primary" @click="handleAddBrandModel">
+          Create
+        </el-button>
       </div>
     </div>
     <!-- divider -->
@@ -31,71 +130,123 @@ const addBrandModel = async () => {
     <!-- content -->
     <div>
       <!-- 品牌信息 -->
-      <div class="px-32 pt-16 pb-24 flex gap-24">
+      <div class="flex gap-24 px-32 pb-24 pt-16">
         <!-- 品牌 logo -->
-        <div class="flex-1 w-400 h-80 flex gap-24">
+        <div class="w-400 flex h-80 flex-1 gap-24">
           <!-- logo -->
-          <el-avatar :size="64" src="https://picsum.photos/64/64" fit="cover" />
+          <el-avatar
+            :size="64"
+            :src="pendingBrandLogoUrl"
+            fit="cover"
+            @error="errorAvatarHandler"
+          >
+            <!-- logo 加载失败的默认显示 -->
+            <i class="flex-center h-64 w-64">
+              <el-text class="heading-h1-26px-medium neutrals-off-black">
+                B
+              </el-text>
+            </i>
+          </el-avatar>
           <!-- desc -->
           <div class="flex flex-col gap-16">
             <el-text>Upload Logo</el-text>
             <!-- 更换 logo 图片 -->
-            <el-button>Upload</el-button>
+            <el-upload
+              :on-change="handleAvatarChange"
+              :auto-upload="false"
+              :show-file-list="false"
+            >
+              <template #trigger>
+                <el-button>Upload</el-button>
+              </template>
+            </el-upload>
           </div>
         </div>
         <!-- 品牌名称 -->
-        <div class="flex-1 w-384 h-80 flex gap-8 bottom-border-only">
+        <div
+          class="w-384 bottom-border-only flex h-80 flex-1 justify-start gap-8"
+        >
           <!-- 标签 -->
           <label
-            class="w-112 h-32 heading-body-body-12px-medium neutrals-grey-3"
+            class="w-112 heading-body-body-12px-medium neutrals-grey-3 h-32"
           >
             Brand
           </label>
+          <!-- 编辑状态 -->
+          <el-input
+            placeholder="Enter"
+            class="h-32"
+            v-model="pendingBrand.name"
+            v-if="pendingBrand.editing"
+            @blur="handleBrandInputBlur"
+            @keyup.enter="handleBrandInputBlur"
+          />
           <!-- 值 -->
-          <el-input placeholder="Enter" class="h-32" />
+          <el-text v-else class="h-full">{{ pendingBrand.name }}</el-text>
         </div>
       </div>
       <!-- 型号信息-->
       <div>
         <!-- 标签信息 -->
-        <div class="px-32 py-7 box-border flex items-center-safe gap-8">
+        <div class="items-center-safe box-border flex gap-8 px-32 py-7">
           <h4>Model List</h4>
           <!-- 型号数量 -->
-          <!--<el-text class="flex-1">2222222</el-text>-->
+          <el-text class="neutrals-grey-3 flex-1">
+            {{ pendingBrandModelList.length }}
+          </el-text>
         </div>
         <!-- 分割线 -->
         <el-divider class="mt-8" />
-        <!-- 车辆品牌表格 -->
-        <div class="px-32">
+        <!-- 车辆品牌型号表格 -->
+        <div class="px-32" v-if="pendingBrandModelList.length > 0">
           <!-- 表头 -->
-          <div class="model-list-table-title">
+          <div class="model-list-table-title flex gap-8">
             <el-checkbox label="Model" class="ml-8" />
           </div>
           <!-- 型号列表 -->
           <ul
-            class="grid grid-cols-3 gap-x-24 [&>li]:border-b [&>li]:border-b-solid [&>li]:border-b-[#EAEEF4] [&>li]:h-[40px] [&>li]:pl-8 [&>li]:box-border [&>li]:flex [&>li]:items-center"
+            class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 [&>li]:box-border [&>li]:flex [&>li]:h-[40px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
           >
             <li
-              v-for="vehicleModel in 9"
-              :key="vehicleModel"
+              v-for="(brandModel, index) in pendingBrandModelList"
+              :key="brandModel"
               class="heading-body-body-12px-regular neutrals-off-black"
             >
-              <el-checkbox>
+              <el-checkbox v-if="brandModel.editing">
                 <template #default>
-                  <el-input placeholder="Enter..." class="h-32" />
-                  <i class="icon icon-delete-bin-line ml-16" />
+                  <el-input
+                    placeholder="Enter..."
+                    class="h-32"
+                    @blur="handleBrandModelInputBlur(index)"
+                    @keyup.enter="handleBrandModelInputBlur(index)"
+                    v-model="brandModel.brandModelName"
+                  />
+                  <!-- 删除待添加项 -->
+                  <i
+                    class="icon icon-delete-bin-line ml-16"
+                    @click.stop.prevent="
+                      handleDeletePendingBrandModelItem(index)
+                    "
+                  />
                 </template>
               </el-checkbox>
+              <!-- 品牌名称 -->
+              <el-text v-else>{{ brandModel.brandModelName }}</el-text>
             </li>
           </ul>
-          <!-- 新增按钮 -->
-          <el-button type="primary" text>
-            <template #icon>
-              <i class="icon-typesadd" />
-            </template>
-            <template #default>New Item</template>
-          </el-button>
         </div>
+        <!-- 新增按钮 -->
+        <el-button
+          type="primary"
+          text
+          @click="handleAddPendingBrandModel"
+          class="ml-32"
+        >
+          <template #icon>
+            <i class="icon-typesadd" />
+          </template>
+          <template #default>New Item</template>
+        </el-button>
       </div>
     </div>
   </section>
@@ -131,5 +282,10 @@ const addBrandModel = async () => {
     @apply flex items-center gap-16;
     color: $neutrals-grey-3;
   }
+}
+
+// 添加图标的样式
+.icon-typesadd {
+  color: $branding-colours-primary;
 }
 </style>

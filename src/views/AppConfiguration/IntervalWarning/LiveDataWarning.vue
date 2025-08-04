@@ -34,20 +34,13 @@ const getLiveWarningDataList = async () => {
 
 // 表格合并单元格方法
 const spanMethod = ({ row, columnIndex }) => {
-  // 如果这一行是详细描述行，让它从Item列开始跨4列显示
-  if (row.isDetail && columnIndex === 1) {
+  // 如果这一行是详细描述行，让它跨越所有6列
+  if (row.isDetail && columnIndex === 0) {
     return {
       rowspan: 1,
-      colspan: 4 // 跨4列：Item, Group, Warning, Unit
+      colspan: 6 // 跨所有列：No, Item, Group, Warning, Unit, 操作列
     }
-  } else if (row.isDetail && (columnIndex === 2 || columnIndex === 3 || columnIndex === 4)) {
-    return {
-      rowspan: 0,
-      colspan: 0
-    }
-  }
-  // 对于详细描述行，隐藏操作列
-  else if (row.isDetail && columnIndex === 5) {
+  } else if (row.isDetail && columnIndex > 0) {
     return {
       rowspan: 0,
       colspan: 0
@@ -64,15 +57,19 @@ getLiveWarningDataList()
   <div>
     <el-table :data="liveWarningDataList" :default-expand-all="true" :span-method="spanMethod">
       <!-- 序号 -->
-      <el-table-column type="index" label="No." min-width="7%" :sortable="true" />
+      <el-table-column label="No." min-width="7%" :sortable="true">
+        <template #default="{ $index, row }">
+          <div v-if="row.isDetail" class="detail-text-full">
+            {{ row.detailText }}
+          </div>
+          <span v-else>{{ Math.floor($index / 2) + 1 }}</span>
+        </template>
+      </el-table-column>
 
       <!-- 指标名称 -->
       <el-table-column prop="name" label="Item" min-width="31%" :sortable="true">
         <template #default="{ row }">
-          <div v-if="row.isDetail" class="detail-text">
-            {{ row.detailText }}
-          </div>
-          <el-text v-else>{{ row.name }}</el-text>
+          <el-text v-if="!row.isDetail">{{ row.name }}</el-text>
         </template>
       </el-table-column>
 
@@ -106,31 +103,82 @@ getLiveWarningDataList()
 </template>
 
 <style scoped lang="scss">
-// 详细描述文本样式
-.detail-text {
+// 详细描述文本样式（跨全表格宽度）
+.detail-text-full {
   color: #909399;
   font-size: 12px;
   line-height: 1.4;
-  padding: 8px 0;
   word-wrap: break-word;
   word-break: break-all;
+  text-align: left;
+  display: block;
+  padding: 8px 12px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 // 详细描述行的样式
 :deep(.el-table__row) {
-  &:has(.detail-text) {
+  &:has(.detail-text-full) {
     background-color: #fafafa;
 
     .el-table__cell {
-      border-top: none;
+      border-top: none !important;
+      border-bottom: 1px solid #ebeef5 !important;
       padding: 4px 0;
+
+      // 跨全表格的详情描述单元格（第一个单元格）
+      &:first-child {
+        .detail-text-full {
+          // 文本左对齐到Item列的位置
+          padding-left: calc(7% + 31% * 12px / 100%); // 序号列宽度 + Item列的左padding
+        }
+      }
     }
+  }
+
+  // 主数据行（详细描述行的前一行）- 去掉下边框
+  &:has(+ .el-table__row .detail-text-full) {
+    .el-table__cell {
+      border-bottom: none !important;
+    }
+  }
+}
+
+// 确保详情描述行有正确的背景色和边框处理
+:deep(.el-table__body) {
+  tr {
+    &:has(.detail-text-full) {
+      background-color: #fafafa;
+
+      td {
+        background-color: #fafafa;
+        border-top: none !important;
+      }
+    }
+
+    // 主数据行如果后面跟着详细描述行，去掉下边框
+    &:has(+ tr .detail-text-full) {
+      td {
+        border-bottom: none !important;
+      }
+    }
+  }
+}
+
+// 确保表格容器不会隐藏伪元素创建的线条
+:deep(.el-table) {
+  overflow: visible;
+
+  .el-table__body-wrapper {
+    overflow: visible;
   }
 }
 
 // 如果上面的:has选择器不支持，使用这个备用方案
 :deep(.el-table__body tr:nth-child(even)) {
-  .detail-text {
+  .detail-text-full {
     background-color: #fafafa;
   }
 }
