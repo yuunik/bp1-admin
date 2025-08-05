@@ -56,7 +56,7 @@ const addPendingItem = () => {
     },
     {
       editing: true,
-      name: 'pendingItem',
+      name: 'obdKey',
       value: '',
       groupKey: '',
       warning: '',
@@ -89,17 +89,22 @@ getLiveWarningDataList()
       </el-table-column>
       <el-table-column prop="name" label="Item" min-width="31%">
         <template #default="{ row }">
-          <!-- 描述 -->
-          <div
-            v-if="row.name === 'objKey'"
-            class="rounded-8 bg-neutrals-grey-1 p-8"
-          >
-            <el-text class="text-neutrals-grey-3">
-              {{ row.obdKey === '' ? 'No obdKey' : row.obdKey }}
-            </el-text>
-          </div>
-          <!-- 值 -->
-          <div v-else>{{ row.value }}</div>
+          <template v-if="row.editing">
+            <el-input placeholder="Item Name" />
+          </template>
+          <template v-else>
+            <!-- 描述 -->
+            <div
+              v-if="row.name === 'objKey'"
+              class="rounded-8 bg-neutrals-grey-1 p-8"
+            >
+              <el-text class="text-neutrals-grey-3">
+                {{ row.obdKey === '' ? 'No obdKey' : row.obdKey }}
+              </el-text>
+            </div>
+            <!-- 值 -->
+            <div v-else>{{ row.value }}</div>
+          </template>
         </template>
       </el-table-column>
       <el-table-column prop="groupKey" label="Group" min-width="17%" />
@@ -145,12 +150,39 @@ getLiveWarningDataList()
   cursor: pointer;
 }
 
-:deep(.logical-row-start:hover + .logical-row-end) {
-  background-color: red;
-}
+//:deep(.el-table__row) {
+//  &.logical-row-start:hover {
+//    background-color: red !important;
+//
+//    & > td {
+//      background-color: red !important;
+//    }
+//  }
+//}
 
-/* 阻止 logical-row-end 自己 hover 出现高亮 */
-.el-table__row.logical-row-end:hover {
-  background-color: inherit !important;
+:deep {
+  .el-table__row.logical-row-start:hover {
+    background-color: transparent !important;
+
+    & > td {
+      background-color: transparent !important;
+    }
+  }
+
+  .el-table__row.logical-row-start:hover + .el-table__row.logical-row-end {
+    background-color: transparent !important;
+  }
+
+  .el-table__row.logical-row-end:hover {
+    background-color: transparent !important;
+
+    & > td {
+      background-color: transparent !important;
+    }
+  }
+
+  .el-table__row.logical-row-end:hover + .el-table__row.logical-row-start {
+    background-color: transparent !important;
+  }
 }
 </style>

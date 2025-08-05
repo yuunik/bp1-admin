@@ -206,3 +206,16 @@
  * @property {string} obdKey - OBD（车载诊断）对应的键名，便于后端字段映射。
  * @property {string} unit - 数值单位，例如摄氏度（℃）。
  */
+
+/* ai 问答数据类型 */
+/**
+ * @typedef {object} AiQuestionInfo
+ * @property {string} id - 数据的唯一标识符。
+ * @property {string} userId - 用户的唯一标识符。
+ * @property {string} questionId - 问题的唯一标识符。
+ * @property {string} question - 用户提出的问题。
+ * @property {string} answer - 针对用户问题的回答。
+ * @property {number} createTime - 记录的创建时间戳。
+ * @property {VehicleDto} vehicleDto - 车辆相关信息。
+ * @property {UserDto} userDto - 用户相关信息。
+ */

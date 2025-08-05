@@ -47,3 +47,10 @@ export const RouteName = Object.freeze({
   ANY: 'Any',
   INTERVAL_WARNING: 'Interval & Warning',
 })
+
+// 分享模块跳转路径
+export const ShareRoutePath = Object.freeze({
+  GOOGLE_PLAY_URL: 'https://itunes.apple.com/cn/app/id6748522066',
+  APPLE_APP_STORE_URL: 'https://itunes.apple.com/cn/app/id6748522066',
+  APP_URL: 'diagnostics://open',
+})

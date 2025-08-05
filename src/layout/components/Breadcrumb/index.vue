@@ -11,10 +11,10 @@ const route = useRoute()
 const breadcrumbList = ref(route.matched.map((item) => item))
 
 emitter.on(EmitterEvent.UPDATE_BREADCRUMB_LIST, (val) => {
-  if (route.path.includes('/app-configuration/brand-Model/manage/')) {
+  if (route.path.includes('/app-configuration/brand-model/manage/')) {
     // 车辆品牌管理模块详情, 修改面包屑, 显示车辆品牌名称
     breadcrumbList.value.find((item) => {
-      if (item.path.includes('/app-configuration/brand-Model/manage/')) {
+      if (item.path.includes('/app-configuration/brand-model/manage/')) {
         item.meta.title = val
       }
     })
@@ -37,7 +37,7 @@ onBeforeUnmount(() => {
 <template>
   <el-breadcrumb
     separator=">"
-    class="p-[24px_32px_16px_32px] heading-body-body-12px-medium box-border"
+    class="heading-body-body-12px-medium box-border p-[24px_32px_16px_32px]"
   >
     <el-breadcrumb-item>
       <el-image :src="CompanyLogo" alt="CompanyLogo" />

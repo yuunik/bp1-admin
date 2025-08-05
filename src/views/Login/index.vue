@@ -45,11 +45,11 @@ const handleLogin = useDebounceFn(async () => {
 <template>
   <div class="bg-container">
     <!-- description -->
-    <div class="flex-1 p-32 h-full flex flex-col box-border gap-32">
+    <div class="box-border flex h-full flex-1 flex-col gap-32 p-32">
       <!-- Company Logo -->
       <img :src="Logo" alt="Logo" class="w-83 h-24" />
       <article
-        class="flex-1 flex flex-col justify-center gap-32 px-24 heading-body-large-body-14px-regular ml-auto mr-auto"
+        class="heading-body-large-body-14px-regular ml-auto mr-auto flex flex-1 flex-col justify-center gap-32 px-24"
       >
         <h2 class="heading-h2-20px-medium neutrals-off-white">
           Our Solutions, Transforming
@@ -57,23 +57,23 @@ const handleLogin = useDebounceFn(async () => {
         <h2 class="heading-h2-20px-medium neutrals-off-white">
           Businesses Bit by Bit
         </h2>
-        <section class="flex items-center gap-16 neutrals-grey-3">
+        <section class="neutrals-grey-3 flex items-center gap-16">
           <i class="icon-typesline text-24" />
           <span>Boost Sales & Saves Time!</span>
         </section>
-        <section class="flex items-center gap-16 neutrals-grey-3">
+        <section class="neutrals-grey-3 flex items-center gap-16">
           <i class="icon-typeslist text-24" />
           Easy project creation and assignment
         </section>
-        <section class="flex items-center gap-16 neutrals-grey-3">
+        <section class="neutrals-grey-3 flex items-center gap-16">
           <i class="icon-typestime text-24" />
           Real-time progress monitoring to ensure timely delivery
         </section>
-        <section class="flex items-center gap-16 neutrals-grey-3">
+        <section class="neutrals-grey-3 flex items-center gap-16">
           <i class="icon-typesnote text-24" />
           Report generation for clear decision making
         </section>
-        <section class="flex items-center gap-16 neutrals-grey-3">
+        <section class="neutrals-grey-3 flex items-center gap-16">
           <i class="icon-typesdot-line text-24" />
           Define, track and optimise your business processes with comprehensive
           data insights,
@@ -87,13 +87,13 @@ const handleLogin = useDebounceFn(async () => {
     </div>
     <!-- Login form -->
     <main
-      class="flex flex-shrink flex-grow-0 basis-auto min-w-592 max-w-800 bg-neutrals-off-white rounded-8 h-full flex justify-center items-center"
+      class="min-w-592 max-w-800 bg-neutrals-off-white rounded-8 flex h-full flex-shrink flex-grow-0 basis-auto items-center justify-center"
     >
-      <div class="flex flex-col gap-48 text-align-left">
+      <div class="text-align-left flex flex-col gap-48">
         <hgroup class="flex flex-col gap-24">
           <h1 class="flex items-center gap-8">
             <strong class="heading-h1-26px-medium">Welcome Back!</strong>
-            <img :src="GreetingIcon" alt="Waving Hand" class="w-24 h-24" />
+            <img :src="GreetingIcon" alt="Waving Hand" class="h-24 w-24" />
           </h1>
           <p class="heading-body-body-12px-regular">
             Welcome to OMS. Please enter your credentials to login.
@@ -112,10 +112,11 @@ const handleLogin = useDebounceFn(async () => {
                 placeholder="Enter your password"
                 v-model="loginForm.password"
                 :type="isShowPassword ? 'text' : 'password'"
+                @keyup.enter="handleLogin"
               >
                 <template #suffix>
                   <i
-                    :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword ' : 'icon-eye-off-line'}`"
+                    :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
                     @click="isShowPassword = !isShowPassword"
                   />
                 </template>
@@ -140,7 +141,7 @@ const handleLogin = useDebounceFn(async () => {
 <style scoped lang="scss">
 .bg-container {
   @extend %common-bg-style;
-  @apply flex justify-between p-8 gap-8;
+  @apply flex justify-between gap-8 p-8;
 }
 
 .bottom-border-only :deep(.el-input__wrapper) {

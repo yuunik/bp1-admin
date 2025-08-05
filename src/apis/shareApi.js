@@ -8,6 +8,8 @@ import request from '@/utils/request.js'
 const ShareApi = Object.freeze({
   // 论坛分享
   GET_FORUM_INFO: '/forum/info',
+  // ai 问答详情分享
+  GET_AI_QUESTION_INFO: '/aichat/info',
 })
 
 /**
@@ -20,6 +22,21 @@ export const getForumInfoApi = (id) => {
   data.append('forumId', id)
   return request({
     url: ShareApi.GET_FORUM_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取ai问答详情
+ * @param aiChatId ai问答id
+ * @returns {Promise<ApiResponse<AiQuestionInfo>>}
+ */
+export const getAiQuestionInfoApi = (id) => {
+  const data = new FormData()
+  data.append('aiChatId', id)
+  return request({
+    url: ShareApi.GET_AI_QUESTION_INFO,
     method: 'POST',
     data,
   })

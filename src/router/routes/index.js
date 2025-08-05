@@ -223,6 +223,16 @@ const constantRoutes = [
           isShow: false,
         },
       },
+      // ai 聊天的分享页
+      {
+        path: '/share/ai-chat/:id',
+        name: 'AI Chat Info',
+        component: () => import('@/share/AiChatInfo.vue'),
+        meta: {
+          title: 'AI Chat Info',
+          isShow: false,
+        },
+      },
     ],
     meta: {
       title: RouteName.SHARE,

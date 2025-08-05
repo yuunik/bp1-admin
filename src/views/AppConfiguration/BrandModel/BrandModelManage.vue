@@ -1,11 +1,17 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { reactive, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 
-import { getBrandModelInfoApi } from '@/apis/appApi.js'
+import {
+  addBrandModelApi,
+  deleteBrandModelApi,
+  getBrandModelInfoApi,
+  modifyBrandModelApi,
+} from '@/apis/appApi.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent } from '@/utils/constantsUtil.js'
+import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 
 // 车辆详情
 const brandModelInfo = reactive({})
@@ -18,6 +24,13 @@ const getBrandModelInfo = async (id) => {
   const { data } = await getBrandModelInfoApi(id)
   // 请求成功
   Object.assign(brandModelInfo, data)
+  // 记录品牌的编辑状态为 false
+  data.isEdit = false
+  // 更新面包屑
+  for (const item of brandModelInfo?.vehicleModelDtos) {
+    // 记录型号的编辑状态为 false
+    item.isEdit = false
+  }
   // 更新面包屑
   emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.brand)
 }
@@ -32,7 +45,46 @@ if (route.params.id) {
   getBrandModelInfo(route.params.id)
 } else {
   // 无 id , 则跳转至首页
-  router.push({ name: 'Dash' })
+  router.push({ name: RouteName.DASHBOARD })
+}
+
+// 新增车辆品牌型号
+const handleAddBrandModel = async () => {
+  // 添加车辆品牌及型号
+  await addBrandModelApi({
+    name: pendingBrand,
+    models: pendingBrandModelList.map((item) => item.brandModelName).join(''),
+    logo: logoFile,
+  })
+  // 添加成功
+  ElMessage.success('Add Brand Model Success')
+  // 跳转列表页
+  router.back()
+}
+
+// 删除车辆品牌型号
+const handleDeleteBrandModel = async (id) => {
+  await deleteBrandModelApi(id)
+  // 删除成功
+  ElMessage.success('Delete Brand Model Success')
+  // 删除车辆品牌型号（从列表中删除）
+  brandModelList.splice(
+    brandModelList.findIndex((item) => item.id === id),
+    1,
+  )
+}
+
+// 编辑车辆品牌型号
+const handleEditBrandModel = async () => {
+  await modifyBrandModelApi({
+    id: route.params.id,
+    name: pendingBrand,
+    models: pending,
+  })
+  // 添加成功
+  ElMessage.success('Edit Brand Model Success')
+  // 跳转列表页
+  router.back()
 }
 </script>
 
@@ -120,14 +172,25 @@ if (route.params.id) {
         <el-divider class="mt-8" />
         <!-- 型号列表 -->
         <ul
-          class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 px-32 [&>li]:box-border [&>li]:flex [&>li]:h-[32px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
+          class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 px-32 [&>li]:box-border [&>li]:flex [&>li]:h-[40px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
         >
           <li
             v-for="vehicleModel in brandModelInfo?.vehicleModelDtos"
             :key="vehicleModel.id"
             class="heading-body-body-12px-regular neutrals-off-black"
           >
-            {{ vehicleModel.name }}
+            <el-checkbox v-if="isEdit">
+              <template #default>
+                <el-input
+                  placeholder="Enter..."
+                  class="h-32"
+                  v-model="vehicleModel.name"
+                />
+                <!-- 删除待添加项 -->
+                <i class="icon icon-delete-bin-line ml-16" />
+              </template>
+            </el-checkbox>
+            <el-text v-else>{{ vehicleModel.name }}</el-text>
           </li>
         </ul>
       </div>

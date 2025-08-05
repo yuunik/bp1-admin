@@ -21,6 +21,10 @@ const AppApi = Object.freeze({
   GET_BRAND_MODEL_INFO: '/manager/vehicle/brandinfo',
   // 新增车辆品牌
   ADD_BRAND_MODEL: '/manager/brand/add',
+  // 删除车辆品牌型号
+  DELETE_BRAND_MODEL: '/manager/brand/delete',
+  // 修改车辆品牌型号
+  MODIFY_BRAND_MODEL: '/manager/model/edit',
   // 获取实时数据预警列表
   GET_LIVE_DATA_WARNING_LIST: 'manager/vehiclewarn/list',
 })
@@ -160,6 +164,45 @@ export const getLiveWarningDataListApi = () => {
 
   return request({
     url: AppApi.GET_LIVE_DATA_WARNING_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除车辆品牌型号
+ * @param id 车辆品牌型号ID
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const deleteBrandModelApi = (id) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', id)
+  return request({
+    url: AppApi.DELETE_BRAND_MODEL,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改车辆品牌型号
+ * @param params 修改车辆品牌型号参数
+ * @param params.id 车辆品牌型号ID
+ * @param params.name 车辆品牌名称
+ * @param params.models 车辆品牌型号名称列表
+ * @param params.logo 车辆品牌logo
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyBrandModelApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', params.id)
+  data.append('name', params.name)
+  data.append('models', params.models)
+  data.append('file', params.logo)
+  return request({
+    url: AppApi.MODIFY_BRAND_MODEL,
     method: 'POST',
     data,
   })
