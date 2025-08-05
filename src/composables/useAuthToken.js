@@ -1,3 +1,6 @@
+/**
+ * 获取token
+ */
 import { useLocalStorage } from '@vueuse/core'
 
 export const useAuthToken = () => {

@@ -1,3 +1,7 @@
+/**
+ * @file useAppLauncher.js
+ * @description app启动器
+ */
 import { ref } from 'vue'
 
 import { ShareRoutePath } from '@/utils/constantsUtil.js'

@@ -51,8 +51,8 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    // 没有 token
-    if (to.path === '/login') {
+    // 没有 token 时, 只允许访问登录页和分享模块
+    if (to.path === '/login' || to.path.includes('share')) {
       // 访问登录, 则放行
       next()
     } else {
