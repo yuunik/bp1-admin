@@ -31,6 +31,10 @@ const AppApi = Object.freeze({
   GET_MAINTENANCE_LIST: '/manager/maintenance/list',
   // 编辑汽车保养数据
   MODIFY_MAINTENANCE_DATA: '/manager/editmaintenance',
+  // 获取预测数据列表
+  GET_PREDICT_DATA_LIST: '/manager/prediction/list',
+  // 编辑预测数据
+  MODIFY_PREDICT_DATA: '/manager/editprediction',
 })
 
 // 获取 token
@@ -244,6 +248,38 @@ export const modifyMaintenanceDataApi = (params) => {
   data.append('file', params.file)
   return request({
     url: AppApi.MODIFY_MAINTENANCE_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取预测数据列表
+ * @returns {Promise<ApiResponse<PredictionData[]>>}
+ */
+export const getPredictionListApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+  return request({
+    url: AppApi.GET_PREDICT_DATA_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改预测数据
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyPredictionDataApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', params.id)
+  data.append('name', params.name)
+  data.append('date', params.date)
+  data.append('file', params.file)
+  return request({
+    url: AppApi.MODIFY_PREDICT_DATA,
     method: 'POST',
     data,
   })

@@ -231,3 +231,15 @@
  * @property {number} mileage - 建议的保养里程（单位：公里，例如每 10000 公里）。
  * @property {number} createTime - 创建时间，使用毫秒级时间戳（Unix 时间戳，单位：毫秒）。
  */
+
+/* 预测数据 */
+/**
+ * 预测数据结构，表示某个故障预测的信息。
+ * @typedef {Object} PredictionData
+ * @property {string} id - 唯一标识符，例如 "fff43cfa-67b6-11f0-aeaf-027e72c170ed"。
+ * @property {string} name - 故障名称，例如 "Battery Failure"。
+ * @property {string} logo - 故障图标的路径，例如 "file/prediction/Battery Failure.png"。
+ * @property {number} isHide - 是否隐藏该故障项，0 表示显示，1 表示隐藏。
+ * @property {number} date - 故障预测发生的天数，比如距当前时间的天数。
+ * @property {number} mileage - 故障预测发生时的预计里程数（单位：公里），例如 8000。
+ */
