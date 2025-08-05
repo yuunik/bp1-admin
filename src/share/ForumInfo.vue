@@ -107,8 +107,8 @@ const handleErrorImage = () => true
             class="grid grid-cols-2 gap-12"
           >
             <div
-              v-for="(item, index) in forumInfo.attachmentDtos.slice(1, 3)"
-              :key="index + 1"
+              v-for="item in forumInfo.attachmentDtos.slice(1, 3)"
+              :key="item.id"
               class="h-166 rounded-8 w-full bg-cover bg-center bg-no-repeat"
               :style="{
                 backgroundImage: `url(${getFullPath(item.path)})`,
@@ -122,8 +122,8 @@ const handleErrorImage = () => true
             class="grid grid-cols-3 gap-12"
           >
             <div
-              v-for="(item, index) in forumInfo.attachmentDtos.slice(3, 6)"
-              :key="index + 3"
+              v-for="item in forumInfo.attachmentDtos.slice(3, 6)"
+              :key="item.id"
               class="h-150 rounded-8 w-full bg-cover bg-center bg-no-repeat"
               :style="{
                 backgroundImage: `url(${getFullPath(item.path)})`,

@@ -51,20 +51,16 @@ if (id) {
           </el-text>
         </div>
       </section>
-      <!-- answer -->
+      <!-- answer container -->
       <section class="flex flex-col gap-16">
         <!-- ai logo -->
         <el-avatar :src="AiLogo" class="h-40 w-40" fit="cover" />
-        <!--<div>-->
-        <!--  <el-text class="heading-h3-16px-regular neutrals-off-black">-->
-        <!--    {{ aiQuestionInfo?.answer }}-->
-        <!--  </el-text>-->
-        <!--</div>-->
+        <!-- answer -->
         <vue-markdown :source="aiQuestionInfo?.answer || ''" />
       </section>
     </main>
     <footer
-      class="border-t-red flex h-60 items-center gap-8 border-t px-20 py-8"
+      class="flex h-60 items-center gap-8 border-t border-t-[#EAEEF4] px-20 py-8"
       @click="launchApp"
     >
       <!-- input -->
@@ -88,7 +84,7 @@ if (id) {
   @apply rounded-12 h-44;
 
   .el-input__wrapper {
-    @apply rounded-12 bg- bg-[#EAEEF4] shadow-none;
+    @apply rounded-12 bg-[#EAEEF4] shadow-none;
 
     .el-input__inner {
       @apply placeholder:text-14 placeholder:text-red placeholder:font-normal;

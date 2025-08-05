@@ -27,6 +27,10 @@ const AppApi = Object.freeze({
   MODIFY_BRAND_MODEL: '/manager/model/edit',
   // 获取实时数据预警列表
   GET_LIVE_DATA_WARNING_LIST: 'manager/vehiclewarn/list',
+  // 获取汽车保养数据列表
+  GET_MAINTENANCE_LIST: '/manager/maintenance/list',
+  // 编辑汽车保养数据
+  MODIFY_MAINTENANCE_DATA: '/manager/editmaintenance',
 })
 
 // 获取 token
@@ -203,6 +207,43 @@ export const modifyBrandModelApi = (params) => {
   data.append('file', params.logo)
   return request({
     url: AppApi.MODIFY_BRAND_MODEL,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取汽车保养数据列表
+ * @returns {Promise<ApiResponse<MaintenanceRecord[]>>}
+ */
+export const getMaintenanceListApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+  return request({
+    url: AppApi.GET_MAINTENANCE_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改汽车保养数据
+ * @param params 修改汽车保养数据参数
+ * @param params.id 保养数据ID
+ * @param params.title 保养数据标题
+ * @param params.content 保养数据内容
+ * @param params.status 保养数据状态
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyMaintenanceDataApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', params.id)
+  data.append('name', params.name)
+  data.append('date', params.date)
+  data.append('file', params.file)
+  return request({
+    url: AppApi.MODIFY_MAINTENANCE_DATA,
     method: 'POST',
     data,
   })

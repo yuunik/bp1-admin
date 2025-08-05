@@ -59,7 +59,9 @@ const handleNavigation = (path) => router.push(path)
       <!-- 路由有多个子路由 -->
       <el-sub-menu
         :index="route.path"
-        v-else-if="route.children && route.children?.length > 1"
+        v-else-if="
+          route?.meta?.isShow && route.children && route.children?.length > 1
+        "
       >
         <!-- 标题插槽 -->
         <template #title>

@@ -219,3 +219,15 @@
  * @property {VehicleDto} vehicleDto - 车辆相关信息。
  * @property {UserDto} userDto - 用户相关信息。
  */
+
+/* 保养数据 */
+/**
+ * 表示一条车辆保养记录的数据结构。
+ * @typedef {Object} MaintenanceRecord
+ * @property {string} id - 保养项目的唯一标识符（UUID 格式）。
+ * @property {string} logo - 保养项目对应的图标或图片路径。
+ * @property {string} name - 保养项目的名称（例如："更换空气滤清器"）。
+ * @property {number} date - 建议的保养周期（以天为单位，例如每 180 天）。
+ * @property {number} mileage - 建议的保养里程（单位：公里，例如每 10000 公里）。
+ * @property {number} createTime - 创建时间，使用毫秒级时间戳（Unix 时间戳，单位：毫秒）。
+ */

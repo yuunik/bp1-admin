@@ -1,9 +1,10 @@
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 
 import { addBrandModelApi } from '@/apis/appApi.js'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+import useFileUpload from '@/composables/useFileUpload.js'
 
 const router = useRouter()
 
@@ -13,9 +14,6 @@ const pendingBrand = reactive({
   editing: true,
 })
 
-// 待添加的车辆品牌logo
-const pendingBrandLogoUrl = ref('')
-
 // 待添加的车辆品牌型号列表, 初始默认添加三个
 const pendingBrandModelList = reactive([
   { isChecked: false, brandModelName: '', editing: true },
@@ -23,23 +21,8 @@ const pendingBrandModelList = reactive([
   { isChecked: false, brandModelName: '', editing: true },
 ])
 
-// 待上传的logo 文件
-const logoFile = ref(null)
-
-// 上传车辆品牌logo
-const handleAvatarChange = (file) => {
-  // 校验文件格式
-  const raw = file.raw
-  const isImage = raw.type.startsWith('image/')
-  if (!isImage) {
-    return ElMessage.error('Please select an image file')
-  }
-  // 保存待上传的logo 文件
-  logoFile.value = raw
-
-  // 本地浏览
-  pendingBrandLogoUrl.value = URL.createObjectURL(raw)
-}
+// 文件上传
+const fileUpload = useFileUpload()
 
 // 新增待添加的车辆品牌
 const handleAddPendingBrandModel = () =>
@@ -77,7 +60,7 @@ const handleAddBrandModel = async () => {
       .filter((item) => item.brandModelName.trim() !== '')
       .map((item) => item.brandModelName.trim())
       .join(','),
-    logo: logoFile.value,
+    logo: fileUpload.uploadFile.value,
   })
   // 添加成功
   ElMessage.success('Add Brand Model Success')
@@ -136,7 +119,7 @@ const handleBrandInputBlur = () => {
           <!-- logo -->
           <el-avatar
             :size="64"
-            :src="pendingBrandLogoUrl"
+            :src="fileUpload.localFilePath"
             fit="cover"
             @error="errorAvatarHandler"
           >
@@ -152,7 +135,7 @@ const handleBrandInputBlur = () => {
             <el-text>Upload Logo</el-text>
             <!-- 更换 logo 图片 -->
             <el-upload
-              :on-change="handleAvatarChange"
+              :on-change="fileUpload.handleValidateImageUpload"
               :auto-upload="false"
               :show-file-list="false"
             >

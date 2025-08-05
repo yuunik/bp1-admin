@@ -9,3 +9,11 @@
  */
 export const getFullPath = (path) =>
   `${import.meta.env.VITE_BASE_URL_API}${path}`
+
+/**
+ * @description 获取数字格式化字符串
+ * @param number
+ * @returns {string}
+ */
+export const getFormatNumber = (number) =>
+  new Intl.NumberFormat().format(number)
