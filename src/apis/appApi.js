@@ -35,6 +35,8 @@ const AppApi = Object.freeze({
   GET_PREDICT_DATA_LIST: '/manager/prediction/list',
   // 编辑预测数据
   MODIFY_PREDICT_DATA: '/manager/editprediction',
+  // 编辑实时预警数据
+  MODIFY_LIVE_DATA_WARNING_DATA: '/manager/vehiclewarn/edit',
 })
 
 // 获取 token
@@ -269,6 +271,11 @@ export const getPredictionListApi = () => {
 
 /**
  * 修改预测数据
+ * @param params 修改预测数据参数
+ * @param params.id 预测数据ID
+ * @param params.name 预测数据名称
+ * @param params.date 预测数据时间
+ * @param params.file 预测数据文件
  * @returns {Promise<ApiResponse<any>>}
  */
 export const modifyPredictionDataApi = (params) => {
@@ -280,6 +287,33 @@ export const modifyPredictionDataApi = (params) => {
   data.append('file', params.file)
   return request({
     url: AppApi.MODIFY_PREDICT_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改实时数据预警
+ * @param params
+ * @param params.id 预警ID
+ * @param params.value 预警值
+ * @param params.name 预警名称
+ * @param params.groupKey 预警分组
+ * @param params.obdKey 预警OBD参数
+ * @param params.unit 预警单位
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyLivingDataWarningDataApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('vehicleWarnId', params.id)
+  data.append('value', params.value)
+  data.append('name', params.name)
+  data.append('groupKey', params.groupKey)
+  data.append('obdKey', params.obdKey)
+  data.append('unit', params.unit)
+  return request({
+    url: AppApi.MODIFY_LIVE_DATA_WARNING_DATA,
     method: 'POST',
     data,
   })

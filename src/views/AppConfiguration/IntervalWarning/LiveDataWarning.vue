@@ -1,9 +1,14 @@
 <script setup>
 import { reactive } from 'vue'
 
-// 实时预警数据列表
-import { getLiveWarningDataListApi } from '@/apis/appApi.js'
+import {
+  getLiveWarningDataListApi,
+  modifyLivingDataWarningDataApi,
+  modifyPredictionDataApi,
+} from '@/apis/appApi.js'
+import { ElMessage } from 'element-plus'
 
+// 实时预警数据列表
 const liveWarningDataList = reactive([])
 
 // 获取实时预警数据列表
@@ -65,6 +70,29 @@ const addPendingItem = () => {
   )
 }
 
+// 修改实时预警数据的状态为编辑状态
+const handleEditLiveDataWarningDataStatusChange = (row, index) => {
+  liveWarningDataList[index].editing = true
+  liveWarningDataList[++index].editing = true
+}
+
+// 修改实时预警数据
+const handleEditLiveDataWarningData = async (index) => {
+  await modifyLivingDataWarningDataApi({
+    id: liveWarningDataList[index].id,
+    name: liveWarningDataList[index].name,
+    value: liveWarningDataList[index].value,
+    groupKey: liveWarningDataList[index].groupKey,
+    obdKey: liveWarningDataList[index + 1].obdKey,
+    unit: liveWarningDataList[index].unit,
+  })
+  // 提示,  编辑成功
+  ElMessage.success('Edit Success')
+  // 关闭编辑状态
+  liveWarningDataList[index].editing = false
+  liveWarningDataList[index + 1].editing = false
+}
+
 // 网络请求
 getLiveWarningDataList()
 </script>
@@ -90,7 +118,11 @@ getLiveWarningDataList()
       <el-table-column prop="name" label="Item" min-width="31%">
         <template #default="{ row }">
           <template v-if="row.editing">
-            <el-input placeholder="Item Name" />
+            <el-input
+              placeholder="Item Name"
+              class="w-full"
+              v-model="row[row.name === 'objKey' ? 'obdKey' : 'name']"
+            />
           </template>
           <template v-else>
             <!-- 描述 -->
@@ -103,36 +135,92 @@ getLiveWarningDataList()
               </el-text>
             </div>
             <!-- 值 -->
-            <div v-else>{{ row.value }}</div>
+            <div v-else>{{ row.name }}</div>
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="groupKey" label="Group" min-width="17%" />
-      <el-table-column prop="value" label="Warning" min-width="17%" />
-      <el-table-column prop="unit" label="Unit" min-width="17%" />
-      <el-table-column min-width="11%">
+      <el-table-column prop="groupKey" label="Group" min-width="17%">
         <template #default="{ row }">
-          <!-- 编辑 -->
-          <i
-            class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
-            v-show="row.name !== 'objKey'"
-          />
-          <!-- 删除 -->
-          <i
-            class="icon-delete-bin-line h-16 w-16 cursor-pointer"
-            v-show="row.name !== 'objKey'"
-          />
+          <template v-if="row.editing">
+            <el-input
+              placeholder="Group"
+              class="w-full"
+              v-model="row.groupKey"
+            />
+          </template>
+          <template v-else>
+            <!-- 值 -->
+            <div>{{ row.groupKey }}</div>
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column prop="value" label="Warning" min-width="17%">
+        <template #default="{ row }">
+          <template v-if="row.editing">
+            <el-input
+              placeholder="Warning"
+              class="w-full"
+              v-model="row.value"
+            />
+          </template>
+          <template v-else>
+            <!-- 值 -->
+            <div>{{ row.value }}</div>
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column prop="unit" label="Unit" min-width="17%">
+        <template #default="{ row }">
+          <template v-if="row.editing">
+            <el-input placeholder="Unit" class="w-full" v-model="row.unit" />
+          </template>
+          <template v-else>
+            <!-- 值 -->
+            <div>{{ row.unit }}</div>
+          </template>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="11%">
+        <template #default="{ row, $index }">
+          <template v-if="row.editing">
+            <el-button
+              type="primary"
+              class="w-100 h-32"
+              @click="handleEditLiveDataWarningData($index)"
+              v-if="row.name !== 'objKey'"
+            >
+              <template #default>Save</template>
+            </el-button>
+          </template>
+          <template v-else>
+            <!-- 编辑 -->
+            <i
+              class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
+              v-show="row.name !== 'objKey'"
+              @click="handleEditLiveDataWarningDataStatusChange(row, $index)"
+            />
+            <!-- 删除 -->
+            <i
+              class="icon-delete-bin-line h-16 w-16 cursor-pointer"
+              v-show="row.name !== 'objKey'"
+            />
+          </template>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 新增按钮 -->
-    <el-button type="primary" text class="w-100 h-32" @click="addPendingItem">
-      <template #icon>
-        <i class="icon-typesadd branding-colours-primary" />
-      </template>
-      <template #default>New Item</template>
-    </el-button>
+    <!--<el-button-->
+    <!--  type="primary"-->
+    <!--  text-->
+    <!--  class="w-100 mt-8 h-32"-->
+    <!--  @click="addPendingItem"-->
+    <!--&gt;-->
+    <!--  <template #icon>-->
+    <!--    <i class="icon-typesadd branding-colours-primary" />-->
+    <!--  </template>-->
+    <!--  <template #default>New Item</template>-->
+    <!--</el-button>-->
   </div>
 </template>
 
@@ -142,22 +230,13 @@ getLiveWarningDataList()
 }
 
 /* 当鼠标悬浮在逻辑第一行时，同时高亮第二行 */
-:deep(.el-table__row.logical-row-start:hover) {
-  cursor: pointer;
-}
-
-:deep(.el-table__row.logical-row-end:hover) {
-  cursor: pointer;
-}
-
-//:deep(.el-table__row) {
-//  &.logical-row-start:hover {
-//    background-color: red !important;
+//:deep(.el-table__row.logical-row-start:hover) {
+//  cursor: pointer;
+//}
 //
-//    & > td {
-//      background-color: red !important;
-//    }
-//  }
+//:deep(.el-table__row.logical-row-end:hover) {
+//  cursor: pointer;
+//}
 //}
 
 :deep {
@@ -183,6 +262,15 @@ getLiveWarningDataList()
 
   .el-table__row.logical-row-end:hover + .el-table__row.logical-row-start {
     background-color: transparent !important;
+  }
+}
+
+// 重置 el-input 的样式
+:deep(.el-input) {
+  @apply rounded-12 h-32;
+
+  .el-input__wrapper {
+    @apply rounded-12 bg-[#EAEEF480];
   }
 }
 </style>
