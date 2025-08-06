@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "local": "vite --mode .env.local --port 3333",
+    "local": "vite --mode .env.local",
     "dev": "vite --mode dev",
     "pro": "vite --mode pro",
     "build:dev": "vite build --mode dev",

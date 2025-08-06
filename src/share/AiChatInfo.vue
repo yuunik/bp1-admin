@@ -10,14 +10,9 @@ import { getAiQuestionInfoApi } from '@/apis/shareApi.js'
 // ai logo
 import AiLogo from '@/assets/icons/ai-logo.svg'
 import SendIcon from '@/assets/icons/fi_arrow-right-circle-disabled.svg'
-import useAppLauncher from '@/composables/useAppLauncher.js'
-
 const aiQuestionInfo = reactive({})
 
 const route = useRoute()
-
-// 获取 app 启动函数
-const { launchApp } = useAppLauncher()
 
 // 修改网页的标题
 document.title = route.meta.title

@@ -37,6 +37,8 @@ const AppApi = Object.freeze({
   MODIFY_PREDICT_DATA: '/manager/editprediction',
   // 编辑实时预警数据
   MODIFY_LIVE_DATA_WARNING_DATA: '/manager/vehiclewarn/edit',
+  // 编辑车辆品牌信息你
+  MODIFY_BRAND_MODEL_INFO: '/manager/brandmodel/edit',
 })
 
 // 获取 token
@@ -314,6 +316,31 @@ export const modifyLivingDataWarningDataApi = (params) => {
   data.append('unit', params.unit)
   return request({
     url: AppApi.MODIFY_LIVE_DATA_WARNING_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改车辆品牌信息
+ * @param params 修改车辆品牌信息参数
+ * @param params.id 车辆品牌ID
+ * @param params.name 车辆品牌名称
+ * @param params.models 车辆品牌型号名称列表
+ * @param params.file 车辆品牌logo
+ * @param params.isdelete 删除车辆品牌
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyBrandInfoApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', params.id)
+  data.append('name', params.name)
+  data.append('models', params.models)
+  data.append('file', params.file)
+  data.append('isdelete', params.isdelete)
+  return request({
+    url: AppApi.MODIFY_BRAND_INFO,
     method: 'POST',
     data,
   })

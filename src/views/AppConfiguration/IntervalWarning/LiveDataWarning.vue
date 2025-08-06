@@ -239,30 +239,28 @@ getLiveWarningDataList()
 //}
 //}
 
-:deep {
-  .el-table__row.logical-row-start:hover {
-    background-color: transparent !important;
+:deep(.el-table__row.logical-row-start:hover) {
+  background-color: transparent !important;
 
-    & > td {
-      background-color: transparent !important;
-    }
-  }
-
-  .el-table__row.logical-row-start:hover + .el-table__row.logical-row-end {
+  > td {
     background-color: transparent !important;
   }
+}
 
-  .el-table__row.logical-row-end:hover {
+:deep(.el-table__row.logical-row-start:hover + .el-table__row.logical-row-end) {
+  background-color: transparent !important;
+}
+
+:deep(.el-table__row.logical-row-end:hover) {
+  background-color: transparent !important;
+
+  > td {
     background-color: transparent !important;
-
-    & > td {
-      background-color: transparent !important;
-    }
   }
+}
 
-  .el-table__row.logical-row-end:hover + .el-table__row.logical-row-start {
-    background-color: transparent !important;
-  }
+:deep(.el-table__row.logical-row-end:hover + .el-table__row.logical-row-start) {
+  background-color: transparent !important;
 }
 
 // 重置 el-input 的样式

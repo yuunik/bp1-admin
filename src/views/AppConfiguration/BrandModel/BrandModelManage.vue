@@ -7,6 +7,7 @@ import {
   addBrandModelApi,
   deleteBrandModelApi,
   getBrandModelInfoApi,
+  modifyBrandInfoApi,
   modifyBrandModelApi,
 } from '@/apis/appApi.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
@@ -75,16 +76,31 @@ const handleDeleteBrandModel = async (id) => {
 }
 
 // 编辑车辆品牌型号
-const handleEditBrandModel = async () => {
-  await modifyBrandModelApi({
-    id: route.params.id,
-    name: pendingBrand,
-    models: pending,
+const handleEditBrandInfo = async () => {
+  await modifyBrandInfoApi({
+    brandId: brandModelInfo.id,
+    name: brandModelInfo.brand,
+    models:
+      brandModelInfo.vehicleModelDtos &&
+      brandModelInfo.vehicleModelDtos?.length > 0
+        ? brandModelInfo.vehicleModelDtos.map((item) => item.name)
+        : '',
   })
   // 添加成功
   ElMessage.success('Edit Brand Model Success')
   // 跳转列表页
   router.back()
+}
+
+// 修改编辑模式
+const handleBrandStatusChange = () => {
+  // 修改编辑状态
+  isEdit.value = !isEdit.value
+  // 编辑状态关闭, 则修改品牌
+  if (!isEdit.value) {
+    // 修改品牌
+    handleEditBrandInfo()
+  }
 }
 </script>
 
@@ -98,7 +114,9 @@ const handleEditBrandModel = async () => {
       <div class="flex gap-8">
         <el-button>Disable</el-button>
         <el-button>Sort</el-button>
-        <el-button type="primary" @click="isEdit = true">Edit</el-button>
+        <el-button type="primary" @click="handleBrandStatusChange">
+          {{ isEdit ? 'Save' : 'Edit' }}
+        </el-button>
       </div>
     </div>
     <!-- divider -->
@@ -135,9 +153,14 @@ const handleEditBrandModel = async () => {
               Brand
             </label>
             <!-- 值 -->
-            <el-text class="w-264 h-32">
-              {{ brandModelInfo?.brand ?? '-' }}
-            </el-text>
+            <template v-if="isEdit">
+              <el-input v-model="brandModelInfo.brand" />
+            </template>
+            <template v-else>
+              <el-text class="w-264 h-32">
+                {{ brandModelInfo?.brand ?? '-' }}
+              </el-text>
+            </template>
           </div>
           <!-- 状态 -->
           <div class="flex gap-8">
@@ -198,4 +221,17 @@ const handleEditBrandModel = async () => {
   </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 重置 el-input 样式
+:deep(.el-input) {
+  @apply rounded-12 h-32;
+
+  .el-input__wrapper {
+    @apply rounded-12 bg-[#EAEEF4];
+
+    .el-input__inner {
+      @apply placeholder:text-14 placeholder:text-red placeholder:font-normal;
+    }
+  }
+}
+</style>

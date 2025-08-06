@@ -50,6 +50,7 @@ const viewVehicleDetail = (row) =>
     name: 'BrandAndModelManagement',
     params: { id: row.id },
   })
+
 // 网络请求
 getBrandModelList()
 </script>
@@ -65,29 +66,29 @@ getBrandModelList()
         <el-button
           type="primary"
           class="w-70 h-32"
-          @click="$router.push('/app-configuration/brand-Model/create')"
+          @click="$router.push('/app-configuration/brand-model/create')"
         >
           Create
         </el-button>
       </div>
       <!-- 搜索栏 -->
-      <div class="flex flex-between">
+      <div class="flex-between flex">
         <!-- 条件搜索 -->
         <el-input
           placeholder="Search..."
-          class="mt-16 brand-model-search"
+          class="brand-model-search mt-16"
           v-model="searchText"
           @input="getBrandModelList"
         >
           <template #prefix>
             <!-- 前置搜索图标 -->
-            <i class="icon-typessearch w-16 h-16" />
+            <i class="icon-typessearch h-16 w-16" />
           </template>
         </el-input>
         <!-- 状态搜索 -->
         <el-dropdown :hide-on-click="false">
           <span
-            class="rounded-full flex gap-5 border-1 border-[#CACFD8] border-solid px-8 py-4 neutrals-grey-3 cursor-pointer"
+            class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
           >
             Status
             <i class="icon-typesdropdown" />
@@ -135,7 +136,7 @@ getBrandModelList()
                 v-if="row.logo"
                 fit="cover"
                 :src="getFullPath(row.logo)"
-                class="w-24 h-24 mr-8"
+                class="mr-8 h-24 w-24"
                 alt="brand icon"
               >
                 <template #error>
