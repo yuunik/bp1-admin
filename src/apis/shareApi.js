@@ -7,7 +7,7 @@ import request from '@/utils/request.js'
 // 统一管理 api
 const ShareApi = Object.freeze({
   // 论坛分享
-  GET_FORUM_INFO: '/forum/info',
+  GET_FORUM_INFO: '/forum/infobyguest',
   // ai 问答详情分享
   GET_AI_QUESTION_INFO: '/aichat/info',
 })
@@ -29,7 +29,7 @@ export const getForumInfoApi = (id) => {
 
 /**
  * 获取ai问答详情
- * @param aiChatId ai问答id
+ * @param id ai问答id
  * @returns {Promise<ApiResponse<AiQuestionInfo>>}
  */
 export const getAiQuestionInfoApi = (id) => {
