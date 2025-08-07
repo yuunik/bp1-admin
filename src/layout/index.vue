@@ -129,14 +129,8 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply rounded-8 flex h-full flex-1 flex-col;
+    @apply rounded-8 flex h-full flex-1 flex-col overflow-hidden;
     background-color: $neutrals-off-white;
-  }
-}
-
-:deep(.el-sub-menu__title) {
-  & > .el-icon {
-    @apply ml-8!;
   }
 }
 </style>
