@@ -25,9 +25,9 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 <template>
   <div class="bg-container">
     <!-- menu bar -->
-    <nav class="heading-body-body-12px-regular flex flex-col gap-16 relative">
+    <nav class="heading-body-body-12px-regular relative flex flex-col gap-16">
       <!-- Company Logo -->
-      <img :src="CompanyLogo" alt="Company Logo" class="w-83 h-24 mt-8 ml-8" />
+      <img :src="CompanyLogo" alt="Company Logo" class="w-83 ml-8 mt-8 h-24" />
       <!-- menu -->
       <el-menu
         class="nav-menu"
@@ -38,8 +38,8 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         <menu-item :user-menu-routes="routes" />
       </el-menu>
       <!-- user center -->
-      <ul class="p-8 flex flex-col gap-16 neutrals-grey-3">
-        <li class="flex items-center gap-8 cursor-pointer">
+      <ul class="neutrals-grey-3 flex flex-col gap-16 p-8">
+        <li class="flex cursor-pointer items-center gap-8">
           <i class="icon-typesnotification text-16" />
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
@@ -95,33 +95,32 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 .bg-container {
   // 公用背景色
   @extend %common-bg-style;
-  @apply p-8 flex gap-8;
 
   // 菜单栏
   .nav-menu {
-    @apply flex-1 overflow-hidden w-184 border-none;
+    @apply w-210 flex-1 overflow-hidden border-none;
   }
 
   // 底部用户信息相关设置
   .item-style {
-    @apply flex gap-8 items-center cursor-pointer;
+    @apply flex cursor-pointer items-center gap-8;
 
     // user avatar
     .user-avatar {
-      @apply w-32 h-32 rounded-full flex-center;
+      @apply flex-center h-32 w-32 rounded-full;
       background-color: $neutrals-10-white;
     }
   }
 
   // 消息通知图标
   .icon-typesnotification-dot {
-    @apply rounded-100 w-16 h-16 flex-center;
+    @apply rounded-100 flex-center h-16 w-16;
     background-color: $status-colours-green;
   }
 
   // 展开按钮
   .expand-btn {
-    @apply absolute w-16 h-72 rounded-200 flex-center cursor-pointer;
+    @apply rounded-200 flex-center absolute h-72 w-16 cursor-pointer;
     border: 1px $neutrals-grey-2 solid;
     background-color: $neutrals-off-white;
     top: 50%;
@@ -130,8 +129,14 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply flex-1 h-full rounded-8 flex flex-col;
+    @apply rounded-8 flex h-full flex-1 flex-col;
     background-color: $neutrals-off-white;
+  }
+}
+
+:deep(.el-sub-menu__title) {
+  & > .el-icon {
+    @apply ml-8!;
   }
 }
 </style>

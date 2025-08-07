@@ -141,7 +141,7 @@ const handleLogin = useDebounceFn(async () => {
 <style scoped lang="scss">
 .bg-container {
   @extend %common-bg-style;
-  @apply flex justify-between gap-8 p-8;
+  @apply justify-between;
 }
 
 .bottom-border-only :deep(.el-input__wrapper) {
