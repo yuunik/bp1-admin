@@ -15,7 +15,7 @@ const ShareApi = Object.freeze({
 /**
  * 获取论坛详情
  * @param id 论坛id
- * @returns {Promise<ApiResponse<ForumInfo>>}
+ * @returns {Promise<ApiResponse<ForumPost>>}
  */
 export const getForumInfoApi = (id) => {
   const data = new FormData()

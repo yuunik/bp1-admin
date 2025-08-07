@@ -1,9 +1,9 @@
 <script setup>
 import { reactive } from 'vue'
-
-import { addBrandModelApi } from '@/apis/appApi.js'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
+
+import { addBrandModelApi } from '@/apis/appApi.js'
 import useFileUpload from '@/composables/useFileUpload.js'
 
 const router = useRouter()
@@ -161,7 +161,6 @@ const handleBrandInputBlur = () => {
             class="h-32"
             v-model="pendingBrand.name"
             v-if="pendingBrand.editing"
-            @blur="handleBrandInputBlur"
             @keyup.enter="handleBrandInputBlur"
           />
           <!-- 值 -->
@@ -200,7 +199,6 @@ const handleBrandInputBlur = () => {
                   <el-input
                     placeholder="Enter..."
                     class="h-32"
-                    @blur="handleBrandModelInputBlur(index)"
                     @keyup.enter="handleBrandModelInputBlur(index)"
                     v-model="brandModel.brandModelName"
                   />
@@ -270,5 +268,18 @@ const handleBrandInputBlur = () => {
 // 添加图标的样式
 .icon-typesadd {
   color: $branding-colours-primary;
+}
+
+// 重置 el-input 样式
+:deep(.el-input) {
+  @apply rounded-12 h-32;
+
+  .el-input__wrapper {
+    @apply rounded-12 bg-[#EAEEF4] shadow-none;
+
+    .el-input__inner {
+      @apply placeholder:text-14 placeholder:font-normal placeholder:text-[#99A0AE];
+    }
+  }
 }
 </style>

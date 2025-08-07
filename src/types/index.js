@@ -131,22 +131,24 @@
 
 /* 论坛贴文详情数据类型 */
 /**
- * @typedef {Object} ForumInfo
- * @property {string} id - 帖子 ID
- * @property {string} userId - 发帖用户 ID
- * @property {number} type - 帖子类型（0 表示普通帖）
- * @property {string} title - 帖子标题
- * @property {string} content - 帖子正文内容
- * @property {number} sort - 排序字段
- * @property {number} favouriteCount - 收藏数量
- * @property {number} commentCount - 评论数量
- * @property {number} accepted - 是否已采纳（0 表示未采纳）
- * @property {number} createTime - 创建时间（时间戳）
- * @property {number} updateTime - 更新时间（时间戳）
+ * @typedef {Object} ForumPost
+ * @property {string} id                   - 帖子唯一标识
+ * @property {string} userId               - 发布者用户 ID
+ * @property {number} type                 - 帖子类型（数字代表不同分类）
+ * @property {string} title                - 帖子标题
+ * @property {string} content              - 帖子正文内容
+ * @property {number} sort                 - 排序权重
+ * @property {number} favouriteCount       - 收藏数量
+ * @property {number} commentCount         - 评论数量
+ * @property {number} likeCount            - 点赞数量
+ * @property {number} hasFavourite         - 当前用户是否已收藏（0/1）
+ * @property {number} hasLike              - 当前用户是否已点赞（0/1）
+ * @property {number} createTime           - 创建时间（Unix 毫秒戳）
+ * @property {number} updateTime           - 更新时间（Unix 毫秒戳）
  * @property {AttachmentDto[]} attachmentDtos - 附件列表
- * @property {UserDto} userDto - 用户信息
- * @property {CommentDto} commentDto - 评论详情
- * @property {VehicleDto} vehicleDto - 关联车辆信息
+ * @property {UserDto} userDto             - 发布者信息
+ * @property {CommentDto} commentDto       - 评论相关信息（顶层占位）
+ * @property {VehicleDto} vehicleDto       - 关联车辆信息
  */
 
 /* 附件数据类型 */

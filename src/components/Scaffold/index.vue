@@ -11,6 +11,7 @@ import { onMounted, useSlots } from 'vue'
 interface PropsType {
   isLeadingVisible?: boolean
   isActionsVisible?: boolean
+  isTitleVisible?: boolean
   appBarTitle?: string
   isFooterVisible?: boolean
   contentPx?: string
@@ -30,6 +31,8 @@ withDefaults(defineProps<PropsType>(), {
   isLeadingVisible: false,
   // 是否需要 actions
   isActionsVisible: false,
+  // 是否需要标题
+  isTitleVisible: false,
   // app bar 的标题
   appBarTitle: '',
   // 是否需要底部栏
@@ -77,13 +80,26 @@ onMounted(() => {
     <!-- app bar -->
     <header class="flex h-44 items-center px-20 py-10">
       <!-- leading -->
-      <el-image :src="LeadingIcon" class="h-24 w-24" fit="cover" />
+      <el-image
+        :src="LeadingIcon"
+        class="h-24 w-24"
+        fit="cover"
+        :class="{ invisible: !isLeadingVisible }"
+      />
       <!-- title -->
-      <h1 class="h2-20px-semibold neutrals-off-black m-auto">
+      <h1
+        class="h2-20px-semibold neutrals-off-black m-auto"
+        :class="{ invisible: !isTitleVisible }"
+      >
         <strong>{{ appBarTitle }}</strong>
       </h1>
       <!-- actions -->
-      <el-image :src="TrailingIcon" class="h-24 w-24" fit="cover" />
+      <el-image
+        :src="TrailingIcon"
+        class="h-24 w-24"
+        fit="cover"
+        :class="{ invisible: !isActionsVisible }"
+      />
     </header>
     <!-- body -->
     <main :class="['flex flex-1 flex-col', contentPx, contentPy, contentGap]">

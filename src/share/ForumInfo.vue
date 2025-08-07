@@ -48,6 +48,8 @@ const handleErrorImage = () => true
     footer-display="flex items-center"
     content-py="py-8"
     app-bar-title="title"
+    :is-actions-visible="true"
+    :is-leading-visible="true"
   >
     <!-- 用户信息容器 -->
     <div class="flex gap-12">

@@ -32,6 +32,7 @@ if (id) {
 
 <template>
   <scaffold
+    :is-title-visible="true"
     app-bar-title="AI Assistant"
     footer-py="py-8"
     footer-display="flex items-center"
