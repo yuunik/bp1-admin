@@ -6,7 +6,6 @@ import routes from '@/router/routes/index.js'
 import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
-import Content from './components/Content/index.vue'
 
 import CompanyLogo from '@/assets/icons/company-logo.svg'
 import { useRoute } from 'vue-router'
@@ -84,9 +83,9 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
     <!-- content -->
     <main class="content-container">
       <!-- breadcrumb -->
-      <breadcrumb />
+      <breadcrumb class="shrink-0" />
       <!-- router view -->
-      <content class="flex-1" />
+      <router-view class="min-h-0 flex-1" />
     </main>
   </div>
 </template>
@@ -129,7 +128,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply rounded-8 flex h-full flex-1 flex-col overflow-hidden;
+    @apply rounded-8 flex h-full flex-1 flex-col;
     background-color: $neutrals-off-white;
   }
 }

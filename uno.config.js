@@ -76,6 +76,8 @@ export default defineConfig({
       'flex-col-between': 'flex flex-col justify-between',
       // 垂直居中
       'row-items-center': 'flex items-center',
+      'bg-neutrals-off-white': 'bg-[#EFF4F9]',
+      'text-neutrals-off-white': 'text-[#EFF4F9]',
     },
   ],
   theme: {

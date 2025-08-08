@@ -47,7 +47,7 @@ getObdList()
 </script>
 
 <template>
-  <section class="flex flex-col">
+  <section class="flex h-full w-full flex-col">
     <!-- OBD List Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -74,58 +74,65 @@ getObdList()
     <!-- 分割线 -->
     <el-divider />
     <!-- OBD 表格容器 -->
-    <!-- OBD 表格 -->
-    <el-table :data="tableData" class="table-container">
-      <!-- 勾选框 -->
-      <el-table-column type="selection" width="48" />
-      <!-- 设备 SN 码 -->
-      <el-table-column prop="sn" label="SN" :sortable="true" />
-      <!-- 上次使用时间 -->
-      <el-table-column prop="updateTime" label="Last Used" :sortable="true">
-        <template #default="{ row }">
-          {{ getLastUsedDate(row.updateTime) }}
-        </template>
-      </el-table-column>
-      <!-- 保修期限 -->
-      <el-table-column prop="createTime" label="Warranty End" :sortable="true">
-        <template #default="{ row }">
-          {{ getWarrantyEndDate(row.createTime) }}
-        </template>
-      </el-table-column>
-      <!-- 使用者 -->
-      <el-table-column prop="simpleUserDto?.name" label="User">
-        <template #default="{ row }">
-          {{ row.userDto?.name === '' ? 'Unnamed User' : row.userDto?.name }}
-        </template>
-      </el-table-column>
-      <!-- 操作 -->
-      <el-table-column align="center" width="48">
-        <template #default>
-          <i class="icon-more-2-line" />
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页 -->
-    <base-pagination
-      :pagination="pagination"
-      :handle-page-change="getObdList"
-    />
+    <div class="pb-38 box-border flex min-h-0 flex-1 flex-col px-32 pt-8">
+      <!-- OBD 表格 -->
+      <el-table :data="tableData" class="w-full flex-1" :fit="false">
+        <!-- 勾选框 -->
+        <el-table-column type="selection" />
+        <!-- 设备 SN 码 -->
+        <el-table-column prop="sn" label="SN" :sortable="true" />
+        <!-- 上次使用时间 -->
+        <el-table-column prop="updateTime" label="Last Used" :sortable="true">
+          <template #default="{ row }">
+            {{ getLastUsedDate(row.updateTime) }}
+          </template>
+        </el-table-column>
+        <!-- 保修期限 -->
+        <el-table-column
+          prop="createTime"
+          label="Warranty End"
+          :sortable="true"
+        >
+          <template #default="{ row }">
+            {{ getWarrantyEndDate(row.createTime) }}
+          </template>
+        </el-table-column>
+        <!-- 使用者 -->
+        <el-table-column prop="simpleUserDto?.name" label="User">
+          <template #default="{ row }">
+            {{ row.userDto?.name === '' ? 'Unnamed User' : row.userDto?.name }}
+          </template>
+        </el-table-column>
+        <!-- 操作 -->
+        <el-table-column align="center">
+          <template #default>
+            <i class="icon-more-2-line" />
+          </template>
+        </el-table-column>
+      </el-table>
+      <!-- 分页 -->
+      <base-pagination
+        :pagination="pagination"
+        :handle-page-change="getObdList"
+      />
+    </div>
   </section>
 </template>
 
 <style scoped lang="scss">
-.obd-list-container {
-  // 搜索框
-  .obd-list-search {
-    // 输入框样式重置
-    :deep(.el-input__wrapper) {
-      box-shadow: none;
-      background-color: transparent;
-    }
+// 输入框样式重置
+.obd-list-search {
+  :deep(.el-input__wrapper) {
+    box-shadow: none;
+    background-color: transparent;
   }
 }
 
-.table-container {
-  flex: 1 1 300px;
+:deep(.el-table__header) {
+  @apply w-full!;
+}
+
+:deep(.el-table__body) {
+  @apply w-full!;
 }
 </style>

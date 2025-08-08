@@ -30,7 +30,7 @@ const { pagination, handlePageChange } = defineProps({
 // 处理分页的变化
 const onPageChange = useDebounceFn((): void => {
   // 是否超出总页数的校验
-  if (pagination.currentPage.value > pagination.total.value) {
+  if (pagination.currentPage > pagination.total) {
     // 重置当前页数
     return
   }
@@ -73,6 +73,7 @@ const onPageChange = useDebounceFn((): void => {
 <style scoped lang="scss">
 // 分页器样式重置
 .pagination-container {
+  // 输入框
   :deep(.el-input) {
     width: 40px;
     height: 24px;
@@ -81,6 +82,16 @@ const onPageChange = useDebounceFn((): void => {
     .el-input__wrapper {
       border-radius: 8px;
     }
+  }
+
+  // 上一页
+  :deep(.btn-prev) {
+    background-color: transparent;
+  }
+
+  // 下一页
+  :deep(.btn-next) {
+    background-color: transparent;
   }
 }
 </style>

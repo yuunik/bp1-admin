@@ -9,6 +9,12 @@ body {
 /* </editor-fold> */
 
 /* <editor-fold desc="html 标签样式重置"> */
+html,
+body,
+#app {
+  @apply w-full h-full;
+}
+
 h1,
 h2,
 h3,

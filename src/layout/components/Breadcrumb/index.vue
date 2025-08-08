@@ -1,15 +1,20 @@
 <script setup>
 import { onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { ArrowRight } from '@element-plus/icons-vue'
 
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent } from '@/utils/constantsUtil.js'
 
 import CompanyLogo from '@/assets/icons/logo.svg'
 
+// 路由
 const route = useRoute()
+
+// 面包屑列表
 const breadcrumbList = ref(route.matched.map((item) => item))
 
+// 更新面包屑
 emitter.on(EmitterEvent.UPDATE_BREADCRUMB_LIST, (val) => {
   if (route.path.includes('/app-configuration/brand-model/manage/')) {
     // 车辆品牌管理模块详情, 修改面包屑, 显示车辆品牌名称
@@ -21,14 +26,6 @@ emitter.on(EmitterEvent.UPDATE_BREADCRUMB_LIST, (val) => {
   }
 })
 
-// 路由变化时, 更新面包屑
-watch(
-  () => route.matched,
-  (val) => {
-    breadcrumbList.value = val
-  },
-)
-
 onBeforeUnmount(() => {
   emitter.off(EmitterEvent.UPDATE_BREADCRUMB_LIST)
 })
@@ -36,8 +33,8 @@ onBeforeUnmount(() => {
 
 <template>
   <el-breadcrumb
-    separator=">"
-    class="heading-body-body-12px-medium box-border p-[24px_32px_16px_32px]"
+    :separator-icon="ArrowRight"
+    class="heading-body-body-12px-medium box-border px-32 pb-16 pt-24"
   >
     <el-breadcrumb-item>
       <el-image :src="CompanyLogo" alt="CompanyLogo" />

@@ -30,8 +30,6 @@ const loginForm = reactive({
 const handleLogin = useDebounceFn(async () => {
   try {
     const res = await login(loginForm)
-    // 登录成功, 实现跳转
-    ElMessage.success('Login success')
     // 路由跳转
     await router.push('/')
   } catch (error) {

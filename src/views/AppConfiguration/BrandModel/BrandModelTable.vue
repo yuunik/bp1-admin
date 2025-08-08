@@ -140,7 +140,7 @@ getBrandModelList()
                 alt="brand icon"
               >
                 <template #error>
-                  <i class="i-ep-picture" />
+                  <i class="i-ep:picture" />
                 </template>
               </el-image>
               <el-text>{{ row.brand }}</el-text>
