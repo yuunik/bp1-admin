@@ -97,7 +97,7 @@ const handleBrandInputBlur = () => {
 </script>
 
 <template>
-  <section class="h-full">
+  <section class="flex h-full flex-col">
     <!-- header -->
     <div class="flex-between px-32 py-16">
       <h3 class="heading-h2-20px-medium neutrals-off-black">Create Brand</h3>
@@ -111,7 +111,7 @@ const handleBrandInputBlur = () => {
     <!-- divider -->
     <el-divider />
     <!-- content -->
-    <div>
+    <el-scrollbar class="min-h-0 flex-1" height="100px">
       <!-- 品牌信息 -->
       <div class="flex gap-24 px-32 pb-24 pt-16">
         <!-- 品牌 logo -->
@@ -229,7 +229,7 @@ const handleBrandInputBlur = () => {
           <template #default>New Item</template>
         </el-button>
       </div>
-    </div>
+    </el-scrollbar>
   </section>
 </template>
 

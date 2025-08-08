@@ -4,9 +4,7 @@ import { reactive } from 'vue'
 import {
   getLiveWarningDataListApi,
   modifyLivingDataWarningDataApi,
-  modifyPredictionDataApi,
 } from '@/apis/appApi.js'
-import { ElMessage } from 'element-plus'
 
 // 实时预警数据列表
 const liveWarningDataList = reactive([])
@@ -86,8 +84,6 @@ const handleEditLiveDataWarningData = async (index) => {
     obdKey: liveWarningDataList[index + 1].obdKey,
     unit: liveWarningDataList[index].unit,
   })
-  // 提示,  编辑成功
-  ElMessage.success('Edit Success')
   // 关闭编辑状态
   liveWarningDataList[index].editing = false
   liveWarningDataList[index + 1].editing = false
@@ -99,15 +95,16 @@ getLiveWarningDataList()
 
 <template>
   <!-- 实时预警数据列表 -->
-  <div class="box-border flex flex-1 flex-col px-32">
+  <div class="box-border flex flex-col px-32">
     <el-table
       :data="liveWarningDataList"
       :row-class-name="getRowClass"
       :span-method="handleTableSpan"
-      class="flex-[1_1_430px]"
+      class="flex-1"
+      :fit="false"
     >
       <!-- 序号 -->
-      <el-table-column type="index" label="No." min-width="7%" width="60">
+      <el-table-column type="index" label="No." min-width="7%">
         <template #default="{ row, $index }">
           <!-- 描述 -->
           <el-text v-show="row.name !== 'objKey'">
@@ -261,14 +258,5 @@ getLiveWarningDataList()
 
 :deep(.el-table__row.logical-row-end:hover + .el-table__row.logical-row-start) {
   background-color: transparent !important;
-}
-
-// 重置 el-input 的样式
-:deep(.el-input) {
-  @apply rounded-12 h-32;
-
-  .el-input__wrapper {
-    @apply rounded-12 bg-[#EAEEF480];
-  }
 }
 </style>

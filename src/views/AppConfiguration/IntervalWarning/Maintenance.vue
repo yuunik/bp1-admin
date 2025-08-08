@@ -1,16 +1,15 @@
 <script setup>
-import { reactive, toRefs } from 'vue'
+import { reactive } from 'vue'
 
 import {
   getMaintenanceListApi,
   modifyMaintenanceDataApi,
 } from '@/apis/appApi.js'
+import { getFormatNumber, getFullPath } from '@/utils/dataFormattedUtil.js'
+import useFileUpload from '@/composables/useFileUpload.js'
 
 // 保养数据默认图标
 import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
-import { getFormatNumber, getFullPath } from '@/utils/dataFormattedUtil.js'
-import useFileUpload from '@/composables/useFileUpload.js'
-import { ElMessage } from 'element-plus'
 
 // 保养数据
 const maintenanceList = reactive([])
@@ -48,8 +47,6 @@ const handleEditMaintenanceData = async (row) => {
     row.logo = row.localLogo
   }
   await modifyMaintenanceDataApi(row)
-  // 提示
-  ElMessage.success('Edit Success')
   row.editing = false
 }
 
@@ -66,9 +63,9 @@ getMaintenanceList()
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col px-32">
+  <div class="flex flex-col px-32">
     <!-- 保养数据表格 -->
-    <el-table :data="maintenanceList">
+    <el-table :data="maintenanceList" class="flex-1" :fit="false">
       <!-- 序号 -->
       <el-table-column type="index" label="No." :sortable="true" />
       <!-- 图标 -->
@@ -176,7 +173,7 @@ getMaintenanceList()
     <el-button
       type="primary"
       text
-      class="mt-8 w-fit"
+      class="my-8 w-fit"
       @click="addNewMaintenanceItem"
     >
       <template #icon>
@@ -187,13 +184,4 @@ getMaintenanceList()
   </div>
 </template>
 
-<style scoped lang="scss">
-// 重置 el-input 的样式
-:deep(.el-input) {
-  @apply rounded-12 h-32;
-
-  .el-input__wrapper {
-    @apply rounded-12 bg-[#EAEEF480];
-  }
-}
-</style>
+<style scoped lang="scss"></style>

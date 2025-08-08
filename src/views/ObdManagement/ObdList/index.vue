@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination/index.vue'
@@ -24,21 +23,15 @@ const pagination = reactive({
 // 获取OBD 列表数据
 const getObdList = useDebounceFn(async () => {
   loading.value = true
-  const { code, data, msg, count } = await getOBDListApi({
+  const { data, count } = await getOBDListApi({
     searchKey: searchText.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
-  if (code === 0) {
-    // 提示成功信息
-    ElMessage.success('Get OBD List Success')
-    // 更新分页数据
-    pagination.total = count
-    // 更新表格数据
-    Object.assign(tableData, data)
-  } else {
-    ElMessage.error(msg)
-  }
+  // 更新分页数据
+  pagination.total = count
+  // 更新表格数据
+  Object.assign(tableData, data)
   loading.value = false
 }, 500)
 
@@ -47,7 +40,7 @@ getObdList()
 </script>
 
 <template>
-  <section class="flex h-full w-full flex-col">
+  <section class="flex h-full flex-col">
     <!-- OBD List Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -76,7 +69,7 @@ getObdList()
     <!-- OBD 表格容器 -->
     <div class="pb-38 box-border flex min-h-0 flex-1 flex-col px-32 pt-8">
       <!-- OBD 表格 -->
-      <el-table :data="tableData" class="w-full flex-1" :fit="false">
+      <el-table :data="tableData" class="flex-1" :fit="false">
         <!-- 勾选框 -->
         <el-table-column type="selection" />
         <!-- 设备 SN 码 -->

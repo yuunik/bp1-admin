@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType, toRefs } from 'vue'
+import { PropType, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
 // 定义分页数据类型
@@ -14,6 +14,8 @@ interface PaginationPropsType {
   pagination: PaginationType
   handlePageChange: (currentPage: number, pageSize: number) => void
 }
+
+const currentPageDisplay = computed(() => pagination.currentPage + 1)
 
 // 申明接收的数据
 const { pagination, handlePageChange } = defineProps({
@@ -51,7 +53,7 @@ const onPageChange = useDebounceFn((): void => {
   >
     <!-- 输入框 -->
     <el-input
-      v-model="pagination.currentPage"
+      v-model="currentPageDisplay"
       class="neutrals-grey-4"
       @change="onPageChange"
     />

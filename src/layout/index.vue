@@ -1,6 +1,7 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { computed, provide } from 'vue'
+import { useRoute } from 'vue-router'
 
 import routes from '@/router/routes/index.js'
 import { useUserStore } from '@/store/index.js'
@@ -8,7 +9,6 @@ import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
 
 import CompanyLogo from '@/assets/icons/company-logo.svg'
-import { useRoute } from 'vue-router'
 
 const userStore = useUserStore()
 // 获取用户相关信息

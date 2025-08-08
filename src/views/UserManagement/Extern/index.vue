@@ -7,7 +7,6 @@ import { getMerchantListApi } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
 import { useDebounceFn } from '@vueuse/core'
-import { ElMessage } from 'element-plus'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -32,8 +31,6 @@ const getMerchantList = useDebounceFn(async () => {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
-  // 提示
-  ElMessage.success('Get Merchant List Success')
   // 记录总数
   pagination.total = count
   // 记录修理厂列表
@@ -48,7 +45,7 @@ getMerchantList()
 </script>
 
 <template>
-  <section class="flex flex-col">
+  <section class="flex h-full flex-col">
     <!-- Extern Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -69,23 +66,23 @@ getMerchantList()
         />
       </el-tabs>
       <!-- 搜索栏 -->
-      <div class="flex flex-between">
+      <div class="flex-between flex">
         <!-- 条件搜索 -->
         <el-input
           v-model="searchKey"
           @input="getMerchantList"
           placeholder="Search..."
-          class="mt-16 extern-search"
+          class="extern-search mt-16"
         >
           <template #prefix>
             <!-- 前置搜索图标 -->
-            <i class="icon-typessearch w-16 h-16" />
+            <i class="icon-typessearch h-16 w-16" />
           </template>
         </el-input>
         <!-- 状态搜索 -->
         <el-dropdown :hide-on-click="false">
           <span
-            class="rounded-full flex gap-5 border-1 border-[#CACFD8] border-solid px-8 py-4 neutrals-grey-3 cursor-pointer"
+            class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
           >
             Status
             <i class="icon-typesdropdown" />
@@ -110,9 +107,11 @@ getMerchantList()
     <!-- workshop 页 -->
     <template v-if="activeTab === UserManagementTab.Workshop">
       <!-- 表格容器 -->
-      <div class="px-32 pt-16 pb-38 flex-1 flex flex-col flex-between">
+      <div
+        class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
+      >
         <!-- 修理厂列表 -->
-        <el-table :data="merchantList" class="h-full" height="100%">
+        <el-table :data="merchantList" class="flex-1" :fit="false">
           <!-- 勾选框 -->
           <el-table-column type="selection" min-width="6%" />
           <!-- 修理厂名称 -->
@@ -129,7 +128,7 @@ getMerchantList()
                 v-if="row.logo"
                 fit="cover"
                 alt="merchant logo"
-                class="w-14 h-14 mr-8"
+                class="mr-8 h-14 w-14"
               />
               <!-- 修理厂名称 -->
               <el-text>{{ row?.name ?? '-' }}</el-text>
@@ -204,5 +203,13 @@ getMerchantList()
   &::before {
     vertical-align: middle;
   }
+}
+
+:deep(.el-table__header) {
+  @apply w-full!;
+}
+
+:deep(.el-table__body) {
+  @apply w-full!;
 }
 </style>

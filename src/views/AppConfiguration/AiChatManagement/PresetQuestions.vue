@@ -22,15 +22,9 @@ const handleTabChange = (tab) => (activeTab.value = tab)
 
 // 获取 ai 问题列表
 const getAiQuestionList = async () => {
-  const { code, data, msg } = await getAiQuestionListApi()
-  if (code === 0) {
-    // 获取成功
-    ElMessage.success('Get AI Question List Success')
-    // 赋值
-    Object.assign(aiQuestionList, data)
-  } else {
-    ElMessage.error(msg)
-  }
+  const { data } = await getAiQuestionListApi()
+  // 赋值
+  Object.assign(aiQuestionList, data)
 }
 
 // 输入框引用
@@ -151,12 +145,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="h-full px-32 pt-16 pb-38">
+  <div class="pb-38 flex h-full flex-col px-32 pt-16">
     <!-- ai 问题表格 -->
     <el-table
       :data="aiQuestionList"
       :span-method="handleTableSpan"
-      class="w-full"
+      class="flex-1"
+      :fit="false"
     >
       <!-- 序号 -->
       <el-table-column
@@ -246,12 +241,12 @@ onBeforeUnmount(() => {
           <template v-else>
             <!-- 编辑 -->
             <i
-              class="icon-edit-line w-16 h-16 mr-8 cursor-pointer"
+              class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
               @click="handleEditQuestionStatusChange(row)"
             />
             <!-- 删除 -->
             <i
-              class="icon-delete-bin-line w-16 h-16 cursor-pointer"
+              class="icon-delete-bin-line h-16 w-16 cursor-pointer"
               @click="handleDeleteQuestion(row?.id)"
             />
           </template>
@@ -259,7 +254,12 @@ onBeforeUnmount(() => {
       </el-table-column>
     </el-table>
     <!-- 添加按钮 -->
-    <el-button type="primary" text @click="handleAddQuestion">
+    <el-button
+      type="primary"
+      text
+      @click="handleAddQuestion"
+      class="mt-8 w-fit"
+    >
       <template #icon>
         <i class="icon-typesadd" />
       </template>
@@ -268,4 +268,12 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.el-table__header) {
+  @apply w-full!;
+}
+
+:deep(.el-table__body) {
+  @apply w-full!;
+}
+</style>

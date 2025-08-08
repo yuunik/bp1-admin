@@ -29,7 +29,7 @@ const loginForm = reactive({
 // 用户登录
 const handleLogin = useDebounceFn(async () => {
   try {
-    const res = await login(loginForm)
+    await login(loginForm)
     // 路由跳转
     await router.push('/')
   } catch (error) {

@@ -46,7 +46,7 @@ const tabMap = Object.freeze({
     <el-divider class="diver" />
     <!-- tab 内容区 -->
     <keep-alive>
-      <component :is="tabMap[activeTab]" />
+      <component :is="tabMap[activeTab]" class="min-h-0 flex-1" />
     </keep-alive>
   </section>
 </template>
