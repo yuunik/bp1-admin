@@ -17,7 +17,7 @@ const drag = {
   },
   beforeUnmount(el) {
     handleElHide(el)
-  }
+  },
 }
 
 async function handleElShow(el) {
@@ -29,11 +29,13 @@ async function handleElShow(el) {
   }
   const header = el.querySelector('.el-dialog__header')
   const dialogMask = el.querySelector('.el-overlay')
-  dialogMask.style.cssText += "overflow: hidden;"
+  dialogMask.style.cssText += 'overflow: hidden;'
   header.style.cursor = 'move'
   let dragStatus = false
-  let data = { // 数据源，不变部分为：window信息、dialog信息、mouse初始值信息，可变部分为：拖拽坐标位移
-    window: { // window信息
+  let data = {
+    // 数据源，不变部分为：window信息、dialog信息、mouse初始值信息，可变部分为：拖拽坐标位移
+    window: {
+      // window信息
       width: 0,
       height: 0,
     },
@@ -42,16 +44,18 @@ async function handleElShow(el) {
       y: 0,
       width: 0,
       height: 0,
-      marginTop: ""
+      marginTop: '',
     }, // dialog信息
-    mouse: { // 鼠标初始信息
+    mouse: {
+      // 鼠标初始信息
       x: 0,
-      y: 0
+      y: 0,
     },
-    drag: { // 拖拽过程信息
+    drag: {
+      // 拖拽过程信息
       x: 0,
-      y: 0
-    }
+      y: 0,
+    },
   }
   // 所有的监听只为了修改data数据
   header.addEventListener('mousedown', mouseDown)
@@ -63,14 +67,22 @@ async function handleElShow(el) {
     if (data.mouse.x - data.drag.x >= data.dialog.x) {
       data.drag.x = data.mouse.x - data.dialog.x
     }
-    if (data.drag.x - data.mouse.x >= data.window.width - (data.dialog.x + data.dialog.width)) {
-      data.drag.x = data.mouse.x + data.window.width - data.dialog.x - data.dialog.width
+    if (
+      data.drag.x - data.mouse.x >=
+      data.window.width - (data.dialog.x + data.dialog.width)
+    ) {
+      data.drag.x =
+        data.mouse.x + data.window.width - data.dialog.x - data.dialog.width
     }
     if (data.mouse.y - data.drag.y >= data.dialog.y) {
       data.drag.y = data.mouse.y - data.dialog.y
     }
-    if (data.drag.y - data.mouse.y >= data.window.height - (data.dialog.y + data.dialog.height)) {
-      data.drag.y = data.mouse.y + data.window.height - data.dialog.y - data.dialog.height
+    if (
+      data.drag.y - data.mouse.y >=
+      data.window.height - (data.dialog.y + data.dialog.height)
+    ) {
+      data.drag.y =
+        data.mouse.y + data.window.height - data.dialog.y - data.dialog.height
     }
     setPosition()
   }
@@ -88,13 +100,13 @@ async function handleElShow(el) {
     }
     data.window = {
       width: document.body.clientWidth,
-      height: document.body.clientHeight
+      height: document.body.clientHeight,
     }
     data.dialog = dialog.getBoundingClientRect()
     data.dialog.marginTop = window.getComputedStyle(dialog).marginTop
     data.mouse = {
       x: e.clientX,
-      y: e.clientY
+      y: e.clientY,
     }
     dragStatus = true
   }
@@ -102,14 +114,14 @@ async function handleElShow(el) {
     if (dragStatus) {
       data.drag = {
         x: e.clientX,
-        y: e.clientY
+        y: e.clientY,
       }
-      dialogMask.style.userSelect = "none"
+      dialogMask.style.userSelect = 'none'
       handlePosition()
-    }  
+    }
   }
   function mouseUp(e) {
-    dialogMask.style.userSelect = "auto"
+    dialogMask.style.userSelect = 'auto'
     dragStatus = false
   }
   function sizeChange(e) {

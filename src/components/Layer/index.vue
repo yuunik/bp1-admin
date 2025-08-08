@@ -28,14 +28,14 @@ export default defineComponent({
         return {
           show: false,
           title: '',
-          showButton: false
+          showButton: false,
         }
       },
-      required: true
-    }
+      required: true,
+    },
   },
   directives: {
-    drag
+    drag,
   },
   setup(props, ctx) {
     function confirm() {
@@ -46,12 +46,10 @@ export default defineComponent({
     }
     return {
       confirm,
-      close
+      close,
     }
-  }
+  },
 })
 </script>
 
-<style lang="scss" scoped>
-  
-</style>
+<style lang="scss" scoped></style>

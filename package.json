@@ -7,10 +7,14 @@
     "local": "vite --mode .env.local",
     "dev": "vite --mode dev",
     "pro": "vite --mode pro",
-    "build:dev": "vite build --mode dev",
-    "build:pro": "vite build --mode pro",
-    "build:local": "vite build --mode .env.local",
-    "serve": "vite preview"
+    "build": "vite build --mode pro",
+    "preview": "vite preview",
+    "lint": "eslint src",
+    "fix": "eslint src --fix",
+    "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\"",
+    "lint:eslint": "eslint src/**/*.{ts,vue} --cache --fix",
+    "lint:style": "stylelint src/**/*.{css,scss,vue} --cache --fix",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",
@@ -41,6 +45,7 @@
     "eslint-plugin-prettier": "^5.5.3",
     "eslint-plugin-vue": "^10.3.0",
     "globals": "^16.3.0",
+    "husky": "^8.0.0",
     "postcss": "^8.5.6",
     "postcss-html": "^1.8.0",
     "postcss-scss": "^4.0.9",

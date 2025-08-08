@@ -7,10 +7,10 @@ const directive = {
   mounted(el, binding) {
     if (typeof binding.value !== 'function') {
       console.error('callback must be a function')
-      return;
+      return
     }
     let timer = null
-    el.__handleClick__ = function(e) {
+    el.__handleClick__ = function (e) {
       if (timer) {
         clearInterval(timer)
       }
@@ -22,7 +22,7 @@ const directive = {
   },
   beforeUnmount(el) {
     el.removeEventListener('click', el.__handleClick__)
-  }
+  },
 }
 
 export default directive
