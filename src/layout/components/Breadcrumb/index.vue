@@ -38,6 +38,7 @@ onBeforeUnmount(() => {
   <el-breadcrumb
     separator=">"
     class="heading-body-body-12px-medium box-border p-[24px_32px_16px_32px]"
+    v-if="route.path !== '/dashboard'"
   >
     <el-breadcrumb-item>
       <el-image :src="CompanyLogo" alt="CompanyLogo" />
