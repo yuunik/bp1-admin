@@ -3,12 +3,14 @@
  * @description 用户登录模块的接口文件
  */
 
-import { md5Encrypt } from '@/utils/md5Util.js'
 import request from '@/utils/request.js'
+import { md5Encrypt } from '@/utils/md5Util.js'
+import { useAuthToken } from '@/composables/useAuthToken.js'
 
 // 统一管理 API
 const LoginAPI = Object.freeze({
   LOGIN: '/manager/login',
+  LOGOUT: '/manager/out',
 })
 
 /**
@@ -25,6 +27,18 @@ export const loginApi = (loginParams) => {
   data.append('password', password)
   return request({
     url: LoginAPI.LOGIN,
+    method: 'POST',
+    data,
+  })
+}
+
+export const logoutApi = () => {
+  const data = new FormData()
+  // 获取 token
+  const { getToken } = useAuthToken()
+  data.append('token', getToken())
+  return request({
+    url: LoginAPI.LOGOUT,
     method: 'POST',
     data,
   })
