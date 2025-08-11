@@ -27,7 +27,7 @@ const handleTabChange = (tab) => (activeTab.value = tab)
       {{ RouteName.INTERVAL_WARNING }}
     </h3>
     <!-- 内容 -->
-    <div class="flex flex-1 flex-col">
+    <div class="flex min-h-0 flex-1 flex-col">
       <!-- tab 栏-->
       <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="px-32">
         <el-tab-pane
@@ -43,10 +43,27 @@ const handleTabChange = (tab) => (activeTab.value = tab)
       <keep-alive>
         <component
           :is="tabArray.find((tab) => tab.key === activeTab).component"
+          class="min-h-0 flex-1"
         />
       </keep-alive>
     </div>
   </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 重置 el-input 的样式
+:deep(.el-input) {
+  @apply rounded-12 h-32;
+
+  .el-input__wrapper {
+    @apply rounded-12 bg-[#EAEEF480];
+  }
+}
+:deep(.el-table__header) {
+  @apply w-full!;
+}
+
+:deep(.el-table__body) {
+  @apply w-full!;
+}
+</style>

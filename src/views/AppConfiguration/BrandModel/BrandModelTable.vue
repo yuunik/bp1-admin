@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
@@ -17,7 +16,7 @@ const tableData = reactive([])
 
 // 分页数据
 const pagination = reactive({
-  currentPage: 1,
+  currentPage: 0,
   pageSize: 15,
   total: 0,
 })
@@ -25,21 +24,15 @@ const pagination = reactive({
 // 获取Brand Model 列表数据
 const getBrandModelList = useDebounceFn(async () => {
   loading.value = true
-  const { code, data, msg, count } = await getBrandModalListApi({
+  const { data, count } = await getBrandModalListApi({
     searchKey: searchText.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
-  if (code === 0) {
-    // 提示成功信息
-    ElMessage.success('Get Brand Model List Success')
-    // 更新分页数据
-    pagination.total = count
-    // 更新表格数据
-    Object.assign(tableData, data)
-  } else {
-    ElMessage.error(msg)
-  }
+  // 更新分页数据
+  pagination.total = count
+  // 更新表格数据
+  Object.assign(tableData, data)
   loading.value = false
 }, 500)
 
@@ -56,7 +49,7 @@ getBrandModelList()
 </script>
 
 <template>
-  <section class="brand-model-container">
+  <section class="flex h-full flex-col">
     <!-- Brand Model Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -109,15 +102,15 @@ getBrandModelList()
     <!-- 分割线 -->
     <el-divider />
     <!-- Brand Model 表格容器 -->
-    <div class="table-container">
+    <div class="pb-38 box-border flex min-h-0 flex-1 flex-col px-32 pt-8">
       <!-- Brand Model 表格 -->
       <el-table
-        class="brand-model-table"
+        class="min-h-0 flex-1"
         :data="tableData"
-        height="100%"
         :loading="loading"
         @row-click="viewVehicleDetail"
         row-class-name="clickable-row"
+        :fit="false"
       >
         <!-- 勾选框 -->
         <el-table-column type="selection" min-width="6%" />
@@ -140,7 +133,7 @@ getBrandModelList()
                 alt="brand icon"
               >
                 <template #error>
-                  <i class="i-ep-picture" />
+                  <i class="i-ep:picture" />
                 </template>
               </el-image>
               <el-text>{{ row.brand }}</el-text>
@@ -155,7 +148,7 @@ getBrandModelList()
           min-width="19%"
         >
           <template #default="{ row }">
-            <span>{{ row?.vehicleModelDtos?.length || 0 }}</span>
+            <span>{{ row.vehicleModelDtos?.length || 0 }}</span>
           </template>
         </el-table-column>
         <!-- 状态: 月姐说了, 取 isDelete , 0 代表激活, 1 代表禁用 -->
@@ -189,41 +182,31 @@ getBrandModelList()
 </template>
 
 <style scoped lang="scss">
-.brand-model-container {
-  width: 100%;
-  height: 100%;
-  // 使用视口高度
-  display: flex;
-  flex-direction: column;
-
-  // 搜索框
-  .brand-model-search {
-    // 输入框样式重置
-    :deep(.el-input__wrapper) {
-      box-shadow: none;
-      background-color: transparent;
-    }
+// 搜索框
+.brand-model-search {
+  // 输入框样式重置
+  :deep(.el-input__wrapper) {
+    box-shadow: none;
+    background-color: transparent;
   }
+}
+:deep(.el-table) {
+  background-color: rgb(252, 252, 252);
+}
 
-  // 表格容器
-  .table-container {
-    padding: 8px 32px 38px;
-    flex: 1;
-    min-height: 0; // 确保 flex 子项可以收缩
-    display: flex;
-    flex-direction: column;
+:deep(th) {
+  background-color: rgb(252, 252, 252);
+}
 
-    :deep(.el-table) {
-      background-color: rgb(252, 252, 252);
-    }
+:deep(tr) {
+  background-color: rgb(252, 252, 252);
+}
 
-    :deep(th) {
-      background-color: rgb(252, 252, 252);
-    }
+:deep(.el-table__header) {
+  @apply w-full!;
+}
 
-    :deep(tr) {
-      background-color: rgb(252, 252, 252);
-    }
-  }
+:deep(.el-table__body) {
+  @apply w-full!;
 }
 </style>

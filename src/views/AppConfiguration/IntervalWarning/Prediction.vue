@@ -1,12 +1,11 @@
 <script setup>
 import { reactive } from 'vue'
-import { ElMessage } from 'element-plus'
 
 import { getPredictionListApi, modifyPredictionDataApi } from '@/apis/appApi.js'
-
-import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
 import { getFullPath } from '@/utils/dataFormattedUtil.js'
 import useFileUpload from '@/composables/useFileUpload.js'
+
+import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
 
 // 预测数据列表
 const predictionList = reactive([])
@@ -45,7 +44,6 @@ const handleEditPredictionData = async (row) => {
     row.logo = row.localLogo
   }
   await modifyPredictionDataApi(row)
-  ElMessage.success('Edit Success')
   row.editing = false
 }
 
@@ -60,8 +58,8 @@ getPredictionList()
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col px-32">
-    <el-table :data="predictionList">
+  <div class="box-border flex flex-col px-32">
+    <el-table :data="predictionList" class="flex-1" :fit="false">
       <!-- 序号 -->
       <el-table-column type="index" label="No." />
       <!-- 图标 -->
@@ -143,12 +141,11 @@ getPredictionList()
         </template>
       </el-table-column>
     </el-table>
-
     <!-- 新增按钮 -->
     <el-button
       type="primary"
       text
-      class="mt-8 w-fit"
+      class="my-8 w-fit"
       @click="addNewPredictionItem"
     >
       <template #icon>
@@ -159,11 +156,4 @@ getPredictionList()
   </div>
 </template>
 
-<style scoped lang="scss">
-:deep(.el-input) {
-  @apply rounded-12 h-32;
-  .el-input__wrapper {
-    @apply rounded-12 bg-[#EAEEF480];
-  }
-}
-</style>
+<style scoped lang="scss"></style>

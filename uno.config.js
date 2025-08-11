@@ -34,7 +34,7 @@ export default defineConfig({
     [/^hc([\.\d]+)$/, ([_, num]) => ({ height: `calc(100% - ${num}px)` })],
     [/^wc([\.\d]+)$/, ([_, num]) => ({ width: `calc(100% - ${num}px)` })],
     // 菜单栏未折叠宽度
-    ['wb-menu-width', { width: '250px' }],
+    ['wb-menu-width', { width: '184px' }],
     // 菜单栏未折叠宽度
     ['wf-menu-width', { width: '64px' }],
     // 默认盒子阴影
@@ -47,7 +47,7 @@ export default defineConfig({
         flexShrink: +grow, // grow 和 shrink 设为相同，保持对称
         flexBasis: `${basis}px`,
       }),
-    ]
+    ],
   ],
   // 自定义属性 一个属性可以对应多个 unocss 类值
   shortcuts: [
@@ -76,6 +76,8 @@ export default defineConfig({
       'flex-col-between': 'flex flex-col justify-between',
       // 垂直居中
       'row-items-center': 'flex items-center',
+      'bg-neutrals-off-white': 'bg-[#EFF4F9]',
+      'text-neutrals-off-white': 'text-[#EFF4F9]',
     },
   ],
   theme: {

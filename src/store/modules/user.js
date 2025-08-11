@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
-import { loginApi } from '@/apis/loginApi.js'
+import { loginApi, logoutApi } from '@/apis/loginApi.js'
 import { useLocalStorage } from '@vueuse/core'
 
 const useUserStore = defineStore('user', () => {
@@ -11,6 +11,8 @@ const useUserStore = defineStore('user', () => {
   const isLoading = ref(false) // 登录状态
 
   // actions
+
+  // 用户登录
   const login = async (email, password) => {
     isLoading.value = true
     const { code, data, msg } = await loginApi(email, password)
@@ -30,6 +32,26 @@ const useUserStore = defineStore('user', () => {
     }
   }
 
+  // 用户登出
+  const logout = async () => {
+    const { code, msg } = await logoutApi()
+    if (code === 0) {
+      // 清除 token 信息
+      token.value = ''
+      // 清除用户信息
+      userInfo.value = {}
+      return 'logout success'
+    } else {
+      return Promise.reject(new Error(msg))
+    }
+  }
+
+  // 清除用户信息
+  const clearInfo = () => {
+    token.value = ''
+    userInfo.value = {}
+  }
+
   // getters
   const username = computed(() => userInfo.value?.name || '') // 用户名字
   const userRole = computed(() => userInfo.value?.role || 'Admin') // 用户角色户令牌
@@ -43,6 +65,8 @@ const useUserStore = defineStore('user', () => {
     isLoading,
     // actions
     login,
+    logout,
+    clearInfo,
     // getters
     username,
     userRole,

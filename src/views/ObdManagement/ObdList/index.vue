@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination/index.vue'
@@ -24,21 +23,15 @@ const pagination = reactive({
 // 获取OBD 列表数据
 const getObdList = useDebounceFn(async () => {
   loading.value = true
-  const { code, data, msg, count } = await getOBDListApi({
+  const { data, count } = await getOBDListApi({
     searchKey: searchText.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
-  if (code === 0) {
-    // 提示成功信息
-    ElMessage.success('Get OBD List Success')
-    // 更新分页数据
-    pagination.total = count
-    // 更新表格数据
-    Object.assign(tableData, data)
-  } else {
-    ElMessage.error(msg)
-  }
+  // 更新分页数据
+  pagination.total = count
+  // 更新表格数据
+  Object.assign(tableData, data)
   loading.value = false
 }, 500)
 
@@ -47,7 +40,7 @@ getObdList()
 </script>
 
 <template>
-  <section class="obd-list-container">
+  <section class="flex h-full flex-col">
     <!-- OBD List Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -61,38 +54,28 @@ getObdList()
       <!-- 搜索栏 -->
       <el-input
         placeholder="Search..."
-        class="mt-16 obd-list-search"
+        class="obd-list-search mt-16"
         v-model="searchText"
         @input="getObdList"
       >
         <template #prefix>
           <!-- 前置搜索图标 -->
-          <i class="icon-typessearch w-16 h-16" />
+          <i class="icon-typessearch h-16 w-16" />
         </template>
       </el-input>
     </div>
     <!-- 分割线 -->
     <el-divider />
     <!-- OBD 表格容器 -->
-    <div class="table-container">
+    <div class="pb-38 box-border flex min-h-0 flex-1 flex-col px-32 pt-8">
       <!-- OBD 表格 -->
-      <el-table class="obd-list-table" :data="tableData" height="100%">
+      <el-table :data="tableData" class="flex-1" :fit="false">
         <!-- 勾选框 -->
-        <el-table-column type="selection" min-width="6%" />
+        <el-table-column type="selection" />
         <!-- 设备 SN 码 -->
-        <el-table-column
-          prop="sn"
-          label="SN"
-          :sortable="true"
-          min-width="26%"
-        />
+        <el-table-column prop="sn" label="SN" :sortable="true" />
         <!-- 上次使用时间 -->
-        <el-table-column
-          prop="updateTime"
-          label="Last Used"
-          :sortable="true"
-          min-width="25%"
-        >
+        <el-table-column prop="updateTime" label="Last Used" :sortable="true">
           <template #default="{ row }">
             {{ getLastUsedDate(row.updateTime) }}
           </template>
@@ -102,24 +85,19 @@ getObdList()
           prop="createTime"
           label="Warranty End"
           :sortable="true"
-          min-width="18%"
         >
           <template #default="{ row }">
             {{ getWarrantyEndDate(row.createTime) }}
           </template>
         </el-table-column>
         <!-- 使用者 -->
-        <el-table-column
-          prop="simpleUserDto?.name"
-          label="User"
-          min-width="19%"
-        >
+        <el-table-column prop="simpleUserDto?.name" label="User">
           <template #default="{ row }">
             {{ row.userDto?.name === '' ? 'Unnamed User' : row.userDto?.name }}
           </template>
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column min-width="6%" align="center">
+        <el-table-column align="center">
           <template #default>
             <i class="icon-more-2-line" />
           </template>
@@ -135,25 +113,19 @@ getObdList()
 </template>
 
 <style scoped lang="scss">
-.obd-list-container {
-  @apply flex flex-col;
-
-  // 搜索框
-  .obd-list-search {
-    // 输入框样式重置
-    :deep(.el-input__wrapper) {
-      box-shadow: none;
-      background-color: transparent;
-    }
+// 输入框样式重置
+.obd-list-search {
+  :deep(.el-input__wrapper) {
+    box-shadow: none;
+    background-color: transparent;
   }
+}
 
-  // 表格容器
-  .table-container {
-    padding: 8px 32px 38px;
-    flex: 1;
-    min-height: 0; // 确保 flex 子项可以收缩
-    display: flex;
-    flex-direction: column;
-  }
+:deep(.el-table__header) {
+  @apply w-full!;
+}
+
+:deep(.el-table__body) {
+  @apply w-full!;
 }
 </style>

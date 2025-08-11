@@ -33,8 +33,6 @@ $status-colours-light-purple: #F5EAFB;
 
 // 公共背景样式
 %common-bg-style {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
+  @apply w-full h-full box-border flex p-8  gap-8;
   background-image: linear-gradient(to bottom, $branding-colours-gradient-b, $branding-colours-gradient-e);
 }

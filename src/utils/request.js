@@ -1,6 +1,9 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
 
+import { useUserStore } from '@/store/index.js'
+import router from '@/router'
+
 const request = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL_API,
   timeout: 10000,
@@ -16,20 +19,30 @@ request.interceptors.request.use(
 )
 
 request.interceptors.response.use(
-  (response) => {
+  async (response) => {
     const {
       data: { code, msg },
     } = response
-    // 若不是成功状态码, 则提示错误信息
-    if (code !== 0) {
+    // 处理请求接口失败的情况
+    if (code === 401) {
+      const { clearInfo } = useUserStore()
+      // 清除用户信息
+      await clearInfo()
+      // token 失效提示
+      ElMessage.error('Token expired')
+      // 路由跳转至登录页
+      await router.replace('/login')
+      return Promise.reject('Unauthorized')
+    } else if (code !== 0) {
       // 错误提示
       ElMessage.error(msg)
+      return Promise.reject(msg)
     }
     return response.data
   },
   (error) => {
     // 处理网络错误的情况
-    let msg = ''
+    let msg
     const status = error.response?.status
     switch (status) {
       case 401:

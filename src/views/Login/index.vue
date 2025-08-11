@@ -29,9 +29,7 @@ const loginForm = reactive({
 // 用户登录
 const handleLogin = useDebounceFn(async () => {
   try {
-    const res = await login(loginForm)
-    // 登录成功, 实现跳转
-    ElMessage.success('Login success')
+    await login(loginForm)
     // 路由跳转
     await router.push('/')
   } catch (error) {
@@ -141,7 +139,7 @@ const handleLogin = useDebounceFn(async () => {
 <style scoped lang="scss">
 .bg-container {
   @extend %common-bg-style;
-  @apply flex justify-between gap-8 p-8;
+  @apply justify-between;
 }
 
 .bottom-border-only :deep(.el-input__wrapper) {

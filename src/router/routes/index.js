@@ -245,11 +245,6 @@ const constantRoutes = [
     name: RouteName.ANY,
     redirect: '/dashboard',
   },
-  {
-    path: '/test',
-    name: 'Test',
-    component: () => import('@/components/Scaffold/index.vue'),
-  },
 ]
 
 export default constantRoutes

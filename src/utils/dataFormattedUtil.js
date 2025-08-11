@@ -8,7 +8,7 @@
  * @returns {string} 格式化后的路径字符串
  */
 export const getFullPath = (path) =>
-  `${import.meta.env.VITE_BASE_URL_API}${path}`
+  `${import.meta.env.VITE_BASE_URL_FILE}${path}`
 
 /**
  * @description 获取数字格式化字符串

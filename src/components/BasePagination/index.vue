@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType, toRefs } from 'vue'
+import { PropType, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
 // 定义分页数据类型
@@ -14,6 +14,8 @@ interface PaginationPropsType {
   pagination: PaginationType
   handlePageChange: (currentPage: number, pageSize: number) => void
 }
+
+const currentPageDisplay = computed(() => pagination.currentPage + 1)
 
 // 申明接收的数据
 const { pagination, handlePageChange } = defineProps({
@@ -30,7 +32,7 @@ const { pagination, handlePageChange } = defineProps({
 // 处理分页的变化
 const onPageChange = useDebounceFn((): void => {
   // 是否超出总页数的校验
-  if (pagination.currentPage.value > pagination.total.value) {
+  if (pagination.currentPage > pagination.total) {
     // 重置当前页数
     return
   }
@@ -51,7 +53,7 @@ const onPageChange = useDebounceFn((): void => {
   >
     <!-- 输入框 -->
     <el-input
-      v-model="pagination.currentPage"
+      v-model="currentPageDisplay"
       class="neutrals-grey-4"
       @change="onPageChange"
     />
@@ -73,6 +75,7 @@ const onPageChange = useDebounceFn((): void => {
 <style scoped lang="scss">
 // 分页器样式重置
 .pagination-container {
+  // 输入框
   :deep(.el-input) {
     width: 40px;
     height: 24px;
@@ -81,6 +84,16 @@ const onPageChange = useDebounceFn((): void => {
     .el-input__wrapper {
       border-radius: 8px;
     }
+  }
+
+  // 上一页
+  :deep(.btn-prev) {
+    background-color: transparent;
+  }
+
+  // 下一页
+  :deep(.btn-next) {
+    background-color: transparent;
   }
 }
 </style>
