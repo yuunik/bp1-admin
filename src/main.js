@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createHead } from '@unhead/vue/client'
 
 import App from './App.vue'
 import store from '@/store/index.js'
@@ -19,10 +20,12 @@ import 'element-plus/dist/index.css'
 import 'virtual:uno.css'
 
 const app = createApp(App)
+const header = createHead()
 
 // 防抖指令
 app.directive('debounce', debounce)
 
+app.use(header)
 app.use(store)
 app.use(router)
 

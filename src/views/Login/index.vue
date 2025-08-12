@@ -85,7 +85,7 @@ const handleLogin = useDebounceFn(async () => {
     </div>
     <!-- Login form -->
     <main
-      class="min-w-592 max-w-800 bg-neutrals-off-white rounded-8 flex h-full flex-shrink flex-grow-0 basis-auto items-center justify-center"
+      class="min-w-592 max-w-800 bg-neutrals-off-white rounded-8 flex h-full w-full items-center justify-center"
     >
       <div class="text-align-left flex flex-col gap-48">
         <hgroup class="flex flex-col gap-24">

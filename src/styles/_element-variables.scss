@@ -61,3 +61,10 @@
 .el-button--large {
   border-radius: 8px !important;
 }
+
+/* 全局覆盖 Element Plus 竖直分割线的默认样式 */
+.el-divider--vertical {
+  @apply h-auto! self-stretch!;
+  /* 让高度不被固定 */
+  /* 在 flex 布局中自动拉伸到父容器高度 */
+}
