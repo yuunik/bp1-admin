@@ -33,6 +33,8 @@ onBeforeUnmount(() => {
 
 <template>
   <el-breadcrumb
+    separator=">"
+    v-if="route.path !== '/dashboard'"
     :separator-icon="ArrowRight"
     class="heading-body-body-12px-medium box-border px-32 pb-16 pt-24"
   >
