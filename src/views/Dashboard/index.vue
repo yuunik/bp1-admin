@@ -274,7 +274,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .order {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  flex: 2;
   width: 100%;
   max-width: none;
   border-radius: 8px;
@@ -293,18 +293,18 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .order_2 {
   display: flex;
   flex-direction: row;
+  flex: 1;
   width: 100%;
   max-width: none;
-  max-height: 85px;
   gap: 16px;
 }
 
 .order_3 {
   display: flex;
   flex-direction: row;
+  flex: 1;
   width: 100%;
   max-width: none;
-  max-height: 93px;
   padding-top: 8px;
   gap: 16px;
 }
@@ -489,7 +489,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .obd {
   display: flex;
   flex-direction: column;
-  flex: 0.6;
+  flex: 1;
   width: 100%;
   max-width: none;
   border-radius: 8px;
@@ -523,9 +523,9 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .obd_content {
   display: flex;
   flex-direction: row;
+  flex: 1;
   width: 100%;
   max-width: none;
-  max-height: 85px;
   gap: 24px;
 }
 
@@ -603,10 +603,10 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .user_content {
   display: flex;
   flex-direction: row;
+  flex: 1;
   justify-content: space-between;
   width: 100%;
   max-width: none;
-  max-height: 85px;
   gap: 8px;
 }
 
