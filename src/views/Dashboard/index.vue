@@ -7,7 +7,7 @@ import { storeToRefs } from 'pinia'
 
 import { useUserStore } from '@/store'
 
-import ContentItem from '@/views/Dashboard/components/ContentItem.vue';
+import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
 // 静态资源
 import Logo from '@/assets/icons/company-logo.svg'
@@ -23,7 +23,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
           <div class="greeting-left_name">
             <h2 class="greeting-left_name_text">Jonathan Wong</h2>
             <div class="h-24 w-24">
-              <img :src="GreetingIcon" alt="Waving Hand">
+              <img :src="GreetingIcon" alt="Waving Hand" />
             </div>
           </div>
         </div>
@@ -32,9 +32,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
       <div class="order">
         <div class="order_1">
           <div class="order_1_left">
-            <div class="order_1_left-text">
-              Order
-            </div>
+            <div class="order_1_left-text">Order</div>
           </div>
           <div class="order_1_right-vector">
             <i class="icon-typesarrow-right"></i>
@@ -121,73 +119,64 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
         </div>
         <div class="container-card2">
           <div class="container-card2-left">
-            <div class="card2-left_1">
-              New Subscription
-            </div>
+            <div class="card2-left_1">New Subscription</div>
             <div class="card2-left_2">
               <div class="card2-left_2-1">5</div>
               <div class="card2-left_2-2-1">
                 <div class="card2-left_2-2-2">-2%</div>
               </div>
             </div>
-            <div class="card2-left_3">
-              Compared to last month
-            </div>
+            <div class="card2-left_3">Compared to last month</div>
           </div>
-          <div class="container-card2-right">
-            图表
-          </div>
+          <div class="container-card2-right">图表</div>
         </div>
         <div class="container-card3">
-          <div class="container-card3-left">
-
-          </div>
+          <div class="container-card3-left"></div>
           <div class="container-card3-right">
-            <div class="card3-right_1">
-              Order from
-            </div>
+            <div class="card3-right_1">Order from</div>
             <div class="card3-right_2">
               <div class="card3-right_2-left">
-                <div class="card3-right_2-icon">
-
-                </div>
-                <div class="card3-right_2-text">
-                  App
-                </div>
+                <div class="card3-right_2-icon"></div>
+                <div class="card3-right_2-text">App</div>
               </div>
-              <div class="card3-right_2-num">
-                20
-              </div>
+              <div class="card3-right_2-num">20</div>
             </div>
             <div class="card3-right_3">
               <div class="card3-right_3-left">
-                <div class="card3-right_3-icon">
-
-                </div>
-                <div class="card3-right_3-text">
-                  Web
-                </div>
+                <div class="card3-right_3-icon"></div>
+                <div class="card3-right_3-text">Web</div>
               </div>
-              <div class="card3-right_3-num">
-                80
-              </div>
+              <div class="card3-right_3-num">80</div>
             </div>
           </div>
         </div>
       </div>
       <div class="container-right_2">
         <div class="notification-title">
-          <div class="notification-title-left">
-            Notifications
-          </div>
+          <div class="notification-title-left">Notifications</div>
           <div class="notification-title-right">
             <i class="icon-typesarrow-right"></i>
           </div>
         </div>
         <div class="notification-content">
-          <ContentItem avatarName="JW" title="Title" description="Description" time="1 mins ago"></ContentItem>
-          <ContentItem avatarName="JW" title="Title" description="Description" time="1 mins ago"></ContentItem>
-          <ContentItem avatarName="JW" title="Title" description="Description" time="1 mins ago"></ContentItem>
+          <ContentItem
+            avatarName="JW"
+            title="Title"
+            description="Description"
+            time="1 mins ago"
+          ></ContentItem>
+          <ContentItem
+            avatarName="JW"
+            title="Title"
+            description="Description"
+            time="1 mins ago"
+          ></ContentItem>
+          <ContentItem
+            avatarName="JW"
+            title="Title"
+            description="Description"
+            time="1 mins ago"
+          ></ContentItem>
         </div>
       </div>
     </div>
@@ -248,7 +237,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .greeting-left_welcome {
@@ -260,7 +249,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0%;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .greeting-left_name {
@@ -274,14 +263,14 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .greeting-left_name_text {
   width: 150px;
   height: 15px;
-  content: "Jonathan Wong";
+  content: 'Jonathan Wong';
   font-family: Inter;
   font-weight: 500;
   font-style: medium;
   font-size: 20px;
   line-height: 30px;
   letter-spacing: 0%;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .order {
@@ -341,13 +330,13 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 14px;
   line-height: 20px;
   letter-spacing: 0%;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .order_1_right-vector {
   width: 6.11px;
   height: 10px;
-  fill: #99A0AE;
+  fill: #99a0ae;
 }
 
 .order_2_box1 {
@@ -360,7 +349,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   border-radius: 8px;
   padding: 16px;
   gap: 16px;
-  background-color: #EAEFF4;
+  background-color: #eaeff4;
 }
 
 .order_2_allorders {
@@ -372,9 +361,8 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 20px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6F7788;
+  color: #6f7788;
 }
-
 
 .order_2_allorders-data {
   width: 220px;
@@ -385,7 +373,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .order_2_new {
@@ -397,7 +385,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 20px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .order_2_new-data {
@@ -409,7 +397,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .order_3_box3 {
@@ -422,7 +410,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   border-radius: 8px;
   padding: 16px;
   gap: 16px;
-  background-color: #EAEFF4;
+  background-color: #eaeff4;
 }
 
 .order_3_pending {
@@ -434,7 +422,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 20px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .order_3_pending-data {
@@ -446,7 +434,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #F6B51E;
+  color: #f6b51e;
 }
 
 .order_3_shipped {
@@ -459,7 +447,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 20px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .order_3_shipped-data {
@@ -472,7 +460,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #FF6D1A;
+  color: #ff6d1a;
 }
 
 .order_3_refund {
@@ -485,7 +473,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 20px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .order_3_refund-data {
@@ -498,7 +486,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6B07EC;
+  color: #6b07ec;
 }
 
 .obd {
@@ -533,7 +521,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .layout-1-vector {
   width: 6.11px;
   height: 10px;
-  fill: #99A0AE;
+  fill: #99a0ae;
 }
 
 .obd_content {
@@ -554,7 +542,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   border-radius: 8px;
   padding: 16px;
   gap: 16px;
-  background-color: #E6F7F5;
+  background-color: #e6f7f5;
 }
 
 .obd_box_2 {
@@ -566,7 +554,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   border-radius: 8px;
   padding: 16px;
   gap: 16px;
-  background-color: #EBF0F8;
+  background-color: #ebf0f8;
 }
 
 .type-1 {
@@ -579,7 +567,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 20px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .obd_box-data1 {
@@ -592,7 +580,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #05AD9D;
+  color: #05ad9d;
 }
 
 .obd_box-data2 {
@@ -605,7 +593,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #3288F8;
+  color: #3288f8;
 }
 
 .user {
@@ -636,7 +624,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   border-radius: 8px;
   padding: 16px;
   gap: 16px;
-  background-color: #EAEFF4;
+  background-color: #eaeff4;
 }
 
 .type-2 {
@@ -648,7 +636,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   line-height: 34px;
   letter-spacing: 0%;
   vertical-align: middle;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .container-right {
@@ -663,11 +651,11 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   max-width: none;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
-  border-left: 1px solid #EAEFF4;
+  border-left: 1px solid #eaeff4;
   padding-top: 16px;
   padding-bottom: 16px;
   gap: 32px;
-  background-color: #FCFCFC;
+  background-color: #fcfcfc;
   overflow: hidden;
 }
 
@@ -703,7 +691,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   width: 100%;
   height: 120px;
   border-radius: 8px;
-  border: 1px solid #EAEFF4;
+  border: 1px solid #eaeff4;
   padding: 16px;
   gap: 16px;
   box-shadow: 0 1px 2px 0 rgba(10, 173, 212, 0.03);
@@ -718,7 +706,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   border-radius: 8px;
   padding: 24px 16px;
   gap: 24px;
-  background: radial-gradient(#0A1C34, #1B1A1E);
+  background: radial-gradient(#0a1c34, #1b1a1e);
   box-shadow: 0 1px 2px 0 rgba(10, 173, 212, 0.03);
 }
 
@@ -729,7 +717,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   box-sizing: border-box;
   height: 130px;
   border-radius: 8px;
-  border: 1px solid #EAEFF4;
+  border: 1px solid #eaeff4;
   padding: 16px;
   gap: 16px;
   box-shadow: 0 1px 2px 0 rgba(10, 173, 212, 0.03);
@@ -770,7 +758,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0;
-  color: #CACFDB;
+  color: #cacfdb;
 }
 
 .card2-left_2 {
@@ -789,7 +777,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-style: medium;
   font-size: 26px;
   line-height: 34px;
-  color: #FCFCFC;
+  color: #fcfcfc;
 }
 
 .card2-left_2-2-1 {
@@ -800,7 +788,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-style: medium;
   font-size: 12px;
   line-height: 16px;
-  color: #EF3C30;
+  color: #ef3c30;
 }
 
 .card2-left_2-2-2 {
@@ -823,14 +811,14 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0;
-  color: #99AAAE;
+  color: #99aaae;
   vertical-align: middle;
 }
 
 .container-card3-left {
   width: 96px;
   height: 96px;
-  border: 2px solid #FCFCFC;
+  border: 2px solid #fcfcfc;
   background-color: $branding-colours-primary;
   border-radius: 50%;
 }
@@ -851,7 +839,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0%;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .card3-right_2 {
@@ -876,7 +864,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background: radial-gradient(circle, #0A1C34, #1B1A1E);
+  background: radial-gradient(circle, #0a1c34, #1b1a1e);
 }
 
 .card3-right_2-text {
@@ -886,7 +874,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0%;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .card3-right_2-num {
@@ -896,7 +884,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0%;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .card3-right_3 {
@@ -921,7 +909,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   width: 8px;
   height: 8px;
   border-radius: 4px;
-  background-color: #006BF7;
+  background-color: #006bf7;
 }
 
 .card3-right_3-text {
@@ -931,7 +919,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0%;
-  color: #6F7788;
+  color: #6f7788;
 }
 
 .card3-right_3-num {
@@ -941,7 +929,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0%;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .notification-content {
@@ -976,7 +964,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   font-style: Medium;
   font-size: 14px;
   line-height: 20px;
-  color: #1B1A1E;
+  color: #1b1a1e;
 }
 
 .notification-title-right {

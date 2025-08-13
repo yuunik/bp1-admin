@@ -8,7 +8,12 @@ import LeadingIcon from '@/assets/icons/h5-leading.svg'
 import TrailingIcon from '@/assets/icons/h5-trailing.svg'
 import { onMounted, useSlots } from 'vue'
 
+// 获取 app 启动函数
+const { launchApp } = useAppLauncher()
+
 interface PropsType {
+  // 是否需要appbar
+  isAppBarVisible?: boolean
   isLeadingVisible?: boolean
   isActionsVisible?: boolean
   isTitleVisible?: boolean
@@ -22,11 +27,16 @@ interface PropsType {
   footerHeight?: string
   footerDisplay?: string
   footerGap?: string
+  isOpenAppVisible?: boolean
   openButtonText?: string
+  isFloatingButtonVisible?: boolean
+  handleButtonClick?: () => void
 }
 
 // 默认值
-withDefaults(defineProps<PropsType>(), {
+const props = withDefaults(defineProps<PropsType>(), {
+  // 是否需要 app bar
+  isAppBarVisible: true,
   // 是否需要 leading
   isLeadingVisible: false,
   // 是否需要 actions
@@ -57,12 +67,13 @@ withDefaults(defineProps<PropsType>(), {
   footerDisplay: 'flex',
   // 底部栏的gap值
   footerGap: 'gap-8',
+  // 是否需要跳转 app 的按钮
+  isOpenAppVisible: true,
   // 跳转 app 的按钮的文字
   openButtonText: 'Open in App',
+  // 是否需要浮动按钮
+  isFloatingButtonVisible: false,
 })
-
-// 获取 app 启动函数
-const { launchApp } = useAppLauncher()
 
 // 校验 slot
 const slots = useSlots()
@@ -72,13 +83,21 @@ onMounted(() => {
     throw new Error('h5 scaffold: missing default slot')
   }
 })
+
+const onButtonClick = () => {
+  if (props.handleButtonClick) {
+    props.handleButtonClick()
+  } else {
+    launchApp()
+  }
+}
 </script>
 
 <template>
   <!-- h5 scaffold -->
-  <div class="relative flex h-full flex-col">
+  <div class="relative flex h-full flex-col bg-[#F4F7FA]">
     <!-- app bar -->
-    <header class="flex h-44 items-center px-20 py-10">
+    <header class="flex h-44 items-center px-20 py-10" v-if="isAppBarVisible">
       <!-- leading -->
       <el-image
         :src="LeadingIcon"
@@ -127,7 +146,8 @@ onMounted(() => {
     <el-button
       type="primary"
       class="bottom-68 fixed inset-x-0 mx-auto w-fit"
-      @click="launchApp"
+      @click="onButtonClick"
+      v-if="isOpenAppVisible"
     >
       {{ openButtonText }}
     </el-button>

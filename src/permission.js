@@ -25,12 +25,11 @@ NProgress.configure({ showSpinner: false })
 // 全局前置路由守卫
 router.beforeEach((to, from, next) => {
   // 开启进度条
-  NProgress.start()
+  // NProgress.start()
 
   // 获取用户token
   const userStore = useUserStore(store)
   const { token } = storeToRefs(userStore)
-
   // token 校验
   if (token.value) {
     // 有 token

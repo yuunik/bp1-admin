@@ -233,6 +233,16 @@ const constantRoutes = [
           isShow: false,
         },
       },
+      // 车辆详情报告页
+      {
+        path: '/share/vehicle-report/:id',
+        name: 'Vehicle Report',
+        component: () => import('@/share/ReportInfo.vue'),
+        meta: {
+          title: 'Vehicle Report',
+          isShow: false,
+        },
+      },
     ],
     meta: {
       title: RouteName.SHARE,

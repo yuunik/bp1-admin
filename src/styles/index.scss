@@ -42,8 +42,9 @@ label {
 }
 
 p {
-  margin: 0;
+  @apply m-0;
 }
+
 /* </editor-fold> */
 
 /* <editor-fold desc="重置字体图标样式"> */
