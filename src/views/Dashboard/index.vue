@@ -655,10 +655,10 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .container-right_1 {
   display: flex;
   flex-direction: column;
+  flex: 1.3;
   width: 100%;
   max-width: none;
   box-sizing: border-box;
-  height: fit-content;
   padding-right: 16px;
   padding-left: 16px;
   gap: 16px;
@@ -680,10 +680,10 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .container-card1 {
   display: flex;
   flex-direction: row;
+  flex: 1;
   box-sizing: border-box;
   width: 100%;
   height: auto; 
-  min-height: 120px;
   border-radius: 8px;
   border: 1px solid #eaeff4;
   padding: 16px;
@@ -694,10 +694,10 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .container-card2 {
   display: flex;
   flex-direction: row;
+  flex: 1;
   box-sizing: border-box;
   width: 100%;
   height: auto; 
-  min-height: 130px;
   border-radius: 8px;
   padding: 24px 16px;
   gap: 24px;
@@ -708,10 +708,9 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .container-card3 {
   display: flex;
   flex-direction: row;
+  flex: 1;
   width: 100%;
   box-sizing: border-box;
-  height: auto; 
-  min-height: 130px;
   border-radius: 8px;
   border: 1px solid #eaeff4;
   padding: 16px;
