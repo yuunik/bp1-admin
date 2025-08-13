@@ -287,6 +287,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .order {
   display: flex;
   flex-direction: column;
+  flex: 1;
   width: 100%;
   max-width: none;
   border-radius: 8px;
@@ -503,6 +504,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .obd {
   display: flex;
   flex-direction: column;
+  flex: 0.6;
   width: 100%;
   max-width: none;
   min-height: 135px;
@@ -609,6 +611,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
 .user {
   display: flex;
   flex-direction: column;
+  flex: 1;
   border-radius: 8px;
   min-height: 135px;
   gap: 8px;
