@@ -7,11 +7,11 @@
  * @param {string} path 路径
  * @returns {string} 格式化后的路径字符串
  */
-export const getFullPath = (path) =>
+export const getFullFilePath = (path) =>
   `${import.meta.env.VITE_BASE_URL_FILE}${path}`
 
 /**
- * @description 获取数字格式化字符串
+ * @description 获取数字格式化字符串, 如 10000 -> 10,000
  * @param number
  * @returns {string}
  */

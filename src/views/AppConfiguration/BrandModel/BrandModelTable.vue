@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination/index.vue'
 import { getBrandModalListApi } from '@/apis/appApi.js'
-import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 // 响应式数据
 const loading = ref(false)
@@ -128,7 +128,7 @@ getBrandModelList()
               <el-image
                 v-if="row.logo"
                 fit="cover"
-                :src="getFullPath(row.logo)"
+                :src="getFullFilePath(row.logo)"
                 class="mr-8 h-24 w-24"
                 alt="brand icon"
               >

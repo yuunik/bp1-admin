@@ -2,7 +2,7 @@
 import { reactive } from 'vue'
 
 import { getPredictionListApi, modifyPredictionDataApi } from '@/apis/appApi.js'
-import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import useFileUpload from '@/composables/useFileUpload.js'
 
 import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
@@ -67,7 +67,7 @@ getPredictionList()
         <template #default="{ row }">
           <div class="flex items-center">
             <el-avatar
-              :src="row?.localLogo ? row.localLogo : getFullPath(row.logo)"
+              :src="row?.localLogo ? row.localLogo : getFullFilePath(row.logo)"
               fit="cover"
               :size="20"
               @error="onErrorImage"

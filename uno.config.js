@@ -85,6 +85,7 @@ export default defineConfig({
       'bg-status-colours-green': 'bg-[#05AD9D]',
       'bg-status-colours-red': 'bg-[#EF3C30]',
       'text-status-colours-red': 'text-[#EF3C30]',
+      'text-neutrals-blue': 'text-[#006BF7]',
       'text-neutrals-off-white': 'text-[#EFF4F9]',
       'text-neutrals-white': 'text-[#FFFFFF]',
       'text-neutrals-off-black': 'text-[#1B1A1E]',

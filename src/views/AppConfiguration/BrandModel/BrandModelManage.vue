@@ -10,7 +10,7 @@ import {
   modifyBrandInfoApi,
   modifyBrandModelApi,
 } from '@/apis/appApi.js'
-import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 
@@ -130,7 +130,7 @@ const handleBrandStatusChange = () => {
           <!-- logo -->
           <el-image
             v-if="brandModelInfo"
-            :src="getFullPath(brandModelInfo?.logo)"
+            :src="getFullFilePath(brandModelInfo?.logo)"
             fit="cover"
             class="h-64 w-64"
             loading="lazy"

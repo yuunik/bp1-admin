@@ -1,10 +1,14 @@
 <script setup>
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
+import { useRoute } from 'vue-router'
 
-import AudiA5 from '@/assets/images/Audi-A5.png'
-import FaultCodesIcon from '@/assets/icons/fault-codes.svg'
-import PredictionIcon from '@/assets/icons/prediction.svg'
+import { getVehicleReportInfoApi } from '@/apis/shareApi.js'
+import { getVehicleReportGeneratedTime } from '../utils/dateUtil.js'
+import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
+
+import FaultCodesIcon from '@/assets/icons/fault-code-icon.svg'
+import PredictionIcon from '@/assets/icons/prediction-icon.svg'
 import RepairIcon from '@/assets/icons/fi_tool.svg'
 import MaintenanceIcon from '@/assets/icons/fi_file-minus.svg'
 import FuelIcon from '@/assets/icons/fuel-level.svg'
@@ -14,7 +18,19 @@ import EngineIcon from '@/assets/icons/engine-load.svg'
 import TransmissionIcon from '@/assets/icons/tranmission.svg'
 import BrakesIcon from '@/assets/icons/brakes.svg'
 import ElectricalIcon from '@/assets/icons/electronic-central-electric.svg'
+import DefaultCarIcon from '@/assets/icons/default-car-img.svg'
 
+// 显示导出按钮
+const showExportButton = ref(true)
+
+const isLoading = ref(false)
+
+// 车辆报告详情
+const vehicleReportInfo = reactive({})
+
+const route = useRoute()
+
+// 导出PDF
 const exportPDF = () => {
   showExportButton.value = false
 
@@ -103,14 +119,28 @@ const exportPDF = () => {
   })
 }
 
-// 显示导出按钮
-const showExportButton = ref(true)
+// 获取车辆报告详情
+const getVehicleReportInfo = async (id) => {
+  isLoading.value = true
+  const { data } = await getVehicleReportInfoApi(id)
+  // 获取成功
+  Object.assign(vehicleReportInfo, data)
+  isLoading.value = false
+}
+
+// 获取路径中的id参数
+const { id } = route.params
+if (id) {
+  // 获取到id
+  getVehicleReportInfo(id)
+}
 </script>
 
 <template>
   <div class="bg-neutrals-off-white flex">
     <div
       class="report-container max-w-595 shadow-default bg-neutrals-white m-auto box-border px-32"
+      v-loading="isLoading"
     >
       <header class="flex flex-col gap-4">
         <h1>
@@ -119,8 +149,8 @@ const showExportButton = ref(true)
           </strong>
         </h1>
         <h2>
-          <em class="poppins-12px-medium not-italic text-[#6F7788]">
-            Generated: 22 Aug 2024 10:30am
+          <em class="poppins-12px-medium text-neutrals-grey-4 not-italic">
+            {{ getVehicleReportGeneratedTime(vehicleReportInfo.createTime) }}
           </em>
         </h2>
       </header>
@@ -130,15 +160,28 @@ const showExportButton = ref(true)
           <!-- 车辆信息 -->
           <section class="my-16 flex items-center gap-32">
             <el-image
-              :src="AudiA5"
+              :src="getFullFilePath(vehicleReportInfo.vehicleDto?.cover)"
               alt="user vehicle image"
               class="w-200"
               fit="cover"
-            />
+            >
+              <template #error>
+                <!-- 车辆图片加载失败的默认 -->
+                <el-image
+                  :src="DefaultCarIcon"
+                  alt="user vehicle image"
+                  class="w-200"
+                  fit="cover"
+                />
+              </template>
+            </el-image>
             <div class="flex flex-1 flex-col gap-8">
               <h2 class="items-centers flex">
-                <em class="poppins-20px-semibold not-italic text-[#006BF7]">
-                  Audi A5 2011
+                <em class="poppins-20px-semibold text-neutrals-blue not-italic">
+                  {{
+                    `${vehicleReportInfo.brand} ${vehicleReportInfo.model} ${vehicleReportInfo.year}` ||
+                    '-'
+                  }}
                 </em>
               </h2>
               <ul class="flex flex-col gap-4 [&>li]:flex [&>li]:gap-8">
@@ -149,7 +192,7 @@ const showExportButton = ref(true)
                   <el-text
                     class="poppins-10px-regular text-truncate flex-[1_1_189px]"
                   >
-                    5YJSA1ZL0KLA03456
+                    {{ vehicleReportInfo.vin || '-' }}
                   </el-text>
                 </li>
                 <li class="flex items-center">
@@ -159,7 +202,7 @@ const showExportButton = ref(true)
                   <el-text
                     class="poppins-10px-regular text-truncate flex-[1_1_189px]"
                   >
-                    SGW222Y
+                    {{ vehicleReportInfo.licensePlate || '-' }}
                   </el-text>
                 </li>
                 <li class="flex items-center">
@@ -169,7 +212,7 @@ const showExportButton = ref(true)
                   <el-text
                     class="poppins-10px-regular text-truncate flex-[1_1_189px]"
                   >
-                    1,200 km
+                    {{ getFormatNumber(vehicleReportInfo.mileage) || '-' }} km
                   </el-text>
                 </li>
               </ul>
@@ -182,7 +225,9 @@ const showExportButton = ref(true)
             >
               <!-- 评分 -->
               <h2 class="flex flex-col gap-4">
-                <em class="hanno-20px-regular">9.5</em>
+                <em class="hanno-20px-regular not-italic">
+                  {{ vehicleReportInfo.modificationCount }}
+                </em>
                 <span class="text-10px-regular">out of 10</span>
               </h2>
               <!-- 分割线 -->
@@ -191,9 +236,7 @@ const showExportButton = ref(true)
               <div class="flex flex-1 flex-col gap-8">
                 <span class="roboto-12px-semibold">Evaluation Level</span>
                 <p class="text-neutrals-grey-2 text-10px-regular">
-                  The vehicle is in good overall condition with all key
-                  indicators normal! The vehicle is in good overall condition
-                  with all key indicators normal!
+                  {{ vehicleReportInfo.explain || '-' }}
                 </p>
               </div>
             </section>
@@ -216,17 +259,33 @@ const showExportButton = ref(true)
                       fit="cover"
                       class="h-24 w-24"
                     />
-                    <p class="poppins-10px-semibold">3 Fault Codes</p>
+                    <p class="poppins-10px-semibold">
+                      {{
+                        vehicleReportInfo.faultCodeCount
+                          ? `${vehicleReportInfo.faultCodeCount} Fault Codes`
+                          : '0 Fault Code'
+                      }}
+                    </p>
                   </div>
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <el-image
-                      :src="PredictionIcon"
-                      fit="cover"
-                      class="h-24 w-24"
-                    />
-                    <p class="poppins-10px-semibold">3 Fault Codes</p>
+                    <!--<el-image-->
+                    <!--  :src="PredictionIcon"-->
+                    <!--  fit="cover"-->
+                    <!--  class="h-24 w-24"-->
+                    <!--/>-->
+                    <svg-icon
+                      name="prediction-icon"
+                      class="icon-svg"
+                      size="24px"
+                      color="#FF0000"
+                    ></svg-icon>
+                    <p class="poppins-10px-semibold">
+                      {{
+                        `${vehicleReportInfo.reportPredictionDtos?.length} Prediction`
+                      }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -766,7 +825,7 @@ const showExportButton = ref(true)
         <!-- 导出 PDF 按钮 -->
         <button
           class="bg-branding-colours-primary shadow-default text-neutrals-off-white bottom-68 fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer rounded-full border-none px-20 py-10"
-          v-if="showExportButton"
+          v-show="showExportButton"
           @click="exportPDF"
         >
           Export as PDF

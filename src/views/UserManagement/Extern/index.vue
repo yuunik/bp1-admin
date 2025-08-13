@@ -5,7 +5,7 @@ import BasePagination from '@/components/BasePagination/index.vue'
 // 获取修理厂列表
 import { getMerchantListApi } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
-import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { useDebounceFn } from '@vueuse/core'
 
 // 修理厂列表
@@ -124,7 +124,7 @@ getMerchantList()
             <!-- 修理厂 logo -->
             <template #default="{ row }">
               <el-image
-                :src="getFullPath(row.logo)"
+                :src="getFullFilePath(row.logo)"
                 v-if="row.logo"
                 fit="cover"
                 alt="merchant logo"

@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 
 import Scaffold from '@/components/Scaffold/index.vue'
 import { getForumInfoApi } from '@/apis/shareApi.js'
-import { getFullPath } from '@/utils/dataFormattedUtil.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getCommentTime } from '@/utils/dateUtil.js'
 
 // 图片加载错误的图片
@@ -56,7 +56,7 @@ const handleErrorImage = () => true
       <!-- 用户头像 -->
       <el-avatar
         :size="40"
-        :src="getFullPath(forumInfo?.userDto?.logo)"
+        :src="getFullFilePath(forumInfo?.userDto?.logo)"
         @error="handleErrorImage"
       >
         <el-image :src="ErrorImage" fit="cover" alt="error image" />
@@ -96,7 +96,7 @@ const handleErrorImage = () => true
           v-if="forumInfo.attachmentDtos.length >= 1"
           class="h-257 rounded-8 w-full bg-cover bg-center bg-no-repeat"
           :style="{
-            backgroundImage: `url(${getFullPath(forumInfo.attachmentDtos[0].path)})`,
+            backgroundImage: `url(${getFullFilePath(forumInfo.attachmentDtos[0].path)})`,
           }"
         ></div>
 
@@ -110,7 +110,7 @@ const handleErrorImage = () => true
             :key="item.id"
             class="h-166 rounded-8 w-full bg-cover bg-center bg-no-repeat"
             :style="{
-              backgroundImage: `url(${getFullPath(item.path)})`,
+              backgroundImage: `url(${getFullFilePath(item.path)})`,
             }"
           ></div>
         </div>
@@ -125,7 +125,7 @@ const handleErrorImage = () => true
             :key="item.id"
             class="h-150 rounded-8 w-full bg-cover bg-center bg-no-repeat"
             :style="{
-              backgroundImage: `url(${getFullPath(item.path)})`,
+              backgroundImage: `url(${getFullFilePath(item.path)})`,
             }"
           ></div>
         </div>
@@ -140,7 +140,7 @@ const handleErrorImage = () => true
             :key="index + 6"
             class="h-150 rounded-8 w-full bg-cover bg-center bg-no-repeat"
             :style="{
-              backgroundImage: `url(${getFullPath(item.path)})`,
+              backgroundImage: `url(${getFullFilePath(item.path)})`,
             }"
           ></div>
         </div>

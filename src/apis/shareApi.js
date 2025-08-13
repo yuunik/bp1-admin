@@ -10,6 +10,8 @@ const ShareApi = Object.freeze({
   GET_FORUM_INFO: '/forum/infobyguest',
   // ai 问答详情分享
   GET_AI_QUESTION_INFO: '/aichat/info',
+  // 获取车辆报告详情
+  GET_VEHICLE_REPORT_INFO: '/report/getreportinfo',
 })
 
 /**
@@ -37,6 +39,21 @@ export const getAiQuestionInfoApi = (id) => {
   data.append('aiChatId', id)
   return request({
     url: ShareApi.GET_AI_QUESTION_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆报告详情
+ * @param id 车辆报告id
+ * @returns {Promise<ApiResponse<VehicleReport>>}
+ */
+export const getVehicleReportInfoApi = (id) => {
+  const data = new FormData()
+  data.append('reportId', id)
+  return request({
+    url: ShareApi.GET_VEHICLE_REPORT_INFO,
     method: 'POST',
     data,
   })

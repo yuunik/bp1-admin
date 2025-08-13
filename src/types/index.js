@@ -245,3 +245,32 @@
  * @property {number} date - 故障预测发生的天数，比如距当前时间的天数。
  * @property {number} mileage - 故障预测发生时的预计里程数（单位：公里），例如 8000。
  */
+
+/* 车辆报告数据类型 */
+/**
+ * @typedef {object} VehicleReport
+ * @property {string} id - The unique identifier for the vehicle report.
+ * @property {string} userId - The user ID associated with this report.
+ * @property {string} licensePlate - The license plate number of the vehicle.
+ * @property {string} vin - The Vehicle Identification Number.
+ * @property {number} mileage - The mileage of the vehicle at the time of the report.
+ * @property {string} brand - The brand of the vehicle.
+ * @property {string} model - The model of the vehicle.
+ * @property {number} year - The manufacturing year of the vehicle.
+ * @property {number} faultCodeCount - The total number of fault codes found.
+ * @property {number} repairCount - The number of repairs recorded.
+ * @property {number} maintenanceCount - The number of maintenance records.
+ * @property {number} fuelCount - The number of fuel records.
+ * @property {number} seiviceCount - The number of service records.
+ * @property {number} modificationCount - The number of modifications recorded.
+ * @property {number} createTime - The timestamp when the report was created.
+ * @property {string} grade - The vehicle's health grade.
+ * @property {string} explain - A brief explanation or summary of the report.
+ * @property {string} expenseTotal - The total expense amount as a string.
+ * @property {number} dtcCount - The total number of Diagnostic Trouble Codes (DTCs).
+ * @property {number} dtcTime - The timestamp of the last DTC scan.
+ * @property {VehicleDto} vehicleDto - Detailed information about the vehicle.
+ * @property {ReportDtcItemDto[]} reportDtcItemDtos - A list of fault code items grouped by system.
+ * @property {ReportPredictionDto[]} reportPredictionDtos - A list of predicted vehicle failures.
+ * @property {ReportExpenseDto[]} reportExpenseDtos - A list of expense records for the vehicle.
+ */

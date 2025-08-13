@@ -7,6 +7,7 @@ import router from '@/router/index.js'
 import debounce from '@/directives/debounce/index.js'
 // 路由鉴权
 import '@/permission.js'
+import SvgIconPlugin from '@/plugins/svg-icon-plugin.js'
 
 // 统一重置样式
 import 'normalize.css'
@@ -18,6 +19,8 @@ import '@/styles/index.scss'
 import 'element-plus/dist/index.css'
 // uno.css 样式
 import 'virtual:uno.css'
+// svg 图标
+import 'virtual:svg-icons-register'
 
 const app = createApp(App)
 const header = createHead()
@@ -28,5 +31,7 @@ app.directive('debounce', debounce)
 app.use(header)
 app.use(store)
 app.use(router)
+// 注册全局 SvgIcon
+app.use(SvgIconPlugin)
 
 app.mount('#app')

@@ -72,3 +72,21 @@ export const getCommentTime = (timestamp) => {
   const day = String(commentTime.getDate()).padStart(2, '0')
   return `${day}/${month}/${year}`
 }
+
+/**
+ * 获取车辆报告生成时间
+ * @param timestamp 时间戳
+ * @returns {string}
+ */
+export const getVehicleReportGeneratedTime = (timestamp) => {
+  // 时间戳为空则返回 '-'
+  if (!timestamp) {
+    return '-'
+  }
+  // 时间戳转日期
+  const date = dayjs(timestamp)
+  // 格式化日期, 如 "Generated: 22 Aug 2024 10:30am"
+  const formatDate = date.format('DD MMM YYYY hh:mma')
+  console.log(`Generated: ${formatDate}`)
+  return `Generated: ${formatDate}`
+}
