@@ -189,11 +189,9 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex-direction: row;
   width: 100%;
   height: 100%;
-  min-height: 750px;
   padding: 8px;
   gap: 8px;
   box-sizing: border-box;
-  flex-wrap: nowrap;
   overflow: hidden;
 }
 
@@ -205,7 +203,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex: 0 0 76%;
   padding: 32px;
   gap: 32px;
-  min-width: 300px;
+  overflow: hidden;
 }
 
 .greeting {
@@ -281,7 +279,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   max-width: none;
   border-radius: 8px;
   gap: 8px;
-  min-height: 226px;
 }
 
 .order_1 {
@@ -495,7 +492,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex: 0.6;
   width: 100%;
   max-width: none;
-  min-height: 135px;
   border-radius: 8px;
   gap: 8px;
 }
@@ -601,7 +597,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex-direction: column;
   flex: 1;
   border-radius: 8px;
-  min-height: 135px;
   gap: 8px;
 }
 
@@ -646,8 +641,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex: 1;
   width: auto;
   height: 100%;
-  min-width: 300px;
-  max-height: 734px;
   max-width: none;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -689,7 +682,8 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex-direction: row;
   box-sizing: border-box;
   width: 100%;
-  height: 120px;
+  height: auto; 
+  min-height: 120px;
   border-radius: 8px;
   border: 1px solid #eaeff4;
   padding: 16px;
@@ -702,7 +696,8 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex-direction: row;
   box-sizing: border-box;
   width: 100%;
-  height: 130px;
+  height: auto; 
+  min-height: 130px;
   border-radius: 8px;
   padding: 24px 16px;
   gap: 24px;
@@ -715,7 +710,8 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex-direction: row;
   width: 100%;
   box-sizing: border-box;
-  height: 130px;
+  height: auto; 
+  min-height: 130px;
   border-radius: 8px;
   border: 1px solid #eaeff4;
   padding: 16px;
@@ -856,7 +852,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   width: fit-content;
   height: fit-content;
   gap: 8px;
-  min-width: 35px;
   min-height: 8px;
 }
 
@@ -901,7 +896,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   width: fit-content;
   height: fit-content;
   gap: 8px;
-  min-width: 38px;
   min-height: 8px;
 }
 
@@ -937,7 +931,6 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex: 1;
   overflow: hidden;
   overflow-y: auto;
-  max-height: calc(100% - 40px);
   padding-right: 4px;
   scrollbar-width: none;
   -ms-overflow-style: none;
