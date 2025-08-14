@@ -59,19 +59,20 @@ export const getVehicleReportInfoApi = (id) => {
   })
 }
 
+/**
+ * 获取图片的 base64 格式
+ * @param url 图片的 url
+ * @returns {Promise<string>}
+ */
 export const getImgUrlToBase64 = async (url) => {
-  try {
-    const response = await fetch(url)
-    const blob = await response.blob()
-
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onloadend = () => resolve(reader.result)
-      reader.onerror = reject
-      reader.readAsDataURL(blob)
-    })
-  } catch (error) {
-    console.error('Failed to convert image to base64:', error)
-    throw error
+  // 图片地址为空
+  if (!url) {
+    return ''
   }
+  const response = await fetch(url)
+  const blob = await response.blob()
+  const reader = new FileReader()
+  reader.onloadend = () => reader.result
+  reader.onerror = () => ''
+  reader.readAsDataURL(blob)
 }

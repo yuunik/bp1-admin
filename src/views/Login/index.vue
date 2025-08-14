@@ -45,7 +45,7 @@ const handleLogin = useDebounceFn(async () => {
     <!-- description -->
     <div class="box-border flex h-full flex-1 flex-col gap-32 p-32">
       <!-- Company Logo -->
-      <img :src="Logo" alt="Logo" class="w-83 h-24" />
+      <el-image :src="Logo" alt="Logo" class="w-83 h-24" />
       <article
         class="heading-body-large-body-14px-regular ml-auto mr-auto flex flex-1 flex-col justify-center gap-32 px-24"
       >
@@ -91,7 +91,7 @@ const handleLogin = useDebounceFn(async () => {
         <hgroup class="flex flex-col gap-24">
           <h1 class="flex items-center gap-8">
             <strong class="heading-h1-26px-medium">Welcome Back!</strong>
-            <img :src="GreetingIcon" alt="Waving Hand" class="h-24 w-24" />
+            <el-image :src="GreetingIcon" alt="Waving Hand" class="h-24 w-24" />
           </h1>
           <p class="heading-body-body-12px-regular">
             Welcome to OMS. Please enter your credentials to login.

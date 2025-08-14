@@ -683,7 +683,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex: 1;
   box-sizing: border-box;
   width: 100%;
-  height: auto; 
+  height: auto;
   border-radius: 8px;
   border: 1px solid #eaeff4;
   padding: 16px;
@@ -697,7 +697,7 @@ import GreetingIcon from '@/assets/icons/waving-hand.svg'
   flex: 1;
   box-sizing: border-box;
   width: 100%;
-  height: auto; 
+  height: auto;
   border-radius: 8px;
   padding: 24px 16px;
   gap: 24px;

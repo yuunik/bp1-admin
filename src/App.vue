@@ -6,7 +6,6 @@ import { useHead } from '@unhead/vue'
 const route = useRoute()
 
 const metaList = computed(() => {
-  console.log(route.path)
   if (route.path.startsWith('/share/vehicle-report')) {
     return []
   }

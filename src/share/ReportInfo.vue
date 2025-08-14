@@ -3,22 +3,25 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { useRoute } from 'vue-router'
 
-import { getVehicleReportInfoApi } from '@/apis/shareApi.js'
-import { getVehicleReportGeneratedTime } from '../utils/dateUtil.js'
+import { getImgUrlToBase64, getVehicleReportInfoApi } from '@/apis/shareApi.js'
+import { getFullDate, getVehicleReportGeneratedTime } from '@/utils/dateUtil.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
+import DefaultCardImg from '@/assets/icons/default-car-img.svg'
 import FaultCodesIcon from '@/assets/icons/fault-code-icon.svg'
 import PredictionIcon from '@/assets/icons/prediction-icon.svg'
 import RepairIcon from '@/assets/icons/fi_tool.svg'
 import MaintenanceIcon from '@/assets/icons/fi_file-minus.svg'
 import FuelIcon from '@/assets/icons/fuel-level.svg'
-import ServicesIcon from '@/assets/icons/services-icon.svg'
 import ModificationIcon from '@/assets/icons/modification.svg'
 import EngineIcon from '@/assets/icons/engine-load.svg'
 import TransmissionIcon from '@/assets/icons/tranmission.svg'
 import BrakesIcon from '@/assets/icons/brakes.svg'
 import ElectricalIcon from '@/assets/icons/electronic-central-electric.svg'
-import DefaultCarIcon from '@/assets/icons/default-car-img.svg'
+import ChassisIcon from '@/assets/icons/chassis.svg'
+import BodyAndTrimIcon from '@/assets/icons/services-icon.svg'
+import OthersIcon from '@/assets/icons/others-icon.svg'
 
 // 显示导出按钮
 const showExportButton = ref(true)
@@ -119,13 +122,24 @@ const exportPDF = () => {
   })
 }
 
+const vehicleImg = ref('')
 // 获取车辆报告详情
 const getVehicleReportInfo = async (id) => {
   isLoading.value = true
-  const { data } = await getVehicleReportInfoApi(id)
-  // 获取成功
-  Object.assign(vehicleReportInfo, data)
-  isLoading.value = false
+  try {
+    const { data } = await getVehicleReportInfoApi(id)
+    // 获取成功
+    Object.assign(vehicleReportInfo, data)
+    // 将网络图片转为本地图片
+    const res = await getImgUrlToBase64(
+      getFullFilePath(vehicleReportInfo.vehicleDto?.cover),
+    )
+    vehicleImg.value = res
+    isLoading.value = false
+  } catch (e) {
+  } finally {
+    isLoading.value = false
+  }
 }
 
 // 获取路径中的id参数
@@ -134,12 +148,166 @@ if (id) {
   // 获取到id
   getVehicleReportInfo(id)
 }
+
+// 系统分类列表
+const systemCategoryList = computed(() => [
+  ...new Set(vehicleReportInfo.reportDtcItemDtos.map((item) => item.type)),
+])
+
+// 是否有 fault code 列表
+const hasFaultCodeList = computed(
+  () =>
+    vehicleReportInfo.reportDtcItemDtos &&
+    vehicleReportInfo.reportDtcItemDtos.length > 0,
+)
+
+// 引擎分类
+const engineItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.ENGINE,
+      )
+    : [],
+)
+
+// 引擎系统DTC数量
+const engineSystemDtcCount = computed(() =>
+  engineItemList.value.length
+    ? engineItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 变速箱分类
+const transmissionItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.TRANSMISSION,
+      )
+    : [],
+)
+
+// 变速箱系统DTC数量
+const transmissionSystemDtcCount = computed(() =>
+  transmissionItemList.value.length
+    ? transmissionItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 制动分类
+const brakesItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.BRAKES,
+      )
+    : [],
+)
+
+// 制动系统DTC数量
+const brakesSystemDtcCount = computed(() =>
+  brakesItemList.value.length
+    ? brakesItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 电气分类
+const electricalItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.ELECTRICAL,
+      )
+    : [],
+)
+
+// 电气分类DTC数量
+const electricalSystemDtcCount = computed(() =>
+  electricalItemList.value.length
+    ? electricalItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 底盘分类
+const chassisItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.CHASSIS,
+      )
+    : [],
+)
+
+// 底盘分类DTC数量
+const chassisSystemDtcCount = computed(() =>
+  chassisItemList.value.length
+    ? chassisItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 车身分类
+const bodyAndTrimItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.BODY_AND_TRIM,
+      )
+    : [],
+)
+
+// 车身分类DTC数量
+const bodyAndTrimSystemDtcCount = computed(() =>
+  bodyAndTrimItemList.value.length
+    ? bodyAndTrimItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 其他分类
+const otherItemList = computed(() =>
+  hasFaultCodeList.value
+    ? vehicleReportInfo.reportDtcItemDtos.filter(
+        (item) => item.type === VehicleEcuCategory.OTHER,
+      )
+    : [],
+)
+
+// 其他分类DTC数量
+const otherSystemDtcCount = computed(() =>
+  otherItemList.value.length
+    ? otherItemList.value.reduce(
+        (pre, cur) => pre + cur.reportDtcItemDtcDtos.length,
+        0,
+      )
+    : 0,
+)
+
+// 分类的图标映射
+const categoryIconMap = Object.freeze({
+  Repair: RepairIcon,
+  Maintenance: MaintenanceIcon,
+  Fuel: FuelIcon,
+  Services: BodyAndTrimIcon,
+  Modification: ModificationIcon,
+})
 </script>
 
 <template>
   <div class="bg-neutrals-off-white flex">
     <div
-      class="report-container max-w-595 shadow-default bg-neutrals-white m-auto box-border px-32"
+      class="report-container max-w-595 shadow-default bg-neutrals-white mx-auto my-20 box-border px-32"
       v-loading="isLoading"
     >
       <header class="flex flex-col gap-4">
@@ -162,13 +330,13 @@ if (id) {
             <el-image
               :src="getFullFilePath(vehicleReportInfo.vehicleDto?.cover)"
               alt="user vehicle image"
-              class="w-200"
+              class="w-200 rounded-16"
               fit="cover"
             >
               <template #error>
                 <!-- 车辆图片加载失败的默认 -->
                 <el-image
-                  :src="DefaultCarIcon"
+                  :src="DefaultCardImg"
                   alt="user vehicle image"
                   class="w-200"
                   fit="cover"
@@ -250,16 +418,23 @@ if (id) {
                 <h4 class="ml-8">
                   <span class="poppins-10px-medium">Issues</span>
                 </h4>
-                <div class="text-status-colours-red flex gap-8">
+                <div class="flex gap-8">
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
                     <el-image
                       :src="FaultCodesIcon"
-                      fit="cover"
                       class="h-24 w-24"
+                      fit="cover"
                     />
-                    <p class="poppins-10px-semibold">
+                    <p
+                      :class="[
+                        'poppins-10px-semibold',
+                        vehicleReportInfo.faultCodeCount > 0
+                          ? 'text-status-colours-red'
+                          : 'text-neutrals-off-black',
+                      ]"
+                    >
                       {{
                         vehicleReportInfo.faultCodeCount
                           ? `${vehicleReportInfo.faultCodeCount} Fault Codes`
@@ -270,18 +445,23 @@ if (id) {
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <!--<el-image-->
-                    <!--  :src="PredictionIcon"-->
-                    <!--  fit="cover"-->
-                    <!--  class="h-24 w-24"-->
-                    <!--/>-->
-                    <svg-icon
+                    <base-svg-icon
                       name="prediction-icon"
-                      class="icon-svg"
                       size="24px"
-                      color="#FF0000"
-                    ></svg-icon>
-                    <p class="poppins-10px-semibold">
+                      :color="
+                        vehicleReportInfo.reportPredictionDtos?.length > 0
+                          ? '#EF3C30'
+                          : '#6F7788'
+                      "
+                    ></base-svg-icon>
+                    <p
+                      :class="[
+                        'poppins-10px-semibold',
+                        vehicleReportInfo.reportPredictionDtos?.length > 0
+                          ? 'text-status-colours-red'
+                          : 'text-neutrals-off-black',
+                      ]"
+                    >
                       {{
                         `${vehicleReportInfo.reportPredictionDtos?.length} Prediction`
                       }}
@@ -298,44 +478,64 @@ if (id) {
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <el-image :src="RepairIcon" fit="cover" class="h-24 w-24" />
-                    <p class="poppins-10px-semibold">3 Repair</p>
+                    <base-svg-icon
+                      name="fi_tool"
+                      size="24px"
+                      color="#6F7788"
+                    ></base-svg-icon>
+                    <p class="poppins-10px-semibold">
+                      {{ vehicleReportInfo.repairCount ?? '-' }} Repair
+                    </p>
                   </div>
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <el-image
-                      :src="MaintenanceIcon"
-                      fit="cover"
-                      class="h-24 w-24"
-                    />
-                    <p class="poppins-10px-semibold">0 Maintenance</p>
+                    <base-svg-icon
+                      name="fi_file-minus"
+                      size="24px"
+                      color="#6F7788"
+                    ></base-svg-icon>
+                    <p class="poppins-10px-semibold">
+                      {{ vehicleReportInfo.maintenanceCount ?? '-' }}
+                      Maintenance
+                    </p>
                   </div>
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <el-image :src="FuelIcon" fit="cover" class="h-24 w-24" />
-                    <p class="poppins-10px-semibold">0 Fuel</p>
+                    <base-svg-icon
+                      name="fuel-level"
+                      size="24px"
+                      color="#6F7788"
+                    ></base-svg-icon>
+                    <p class="poppins-10px-semibold">
+                      {{ vehicleReportInfo.fuelCount ?? '-' }} Fuel
+                    </p>
                   </div>
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <el-image
-                      :src="ServicesIcon"
-                      fit="cover"
-                      class="h-24 w-24"
-                    />
-                    <p class="poppins-10px-semibold">0 Services</p>
+                    <base-svg-icon
+                      name="services-icon"
+                      size="24px"
+                      color="#6F7788"
+                    ></base-svg-icon>
+                    <p class="poppins-10px-semibold">
+                      {{ vehicleReportInfo.seiviceCount ?? '-' }} Services
+                    </p>
                   </div>
                   <div
                     class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                   >
-                    <el-image
-                      :src="ModificationIcon"
-                      fit="cover"
-                      class="h-24 w-24"
-                    />
-                    <p class="poppins-10px-semibold">2 Modification</p>
+                    <base-svg-icon
+                      name="modification"
+                      size="24px"
+                      color="#6F7788"
+                    ></base-svg-icon>
+                    <p class="poppins-10px-semibold">
+                      {{ vehicleReportInfo.modificationCount ?? '-' }}
+                      Modification
+                    </p>
                   </div>
                 </div>
               </div>
@@ -346,50 +546,75 @@ if (id) {
                 <em class="title">Vehicle Information</em>
               </h3>
               <ul
-                class="grid grid-cols-2 gap-x-8 gap-y-8 [&>li]:flex [&>li]:gap-8"
+                class="[&_label]:w-100 grid grid-cols-2 gap-8 [&>li]:flex [&>li]:gap-8"
               >
                 <li>
                   <label>Vehicle Type</label>
-                  <el-text>P10 - Passenger Moto Car</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.vehicleType || '-' }}
+                  </el-text>
                 </li>
                 <li>
                   <label>Primary Colour</label>
-                  <el-text>Blue</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.primaryColour || '-' }}
+                  </el-text>
                 </li>
                 <li>
                   <label>Manufacturing Year</label>
-                  <el-text>2011</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.year || '-' }}
+                  </el-text>
                 </li>
                 <li>
                   <label>Chassis No.</label>
-                  <el-text>WAUZZZ8T9BA000000</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.vin || '-' }}
+                  </el-text>
                 </li>
                 <li>
                   <label>Original Reg. Date</label>
-                  <el-text>15 Aug 2011</el-text>
+                  <el-text>
+                    {{
+                      getFullDate(vehicleReportInfo.vehicleDto?.createTime) ||
+                      '-'
+                    }}
+                  </el-text>
                 </li>
                 <li>
                   <label>Transfer Count</label>
-                  <el-text>2</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.transferCount || '-' }}
+                  </el-text>
                 </li>
                 <li>
                   <label>COE Category</label>
-                  <el-text>Cat B</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.coeCategory || '-' }}
+                  </el-text>
                 </li>
                 <li>
                   <label>Engine Capacity</label>
-                  <el-text>1984 cc</el-text>
+                  <el-text>
+                    {{ vehicleReportInfo.vehicleDto?.engineCapacity || '-' }}
+                  </el-text>
                 </li>
               </ul>
             </section>
             <!-- Fault Codes -->
-            <section class="section-container">
+            <section
+              class="section-container"
+              v-if="
+                vehicleReportInfo.reportDtcItemDtos &&
+                vehicleReportInfo.reportDtcItemDtos.length > 0
+              "
+            >
               <h3 class="section-header">
                 <em class="title">Fault Codes</em>
               </h3>
               <!-- table -->
               <div>
-                <!-- theader -->
+                <!-- thead -->
                 <el-row
                   class="bg-neutrals-grey-1 rounded-t-8 text-neutrals-grey-4 poppins-10px-semibold rounded"
                   :gutter="16"
@@ -401,200 +626,771 @@ if (id) {
                 </el-row>
                 <!-- tbody -->
                 <!-- Engine -->
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2">
-                    <el-image :src="EngineIcon" fit="cover" class="h-16 w-16" />
-                  </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">Engine</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-green">Normal</i>
-                  </el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12" class="poppins-10px-regular">EMS</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Power Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-divider />
+                <template v-if="engineItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="EngineIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.ENGINE }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          engineSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          engineSystemDtcCount
+                            ? `${engineSystemDtcCount} DTC${engineSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in engineItemList" :key="item.id">
+                    <el-row
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
+                      </el-col>
+                    </el-row>
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
+                    >
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
                 <!-- Transmission -->
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2">
-                    <el-image
-                      :src="TransmissionIcon"
-                      fit="cover"
-                      class="h-16 w-16"
-                    />
-                  </el-col>
-                  <el-col :span="6">Transmission</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-green">Normal</i>
-                  </el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Transmission Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-divider />
+                <template v-if="transmissionItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="TransmissionIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.TRANSMISSION }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          transmissionSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          transmissionSystemDtcCount
+                            ? `${transmissionSystemDtcCount} DTC${transmissionSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in transmissionItemList" :key="item.id">
+                    <el-row
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
+                      </el-col>
+                    </el-row>
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
+                    >
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
                 <!-- Brakes -->
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2">
-                    <el-image :src="BrakesIcon" fit="cover" class="h-16 w-16" />
-                  </el-col>
-                  <el-col :span="6">Brakes</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-red">1 DTC</i>
-                  </el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Anti-Lock Braking Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Parking Aid Control Module</el-col>
-                  <el-col :span="4">1 DTC</el-col>
-                </el-row>
-                <el-row
-                  class="poppins-10px-regular text-neutrals-off-black pb-0!"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
+                <template v-if="brakesItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="BrakesIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.BRAKES }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          brakesSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          brakesSystemDtcCount
+                            ? `${brakesSystemDtcCount} DTC${brakesSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in brakesItemList" :key="item.id">
                     <el-row
-                      :gutter="24"
-                      class="rounded-t-8 bg-neutrals-off-white"
+                      class="poppins-10px-regular text-neutrals-off-black"
                     >
-                      <el-col :span="8">DTC</el-col>
-                      <el-col :span="16">Description</el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-                <el-row
-                  class="pt-0! poppins-10px-regular text-neutrals-off-black"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row
-                      :gutter="24"
-                      class="rounded-b-8 bg-neutrals-off-white"
-                    >
-                      <el-col :span="8">C0750:39</el-col>
-                      <el-col :span="16">
-                        Left front tire pressure sensor
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
                       </el-col>
                     </el-row>
-                  </el-col>
-                </el-row>
-                <el-divider />
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
+                    >
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
                 <!-- Electrical -->
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2">
-                    <el-image
-                      :src="ElectricalIcon"
-                      fit="cover"
-                      class="h-16 w-16"
-                    />
-                  </el-col>
-                  <el-col :span="6">Electrical</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-red">2 DTCs</i>
-                  </el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">BCM</el-col>
-                  <el-col :span="4">2 DTCs</el-col>
-                </el-row>
-                <el-row
-                  class="pb-0! poppins-10px-regular text-neutrals-off-black"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
+                <template v-if="electricalItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="ElectricalIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.ELECTRICAL }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          electricalSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          electricalSystemDtcCount
+                            ? `${electricalSystemDtcCount} DTC${electricalSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in electricalItemList" :key="item.id">
                     <el-row
-                      :gutter="24"
-                      class="rounded-t-8 bg-neutrals-off-white poppins-10px-medium text"
+                      class="poppins-10px-regular text-neutrals-off-black"
                     >
-                      <el-col :span="8">DTC</el-col>
-                      <el-col :span="16">
-                        Invalid data received from electronic brake control
-                        module
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
                       </el-col>
                     </el-row>
-                  </el-col>
-                </el-row>
-                <el-row
-                  class="py-0! poppins-10px-regular text-neutrals-off-black"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row :gutter="24" class="bg-neutrals-off-white">
-                      <el-col :span="8">U0415:71</el-col>
-                      <el-col :span="16">Description</el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-                <el-row
-                  class="pt-0! poppins-10px-regular text-neutrals-off-black"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row
-                      :gutter="24"
-                      class="rounded-b-8 bg-neutrals-off-white"
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
                     >
-                      <el-col :span="8">U0415:71</el-col>
-                      <el-col :span="16">
-                        Invalid data received from electronic brake control
-                        module
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
+                <!-- Chassis -->
+                <template v-if="chassisItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="ChassisIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.CHASSIS }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          chassisSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          chassisSystemDtcCount
+                            ? `${chassisSystemDtcCount} DTC${chassisSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in chassisItemList" :key="item.id">
+                    <el-row
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
                       </el-col>
                     </el-row>
-                  </el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">
-                    Remote Communication Interface Control Module
-                  </el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Central Control Panel Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Instrument Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
+                    >
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
+                <!-- Body and Trim -->
+                <template v-if="bodyAndTrimItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="BodyAndTrimIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.BODY_AND_TRIM }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          bodyAndTrimSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          bodyAndTrimSystemDtcCount
+                            ? `${bodyAndTrimSystemDtcCount} DTC${bodyAndTrimSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in bodyAndTrimItemList" :key="item.id">
+                    <el-row
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
+                      </el-col>
+                    </el-row>
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
+                    >
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
+                <!-- Others -->
+                <template v-if="otherItemList.length > 0">
+                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                    <el-col :span="2">
+                      <el-image
+                        :src="OthersIcon"
+                        class="h-16 w-16"
+                        fit="cover"
+                      />
+                    </el-col>
+                    <el-col :span="6" class="poppins-10px-regular">
+                      {{ VehicleEcuCategory.OTHERS }}
+                    </el-col>
+                    <el-col :span="12"></el-col>
+                    <el-col :span="4">
+                      <i
+                        :class="[
+                          otherSystemDtcCount
+                            ? 'bg-status-colours-red'
+                            : 'bg-status-colours-green',
+                        ]"
+                      >
+                        {{
+                          otherSystemDtcCount
+                            ? `${otherSystemDtcCount} DTC${otherSystemDtcCount > 1 ? 's' : ''}`
+                            : 'Normal'
+                        }}
+                      </i>
+                    </el-col>
+                  </el-row>
+                  <div v-for="item in otherItemList" :key="item.id">
+                    <el-row
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      <el-col :span="2"></el-col>
+                      <el-col :span="6"></el-col>
+                      <el-col :span="12" class="divider-neutral-grey-4-1px">
+                        {{ item.name }}
+                      </el-col>
+                      <el-col :span="4" class="divider-neutral-grey-4-1px">
+                        {{
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                            ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
+                            : '-'
+                        }}
+                      </el-col>
+                    </el-row>
+                    <!-- DTC 数量 -->
+                    <template
+                      v-if="
+                        item.reportDtcItemDtcDtos &&
+                        item.reportDtcItemDtcDtos.length > 0
+                      "
+                    >
+                      <el-row
+                        class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            class="rounded-t-8 bg-neutrals-off-white"
+                          >
+                            <el-col :span="8">DTC</el-col>
+                            <el-col :span="16">Description</el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                      <el-row
+                        v-for="(dtcDto, index) in item.reportDtcItemDtcDtos"
+                        :key="dtcDto.id"
+                        :class="[
+                          'poppins-10px-regular',
+                          'text-neutrals-off-black',
+                          index === item.reportDtcItemDtcDtos.length - 1
+                            ? 'pt-1!'
+                            : 'py-1!',
+                        ]"
+                      >
+                        <el-col :span="2"></el-col>
+                        <el-col :span="6"></el-col>
+                        <el-col :span="16">
+                          <el-row
+                            :gutter="24"
+                            :class="[
+                              'bg-neutrals-off-white',
+                              {
+                                'rounded-b-8':
+                                  index ===
+                                  item.reportDtcItemDtcDtos.length - 1,
+                              },
+                            ]"
+                          >
+                            <el-col :span="8">
+                              {{ dtcDto.faultCode || '-' }}
+                            </el-col>
+                            <el-col :span="16">
+                              {{ dtcDto.name || '-' }}
+                            </el-col>
+                          </el-row>
+                        </el-col>
+                      </el-row>
+                    </template>
+                  </div>
+                  <el-divider />
+                </template>
               </div>
             </section>
             <!-- Prediction -->
-            <section class="section-container">
+            <section
+              class="section-container"
+              v-if="
+                vehicleReportInfo.reportPredictionDtos &&
+                vehicleReportInfo.reportPredictionDtos.length > 0
+              "
+            >
               <h3 class="section-header">
                 <em class="title">Prediction</em>
               </h3>
@@ -602,7 +1398,7 @@ if (id) {
               <div>
                 <!-- theader -->
                 <el-row
-                  class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold rounded"
+                  class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold"
                   :gutter="16"
                 >
                   <el-col :span="2"></el-col>
@@ -610,214 +1406,200 @@ if (id) {
                   <el-col :span="11">Condition</el-col>
                 </el-row>
                 <!-- tbody -->
-                <template v-for="item in 10" :key="item">
-                  <el-row>
+                <template
+                  v-for="predictionDto in vehicleReportInfo.reportPredictionDtos"
+                  :key="predictionDto.id"
+                >
+                  <el-row class="flex items-center">
                     <el-col :span="2">
                       <el-image
-                        :src="EngineIcon"
+                        :src="
+                          getFullFilePath(
+                            predictionDto?.predictionsToMGDto?.logo,
+                          )
+                        "
+                        fit="cover"
+                        class="h-16 w-16"
+                      >
+                        <template #error>
+                          <el-image
+                            src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"
+                            fit="cover"
+                            class="h-16 w-16"
+                          />
+                        </template>
+                      </el-image>
+                    </el-col>
+                    <el-col
+                      :span="11"
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      {{ predictionDto.name }}
+                    </el-col>
+                    <el-col :span="11">
+                      <span
+                        :class="[
+                          'poppins-10px-semibold',
+                          {
+                            'text-status-colours-red':
+                              predictionDto.value <= 0.3,
+                            'text-neutrals-off-black':
+                              predictionDto.value > 0.3 &&
+                              predictionDto.value < 0.8,
+                            'text-status-colours-green':
+                              predictionDto.value >= 0.8,
+                          },
+                        ]"
+                      >
+                        {{ predictionDto.value * 100 }} %
+                      </span>
+                    </el-col>
+                  </el-row>
+                  <el-divider class="divider-neutral-grey-4-1px!" />
+                </template>
+              </div>
+            </section>
+            <!-- Expense Records -->
+            <section
+              class="section-container"
+              v-if="
+                vehicleReportInfo.reportCategoryDtos &&
+                vehicleReportInfo.reportCategoryDtos.length > 0
+              "
+            >
+              <h3 class="section-header">
+                <em class="title">Expense Records</em>
+              </h3>
+              <!-- total cost -->
+              <h4 class="text-neutrals-off-black flex items-center gap-8">
+                <span class="poppins-10px-regular">Total Cost (SGD):</span>
+                <strong class="poppins-16px-semibold not-italic">
+                  $
+                  {{
+                    vehicleReportInfo.reportCategoryDtos?.reduce(
+                      (acc, cur) => acc + parseFloat(cur.amount),
+                      0,
+                    )
+                  }}
+                </strong>
+              </h4>
+              <!-- table category -->
+              <div class="flex flex-col gap-8">
+                <!-- title -->
+                <h5
+                  class="border-b-solid poppins-12px-semibold text-neutrals-off-black border-b border-b-[#1B1A1E] px-12 pb-4"
+                >
+                  Category
+                </h5>
+                <!-- theader -->
+                <el-row
+                  class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold"
+                  :gutter="16"
+                >
+                  <el-col :span="3"></el-col>
+                  <el-col :span="7">Category</el-col>
+                  <el-col :span="7">Expense (SGD)</el-col>
+                  <el-col :span="7">Percentage</el-col>
+                </el-row>
+                <!-- tbody -->
+                <template
+                  v-for="categoryDto in vehicleReportInfo.reportCategoryDtos"
+                  :key="categoryDto.category"
+                >
+                  <el-row class="flex-center flex">
+                    <el-col :span="3">
+                      <el-image
+                        :src="categoryIconMap[categoryDto.category]"
                         fit="cover"
                         class="h-16 w-16"
                       />
                     </el-col>
-                    <el-col :span="11" class="poppins-10px-regular">
-                      Brake Failure
+                    <el-col
+                      :span="7"
+                      class="poppins-10px-regular text-neutrals-off-black"
+                    >
+                      {{ categoryDto.category }}
                     </el-col>
-                    <el-col :span="11" class="poppins-10px-semibold">6%</el-col>
+                    <el-col :span="7">
+                      <span
+                        class="poppins-10px-semibold text-neutrals-off-black"
+                      >
+                        $ {{ categoryDto.amount }}
+                      </span>
+                    </el-col>
+                    <el-col :span="7">
+                      <span
+                        class="poppins-10px-semibold text-neutrals-off-black"
+                      >
+                        {{ categoryDto.percentage * 100 }} %
+                      </span>
+                    </el-col>
                   </el-row>
-                  <el-divider class="divider-neutral-grey-4-1px" />
+                  <el-divider class="divider-neutral-grey-4-1px!" />
                 </template>
               </div>
-            </section>
-            <!-- Expense Records 1  -->
-            <section class="section-container">
-              <h3 class="section-header">
-                <em class="title">Expense Records</em>
-              </h3>
-              <!-- table -->
-              <div>
-                <!-- theader -->
-                <el-row
-                  class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold rounded"
-                  :gutter="16"
+              <!-- modules records -->
+              <div class="flex flex-col gap-8">
+                <!-- title -->
+                <h5
+                  class="border-b-solid poppins-12px-semibold text-neutrals-off-black border-b border-b-[#1B1A1E] px-12 pb-4"
                 >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6">System</el-col>
-                  <el-col :span="12">ECU</el-col>
-                  <el-col :span="4">DTC</el-col>
-                </el-row>
-                <!-- tbody -->
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6">Chassis</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-red">2 DTCs</i>
-                  </el-col>
-                </el-row>
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Power Steering Control Module</el-col>
-                  <el-col :span="4">1 DTC</el-col>
-                </el-row>
-                <!-- 小表格 -->
-                <el-row
-                  class="pb-0! poppins-10px-regular text-neutrals-off-black"
+                  Records({{ vehicleReportInfo.reportExpenseDtos.length }})
+                </h5>
+                <!-- record -->
+                <div
+                  v-for="expenseDto in vehicleReportInfo.reportExpenseDtos"
+                  :key="expenseDto.id"
+                  class="flex flex-col gap-8"
                 >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row
-                      :gutter="24"
-                      class="rounded-t-8 bg-neutrals-off-white"
-                    >
-                      <el-col :span="8">DTC</el-col>
-                      <el-col :span="16">Description</el-col>
+                  <!-- record date -->
+                  <div
+                    class="poppins-10px-regular flex items-center gap-12 py-8"
+                  >
+                    <p>05 Feb 2025</p>
+                    <div class="flex items-center gap-8">
+                      <el-avatar
+                        :src="getFullFilePath(expenseDto.logo)"
+                        fit="cover"
+                        :size="16"
+                      />
+                      <span>ORCA Automotive</span>
+                    </div>
+                  </div>
+                  <!-- thead -->
+                  <el-row
+                    class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold"
+                    :gutter="16"
+                  >
+                    <el-col :span="10">Item</el-col>
+                    <el-col :span="7">Quantity</el-col>
+                    <el-col :span="7">Amount (SGD)</el-col>
+                  </el-row>
+                  <!-- tbody -->
+                  <template
+                    v-if="
+                      expenseDto.reportExpenseItemDtos &&
+                      expenseDto.reportExpenseItemDtos.length > 0
+                    "
+                    v-for="expenseItemDto in expenseDto.reportExpenseItemDtos"
+                    :key="expenseItemDto.id"
+                  >
+                    <el-row class="poppins-10px-regular flex items-center">
+                      <el-col :span="10" class="flex flex-col">
+                        <span>
+                          {{ expenseItemDto.name }}
+                          <br />
+                          {{ expenseItemDto.category || 'Uncategorized' }}
+                        </span>
+                      </el-col>
+                      <el-col :span="7">
+                        {{ expenseItemDto.quantity }}
+                      </el-col>
+                      <el-col :span="7">${{ expenseItemDto.amount }}</el-col>
                     </el-row>
-                  </el-col>
-                </el-row>
-                <el-row
-                  class="pt-0! poppins-10px-regular text-neutrals-off-black"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row
-                      :gutter="24"
-                      class="rounded-b-8 bg-neutrals-off-white"
-                    >
-                      <el-col :span="8">B1325:03</el-col>
-                      <el-col :span="16">Control module power circuit</el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Steering Wheel Angle Sensor Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-divider />
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6">Body and Trim</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-green">Normal</i>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Air Conditioning Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Radio Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Airbag Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-              </div>
-            </section>
-            <!-- Expense Records 2  -->
-            <section class="section-container">
-              <h3 class="section-header">
-                <em class="title">Expense Records</em>
-              </h3>
-              <!-- table -->
-              <div>
-                <!-- theader -->
-                <el-row
-                  class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold rounded"
-                  :gutter="16"
-                >
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6">System</el-col>
-                  <el-col :span="12">ECU</el-col>
-                  <el-col :span="4">DTC</el-col>
-                </el-row>
-                <!-- tbody -->
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6">Chassis</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-red">2 DTCs</i>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Power Steering Control Module</el-col>
-                  <el-col :span="4">1 DTC</el-col>
-                </el-row>
-                <!-- 小表格 -->
-                <el-row class="pb-0!">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row
-                      :gutter="24"
-                      class="rounded-t-8 bg-neutrals-off-white"
-                    >
-                      <el-col :span="8">DTC</el-col>
-                      <el-col :span="16">Description</el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-                <el-row class="pt-0!">
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="16">
-                    <el-row
-                      :gutter="24"
-                      class="rounded-b-8 bg-neutrals-off-white"
-                    >
-                      <el-col :span="8">B1325:03</el-col>
-                      <el-col :span="16">Control module power circuit</el-col>
-                    </el-row>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Steering Wheel Angle Sensor Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-divider />
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6">Body and Trim</el-col>
-                  <el-col :span="12"></el-col>
-                  <el-col :span="4">
-                    <i class="bg-status-colours-green">Normal</i>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Air Conditioning Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Radio Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="2"></el-col>
-                  <el-col :span="6"></el-col>
-                  <el-col :span="12">Airbag Control Module</el-col>
-                  <el-col :span="4">-</el-col>
-                </el-row>
+                    <el-divider class="divider-neutral-grey-4-1px!" />
+                  </template>
+                </div>
               </div>
             </section>
           </div>
@@ -859,7 +1641,7 @@ label {
 }
 
 :deep(.el-row) {
-  @apply px-8 py-12;
+  @apply m-0! px-8 py-12;
 
   & > .el-col:first-child {
     @apply pl-0!;

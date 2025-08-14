@@ -25,7 +25,7 @@ export const getLastUsedDate = (timestamp) => {
 }
 
 /**
- * 将给定时间戳加一年并格式化为 "DD MMM YYYY"
+ * 将给定时间戳加一年并格式化为 "DD MMM YYYY", 如 "03 Apr 2026"
  * @param {number} timestamp 毫秒时间戳
  * @returns {string} 格式化后的日期
  */
@@ -38,7 +38,7 @@ export const getWarrantyEndDate = (timestamp) => {
 }
 
 /**
- * 格式化贴文发布的时间
+ * 格式化贴文发布的时间, 格式为 "22 Aug 2024 10:30am"
  * @param timestamp 贴文发布的时间戳
  */
 export const getCommentTime = (timestamp) => {
@@ -74,7 +74,7 @@ export const getCommentTime = (timestamp) => {
 }
 
 /**
- * 获取车辆报告生成时间
+ * 获取车辆报告生成时间, 格式为 "Generated: 22 Aug 2024 10:30am"
  * @param timestamp 时间戳
  * @returns {string}
  */
@@ -87,6 +87,18 @@ export const getVehicleReportGeneratedTime = (timestamp) => {
   const date = dayjs(timestamp)
   // 格式化日期, 如 "Generated: 22 Aug 2024 10:30am"
   const formatDate = date.format('DD MMM YYYY hh:mma')
-  console.log(`Generated: ${formatDate}`)
   return `Generated: ${formatDate}`
+}
+
+/**
+ * 获取完整的日期, 格式为 "22 Aug 2024"
+ * @param timestamp
+ * @returns {string}
+ */
+export const getFullDate = (timestamp) => {
+  if (!timestamp) {
+    return '-'
+  }
+  const date = dayjs(timestamp)
+  return date.format('DD MMM YYYY')
 }

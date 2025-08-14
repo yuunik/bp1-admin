@@ -1,109 +1,184 @@
-# Pd1-web-admin
+# PD1 Web Admin
 
-## Getting started
+一个基于 Vue 3 + Vite 构建的现代化管理后台系统，提供用户管理、OBD设备管理、订单管理等功能。
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## 技术栈
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- **前端框架**: Vue 3 (Composition API)
+- **构建工具**: Vite 7.0
+- **UI 组件库**: Element Plus 2.10
+- **CSS 框架**: UnoCSS
+- **状态管理**: Pinia
+- **路由管理**: Vue Router 4
+- **HTTP 客户端**: Axios
+- **样式预处理**: Sass/SCSS
+- **代码规范**: ESLint + Prettier + Stylelint
+- **Git 钩子**: Husky
 
-## Add your files
+## 项目特性
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- 🚀 基于 Vue 3 Composition API 开发
+- 📦 使用 Vite 构建，开发体验极佳
+- 🎨 集成 Element Plus 组件库
+- 🎯 UnoCSS 原子化 CSS 框架
+- 📱 响应式设计，支持多端适配
+- 🔐 完整的权限管理系统
+- 📊 数据可视化图表
+- 🛠 丰富的工具函数和组件
+- 📄 支持 PDF 导出和报告生成
+- 🎭 SVG 图标系统
+
+## 功能模块
+
+- **用户管理**: 用户信息管理、权限控制
+- **OBD管理**: OBD设备管理和数据监控
+- **订单管理**: 订单处理和状态跟踪
+- **数据库管理**: 数据库操作和维护
+- **应用配置**: 系统配置和参数设置
+- **仪表盘**: 数据统计和可视化展示
+- **分享功能**: 支持AI聊天、论坛、报告分享
+
+## 环境要求
+
+- Node.js >= 16.0.0
+- npm >= 8.0.0 或 yarn >= 1.22.0
+
+## 快速开始
+
+### 安装依赖
+
+```bash
+npm install
+# 或
+yarn install
+```
+
+### 开发环境
+
+```bash
+# 本地开发环境
+npm run local
+
+# 开发环境
+npm run dev
+
+# 生产环境
+npm run pro
+```
+
+### 构建部署
+
+```bash
+# 构建开发环境
+npm run build:dev
+
+# 构建生产环境
+npm run build:pro
+
+# 构建本地环境
+npm run build:local
+```
+
+### 代码规范
+
+```bash
+# ESLint 检查
+npm run lint
+
+# ESLint 修复
+npm run fix
+
+# 代码格式化
+npm run format
+
+# 样式检查和修复
+npm run lint:style
+```
+
+## 项目结构
 
 ```
-cd existing_repo
-git remote add origin https://gittmp.proteus-dt.com/xiamen-dev/pd1-web-admin.git
-git branch -M main
-git push -uf origin main
+src/
+├── apis/              # API 接口
+├── assets/            # 静态资源
+├── components/        # 公共组件
+├── composables/       # 组合式函数
+├── directives/        # 自定义指令
+├── layout/            # 布局组件
+├── plugins/           # 插件
+├── router/            # 路由配置
+├── share/             # 分享页面
+├── store/             # 状态管理
+├── styles/            # 样式文件
+├── types/             # 类型定义
+├── utils/             # 工具函数
+├── views/             # 页面组件
+├── App.vue            # 根组件
+├── main.js            # 入口文件
+└── permission.js      # 权限控制
 ```
 
-## Integrate with your tools
+## 开发规范
 
-- [ ] [Set up project integrations](https://gittmp.proteus-dt.com/xiamen-dev/pd1-web-admin/-/settings/integrations)
+### 组件命名
 
-## Collaborate with your team
+- 组件文件使用 PascalCase 命名
+- 组件名称使用 PascalCase
+- 页面组件放在 `views` 目录下
+- 公共组件放在 `components` 目录下
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### 样式规范
 
-## Test and Deploy
+- 使用 UnoCSS 原子化 CSS
+- SCSS 变量统一在 `styles/variable.scss` 中定义
+- 组件样式使用 scoped
 
-Use the built-in continuous integration in GitLab.
+### API 规范
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- API 接口统一在 `apis` 目录下管理
+- 使用 axios 进行 HTTP 请求
+- 统一的错误处理和响应拦截
+
+## 环境配置
+
+项目支持多环境配置：
+
+- **local**: 本地开发环境
+- **dev**: 开发环境
+- **pro**: 生产环境
+
+在项目根目录创建对应的环境文件：
+
+- `.env.local`
+- `.env.dev`
+- `.env.pro`
+
+## 浏览器支持
+
+- Chrome >= 87
+- Firefox >= 78
+- Safari >= 14
+- Edge >= 88
+
+## 贡献指南
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
+
+## 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 联系方式
+
+如有问题或建议，请通过以下方式联系：
+
+- 项目地址: https://gittmp.proteus-dt.com/xiamen-dev/pd1-web-admin
+- 问题反馈: 请在 GitLab Issues 中提交
 
 ---
 
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-
-Choose a self-explaining name for your project.
-
-## Description
-
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-
-Show your appreciation to those who have contributed to the project.
-
-## License
-
-For open source projects, say how it is licensed.
-
-## Project status
-
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
-
-# Vue 3 + Vite
-
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+**注意**: 本项目仅供内部使用，请勿外传。

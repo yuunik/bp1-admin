@@ -54,3 +54,21 @@ export const ShareRoutePath = Object.freeze({
   APPLE_APP_STORE_URL: 'https://itunes.apple.com/cn/app/id6748522066',
   APP_URL: 'diagnostics://open',
 })
+
+// 汽车电控系统分类的定义
+export const VehicleEcuCategory = Object.freeze({
+  // 引擎
+  ENGINE: 'Engine',
+  // 变速箱
+  TRANSMISSION: 'Transmission',
+  // 制动
+  BRAKES: 'Brakes',
+  // 电气
+  ELECTRICAL: 'Electrical',
+  // 底盘
+  CHASSIS: 'Chassis',
+  // 车身
+  BODY_AND_TRIM: 'Body and Trim',
+  // 其他
+  OTHERS: 'Others',
+})
