@@ -8,7 +8,7 @@
  * @returns {string} 格式化后的路径字符串
  */
 export const getFullFilePath = (path) =>
-  `${import.meta.env.VITE_BASE_URL_FILE}${path}`
+  `${import.meta.env.VITE_SERVER_URL_FILE}/${path}`
 
 /**
  * @description 获取数字格式化字符串, 如 10000 -> 10,000
