@@ -21,6 +21,9 @@ export default defineConfig(({ mode }) => {
 
   // 服务器地址
   const serverApi = env.VITE_SERVER_URL_API
+  const serverFileApi = env.VITE_SERVER_URL_FILE
+
+  const isLocal = mode === '.env.local'
 
   return {
     plugins: [
@@ -84,18 +87,20 @@ export default defineConfig(({ mode }) => {
       port: 3333,
       host: '0.0.0.0',
       open: true,
-      proxy: {
-        [baseApi]: {
-          target: serverApi,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(new RegExp(`^${baseApi}`), ''),
-        },
-        [fileApi]: {
-          target: serverApi,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(new RegExp(`^${fileApi}`), ''),
-        },
-      },
+      proxy: isLocal
+        ? {
+            [baseApi]: {
+              target: serverApi,
+              changeOrigin: true,
+              rewrite: (path) => path.replace(new RegExp(`^${baseApi}`), ''),
+            },
+            [fileApi]: {
+              target: serverApi,
+              changeOrigin: true,
+              rewrite: (path) => path.replace(new RegExp(`^${fileApi}`), ''),
+            },
+          }
+        : undefined,
     },
     css: {
       preprocessorOptions: {

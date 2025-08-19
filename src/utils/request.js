@@ -4,10 +4,19 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/index.js'
 import router from '@/router'
 
-const request = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL_API,
-  timeout: 10000,
-})
+let request
+const { MODE, VITE_BASE_URL_API, VITE_SERVER_URL_API } = import.meta.env
+if (MODE === '.env.local') {
+  request = axios.create({
+    baseURL: VITE_BASE_URL_API,
+    timeout: 10000,
+  })
+} else {
+  request = axios.create({
+    baseURL: VITE_SERVER_URL_API,
+    timeout: 10000,
+  })
+}
 
 request.interceptors.request.use(
   (config) => {

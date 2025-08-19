@@ -2,6 +2,14 @@
  * @description 数据格式化工具类
  */
 
+let fileApi
+const { MODE, VITE_BASE_URL_FILE, VITE_SERVER_URL_FILE } = import.meta.env
+if (MODE === '.env.local') {
+  fileApi = VITE_BASE_URL_FILE
+} else {
+  fileApi = VITE_SERVER_URL_FILE
+}
+
 /**
  * @description 获取文件完整路径
  * @param {string} path 路径
