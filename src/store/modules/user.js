@@ -15,21 +15,24 @@ const useUserStore = defineStore('user', () => {
   // 用户登录
   const login = async (email, password) => {
     isLoading.value = true
-    const { code, data, msg } = await loginApi(email, password)
-    try {
-      if (code === 0) {
-        // 登录成功
-        userInfo.value = data
-        // token 本地持久化
-        token.value = data.token
-        return 'login success'
-      } else {
-        // 抛处异常
-        return Promise.reject(new Error(msg))
-      }
-    } finally {
-      isLoading.value = false
-    }
+    loginApi(email, password)
+      .then((res) => {
+        const { code, data, msg } = res
+        if (code === 0) {
+          // 登录成功
+          userInfo.value = data
+          // token 本地持久化
+          token.value = data.token
+          return 'login success'
+        } else {
+          // 抛处异常
+          return Promise.reject(new Error(msg))
+        }
+      })
+      .finally(() => {
+        // 关闭加载中
+        isLoading.value = false
+      })
   }
 
   // 用户登出
