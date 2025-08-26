@@ -1,13 +1,12 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { Line } from 'vue-chartjs'
 import { ElMessage } from 'element-plus'
 
 import {
   getOBDBindHistoryApi,
   getOBDBindVehiclesApi,
-  getOBDInfoApi,
   unbindOBDApi,
 } from '@/apis/obdApi.js'
 import {
@@ -16,12 +15,15 @@ import {
   getLastUsedDate,
   getWarrantyEndDate,
 } from '@/utils/dateUtil.js'
+import { RouteName } from '@/utils/constantsUtil.js'
 
 const isObdOn = computed(() => obdInfo.status === 10)
 
 const dateRange = ref('1')
 
 const route = useRoute()
+
+const router = useRouter()
 
 const obdInfo = inject('obdInfo')
 
@@ -104,12 +106,6 @@ const chartOptions = {
   },
 }
 
-// 获取 OBD 详情
-const getOBDInfo = async (id) => {
-  const { data } = await getOBDInfoApi(id)
-  Object.assign(obdInfo, data)
-}
-
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
   const { data } = await getOBDBindHistoryApi(id)
@@ -127,6 +123,10 @@ const handleUnbindUser = async (id) => {
   await unbindOBDApi(id)
   ElMessage.success('Unbind success')
 }
+
+// 查看 OBD 绑定的车辆详情
+const handleViewVehicleDetails = async (id) =>
+  router.push({ name: RouteName.VIEW_VEHICLE, params: id })
 
 onMounted(async () => {
   // 获取路径中 id
@@ -281,7 +281,12 @@ onMounted(async () => {
           </el-table-column>
           <el-table-column>
             <template #default="{ row }">
-              <el-button class="rounded-full!">View Details</el-button>
+              <el-button
+                class="rounded-full!"
+                @click.stop="handleViewVehicleDetails"
+              >
+                View Details
+              </el-button>
             </template>
           </el-table-column>
         </el-table>

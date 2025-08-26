@@ -32,6 +32,7 @@ export const RouteName = Object.freeze({
   OBD_MANAGEMENT: 'OBD Management',
   OBD_LIST: 'OBD List',
   OBD_DETAILS: 'OBD Details',
+  VIEW_VEHICLE: 'View Vehicle',
   INVENTORY: 'Inventory',
   USER_MANAGEMENT: 'User Management',
   INTERNAL: 'Internal',

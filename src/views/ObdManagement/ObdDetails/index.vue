@@ -70,7 +70,7 @@ provide('obdInfo', obdInfo)
     <!-- header -->
     <div class="flex-between px-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
-        PD-1 | A000002
+        {{ obdInfo.sn }}
       </h3>
       <el-button @click.stop="handleUnbindUser">Unbind User</el-button>
     </div>

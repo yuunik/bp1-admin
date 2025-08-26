@@ -50,35 +50,36 @@ const constantRoutes = [
     name: RouteName.OBD_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
+      // OBD 列表
       {
         path: '/obd-management/obd-list',
         name: RouteName.OBD_LIST,
         component: () => import('@/views/ObdManagement/ObdList/index.vue'),
+        meta: {
+          title: RouteName.OBD_LIST,
+          isShow: true,
+        },
+      },
+      // OBD 详情
+      {
+        path: '/obd-management/obd-details/:id',
+        name: RouteName.OBD_DETAILS,
+        component: () => import('@/views/ObdManagement/ObdDetails/index.vue'),
         children: [
-          // OBD 列表
+          // 车辆详情页
           {
-            path: '',
-            name: 'OBD Table',
+            path: '/obd-management/obd-list/obd-details/vehicle-details/:id',
+            name: RouteName.VIEW_VEHICLE,
             component: () =>
-              import('@/views/ObdManagement/ObdList/ObdTable.vue'),
+              import('@/views/ObdManagement/ObdDetails/VehicleDetails.vue'),
             meta: {
-              isShow: true,
-            },
-          },
-          // OBD 详情
-          {
-            path: '/obd-management/obd-list/obd-details/:id',
-            name: RouteName.OBD_DETAILS,
-            component: () =>
-              import('@/views/ObdManagement/ObdList/ObdDetailsTabs.vue'),
-            meta: {
-              title: RouteName.OBD_DETAILS,
+              title: RouteName.VIEW_VEHICLE,
               isShow: true,
             },
           },
         ],
         meta: {
-          title: RouteName.OBD_LIST,
+          title: RouteName.OBD_DETAILS,
           isShow: true,
         },
       },

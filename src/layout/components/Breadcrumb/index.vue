@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowRight } from '@element-plus/icons-vue'
 
@@ -12,7 +12,7 @@ import CompanyLogo from '@/assets/icons/logo.svg'
 const route = useRoute()
 
 // 面包屑列表
-const breadcrumbList = ref(route.matched.map((item) => item))
+const breadcrumbList = computed(() => route.matched.map((item) => item))
 
 // 更新面包屑
 emitter.on(EmitterEvent.UPDATE_BREADCRUMB_LIST, (val) => {
