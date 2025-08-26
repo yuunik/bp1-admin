@@ -8,6 +8,7 @@
         "@unhead/vue": "^2.0.14",
         "@vueuse/core": "^13.5.0",
         "axios": "^1.10.0",
+        "chart.js": "^4.5.0",
         "chokidar": "^4.0.3",
         "crypto-js": "^4.2.0",
         "dayjs": "^1.11.13",
@@ -20,6 +21,7 @@
         "nprogress": "^0.2.0",
         "pinia": "^3.0.3",
         "vue": "^3.5.17",
+        "vue-chartjs": "^5.3.2",
         "vue-markdown-render": "^2.2.1",
         "vue-router": "^4.5.1",
       },
@@ -216,6 +218,8 @@
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.29", "https://registry.npmmirror.com/@jridgewell/trace-mapping/-/trace-mapping-0.3.29.tgz", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-uw6guiW/gcAGPDhLmd77/6lW8QLeiV5RUTsAX46Db6oLhGaVj4lhnPwb184s1bkc8kdVg/+h988dro8GRDpmYQ=="],
 
     "@keyv/serialize": ["@keyv/serialize@1.0.3", "https://registry.npmmirror.com/@keyv/serialize/-/serialize-1.0.3.tgz", { "dependencies": { "buffer": "^6.0.3" } }, "sha512-qnEovoOp5Np2JDGonIDL6Ayihw0RhnRh6vxPuHo4RDn1UOzwEo4AeIfpL6UGIrsceWrCMiVPgwRjbHu4vYFc3g=="],
+
+    "@kurkle/color": ["@kurkle/color@0.3.4", "https://registry.npmmirror.com/@kurkle/color/-/color-0.3.4.tgz", {}, "sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w=="],
 
     "@nicolo-ribaudo/eslint-scope-5-internals": ["@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1", "https://registry.npmmirror.com/@nicolo-ribaudo/eslint-scope-5-internals/-/eslint-scope-5-internals-5.1.1-v1.tgz", { "dependencies": { "eslint-scope": "5.1.1" } }, "sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg=="],
 
@@ -510,6 +514,8 @@
     "canvg": ["canvg@3.0.11", "https://registry.npmmirror.com/canvg/-/canvg-3.0.11.tgz", { "dependencies": { "@babel/runtime": "^7.12.5", "@types/raf": "^3.4.0", "core-js": "^3.8.3", "raf": "^3.4.1", "regenerator-runtime": "^0.13.7", "rgbcolor": "^1.0.1", "stackblur-canvas": "^2.0.0", "svg-pathdata": "^6.0.3" } }, "sha512-5ON+q7jCTgMp9cjpu4Jo6XbvfYwSB2Ow3kzHKfIyJfaCAOHLbdKPQqGKgfED/R5B+3TFFfe8pegYA+b423SRyA=="],
 
     "chalk": ["chalk@4.1.2", "https://registry.npmmirror.com/chalk/-/chalk-4.1.2.tgz", { "dependencies": { "ansi-styles": "^4.1.0", "supports-color": "^7.1.0" } }, "sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA=="],
+
+    "chart.js": ["chart.js@4.5.0", "https://registry.npmmirror.com/chart.js/-/chart.js-4.5.0.tgz", { "dependencies": { "@kurkle/color": "^0.3.0" } }, "sha512-aYeC/jDgSEx8SHWZvANYMioYMZ2KX02W6f6uVfyteuCGcadDLcYVHdfdygsTQkQ4TKn5lghoojAsPj5pu0SnvQ=="],
 
     "chokidar": ["chokidar@4.0.3", "https://registry.npmmirror.com/chokidar/-/chokidar-4.0.3.tgz", { "dependencies": { "readdirp": "^4.0.1" } }, "sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA=="],
 
@@ -1436,6 +1442,8 @@
     "vite-plugin-svg-icons": ["vite-plugin-svg-icons@2.0.1", "https://registry.npmmirror.com/vite-plugin-svg-icons/-/vite-plugin-svg-icons-2.0.1.tgz", { "dependencies": { "@types/svgo": "^2.6.1", "cors": "^2.8.5", "debug": "^4.3.3", "etag": "^1.8.1", "fs-extra": "^10.0.0", "pathe": "^0.2.0", "svg-baker": "1.7.0", "svgo": "^2.8.0" }, "peerDependencies": { "vite": ">=2.0.0" } }, "sha512-6ktD+DhV6Rz3VtedYvBKKVA2eXF+sAQVaKkKLDSqGUfnhqXl3bj5PPkVTl3VexfTuZy66PmINi8Q6eFnVfRUmA=="],
 
     "vue": ["vue@3.5.17", "https://registry.npmmirror.com/vue/-/vue-3.5.17.tgz", { "dependencies": { "@vue/compiler-dom": "3.5.17", "@vue/compiler-sfc": "3.5.17", "@vue/runtime-dom": "3.5.17", "@vue/server-renderer": "3.5.17", "@vue/shared": "3.5.17" }, "peerDependencies": { "typescript": "*" }, "optionalPeers": ["typescript"] }, "sha512-LbHV3xPN9BeljML+Xctq4lbz2lVHCR6DtbpTf5XIO6gugpXUN49j2QQPcMj086r9+AkJ0FfUT8xjulKKBkkr9g=="],
+
+    "vue-chartjs": ["vue-chartjs@5.3.2", "https://registry.npmmirror.com/vue-chartjs/-/vue-chartjs-5.3.2.tgz", { "peerDependencies": { "chart.js": "^4.1.1", "vue": "^3.0.0-0 || ^2.7.0" } }, "sha512-NrkbRRoYshbXbWqJkTN6InoDVwVb90C0R7eAVgMWcB9dPikbruaOoTFjFYHE/+tNPdIe6qdLCDjfjPHQ0fw4jw=="],
 
     "vue-demi": ["vue-demi@0.14.10", "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.14.10.tgz", { "peerDependencies": { "@vue/composition-api": "^1.0.0-rc.1", "vue": "^3.0.0-0 || ^2.6.0" }, "optionalPeers": ["@vue/composition-api"], "bin": { "vue-demi-fix": "bin/vue-demi-fix.js", "vue-demi-switch": "bin/vue-demi-switch.js" } }, "sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg=="],
 

@@ -70,7 +70,7 @@ const constantRoutes = [
             path: '/obd-management/obd-list/obd-details/:id',
             name: RouteName.OBD_DETAILS,
             component: () =>
-              import('@/views/ObdManagement/ObdList/ObdDetails.vue'),
+              import('@/views/ObdManagement/ObdList/ObdDetailsTabs.vue'),
             meta: {
               title: RouteName.OBD_DETAILS,
               isShow: true,

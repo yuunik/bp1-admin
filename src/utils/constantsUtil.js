@@ -73,3 +73,11 @@ export const VehicleEcuCategory = Object.freeze({
   // 其他
   OTHERS: 'Others',
 })
+
+// OBD Details 的 tab 分页常量
+export const ObdDetailsTabs = Object.freeze({
+  // OBD 详情
+  OBD_DETAILS: 'OBD Details',
+  // 行为统计
+  BEHAVIOR_STATISTICS: 'Behavior Statistics',
+})

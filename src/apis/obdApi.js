@@ -14,6 +14,12 @@ const ObdApi = Object.freeze({
   UNBIND_OBD: '/manager/obd/unbind',
   // 关闭 OBD
   CLOSE_OBD: '/manager/obd/close',
+  // 获取 OBD 详情
+  GET_OBD_DETAIL: '/manager/obd/info',
+  // 获取 OBD 绑定过的账号历史信息
+  GET_OBD_BIND_HISTORY: '/manager/obd/users',
+  // 获取 OBD 绑过的车辆信息
+  GET_OBD_BIND_VEHICLE: '/manager/obd/vehicles',
 })
 
 // 获取 token
@@ -67,6 +73,57 @@ export const closeOBDApi = (odbIds) => {
 
   return request({
     url: ObdApi.CLOSE_OBD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取 OBD 信息
+ * @param obdId obd id
+ * @returns {*}
+ */
+export const getOBDInfoApi = (obdId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdId', obdId)
+
+  return request({
+    url: ObdApi.GET_OBD_DETAIL,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取 OBD 绑定历史
+ * @param obdId
+ * @returns {*}
+ */
+export const getOBDBindHistoryApi = (obdId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdId', obdId)
+
+  return request({
+    url: ObdApi.GET_OBD_BIND_HISTORY,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取 OBD 绑定车辆
+ * @param obdId
+ * @returns {*}
+ */
+export const getOBDBindVehiclesApi = (obdId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdId', obdId)
+
+  return request({
+    url: ObdApi.GET_OBD_BIND_VEHICLE,
     method: 'POST',
     data,
   })

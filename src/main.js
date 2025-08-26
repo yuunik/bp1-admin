@@ -21,6 +21,7 @@ import 'element-plus/dist/index.css'
 import 'virtual:uno.css'
 // svg 图标
 import 'virtual:svg-icons-register'
+import '@/utils/chart.js'
 
 const app = createApp(App)
 const header = createHead()

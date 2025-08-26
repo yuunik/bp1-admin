@@ -85,7 +85,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       <!-- breadcrumb -->
       <breadcrumb class="shrink-0" />
       <!-- router view -->
-      <router-view class="min-h-0 flex-1" />
+      <router-view class="flex-1" />
     </main>
   </div>
 </template>
