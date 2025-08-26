@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination/index.vue'
-import { getOBDListApi } from '@/apis/obdApi.js'
+import { getOBDListApi, unbindODBApi } from '@/apis/obdApi.js'
 import { getLastUsedDate, getWarrantyEndDate } from '@/utils/dateUtil.js'
 
 // 响应式数据
@@ -11,11 +11,13 @@ const loading = ref(false)
 // 搜索文本
 const searchText = ref('')
 // OBD 列表数据
-const tableData = reactive([])
+const tableData = ref([])
+// 选择的 OBD 列表
+const selectedOBDList = ref([])
 
 // 分页数据
 const pagination = reactive({
-  currentPage: 1,
+  currentPage: 0,
   pageSize: 15,
   total: 0,
 })
@@ -31,9 +33,24 @@ const getObdList = useDebounceFn(async () => {
   // 更新分页数据
   pagination.total = count
   // 更新表格数据
-  Object.assign(tableData, data)
+  tableData.value = data
   loading.value = false
 }, 500)
+
+// 选项勾选变化
+const handleSelectionChange = async (val) => {
+  selectedOBDList.value = val
+}
+
+// 解绑用户
+const handleUnbindUser = async () => {
+  const selectedIds = selectedOBDList.value.map((item) => item.id)
+  await unbindODBApi(selectedIds)
+  // 解绑成功
+  ElMessage.success('Unbind success')
+  // 刷新
+  getObdList()
+}
 
 // 网络请求
 getObdList()
@@ -68,8 +85,21 @@ getObdList()
     <el-divider />
     <!-- OBD 表格容器 -->
     <div class="pb-38 box-border flex min-h-0 flex-1 flex-col px-32 pt-8">
+      <!-- 选择框操作区 -->
+      <div class="flex-between flex" v-show="selectedOBDList.length">
+        <span>{{ selectedOBDList.length }} selected</span>
+        <div>
+          <el-button @click="handleUnbindUser">Unbind User</el-button>
+          <el-button class="ml-8">Off OBD</el-button>
+        </div>
+      </div>
       <!-- OBD 表格 -->
-      <el-table :data="tableData" class="flex-1" :fit="false">
+      <el-table
+        :data="tableData"
+        class="flex-1"
+        :fit="false"
+        @selection-change="handleSelectionChange"
+      >
         <!-- 勾选框 -->
         <el-table-column type="selection" />
         <!-- 设备 SN 码 -->

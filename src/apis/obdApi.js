@@ -10,7 +10,12 @@ import request from '@/utils/request.js'
 const ObdApi = Object.freeze({
   // 获取 OBD 列表
   GET_OBD_LIST: '/manager/obds/get',
+  // 解绑 OBD
+  UNBIND_OBD: '/manager/obd/unbind',
 })
+
+// 获取 token
+const { getToken } = useAuthToken()
 
 // 获取 OBD 列表
 /**
@@ -19,8 +24,6 @@ const ObdApi = Object.freeze({
  */
 export const getOBDListApi = (params) => {
   const data = new FormData()
-  // 获取 token
-  const { getToken } = useAuthToken()
   data.append('token', getToken())
   data.append('searchKey', params?.searchKey ?? '')
   data.append('page', params?.page ?? 1)
@@ -28,6 +31,23 @@ export const getOBDListApi = (params) => {
 
   return request({
     url: ObdApi.GET_OBD_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 解绑 OBD
+ * @param odbIds
+ * @returns {*}
+ */
+export const unbindODBApi = (odbIds) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdIds', odbIds)
+
+  return request({
+    url: ObdApi.UNBIND_OBD,
     method: 'POST',
     data,
   })
