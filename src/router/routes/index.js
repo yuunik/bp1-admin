@@ -54,6 +54,29 @@ const constantRoutes = [
         path: '/obd-management/obd-list',
         name: RouteName.OBD_LIST,
         component: () => import('@/views/ObdManagement/ObdList/index.vue'),
+        children: [
+          // OBD 列表
+          {
+            path: '',
+            name: 'OBD Table',
+            component: () =>
+              import('@/views/ObdManagement/ObdList/ObdTable.vue'),
+            meta: {
+              isShow: true,
+            },
+          },
+          // OBD 详情
+          {
+            path: '/obd-management/obd-list/obd-details/:id',
+            name: RouteName.OBD_DETAILS,
+            component: () =>
+              import('@/views/ObdManagement/ObdList/ObdDetails.vue'),
+            meta: {
+              title: RouteName.OBD_DETAILS,
+              isShow: true,
+            },
+          },
+        ],
         meta: {
           title: RouteName.OBD_LIST,
           isShow: true,

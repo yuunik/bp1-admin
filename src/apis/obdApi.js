@@ -12,6 +12,8 @@ const ObdApi = Object.freeze({
   GET_OBD_LIST: '/manager/obds/get',
   // 解绑 OBD
   UNBIND_OBD: '/manager/obd/unbind',
+  // 关闭 OBD
+  CLOSE_OBD: '/manager/obd/close',
 })
 
 // 获取 token
@@ -39,15 +41,32 @@ export const getOBDListApi = (params) => {
 /**
  * 解绑 OBD
  * @param odbIds
- * @returns {*}
+ * @returns {Promise<ApiResponse<any>>}
  */
-export const unbindODBApi = (odbIds) => {
+export const unbindOBDApi = (odbIds) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('obdIds', odbIds)
 
   return request({
     url: ObdApi.UNBIND_OBD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 关闭 OBD
+ * @param odbIds
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const closeOBDApi = (odbIds) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdIds', odbIds)
+
+  return request({
+    url: ObdApi.CLOSE_OBD,
     method: 'POST',
     data,
   })
