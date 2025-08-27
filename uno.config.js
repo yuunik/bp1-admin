@@ -54,6 +54,8 @@ export default defineConfig({
     {
       // 垂直水平居中
       'flex-center': 'flex items-center justify-center',
+      // 行居中
+      'row-center': 'flex items-center',
       // 放在最后
       'flex-end': 'flex items-center justify-end',
       // 垂直居中

@@ -125,8 +125,10 @@ const handleUnbindUser = async (id) => {
 }
 
 // 查看 OBD 绑定的车辆详情
-const handleViewVehicleDetails = async (id) =>
-  router.push({ name: RouteName.VIEW_VEHICLE, params: id })
+const handleViewVehicleDetails = async (id) => {
+  router.push(`/obd-management/obd-list/obd-details/vehicle-details/${id}`)
+  // router.push({ name: RouteName.VIEW_VEHICLE, params: id })
+}
 
 onMounted(async () => {
   // 获取路径中 id
@@ -283,7 +285,7 @@ onMounted(async () => {
             <template #default="{ row }">
               <el-button
                 class="rounded-full!"
-                @click.stop="handleViewVehicleDetails"
+                @click.stop="handleViewVehicleDetails(row.id)"
               >
                 View Details
               </el-button>

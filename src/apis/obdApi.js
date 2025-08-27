@@ -141,7 +141,7 @@ export const getVehicleInfoApi = (vehicleId) => {
   data.append('token', getToken())
   data.append('vehicleId', vehicleId)
   return request({
-    url: ObdApi.ET_OBD_BIND_VEHICLE_DETAIL,
+    url: ObdApi.GET_OBD_BIND_VEHICLE_DETAIL,
     method: 'POST',
     data,
   })

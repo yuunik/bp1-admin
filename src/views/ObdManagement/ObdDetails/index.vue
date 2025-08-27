@@ -66,7 +66,8 @@ provide('obdInfo', obdInfo)
 </script>
 
 <template>
-  <section class="flex h-full flex-col overflow-auto">
+  <router-view v-if="$route.meta?.title === RouteName.VIEW_VEHICLE" />
+  <section class="flex h-full flex-col overflow-auto" v-else>
     <!-- header -->
     <div class="flex-between px-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">

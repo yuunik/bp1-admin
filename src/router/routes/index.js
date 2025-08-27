@@ -71,7 +71,7 @@ const constantRoutes = [
             path: '/obd-management/obd-list/obd-details/vehicle-details/:id',
             name: RouteName.VIEW_VEHICLE,
             component: () =>
-              import('@/views/ObdManagement/ObdDetails/VehicleDetails.vue'),
+              import('@/views/ObdManagement/VehicleDetails/index.vue'),
             meta: {
               title: RouteName.VIEW_VEHICLE,
               isShow: true,

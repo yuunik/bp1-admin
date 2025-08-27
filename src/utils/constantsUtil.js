@@ -82,3 +82,15 @@ export const ObdDetailsTabs = Object.freeze({
   // 行为统计
   BEHAVIOR_STATISTICS: 'Behavior Statistics',
 })
+
+// Vehicle Detail 的 tab 分页常量
+export const VehicleDetailTabs = Object.freeze({
+  // 车辆详情
+  VEHICLE_DETAILS: 'Vehicle Details',
+  // 实时数据
+  LIVE_DATA: 'Live Data',
+  // 故障码
+  FAULT_CODES: 'Fault Codes',
+  // 扫描记录
+  SCANNED_HISTORY: 'Scanned History',
+})

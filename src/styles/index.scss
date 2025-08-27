@@ -41,6 +41,25 @@ label {
   color: $neutrals-grey-3;
 }
 
+dl {
+  margin: 0;
+}
+
+dt {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: $neutrals-grey-3
+}
+
+dd {
+  margin: 0;
+  font-weight: 400;
+  line-height: 16px;
+  font-size: 12px;
+  color: $neutrals-off-black
+}
+
 p {
   @apply m-0;
 }

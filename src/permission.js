@@ -9,8 +9,6 @@
  * @usage 在 router/index.js 中引入此文件以启用路由守卫功能。
  *        需确保 useUserStore(store) 提供 token 与用户信息状态。
  */
-
-import { storeToRefs } from 'pinia'
 import { ElMessage } from 'element-plus'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -25,13 +23,12 @@ NProgress.configure({ showSpinner: false })
 // 全局前置路由守卫
 router.beforeEach((to, from, next) => {
   // 开启进度条
-  // NProgress.start()
-
+  NProgress.start()
   // 获取用户token
   const userStore = useUserStore(store)
-  const { token } = storeToRefs(userStore)
+  const token = userStore.token
   // token 校验
-  if (token.value) {
+  if (token) {
     // 有 token
     if (to.path === '/login') {
       // 提示: 已经登录, 无需重复登录
@@ -56,7 +53,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       // 提示
-      ElMessage.error('No access rights')
+      ElMessage.warning('No access rights')
       // 访问非登录, 则跳转登录
       next({ name: RouteName.LOGIN })
     }
