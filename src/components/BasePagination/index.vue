@@ -28,6 +28,7 @@ const onPageChange = useDebounceFn((): void => {
   }
 }, 500)
 
+// 当前页数
 const currentPageDisplay = computed({
   get: () => pagination.value.currentPage + 1,
   set: (val: number) => {
@@ -39,18 +40,55 @@ const currentPageDisplay = computed({
     pagination.value.currentPage = page - 1
   },
 })
+
+// 总页数
+const totalPages = computed(() =>
+  Math.ceil(
+    pagination.value.total / pagination.value.pageSize < 1
+      ? 1
+      : pagination.value.total / pagination.value.pageSize,
+  ),
+)
+
+// 上一页是否禁用
+const isPreDisabled = computed(() => pagination.value.currentPage <= 0)
+
+// 上一页
+const handlePreChange = () => {
+  if (isPreDisabled.value) {
+    return
+  }
+  pagination.value.currentPage--
+}
+
+// 下一页是否禁用
+const isNextDisabled = computed(
+  () => pagination.value.currentPage >= totalPages.value - 1,
+)
+
+// 下一页
+const handleNextChange = () => {
+  if (isNextDisabled.value) {
+    return
+  }
+  pagination.value.currentPage++
+}
 </script>
 
 <template>
   <!-- 分页 -->
   <el-pagination
-    class="pagination-container flex-center mt-16"
+    class="pagination-container flex-center mt-16 gap-8"
     v-model:current-page="pagination.currentPage"
     v-model:page-size="pagination.pageSize"
-    layout="prev, slot, next"
+    layout="slot"
     :total="pagination.total"
     @change="onPageChange"
   >
+    <i
+      class="i-ep:arrow-left h-20 w-20 cursor-pointer"
+      @click="handlePreChange"
+    />
     <!-- 输入框 -->
     <el-input
       v-model="currentPageDisplay"
@@ -60,15 +98,13 @@ const currentPageDisplay = computed({
     <!-- 总页数 -->
     <span class="heading-body-body-12px-regular neutrals-grey-3">
       of
-      {{
-        Math.ceil(
-          pagination.total / pagination.pageSize < 1
-            ? 1
-            : pagination.total / pagination.pageSize,
-        )
-      }}
+      {{ totalPages }}
       pages
     </span>
+    <i
+      class="i-ep:arrow-right h-20 w-20 cursor-pointer"
+      @click="handleNextChange"
+    />
   </el-pagination>
 </template>
 
