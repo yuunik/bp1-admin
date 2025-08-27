@@ -44,7 +44,7 @@ onBeforeUnmount(() => {
     <!-- 默认显示面包屑, 若不需要显示面包屑, 则需要 meta 加 hideBreadcrumb -->
     <template v-for="route in breadcrumbList">
       <el-breadcrumb-item
-        v-if="route?.meta?.isShow"
+        v-if="route?.meta?.showInBreadcrumb"
         :to="route.path"
         :key="route.path"
       >

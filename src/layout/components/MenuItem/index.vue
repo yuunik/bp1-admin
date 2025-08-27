@@ -29,7 +29,7 @@ const handleNavigation = (path) => router.push(path)
       <!-- 路由没有子路由 -->
       <el-menu-item
         :index="route.path"
-        v-if="route.meta?.isShow && !route.children"
+        v-if="route.meta?.showInMenu && !route.children"
         @click="handleNavigation(route.path)"
       >
         <!-- 菜单图标 -->
@@ -45,7 +45,7 @@ const handleNavigation = (path) => router.push(path)
         v-else-if="
           route.children &&
           route.children?.length === 1 &&
-          route.children?.[0]?.meta?.isShow
+          route.children?.[0]?.meta?.showInMenu
         "
         @click="handleNavigation(route.path)"
       >
@@ -60,7 +60,9 @@ const handleNavigation = (path) => router.push(path)
       <el-sub-menu
         :index="route.path"
         v-else-if="
-          route?.meta?.isShow && route.children && route.children?.length > 1
+          route?.meta?.showInMenu &&
+          route.children &&
+          route.children?.length > 1
         "
       >
         <!-- 标题插槽 -->
@@ -78,7 +80,7 @@ const handleNavigation = (path) => router.push(path)
     <template v-else>
       <el-menu-item
         :index="route.path"
-        v-if="route.meta?.isShow"
+        v-if="route.meta?.showInMenu"
         @click="handleNavigation(route.path)"
       >
         <!-- 菜单图标 -->

@@ -9,7 +9,9 @@ const constantRoutes = [
       // 显示在菜单栏的标题
       title: RouteName.LOGIN,
       // 控制是否显示在菜单栏
-      isShow: false,
+      showInMenu: false,
+      // 控制是否显示在面包屑中
+      showInBreadcrumb: false,
     },
   },
   {
@@ -24,14 +26,16 @@ const constantRoutes = [
         component: () => import('@/views/Dashboard/index.vue'),
         meta: {
           title: RouteName.DASHBOARD,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
           icon: 'icon-dashboard',
         },
       },
     ],
     meta: {
       title: RouteName.LAYOUT,
-      isShow: false,
+      showInMenu: false,
+      showInBreadcrumb: true,
     },
   },
   {
@@ -40,7 +44,8 @@ const constantRoutes = [
     component: () => import('@/layout/index.vue'),
     meta: {
       title: RouteName.ORDER_MANAGEMENT,
-      isShow: true,
+      showInMenu: true,
+      showInBreadcrumb: true,
       icon: 'icon-order-management',
     },
   },
@@ -57,7 +62,8 @@ const constantRoutes = [
         component: () => import('@/views/ObdManagement/ObdList/index.vue'),
         meta: {
           title: RouteName.OBD_LIST,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
       // OBD 详情
@@ -74,13 +80,15 @@ const constantRoutes = [
               import('@/views/ObdManagement/VehicleDetails/index.vue'),
             meta: {
               title: RouteName.VIEW_VEHICLE,
-              isShow: true,
+              showInMenu: false,
+              showInBreadcrumb: true,
             },
           },
         ],
         meta: {
           title: RouteName.OBD_DETAILS,
-          isShow: true,
+          showInMenu: false,
+          showInBreadcrumb: true,
         },
       },
       {
@@ -89,13 +97,15 @@ const constantRoutes = [
         component: () => import('@/views/ObdManagement/Inventory/index.vue'),
         meta: {
           title: RouteName.INVENTORY,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
     ],
     meta: {
       title: RouteName.OBD_MANAGEMENT,
-      isShow: true,
+      showInMenu: true,
+      showInBreadcrumb: true,
       icon: 'icon-obd-management',
     },
   },
@@ -111,7 +121,8 @@ const constantRoutes = [
         component: () => import('@/views/UserManagement/Internal/index.vue'),
         meta: {
           title: RouteName.INTERNAL,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
       {
@@ -120,13 +131,15 @@ const constantRoutes = [
         component: () => import('@/views/UserManagement/Extern/index.vue'),
         meta: {
           title: RouteName.EXTERN,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
     ],
     meta: {
       title: RouteName.USER_MANAGEMENT,
-      isShow: true,
+      showInMenu: true,
+      showInBreadcrumb: true,
       icon: 'icon-user-management',
     },
   },
@@ -136,7 +149,8 @@ const constantRoutes = [
     component: () => import('@/layout/index.vue'),
     meta: {
       title: RouteName.DATABASE,
-      isShow: true,
+      showInMenu: true,
+      showInBreadcrumb: true,
       icon: 'icon-database',
     },
   },
@@ -153,7 +167,8 @@ const constantRoutes = [
           import('@/views/AppConfiguration/VersionControl/index.vue'),
         meta: {
           title: RouteName.VERSION_CONTROL,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
       {
@@ -169,7 +184,8 @@ const constantRoutes = [
             component: () =>
               import('@/views/AppConfiguration/BrandModel/BrandModelTable.vue'),
             meta: {
-              isShow: false,
+              showInMenu: false,
+              showInBreadcrumb: true,
             },
           },
           // 车辆管理页面
@@ -182,7 +198,8 @@ const constantRoutes = [
               ),
             params: true,
             meta: {
-              isShow: true,
+              showInMenu: true,
+              showInBreadcrumb: true,
             },
           },
           // 车辆品牌新增页面
@@ -195,13 +212,15 @@ const constantRoutes = [
               ),
             meta: {
               title: 'Create Brand',
-              isShow: true,
+              showInMenu: true,
+              showInBreadcrumb: true,
             },
           },
         ],
         meta: {
           title: RouteName.BRAND_MODEL,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
       {
@@ -211,7 +230,8 @@ const constantRoutes = [
           import('@/views/AppConfiguration/AiChatManagement/index.vue'),
         meta: {
           title: RouteName.AI_CHAT_MANAGEMENT,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
       {
@@ -221,13 +241,15 @@ const constantRoutes = [
           import('@/views/AppConfiguration/IntervalWarning/index.vue'),
         meta: {
           title: RouteName.INTERVAL_WARNING,
-          isShow: true,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
     ],
     meta: {
       title: RouteName.APP_MANAGEMENT,
-      isShow: true,
+      showInMenu: true,
+      showInBreadcrumb: true,
       icon: 'icon-app-configuration',
     },
   },
@@ -244,7 +266,8 @@ const constantRoutes = [
         component: () => import('@/share/ForumInfo.vue'),
         meta: {
           title: 'Forum Info',
-          isShow: false,
+          showInMenu: false,
+          showInBreadcrumb: false,
         },
       },
       // ai 聊天的分享页
@@ -254,7 +277,8 @@ const constantRoutes = [
         component: () => import('@/share/AiChatInfo.vue'),
         meta: {
           title: 'AI Chat Info',
-          isShow: false,
+          showInMenu: false,
+          showInBreadcrumb: false,
         },
       },
       // 车辆详情报告页
@@ -264,13 +288,15 @@ const constantRoutes = [
         component: () => import('@/share/ReportInfo.vue'),
         meta: {
           title: 'Vehicle Report',
-          isShow: false,
+          showInMenu: false,
+          showInBreadcrumb: false,
         },
       },
     ],
     meta: {
       title: RouteName.SHARE,
-      isShow: false,
+      showInMenu: false,
+      showInBreadcrumb: false,
     },
   },
   // 任意路由
@@ -278,6 +304,11 @@ const constantRoutes = [
     path: '/:pathMatch(.*)*',
     name: RouteName.ANY,
     redirect: '/dashboard',
+    meta: {
+      title: RouteName.ANY,
+      showInMenu: false,
+      showInBreadcrumb: false,
+    },
   },
 ]
 
