@@ -166,10 +166,7 @@ const vehicleDetails = inject('vehicleDetails')
           <el-table-column prop="data" label="Data" />
           <el-table-column prop="unit" label="Unit" />
         </el-table>
-        <base-pagination
-          :pagination="pagination"
-          :handle-page-change="handlePageChange"
-        />
+        <base-pagination v-model="pagination" />
       </div>
     </div>
     <!-- Fault Codes -->

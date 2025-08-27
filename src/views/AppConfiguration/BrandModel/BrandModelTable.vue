@@ -173,10 +173,7 @@ getBrandModelList()
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <base-pagination
-        :pagination="pagination"
-        :handle-page-change="getBrandModelList"
-      />
+      <base-pagination v-model="pagination" />
     </div>
   </section>
 </template>

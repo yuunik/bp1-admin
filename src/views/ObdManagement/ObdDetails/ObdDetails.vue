@@ -408,10 +408,7 @@ onMounted(async () => {
           <el-table-column prop="description" label="Detail" />
         </el-table>
         <!-- pagination -->
-        <base-pagination
-          :pagination="operationRecordParams"
-          :handle-page-change="handleOperationRecordPageChange"
-        />
+        <base-pagination v-model="operationRecordParams" />
       </div>
     </div>
   </div>

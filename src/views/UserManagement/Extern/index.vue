@@ -178,10 +178,7 @@ getMerchantList()
           </el-table-column>
         </el-table>
         <!-- 分页器 -->
-        <base-pagination
-          :pagination="pagination"
-          :handle-page-change="getMerchantList"
-        />
+        <base-pagination v-model="pagination" />
       </div>
     </template>
   </section>
