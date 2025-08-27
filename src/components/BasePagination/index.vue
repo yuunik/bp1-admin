@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType, computed } from 'vue'
+import { computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
 // 定义分页数据类型
@@ -15,30 +15,30 @@ interface PaginationPropsType {
   handlePageChange: (currentPage: number, pageSize: number) => void
 }
 
-const currentPageDisplay = computed(() => pagination.currentPage + 1)
-
-// 申明接收的数据
-const { pagination, handlePageChange } = defineProps({
-  pagination: {
-    type: Object as PropType<PaginationType>,
-    required: true,
-  },
-  handlePageChange: {
-    type: Function as PropType<(currentPage: number, pageSize: number) => void>,
-    required: true,
-  },
+const pagination = defineModel<PaginationType>({
+  required: true,
 })
 
 // 处理分页的变化
 const onPageChange = useDebounceFn((): void => {
   // 是否超出总页数的校验
-  if (pagination.currentPage > pagination.total) {
+  if (pagination.value.currentPage > pagination.value.total) {
     // 重置当前页数
     return
   }
-  // 调用父组件的分页方法
-  handlePageChange(pagination.currentPage, pagination.pageSize)
 }, 500)
+
+const currentPageDisplay = computed({
+  get: () => pagination.value.currentPage + 1,
+  set: (val: number) => {
+    const totalPages = Math.max(
+      1,
+      Math.ceil(pagination.value.total / pagination.value.pageSize),
+    )
+    const page = Math.max(1, Math.min(val, totalPages)) // 限制范围
+    pagination.value.currentPage = page - 1
+  },
+})
 </script>
 
 <template>

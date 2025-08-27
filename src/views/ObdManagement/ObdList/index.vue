@@ -79,6 +79,11 @@ const handleSearch = useDebounceFn(async () => {
   getObdList()
 }, 500)
 
+watch(
+  () => pagination.currentPage,
+  () => getObdList(),
+)
+
 // 网络请求
 getObdList()
 </script>
@@ -172,10 +177,7 @@ getObdList()
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <base-pagination
-        :pagination="pagination"
-        :handle-page-change="getObdList"
-      />
+      <base-pagination v-model="pagination" />
     </div>
   </section>
 </template>
