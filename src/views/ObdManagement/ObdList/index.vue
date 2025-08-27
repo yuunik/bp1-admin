@@ -2,11 +2,11 @@
 import { ref, reactive } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 import BasePagination from '@/components/BasePagination/index.vue'
 import { closeOBDApi, getOBDListApi, unbindOBDApi } from '@/apis/obdApi.js'
 import { getLastUsedDate, getWarrantyEndDate } from '@/utils/dateUtil.js'
-import { ElMessage } from 'element-plus'
 import { RouteName } from '@/utils/constantsUtil.js'
 
 const router = useRouter()
@@ -79,7 +79,8 @@ getObdList()
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
+  <router-view v-if="$route.name === RouteName.CREATE_STOCK_ORDER" />
+  <section class="flex h-full flex-col" v-else>
     <!-- OBD List Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -87,7 +88,13 @@ getObdList()
         <h3 class="heading-h2-20px-medium">OBD List</h3>
         <div>
           <el-button type="default" class="w-70 h-32">Export</el-button>
-          <el-button type="primary" class="w-70 h-32">Create</el-button>
+          <el-button
+            type="primary"
+            class="w-70 h-32"
+            @click="$router.push({ name: RouteName.CREATE_STOCK_ORDER })"
+          >
+            Create
+          </el-button>
         </div>
       </div>
       <!-- 搜索栏 -->

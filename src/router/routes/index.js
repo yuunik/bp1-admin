@@ -60,6 +60,20 @@ const constantRoutes = [
         path: '/obd-management/obd-list',
         name: RouteName.OBD_LIST,
         component: () => import('@/views/ObdManagement/ObdList/index.vue'),
+        children: [
+          // 创建 OBD
+          {
+            path: '/obd-management/create',
+            name: RouteName.CREATE_STOCK_ORDER,
+            component: () =>
+              import('@/views/ObdManagement/ObdList/CreateStockOrder.vue'),
+            meta: {
+              title: RouteName.CREATE_STOCK_ORDER,
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+        ],
         meta: {
           title: RouteName.OBD_LIST,
           showInMenu: true,

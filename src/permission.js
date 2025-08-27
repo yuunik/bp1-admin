@@ -53,7 +53,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       // 提示
-      ElMessage.warning('No access rights')
+      // ElMessage.warning('No access rights')
       // 访问非登录, 则跳转登录
       next({ name: RouteName.LOGIN })
     }

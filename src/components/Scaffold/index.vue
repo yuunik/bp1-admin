@@ -9,7 +9,9 @@ import TrailingIcon from '@/assets/icons/h5-trailing.svg'
 import { onMounted, useSlots } from 'vue'
 
 // 获取 app 启动函数
-const { launchApp } = useAppLauncher()
+const { aRef, appleRef, launchApp } = useAppLauncher()
+
+const isLoading = ref(false)
 
 interface PropsType {
   // 是否需要appbar
@@ -85,11 +87,13 @@ onMounted(() => {
 })
 
 const onButtonClick = () => {
+  isLoading.value = true
   if (props.handleButtonClick) {
     props.handleButtonClick()
   } else {
     launchApp()
   }
+  isLoading.value = false
 }
 </script>
 
@@ -148,9 +152,16 @@ const onButtonClick = () => {
       class="bottom-68 fixed inset-x-0 mx-auto w-fit"
       @click="onButtonClick"
       v-if="isOpenAppVisible"
+      :disabled="isLoading"
+      :loading="isLoading"
     >
       {{ openButtonText }}
     </el-button>
+    <a
+      href="itms-apps://apps.apple.com/app/id6748522066"
+      ref="aRef"
+      v-show="false"
+    />
   </div>
 </template>
 
