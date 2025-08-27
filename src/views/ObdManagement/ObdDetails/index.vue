@@ -11,7 +11,7 @@ import { getOBDInfoApi, unbindOBDApi } from '@/apis/obdApi.js'
 const activeTabName = ref(ObdDetailsTabs.OBD_DETAILS)
 
 // OBD 信息
-const obdInfo = reactive({})
+const obdInfo = ref({})
 
 // 当前 OBD 的id
 const currentOBDId = ref('')
@@ -40,15 +40,13 @@ const tabPaneList = Object.freeze([
 // 获取 OBD 详情
 const getOBDInfo = async (id) => {
   const { data } = await getOBDInfoApi(id)
-  Object.assign(obdInfo, data)
+  obdInfo.value = data
 }
 
 // 解绑 OBD 绑定的用户
 const handleUnbindUser = async () => {
-  await unbindOBDApi(currentOBDId)
+  await unbindOBDApi(currentOBDId.value)
   ElMessage.success('Unbind success')
-  // 路由跳转至 OBD List 页
-  router.push({ name: RouteName.OBD_LIST })
 }
 
 // 获取路径中 id
@@ -63,17 +61,21 @@ if (id) {
 
 // 提供 OBD 详情
 provide('obdInfo', obdInfo)
+provide('getOBDInfo', getOBDInfo)
 </script>
 
 <template>
-  <router-view v-if="$route.meta?.title === RouteName.VIEW_VEHICLE" />
+  <router-view
+    v-if="$route.name === RouteName.VIEW_VEHICLE"
+    @refresh="getOBDInfo"
+  />
   <section class="flex h-full flex-col overflow-auto" v-else>
     <!-- header -->
     <div class="flex-between px-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         {{ obdInfo.sn }}
       </h3>
-      <el-button @click.stop="handleUnbindUser" v-if="obdInfo.userDto?.id">
+      <el-button @click="handleUnbindUser" v-if="obdInfo.userDto?.id">
         Unbind User
       </el-button>
     </div>

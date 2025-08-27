@@ -44,6 +44,10 @@ const operationRecordParams = reactive({
 // obd 操作记录列表
 const operationRecordList = ref([])
 
+const emit = defineEmits(['refresh'])
+
+const getOBDInfo = inject('getOBDInfo')
+
 // 日期标签（X轴）
 const labels = [
   '03-05',
@@ -132,6 +136,9 @@ const getOBDBindVehicleList = async (id) => {
 // 解绑 OBD 绑定的用户
 const handleUnbindUser = async (id) => {
   await unbindOBDApi(id)
+  await getOBDBindHistoryList(id)
+  // 触发刷新 OBD 详情
+  await getOBDInfo?.(id)
   ElMessage.success('Unbind success')
 }
 
