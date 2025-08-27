@@ -10,6 +10,7 @@ import { useUserStore } from '@/store'
 // 静态资源
 import Logo from '@/assets/icons/company-logo.svg'
 import GreetingIcon from '@/assets/icons/waving-hand.svg'
+import { RouteName } from '@/utils/constantsUtil.js'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -31,7 +32,7 @@ const handleLogin = useDebounceFn(async () => {
   try {
     await login(loginForm)
     // 路由跳转
-    await router.push('/')
+    router.push({ name: RouteName.DASHBOARD })
   } catch (error) {
     const { message } = error
     // 登录失败, 实现错误提示
@@ -128,6 +129,7 @@ const handleLogin = useDebounceFn(async () => {
           class="primary-button"
           @click="handleLogin"
           :loading="isLoading"
+          :disabled="isLoading"
         >
           Log In
         </el-button>
