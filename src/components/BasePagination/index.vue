@@ -9,12 +9,6 @@ interface PaginationType {
   pageSize: number
 }
 
-// 定义接收数据的类型
-interface PaginationPropsType {
-  pagination: PaginationType
-  handlePageChange: (currentPage: number, pageSize: number) => void
-}
-
 const pagination = defineModel<PaginationType>({
   required: true,
 })
@@ -78,7 +72,7 @@ const handleNextChange = () => {
 <template>
   <!-- 分页 -->
   <el-pagination
-    class="pagination-container flex-center mt-16 gap-8"
+    class="pagination-container flex-center gap-15 mt-16"
     v-model:current-page="pagination.currentPage"
     v-model:page-size="pagination.pageSize"
     layout="slot"
@@ -86,7 +80,16 @@ const handleNextChange = () => {
     @change="onPageChange"
   >
     <i
-      class="i-ep:arrow-left h-20 w-20 cursor-pointer"
+      :class="[
+        'i-ep:arrow-left',
+        'h-15',
+        'w-15',
+        'cursor-pointer',
+        {
+          'cursor-not-allowed': isPreDisabled,
+          'text-neutrals-grey-3': isPreDisabled,
+        },
+      ]"
       @click="handlePreChange"
     />
     <!-- 输入框 -->
@@ -102,7 +105,16 @@ const handleNextChange = () => {
       pages
     </span>
     <i
-      class="i-ep:arrow-right h-20 w-20 cursor-pointer"
+      :class="[
+        'i-ep:arrow-right',
+        'h-15',
+        'w-15',
+        'cursor-pointer',
+        {
+          'cursor-not-allowed': isNextDisabled,
+          'text-neutrals-grey-3': isNextDisabled,
+        },
+      ]"
       @click="handleNextChange"
     />
   </el-pagination>
@@ -120,16 +132,6 @@ const handleNextChange = () => {
     .el-input__wrapper {
       border-radius: 8px;
     }
-  }
-
-  // 上一页
-  :deep(.btn-prev) {
-    background-color: transparent;
-  }
-
-  // 下一页
-  :deep(.btn-next) {
-    background-color: transparent;
   }
 }
 </style>
