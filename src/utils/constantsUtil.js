@@ -57,7 +57,7 @@ export const ShareRoutePath = Object.freeze({
     'https://play.google.com/store/apps/details?id=com.proteus.diagnostics',
   // APPLE_APP_STORE_URL: 'https://apps.apple.com/app/id6748522066',
   APPLE_APP_STORE_URL: 'itms-apps://apps.apple.com/app/id6748522066',
-  APP_URL: 'diagnostics://open',
+  APP_URL: 'pd-1://',
 })
 
 // 汽车电控系统分类的定义
