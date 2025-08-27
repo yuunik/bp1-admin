@@ -52,7 +52,8 @@ export const RouteName = Object.freeze({
 
 // 分享模块跳转路径
 export const ShareRoutePath = Object.freeze({
-  GOOGLE_PLAY_URL: 'https://itunes.apple.com/cn/app/id6748522066',
+  GOOGLE_PLAY_URL:
+    'https://play.google.com/store/apps/details?id=com.proteus.diagnostics',
   APPLE_APP_STORE_URL: 'https://itunes.apple.com/cn/app/id6748522066',
   APP_URL: 'diagnostics://open',
 })
@@ -93,4 +94,9 @@ export const VehicleDetailTabs = Object.freeze({
   FAULT_CODES: 'Fault Codes',
   // 扫描记录
   SCANNED_HISTORY: 'Scanned History',
+})
+
+// 菜单栏常量定义
+export const Menu = Object.freeze({
+  WIDTH: '210px',
 })
