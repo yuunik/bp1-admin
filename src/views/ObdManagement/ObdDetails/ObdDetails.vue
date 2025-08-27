@@ -7,6 +7,7 @@ import { ElMessage } from 'element-plus'
 import {
   getOBDBindHistoryApi,
   getOBDBindVehiclesApi,
+  getOBDOperationRecordsApi,
   unbindOBDApi,
 } from '@/apis/obdApi.js'
 import {
@@ -15,7 +16,7 @@ import {
   getLastUsedDate,
   getWarrantyEndDate,
 } from '@/utils/dateUtil.js'
-import { RouteName } from '@/utils/constantsUtil.js'
+import BasePagination from '@/components/BasePagination/index.vue'
 
 const isObdOn = computed(() => obdInfo.status === 10)
 
@@ -32,6 +33,16 @@ const boundVehicleList = ref([])
 
 // 绑定历史列表
 const bindHistoryList = ref([])
+
+// obd 操作记录查询参数
+const operationRecordParams = reactive({
+  currentPage: 0,
+  pageSize: 10,
+  total: 0,
+})
+
+// obd 操作记录列表
+const operationRecordList = ref([])
 
 // 日期标签（X轴）
 const labels = [
@@ -130,13 +141,32 @@ const handleViewVehicleDetails = async (id) => {
   // router.push({ name: RouteName.VIEW_VEHICLE, params: id })
 }
 
+// 获取 OBD 操作记录
+const getOBDOperationRecord = async (id) => {
+  const { data, count } = await getOBDOperationRecordsApi({
+    obdId: id,
+    ...operationRecordParams,
+  })
+  operationRecordList.value = data
+  operationRecordParams.total = count
+}
+
+// obd 操作记录分页改变
+const handleOperationRecordPageChange = (currentPage, pageSize) => {
+  console.log('handleOperationRecordPageChange', currentPage, pageSize)
+}
+
 onMounted(async () => {
   // 获取路径中 id
   const {
     params: { id },
   } = route
   if (id) {
-    await Promise.all([getOBDBindHistoryList(id), getOBDBindVehicleList(id)])
+    await Promise.all([
+      getOBDBindHistoryList(id),
+      getOBDBindVehicleList(id),
+      getOBDOperationRecord(id),
+    ])
   }
 })
 </script>
@@ -349,8 +379,32 @@ onMounted(async () => {
         </div>
       </div>
       <!-- chart -->
-      <div class="h-600 mx-32">
+      <div class="h-600 mx-32 flex justify-center overflow-hidden">
         <Line :data="chartData" :options="chartOptions" />
+      </div>
+      <!-- divider -->
+      <el-divider class="mt-24!" />
+      <!-- obd records -->
+      <div class="mx-32">
+        <!-- table -->
+        <el-table :data="operationRecordList" v-if="operationRecordList.length">
+          <el-table-column label="Date">
+            <template #default="{ row }">
+              {{ getFullDate(row.createTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="Operator">
+            <template #default="{ row }">
+              {{ row.userDto?.name || 'Admin' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="Detail" />
+        </el-table>
+        <!-- pagination -->
+        <base-pagination
+          :pagination="operationRecordParams"
+          :handle-page-change="handleOperationRecordPageChange"
+        />
       </div>
     </div>
   </div>

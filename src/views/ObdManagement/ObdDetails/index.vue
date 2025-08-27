@@ -73,7 +73,9 @@ provide('obdInfo', obdInfo)
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         {{ obdInfo.sn }}
       </h3>
-      <el-button @click.stop="handleUnbindUser">Unbind User</el-button>
+      <el-button @click.stop="handleUnbindUser" v-if="obdInfo.userDto?.id">
+        Unbind User
+      </el-button>
     </div>
     <!-- divider -->
     <el-divider class="mt-16! mb-19!" />
