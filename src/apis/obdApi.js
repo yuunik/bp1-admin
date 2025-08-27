@@ -38,7 +38,7 @@ export const getOBDListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('searchKey', params?.searchKey ?? '')
-  data.append('page', params?.page ?? 1)
+  data.append('page', params?.page ?? 0)
   data.append('pageSize', params?.pageSize ?? 10)
 
   return request({

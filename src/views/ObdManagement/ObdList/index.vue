@@ -74,6 +74,11 @@ const viewOBDDetail = (row, column) => {
   router.push({ name: RouteName.OBD_DETAILS, params: { id: row.id } })
 }
 
+const handleSearch = useDebounceFn(async () => {
+  pagination.currentPage = 0
+  getObdList()
+}, 500)
+
 // 网络请求
 getObdList()
 </script>
@@ -102,7 +107,7 @@ getObdList()
         placeholder="Search..."
         class="obd-list-search mt-16"
         v-model="searchText"
-        @input="getObdList"
+        @input="handleSearch"
       >
         <template #prefix>
           <!-- 前置搜索图标 -->
