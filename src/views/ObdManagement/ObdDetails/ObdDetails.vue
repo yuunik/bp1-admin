@@ -18,14 +18,17 @@ import {
 } from '@/utils/dateUtil.js'
 import BasePagination from '@/components/BasePagination/index.vue'
 
+// OBD 是否开启
 const isObdOn = computed(() => obdInfo.status === 10)
 
+// date Range
 const dateRange = ref('1')
 
 const route = useRoute()
 
 const router = useRouter()
 
+// OBD 信息
 const obdInfo = inject('obdInfo')
 
 // 绑定车辆列表
@@ -44,8 +47,7 @@ const operationRecordParams = reactive({
 // obd 操作记录列表
 const operationRecordList = ref([])
 
-const emit = defineEmits(['refresh'])
-
+// 获取 OBD 详情 的方法
 const getOBDInfo = inject('getOBDInfo')
 
 // 日期标签（X轴）
@@ -152,15 +154,11 @@ const handleViewVehicleDetails = async (id) => {
 const getOBDOperationRecord = async (id) => {
   const { data, count } = await getOBDOperationRecordsApi({
     obdId: id,
-    ...operationRecordParams,
+    page: operationRecordParams.currentPage,
+    pageSize: operationRecordParams.pageSize,
   })
   operationRecordList.value = data
   operationRecordParams.total = count
-}
-
-// obd 操作记录分页改变
-const handleOperationRecordPageChange = (currentPage, pageSize) => {
-  console.log('handleOperationRecordPageChange', currentPage, pageSize)
 }
 
 onMounted(async () => {
@@ -180,7 +178,7 @@ onMounted(async () => {
 // 监听currentPage, 刷新列表
 watch(
   () => operationRecordParams.currentPage,
-  () => {},
+  () => getOBDOperationRecord,
 )
 </script>
 
