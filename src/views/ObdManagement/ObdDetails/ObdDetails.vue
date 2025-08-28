@@ -358,15 +358,15 @@ watch(
               <el-radio value="3">90 days</el-radio>
             </el-radio-group>
           </div>
-          <div class="leading-32 flex items-center">
-            <label for="usage-score" class="w-113 h-32">Usage Score</label>
-            <span
-              id="usage-score"
-              class="heading-body-body-12px-regular text-neutrals-off-black"
-            >
-              60%
-            </span>
-          </div>
+          <!--<div class="leading-32 flex items-center">-->
+          <!--  <label for="usage-score" class="w-113 h-32">Usage Score</label>-->
+          <!--  <span-->
+          <!--    id="usage-score"-->
+          <!--    class="heading-body-body-12px-regular text-neutrals-off-black"-->
+          <!--  >-->
+          <!--    60%-->
+          <!--  </span>-->
+          <!--</div>-->
         </div>
         <div class="flex flex-1 flex-col gap-4">
           <!-- Active Days -->
@@ -380,15 +380,15 @@ watch(
             </span>
           </div>
           <!-- Avg. Daily Use -->
-          <div class="leading-32 flex items-center">
-            <label for="avg-daily-use" class="w-113 h-32">Avg. Daily Use</label>
-            <span
-              id="avg-daily-use"
-              class="heading-body-body-12px-regular text-neutrals-off-black"
-            >
-              22 mins/day
-            </span>
-          </div>
+          <!--<div class="leading-32 flex items-center">-->
+          <!--  <label for="avg-daily-use" class="w-113 h-32">Avg. Daily Use</label>-->
+          <!--  <span-->
+          <!--    id="avg-daily-use"-->
+          <!--    class="heading-body-body-12px-regular text-neutrals-off-black"-->
+          <!--  >-->
+          <!--    22 mins/day-->
+          <!--  </span>-->
+          <!--</div>-->
         </div>
       </div>
       <!-- chart -->

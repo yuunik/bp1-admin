@@ -150,7 +150,7 @@ getObdList()
         <!-- 上次使用时间 -->
         <el-table-column prop="updateTime" label="Last Used" :sortable="true">
           <template #default="{ row }">
-            {{ getLastUsedDate(row.updateTime) }}
+            {{ getLastUsedDate(row.useTime) }}
           </template>
         </el-table-column>
         <!-- 保修期限 -->
@@ -160,13 +160,19 @@ getObdList()
           :sortable="true"
         >
           <template #default="{ row }">
-            {{ getWarrantyEndDate(row.createTime) }}
+            {{ getWarrantyEndDate(row.warrantyTime) }}
+          </template>
+        </el-table-column>
+        <!-- 绑定时间 -->
+        <el-table-column prop="bindingTime" label="Bind Time" :sortable="true">
+          <template #default="{ row }">
+            {{ getLastUsedDate(row.bindingTime) }}
           </template>
         </el-table-column>
         <!-- 使用者 -->
         <el-table-column prop="simpleUserDto?.name" label="User">
           <template #default="{ row }">
-            {{ row.userDto?.name === '' ? 'Unnamed User' : row.userDto?.name }}
+            {{ row.userDto?.name === '' ? '-' : row.userDto?.name }}
           </template>
         </el-table-column>
         <!-- 操作 -->

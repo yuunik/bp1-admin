@@ -12,7 +12,7 @@ import dayjs from 'dayjs'
 export const getLastUsedDate = (timestamp) => {
   if (timestamp === 0) {
     // 未使用过
-    return 'Never Used'
+    return '-'
   }
   // 时间戳转日期
   const date = dayjs(timestamp)
@@ -31,7 +31,7 @@ export const getLastUsedDate = (timestamp) => {
  */
 export const getWarrantyEndDate = (timestamp) => {
   if (timestamp === 0) {
-    return 'Never Used'
+    return '-'
   }
   const oneYearLater = dayjs(timestamp).add(1, 'year')
   return oneYearLater.format('DD MMM YYYY')
