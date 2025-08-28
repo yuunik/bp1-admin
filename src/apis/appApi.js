@@ -43,6 +43,8 @@ const AppApi = Object.freeze({
   ADD_VERSION_DATA: '/manager/version/addappversion',
   // 编辑版本数据
   MODIFY_VERSION_DATA: '/manager/version/editappversion',
+  // 获取版本数据详情
+  GET_VERSION_INFO: '/manager/version/info',
   // 获取版本数据列表
   GET_VERSION_LIST: '/manager/version/getappversions',
 })
@@ -382,6 +384,7 @@ export const addAppVersionApi = (params) => {
  * @param {number} params.id 版本ID
  * @param {string} params.type 版本类型 (IOS,Android)
  * @param {string} params.version 版本号
+ * @param {string} params.content 版本内容
  * @param {number} params.state 状态 (0不提示、1提示更新、2强制更新、3审核中)
  * @param {string} params.url 更新路径
  * @returns {Promise<ApiResponse<any>>}
@@ -392,11 +395,28 @@ export const modifyAppVersionApi = (params) => {
   data.append('id', params.id)
   data.append('type', params.type)
   data.append('version', params.version)
+  data.append('content', params.content)
   data.append('state', params.state)
   data.append('url', params.url)
 
   return request({
     url: AppApi.MODIFY_VERSION_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取APP版本信息
+ * @param id 版本ID
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getAppVersionInfoApi = (id) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', id)
+  return request({
+    url: AppApi.GET_VERSION_INFO,
     method: 'POST',
     data,
   })

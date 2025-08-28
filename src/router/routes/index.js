@@ -179,6 +179,21 @@ const constantRoutes = [
         name: RouteName.VERSION_CONTROL,
         component: () =>
           import('@/views/AppConfiguration/VersionControl/index.vue'),
+        children: [
+          {
+            path: '/app-configuration/version-control/manage/:id',
+            name: RouteName.MANAGE_VERSION,
+            component: () =>
+              import(
+                '@/views/AppConfiguration/VersionControl/VersionControlManage.vue'
+              ),
+            meta: {
+              title: RouteName.MANAGE_VERSION,
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+        ],
         meta: {
           title: RouteName.VERSION_CONTROL,
           showInMenu: true,

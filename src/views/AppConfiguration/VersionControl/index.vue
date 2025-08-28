@@ -1,10 +1,11 @@
 <script setup>
 import { useDebounceFn } from '@vueuse/core'
+import { useRouter } from 'vue-router'
 
 import { getAppVersionListApi } from '@/apis/appApi.js'
 import BasePagination from '@/components/BasePagination/index.vue'
 import { getCommentTime } from '@/utils/dateUtil.js'
-import { TimingPreset } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 
 const searchText = ref('')
 
@@ -22,6 +23,8 @@ const appVersionList = ref([])
 
 // 搜索的版本平台
 const searchType = ref('')
+
+const router = useRouter()
 
 // 获取版本列表
 const getAppVersionList = useDebounceFn(async () => {
@@ -45,6 +48,10 @@ const handlePlatformChange = (command) => {
   pagination.currentPage = 0
 }
 
+// 查看版本详情
+const viewVersionDetail = (row) =>
+  router.push({ name: RouteName.MANAGE_VERSION, params: { id: row.id } })
+
 // 监听 pagination.currentPage, 自动发起查询
 watch(
   () => pagination.currentPage,
@@ -56,7 +63,8 @@ getAppVersionList()
 </script>
 
 <template>
-  <section class="flex flex-col gap-16">
+  <router-view v-if="$route.name === RouteName.MANAGE_VERSION" />
+  <section class="flex flex-col gap-16" v-else>
     <!-- header -->
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
@@ -102,6 +110,7 @@ getAppVersionList()
         :data="appVersionList"
         class="flex-1"
         row-class-name="clickable-row"
+        @row-click="viewVersionDetail"
       >
         <el-table-column type="selection" />
         <el-table-column prop="type" label="Platform" />
