@@ -29,7 +29,7 @@ const router = useRouter()
 // 获取版本列表
 const getAppVersionList = useDebounceFn(async () => {
   const { data, count } = await getAppVersionListApi({
-    type: searchType.value,
+    types: searchType.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
@@ -51,6 +51,16 @@ const handlePlatformChange = (command) => {
 // 查看版本详情
 const viewVersionDetail = (row) =>
   router.push({ name: RouteName.MANAGE_VERSION, params: { id: row.id } })
+
+// 移除搜索平台
+const removeSearchPlatform = () => {
+  searchType.value = ''
+  // 修改当前页
+  if (pagination.currentPage === 0) {
+    return getAppVersionList()
+  }
+  pagination.currentPage = 0
+}
 
 // 监听 pagination.currentPage, 自动发起查询
 watch(
@@ -91,7 +101,7 @@ getAppVersionList()
         </template>
       </el-input>
       <!-- 状态搜索 -->
-      <el-dropdown @command="handlePlatformChange">
+      <el-dropdown @command="handlePlatformChange" v-if="!searchType">
         <span
           class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
         >
@@ -105,6 +115,15 @@ getAppVersionList()
           </el-dropdown-menu>
         </template>
       </el-dropdown>
+      <el-tag
+        v-else
+        closable
+        type="primary"
+        @close="removeSearchPlatform"
+        class="w-84 h-24"
+      >
+        {{ searchType }}
+      </el-tag>
     </div>
     <!-- divider -->
     <el-divider />

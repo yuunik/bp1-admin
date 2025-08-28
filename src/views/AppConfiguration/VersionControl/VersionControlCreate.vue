@@ -1,8 +1,9 @@
 <script setup>
-import { RouteName } from '@/utils/constantsUtil.js'
-import { addAppVersionApi } from '@/apis/appApi.js'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+
+import { RouteName } from '@/utils/constantsUtil.js'
+import { addAppVersionApi } from '@/apis/appApi.js'
 
 const appVersionInfo = reactive({
   type: '',

@@ -57,8 +57,8 @@ export const RouteName = Object.freeze({
 export const ShareRoutePath = Object.freeze({
   GOOGLE_PLAY_URL:
     'https://play.google.com/store/apps/details?id=com.proteus.diagnostics',
-  // APPLE_APP_STORE_URL: 'https://apps.apple.com/app/id6748522066',
-  APPLE_APP_STORE_URL: 'itms-apps://apps.apple.com/app/id6748522066',
+  APPLE_APP_STORE_URL: 'https://apps.apple.com/app/id6748522066',
+  // APPLE_APP_STORE_URL: 'itms-apps://apps.apple.com/app/id6748522066',
   APP_URL: 'pd-1://',
 })
 
