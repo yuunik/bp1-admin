@@ -42,6 +42,12 @@ const handleTabChange = (tabName) => (activeTab.value = tabName)
 
 // 网络请求
 getMerchantList()
+
+// 监听currentPage, 刷新列表
+watch(
+  () => pagination.currentPage,
+  () => getMerchantList(),
+)
 </script>
 
 <template>

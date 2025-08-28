@@ -46,6 +46,12 @@ const viewVehicleDetail = (row) =>
 
 // 网络请求
 getBrandModelList()
+
+// 监听currentPage, 刷新列表
+watch(
+  () => pagination.currentPage,
+  () => getBrandModelList,
+)
 </script>
 
 <template>

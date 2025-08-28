@@ -76,9 +76,9 @@ const viewOBDDetail = (row, column) => {
 
 const handleSearch = useDebounceFn(async () => {
   pagination.currentPage = 0
-  getObdList()
 }, 500)
 
+// 监听currentPage, 刷新列表
 watch(
   () => pagination.currentPage,
   () => getObdList(),

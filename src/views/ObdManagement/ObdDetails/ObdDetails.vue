@@ -176,6 +176,12 @@ onMounted(async () => {
     ])
   }
 })
+
+// 监听currentPage, 刷新列表
+watch(
+  () => operationRecordParams.currentPage,
+  () => {},
+)
 </script>
 
 <template>
@@ -387,7 +393,11 @@ onMounted(async () => {
       </div>
       <!-- chart -->
       <div class="h-600 mx-32 flex justify-center overflow-hidden">
-        <Line :data="chartData" :options="chartOptions" />
+        <Line
+          :data="chartData"
+          :options="chartOptions"
+          class="overflow-hidden"
+        />
       </div>
       <!-- divider -->
       <el-divider class="mt-24!" />

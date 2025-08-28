@@ -8,8 +8,6 @@ const pagination = reactive({
   total: 100,
 })
 
-const handlePageChange = () => {}
-
 const liveDataList = reactive([
   { id: 1, parameter: 'Engine RPM', data: 8000, unit: 'rpm' },
   { id: 2, parameter: 'Vehicle Speed', data: 255, unit: 'km/h' },
@@ -97,6 +95,12 @@ const dataList = reactive([
 
 // 获取提供的vehicleDetails信息
 const vehicleDetails = inject('vehicleDetails')
+
+// 监听currentPage, 刷新列表
+watch(
+  () => pagination.currentPage,
+  () => {},
+)
 </script>
 
 <template>
