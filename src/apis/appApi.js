@@ -359,6 +359,7 @@ export const modifyBrandInfoApi = (params) => {
  * @param {object} params 添加APP版本信息参数
  * @param {string} params.type 版本类型 (IOS,Android)
  * @param {string} params.version 版本号
+ * @param {string} params.content 描述
  * @param {number} params.state 状态 (0不提示、1提示更新、2强制更新、3审核中)
  * @param {string} params.url 更新路径
  * @returns {Promise<ApiResponse<any>>}
@@ -368,6 +369,7 @@ export const addAppVersionApi = (params) => {
   data.append('token', getToken())
   data.append('type', params.type)
   data.append('version', params.version)
+  data.append('content', params.content)
   data.append('state', params.state)
   data.append('url', params.url)
 

@@ -179,24 +179,37 @@ const constantRoutes = [
         name: RouteName.VERSION_CONTROL,
         component: () =>
           import('@/views/AppConfiguration/VersionControl/index.vue'),
-        children: [
-          {
-            path: '/app-configuration/version-control/manage/:id',
-            name: RouteName.MANAGE_VERSION,
-            component: () =>
-              import(
-                '@/views/AppConfiguration/VersionControl/VersionControlManage.vue'
-              ),
-            meta: {
-              title: RouteName.MANAGE_VERSION,
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-        ],
         meta: {
           title: RouteName.VERSION_CONTROL,
           showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
+      // 版本管理
+      {
+        path: '/app-configuration/version-control/manage/:id',
+        name: RouteName.MANAGE_VERSION,
+        component: () =>
+          import(
+            '@/views/AppConfiguration/VersionControl/VersionControlManage.vue'
+          ),
+        meta: {
+          title: RouteName.MANAGE_VERSION,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      // 版本创建
+      {
+        path: '/app-configuration/version-control/create',
+        name: RouteName.VERSION_CONTROL_CREATE,
+        component: () =>
+          import(
+            '@/views/AppConfiguration/VersionControl/VersionControlCreate.vue'
+          ),
+        meta: {
+          title: RouteName.VERSION_CONTROL_CREATE,
+          showInMenu: false,
           showInBreadcrumb: true,
         },
       },

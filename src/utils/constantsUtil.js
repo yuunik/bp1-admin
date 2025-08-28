@@ -44,6 +44,7 @@ export const RouteName = Object.freeze({
   AI_CHAT_MANAGEMENT: 'AI Chat Management',
   VERSION_CONTROL: 'Version Control',
   MANAGE_VERSION: 'Manage Version',
+  VERSION_CONTROL_CREATE: 'New Config',
   BRAND_MODEL: 'Brand & Model',
   CREATE_BRAND: 'Create Brand',
   SHARE: 'Share',

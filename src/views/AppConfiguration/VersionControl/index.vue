@@ -63,14 +63,18 @@ getAppVersionList()
 </script>
 
 <template>
-  <router-view v-if="$route.name === RouteName.MANAGE_VERSION" />
-  <section class="flex flex-col gap-16" v-else>
+  <section class="flex flex-col gap-16">
     <!-- header -->
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         Version Control
       </h3>
-      <el-button type="primary">New Config</el-button>
+      <el-button
+        type="primary"
+        @click="$router.push({ name: RouteName.VERSION_CONTROL_CREATE })"
+      >
+        New Config
+      </el-button>
     </div>
     <!-- search -->
     <div class="flex-between mx-32 h-24 gap-8">
