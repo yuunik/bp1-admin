@@ -8,33 +8,6 @@ const pagination = reactive({
   total: 100,
 })
 
-const liveDataList = reactive([
-  { id: 1, parameter: 'Engine RPM', data: 8000, unit: 'rpm' },
-  { id: 2, parameter: 'Vehicle Speed', data: 255, unit: 'km/h' },
-  { id: 3, parameter: 'Engine Coolant Temperature', data: 215, unit: '°C' },
-  { id: 4, parameter: 'Intake Air Temperature', data: 215, unit: '°C' },
-  { id: 5, parameter: 'MAF Air Flow Rate', data: 655.35, unit: 'g/s' },
-  { id: 6, parameter: 'Throttle Position', data: 100, unit: '%' },
-  { id: 7, parameter: 'Calculated Engine Load', data: 255, unit: '%' },
-  { id: 8, parameter: 'Fuel Level Input', data: 100, unit: '%' },
-  { id: 9, parameter: 'Fuel Rail Pressure', data: 655350, unit: 'kPa' },
-  { id: 10, parameter: 'Time Since Engine Start', data: 65535, unit: 's' },
-  { id: 11, parameter: 'Intake Manifold Pressure', data: 255, unit: 'kPa' },
-  { id: 12, parameter: 'O2 Sensor 2 Voltage', data: 1.275, unit: 'V' },
-  {
-    id: 13,
-    parameter: 'O2 Sensor 2 Short-Term Fuel Trim',
-    data: 100,
-    unit: '%',
-  },
-  {
-    id: 14,
-    parameter: 'Distance Traveled with MIL On',
-    data: 65535,
-    unit: 'km',
-  },
-])
-
 const faultCodeList = reactive([
   {
     ecu: 'Engine Control Module 1',
@@ -152,25 +125,6 @@ watch(
             <dd class="flex-1">-</dd>
           </dl>
         </div>
-      </div>
-    </div>
-    <!-- Live Data -->
-    <div class="flex flex-col gap-8">
-      <h4
-        class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
-      >
-        Live Data
-      </h4>
-      <!-- divider -->
-      <el-divider />
-      <!-- table -->
-      <div class="mx-32 flex flex-col gap-16">
-        <el-table :data="liveDataList" class="h-512 overflow-auto">
-          <el-table-column prop="parameter" label="Parameter" sortable />
-          <el-table-column prop="data" label="Data" />
-          <el-table-column prop="unit" label="Unit" />
-        </el-table>
-        <base-pagination v-model="pagination" />
       </div>
     </div>
     <!-- Fault Codes -->
