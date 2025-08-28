@@ -50,6 +50,9 @@ const operationRecordList = ref([])
 // 获取 OBD 详情 的方法
 const getOBDInfo = inject('getOBDInfo')
 
+// 当前的OBD id
+const currentObdId = ref('')
+
 // 日期标签（X轴）
 const labels = [
   '03-05',
@@ -167,6 +170,7 @@ onMounted(async () => {
     params: { id },
   } = route
   if (id) {
+    currentObdId.value = id
     await Promise.all([
       getOBDBindHistoryList(id),
       getOBDBindVehicleList(id),
@@ -178,7 +182,7 @@ onMounted(async () => {
 // 监听currentPage, 刷新列表
 watch(
   () => operationRecordParams.currentPage,
-  () => getOBDOperationRecord,
+  () => getOBDOperationRecord(currentObdId.value),
 )
 </script>
 
