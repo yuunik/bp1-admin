@@ -1,7 +1,10 @@
 <script setup>
+import { useDebounceFn } from '@vueuse/core'
+
 import { getAppVersionListApi } from '@/apis/appApi.js'
 import BasePagination from '@/components/BasePagination/index.vue'
 import { getCommentTime } from '@/utils/dateUtil.js'
+import { TimingPreset } from '@/utils/constantsUtil.js'
 
 const searchText = ref('')
 
@@ -10,21 +13,43 @@ const handleSearch = () => {}
 // 分页查询条件
 const pagination = reactive({
   currentPage: 0,
-  pageSize: 10,
+  pageSize: 15,
   total: 0,
 })
 
 // 版本数据列表
 const appVersionList = ref([])
 
+// 搜索的版本平台
+const searchType = ref('')
+
 // 获取版本列表
-const getAppVersionList = async () => {
-  const { data } = await getAppVersionListApi({
+const getAppVersionList = useDebounceFn(async () => {
+  const { data, count } = await getAppVersionListApi({
+    type: searchType.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
   appVersionList.value = data
+  // 更新分页数据
+  pagination.total = count
+}, TimingPreset.DEBOUNCE)
+
+// 搜索平台切换
+const handlePlatformChange = (command) => {
+  searchType.value = command
+  // 修改当前页
+  if (pagination.currentPage === 0) {
+    return getAppVersionList()
+  }
+  pagination.currentPage = 0
 }
+
+// 监听 pagination.currentPage, 自动发起查询
+watch(
+  () => pagination.currentPage,
+  () => getAppVersionList,
+)
 
 // 组件创建时, 发起网络请求
 getAppVersionList()
@@ -54,7 +79,7 @@ getAppVersionList()
         </template>
       </el-input>
       <!-- 状态搜索 -->
-      <el-dropdown :hide-on-click="false">
+      <el-dropdown @command="handlePlatformChange">
         <span
           class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
         >
@@ -63,19 +88,21 @@ getAppVersionList()
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>Action 1</el-dropdown-item>
-            <el-dropdown-item>Action 2</el-dropdown-item>
-            <el-dropdown-item>Action 3</el-dropdown-item>
-            <el-dropdown-item disabled>Action 4</el-dropdown-item>
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
-            <el-dropdown-item divided>Action 6</el-dropdown-item>
+            <el-dropdown-item command="iOS">iOS</el-dropdown-item>
+            <el-dropdown-item command="Android">Android</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
     </div>
+    <!-- divider -->
+    <el-divider />
     <!-- list -->
-    <div class="pb-38 flex flex-1 flex-col">
-      <el-table :data="appVersionList" class="flex-1">
+    <div class="pb-38 mx-32 flex flex-1 flex-col">
+      <el-table
+        :data="appVersionList"
+        class="flex-1"
+        row-class-name="clickable-row"
+      >
         <el-table-column type="selection" />
         <el-table-column prop="type" label="Platform" />
         <el-table-column prop="version" label="Version" />

@@ -102,3 +102,9 @@ export const VehicleDetailTabs = Object.freeze({
 export const Menu = Object.freeze({
   WIDTH: '210px',
 })
+
+// 节流和防抖的常量定义
+export const TimingPreset = Object.freeze({
+  DEBOUNCE: 300,
+  THROTTLE: 100,
+})

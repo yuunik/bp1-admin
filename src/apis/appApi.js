@@ -405,6 +405,7 @@ export const modifyAppVersionApi = (params) => {
 /**
  * 获取APP版本列表
  * @param {object} params
+ * @param {string} params.type 版本类型 (IOS,Android)
  * @param {string} params.page 不填默认0
  * @param {string} params.pageSize 不填默认20
  * @returns {Promise<ApiResponse<any>>}
@@ -412,6 +413,7 @@ export const modifyAppVersionApi = (params) => {
 export const getAppVersionListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
+  data.append('type', params.type)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
 
