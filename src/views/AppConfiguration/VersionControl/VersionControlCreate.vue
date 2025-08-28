@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
-import { RouteName } from '@/utils/constantsUtil.js'
+import { RouteName, ShareRoutePath } from '@/utils/constantsUtil.js'
 import { addAppVersionApi } from '@/apis/appApi.js'
 
 const appVersionInfo = reactive({
@@ -21,6 +21,18 @@ const handleAddAppVersionInfo = async () => {
   ElMessage.success('Added successfully')
   router.push({ name: RouteName.VERSION_CONTROL })
 }
+
+// 监听 type,  动态填写 url
+watch(
+  () => appVersionInfo.type,
+  (val) => {
+    if (val === 'Android') {
+      appVersionInfo.url = ShareRoutePath.GOOGLE_PLAY_URL
+    } else {
+      appVersionInfo.url = ShareRoutePath.APPLE_APP_STORE_URL
+    }
+  },
+)
 </script>
 
 <template>
@@ -68,7 +80,7 @@ const handleAddAppVersionInfo = async () => {
       </dd>
       <dt>Update Prompt</dt>
       <dd>
-        <el-input v-model="appVersionInfo.content" />
+        <el-input v-model="appVersionInfo.content" type="textarea" :rows="15" />
       </dd>
     </dl>
   </section>
