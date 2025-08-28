@@ -39,6 +39,12 @@ const AppApi = Object.freeze({
   MODIFY_LIVE_DATA_WARNING_DATA: '/manager/vehiclewarn/edit',
   // 编辑车辆品牌信息你
   MODIFY_BRAND_MODEL_INFO: '/manager/brandmodel/edit',
+  // 新增版本数据
+  ADD_VERSION_DATA: '/manager/version/addappversion',
+  // 编辑版本数据
+  MODIFY_VERSION_DATA: '/manager/version/editappversion',
+  // 获取版本数据列表
+  GET_VERSION_LIST: '/manager/version/getappversions',
 })
 
 // 获取 token
@@ -341,6 +347,76 @@ export const modifyBrandInfoApi = (params) => {
   data.append('isdelete', params.isdelete)
   return request({
     url: AppApi.MODIFY_BRAND_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 添加APP版本信息
+ * @param {object} params 添加APP版本信息参数
+ * @param {string} params.type 版本类型 (IOS,Android)
+ * @param {string} params.version 版本号
+ * @param {number} params.state 状态 (0不提示、1提示更新、2强制更新、3审核中)
+ * @param {string} params.url 更新路径
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const addAppVersionApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('type', params.type)
+  data.append('version', params.version)
+  data.append('state', params.state)
+  data.append('url', params.url)
+
+  return request({
+    url: AppApi.ADD_VERSION_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改APP版本信息
+ * @param {object} params 添加APP版本信息参数
+ * @param {number} params.id 版本ID
+ * @param {string} params.type 版本类型 (IOS,Android)
+ * @param {string} params.version 版本号
+ * @param {number} params.state 状态 (0不提示、1提示更新、2强制更新、3审核中)
+ * @param {string} params.url 更新路径
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyAppVersionApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', params.id)
+  data.append('type', params.type)
+  data.append('version', params.version)
+  data.append('state', params.state)
+  data.append('url', params.url)
+
+  return request({
+    url: AppApi.MODIFY_VERSION_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取APP版本列表
+ * @param {object} params
+ * @param {string} params.page 不填默认0
+ * @param {string} params.pageSize 不填默认20
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getAppVersionListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
+  return request({
+    url: AppApi.GET_VERSION_LIST,
     method: 'POST',
     data,
   })
