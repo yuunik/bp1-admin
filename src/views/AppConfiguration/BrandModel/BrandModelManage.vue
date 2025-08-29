@@ -1,14 +1,13 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
 import {
   addBrandModelApi,
   deleteBrandModelApi,
   getBrandModelInfoApi,
-  modifyBrandInfoApi,
-  modifyBrandModelApi,
+  modifyBrandModelNameApi,
   modifyBrandNameApi,
 } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
@@ -17,9 +16,6 @@ import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 
 // 车辆详情
 const brandModelInfo = ref({})
-
-// 编辑模式
-const isEdit = ref(false)
 
 // 获取车辆品牌详情
 const getBrandModelInfo = async (id) => {
@@ -50,49 +46,6 @@ if (route.params.id) {
   router.push({ name: RouteName.DASHBOARD })
 }
 
-// 新增车辆品牌型号
-const handleAddBrandModel = async () => {
-  // 添加车辆品牌及型号
-  await addBrandModelApi({
-    name: pendingBrand,
-    models: pendingBrandModelList.map((item) => item.brandModelName).join(''),
-    logo: logoFile,
-  })
-  // 添加成功
-  ElMessage.success('Add Brand Model Success')
-  // 跳转列表页
-  router.back()
-}
-
-// 删除车辆品牌型号
-const handleDeleteBrandModel = async (id) => {
-  await deleteBrandModelApi(id)
-  // 删除成功
-  ElMessage.success('Delete Brand Model Success')
-  // 删除车辆品牌型号（从列表中删除）
-  brandModelList.splice(
-    brandModelList.findIndex((item) => item.id === id),
-    1,
-  )
-}
-
-// 编辑车辆品牌型号
-const handleEditBrandInfo = async () => {
-  await modifyBrandInfoApi({
-    brandId: brandModelInfo.value.id,
-    name: brandModelInfo.value.brand,
-    models:
-      brandModelInfo.value.vehicleModelDtos &&
-      brandModelInfo.value.vehicleModelDtos?.length > 0
-        ? brandModelInfo.value.vehicleModelDtos.map((item) => item.name)
-        : '',
-  })
-  // 添加成功
-  ElMessage.success('Edit Brand Model Success')
-  // 跳转列表页
-  router.back()
-}
-
 // 编辑车辆品牌名称
 const handleEditBrandName = async () => {
   await modifyBrandNameApi({
@@ -100,19 +53,47 @@ const handleEditBrandName = async () => {
     name: brandModelInfo.value.brand,
   })
   // 修改成功
-  ElMessage.success('Edit Brand Model Success')
+  ElMessage.success('Edit Brand Name Success')
   getBrandModelInfo(route.params.id)
 }
 
-// 修改编辑模式
-const handleBrandStatusChange = () => {
-  // 修改编辑状态
-  isEdit.value = !isEdit.value
-  // 编辑状态关闭, 则修改品牌
-  if (!isEdit.value) {
-    // 修改品牌
-    handleEditBrandInfo()
+// 管理品牌型号名称
+const handleEditBrandModelName = async (row) => {
+  if (row.id) {
+    // 编辑
+    await modifyBrandModelNameApi({
+      id: row.id,
+      name: row.name,
+    })
+    // 添加成功
+    ElMessage.success('Edit Brand Model Name Success')
+  } else {
+    // 新增
+    await addBrandModelApi({
+      brandId: brandModelInfo.value.id,
+      name: row.name,
+    })
+    // 添加成功
+    ElMessage.success('Add Brand Model Success')
   }
+  // 刷新页面
+  getBrandModelInfo(route.params.id)
+}
+
+// 待添加车辆品牌名称
+const handleAddPendingBrandModel = () => {
+  brandModelInfo.value.vehicleModelDtos.push({
+    name: '',
+    isEdit: true,
+  })
+}
+
+// 删除车辆品牌
+const handleDeleteBrandModel = async (id) => {
+  await deleteBrandModelApi(id)
+  // 删除成功
+  ElMessage.success('Delete Brand Model Success')
+  getBrandModelInfo(route.params.id)
 }
 </script>
 
@@ -126,9 +107,6 @@ const handleBrandStatusChange = () => {
       <div class="flex gap-8">
         <el-button>Disable</el-button>
         <el-button>Sort</el-button>
-        <el-button type="primary" @click="handleBrandStatusChange">
-          {{ isEdit ? 'Save' : 'Edit' }}
-        </el-button>
       </div>
     </div>
     <!-- divider -->
@@ -221,28 +199,6 @@ const handleBrandStatusChange = () => {
         <!-- 分割线 -->
         <el-divider class="mt-8" />
         <!-- 型号列表 -->
-        <ul
-          class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 px-32 [&>li]:box-border [&>li]:flex [&>li]:h-[40px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
-        >
-          <li
-            v-for="vehicleModel in brandModelInfo?.vehicleModelDtos"
-            :key="vehicleModel.id"
-            class="heading-body-body-12px-regular neutrals-off-black"
-          >
-            <el-checkbox v-if="isEdit">
-              <template #default>
-                <el-input
-                  placeholder="Enter..."
-                  class="h-32"
-                  v-model="vehicleModel.name"
-                />
-                <!-- 删除待添加项 -->
-                <i class="icon icon-delete-bin-line ml-16" />
-              </template>
-            </el-checkbox>
-            <el-text v-else>{{ vehicleModel.name }}</el-text>
-          </li>
-        </ul>
         <div class="table-container mx-32">
           <el-table :data="brandModelInfo?.vehicleModelDtos">
             <el-table-column type="selection" />
@@ -263,18 +219,34 @@ const handleBrandStatusChange = () => {
               <template #default="{ row }">
                 <template v-if="!row.isEdit">
                   <!-- 编辑 -->
-                  <i class="icon-edit-line mr-8 h-16 w-16 cursor-pointer" />
+                  <i
+                    class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
+                    @click="row.isEdit = true"
+                  />
                   <!-- 删除 -->
-                  <i class="icon-delete-bin-line h-16 w-16 cursor-pointer" />
+                  <i
+                    class="icon-delete-bin-line h-16 w-16 cursor-pointer"
+                    @click="handleDeleteBrandModel(row.id)"
+                  />
                 </template>
                 <template v-else>
-                  <el-button type="primary">Add</el-button>
+                  <el-button
+                    type="primary"
+                    @click="handleEditBrandModelName(row)"
+                  >
+                    {{ row.id ? 'Edit' : 'Add' }}
+                  </el-button>
                 </template>
               </template>
             </el-table-column>
           </el-table>
           <!-- 新增按钮 -->
-          <el-button type="primary" text class="my-8 w-fit">
+          <el-button
+            type="primary"
+            text
+            class="my-8 w-fit"
+            @click="handleAddPendingBrandModel"
+          >
             <template #icon>
               <i class="icon-typesadd branding-colours-primary" />
             </template>
@@ -313,7 +285,7 @@ const handleBrandStatusChange = () => {
     @apply rounded-12 bg-[#EAEEF4];
 
     .el-input__inner {
-      @apply placeholder:text-14 placeholder:text-red placeholder:font-normal;
+      @apply placeholder:text-14 placeholder:font-normal;
     }
   }
 }
