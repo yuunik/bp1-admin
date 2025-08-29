@@ -204,69 +204,56 @@ watch(
 <template>
   <div class="overflow-auto">
     <!-- OBD Info -->
-    <div class="flex-between mx-32 mb-4 gap-24">
-      <div class="flex flex-1 flex-col gap-4">
-        <div class="leading-32 flex gap-8">
-          <label for="model" class="w-112 h-32">Model</label>
-          <span
-            id="model"
-            class="heading-body-body-12px-regular text-neutrals-off-black"
-          >
-            {{ obdInfo.vehicleDto?.model || '-' }}
+    <div class="mx-32 mb-4 grid grid-cols-2 gap-x-24 gap-y-8">
+      <div class="leading-32 flex gap-8">
+        <label for="last-used" class="w-112 h-32">Last Used</label>
+        <span
+          id="last-used"
+          class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
+        >
+          {{ getLastUsedDate(obdInfo.createdTime) }}
+        </span>
+      </div>
+      <div class="leading-32 flex gap-8">
+        <label for="on_off" class="w-112 leading-32 h-32">On/Off</label>
+        <el-switch
+          id="on_off"
+          v-model="isObdOn"
+          class="h-20 w-32"
+          active-text="On"
+          inactive-text="Off"
+        />
+      </div>
+      <div class="leading-32 flex gap-8">
+        <label for="serial-number" class="w-112 leading-32 h-32">
+          Serial Number
+        </label>
+        <span
+          id="serial-number"
+          class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
+        >
+          {{ obdInfo.sn }}
+        </span>
+      </div>
+      <div class="leading-32 flex gap-8">
+        <label for="warranty-end" class="w-112 leading-32 h-32">
+          Warranty End
+        </label>
+        <div id="warranty-end" class="text-neutrals-off-black flex flex-1">
+          <span class="heading-body-body-12px-regular items-center">
+            {{ getWarrantyEndDate(obdInfo.warrantyTime) }}
           </span>
-        </div>
-        <div class="leading-32 flex gap-8">
-          <label for="last-used" class="w-112 h-32">Last Used</label>
-          <span
-            id="last-used"
-            class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
-          >
-            {{ getLastUsedDate(obdInfo.createdTime) }}
-          </span>
-        </div>
-        <div class="leading-32 flex gap-8">
-          <label for="on_off" class="w-112 leading-32 h-32">On/Off</label>
-          <el-switch
-            id="on_off"
-            v-model="isObdOn"
-            class="h-20 w-32"
-            active-text="On"
-            inactive-text="Off"
-          />
+          <el-tag type="success" class="rounded-4 ml-8">Valid</el-tag>
         </div>
       </div>
-      <div class="flex flex-1 flex-col gap-4">
-        <div class="leading-32 flex gap-8">
-          <label for="serial-number" class="w-112 leading-32 h-32">
-            Serial Number
-          </label>
-          <span
-            id="serial-number"
-            class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
-          >
-            {{ obdInfo.sn }}
-          </span>
-        </div>
-        <div class="leading-32 flex gap-8">
-          <label for="warranty-end" class="w-112 leading-32 h-32">
-            Warranty End
-          </label>
-          <div id="warranty-end" class="text-neutrals-off-black flex flex-1">
-            <span class="heading-body-body-12px-regular items-center">
-              {{ getWarrantyEndDate(obdInfo.warrantyTime) }}
-            </span>
-            <el-tag type="success" class="rounded-4 ml-8">Valid</el-tag>
-          </div>
-        </div>
-        <div class="leading-32 flex gap-8">
-          <label for="order" class="w-112 leading-32 h-32">Order</label>
-          <span
-            id="order"
-            class="heading-body-body-12px-regular text-neutrals-off-black flex-1 underline"
-          >
-            -
-          </span>
-        </div>
+      <div class="leading-32 flex gap-8">
+        <label for="order" class="w-112 leading-32 h-32">Order</label>
+        <span
+          id="order"
+          class="heading-body-body-12px-regular text-neutrals-off-black flex-1 underline"
+        >
+          -
+        </span>
       </div>
     </div>
     <!-- Bound Users -->
