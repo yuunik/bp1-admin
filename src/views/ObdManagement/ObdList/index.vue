@@ -67,6 +67,15 @@ const handleUnbindUser = async () => {
   getObdList()
 }
 
+// 操作栏解绑用户
+const onUnbindUser = async (id) => {
+  await unbindOBDApi(id)
+  // 解绑成功
+  ElMessage.success('Unbind success')
+  // 刷新
+  getObdList()
+}
+
 // 关闭 OBD
 const handleCloseOBD = async () => {
   await closeOBDApi(selectedOBDIdList.value.join(','))
@@ -76,16 +85,28 @@ const handleCloseOBD = async () => {
   getObdList()
 }
 
+// 操作栏关闭 OBD
+const onCloseOBD = async (id) => {
+  await closeOBDApi(id)
+  // 关闭成功
+  ElMessage.success('Close success')
+  // 刷新
+  getObdList()
+}
+
 // 查看 OBD 详情
 const viewOBDDetail = (row, column) => {
-  const { type } = column
+  const { type, property } = column
   if (type === 'selection') {
     // 阻止默认选中行, 跳转查看详情
+    return
+  } else if (property === 'actions') {
     return
   }
   router.push({ name: RouteName.OBD_DETAILS, params: { id: row.id } })
 }
 
+// 搜索
 const handleSearch = useDebounceFn(async () => {
   if (pagination.currentPage === 0) {
     return getObdList()
@@ -93,6 +114,7 @@ const handleSearch = useDebounceFn(async () => {
   pagination.currentPage = 0
 }, 500)
 
+// 排序
 const handleSortByCondition = useDebounceFn((data) => {
   const { prop, order } = data
   if (order) {
@@ -104,6 +126,8 @@ const handleSortByCondition = useDebounceFn((data) => {
   }
   getObdList()
 }, TimingPreset.DEBOUNCE)
+
+// 关闭 OBD
 
 // 监听currentPage, 刷新列表
 watch(
@@ -165,7 +189,7 @@ getObdList()
             <i class="icon-typesdropdown" />
           </span>
           <template #dropdown>
-            <el-checkbox-group v-model="userKeys">
+            <el-checkbox-group v-model="userKeys" class="p-8">
               <el-checkbox value="2">With User</el-checkbox>
               <el-checkbox value="1">Without User</el-checkbox>
             </el-checkbox-group>
@@ -234,9 +258,22 @@ getObdList()
           </template>
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column align="center">
-          <template #default>
-            <i class="icon-more-2-line" />
+        <el-table-column align="center" prop="actions" width="50">
+          <template #default="{ row }">
+            <!-- 状态搜索 -->
+            <el-dropdown popper-class="custom-dropdown">
+              <i class="icon-more-2-line" />
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="onUnbindUser(row.id)">
+                    Unbind User
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="onCloseOBD(row.id)">
+                    Off OBD
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -265,5 +302,10 @@ getObdList()
 
 .obd-details {
   @apply cursor-pointer!;
+}
+
+:deep(.el-tooltip__trigger:focus),
+:deep(.el-tooltip__trigger:focus-visible) {
+  outline: none;
 }
 </style>

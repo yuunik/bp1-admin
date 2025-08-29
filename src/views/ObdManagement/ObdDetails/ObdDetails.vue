@@ -173,10 +173,6 @@ const getOBDConnectedCountList = async (id) => {
   }
 }
 
-const betweenDays = computed(() =>
-  Math.abs(dayjs(endTime.value).diff(beginTime.value, 'day')),
-)
-
 // 监听统计图标时间区间的变化, 重新获取数据
 watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)

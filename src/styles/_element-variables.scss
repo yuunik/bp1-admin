@@ -68,3 +68,8 @@
   /* 让高度不被固定 */
   /* 在 flex 布局中自动拉伸到父容器高度 */
 }
+
+.el-tooltip__trigger:focus,
+.el-tooltip__trigger:focus-visible {
+  outline: none;
+}
