@@ -149,24 +149,11 @@ getObdList()
 </script>
 
 <template>
-  <router-view v-if="$route.name === RouteName.CREATE_STOCK_ORDER" />
-  <section class="flex h-full flex-col" v-else>
+  <section class="flex h-full flex-col">
     <!-- OBD List Header -->
     <div class="px-32 pb-16">
-      <!-- 标题栏 -->
-      <div class="flex-between">
-        <h3 class="heading-h2-20px-medium">OBD List</h3>
-        <div>
-          <el-button type="default" class="w-70 h-32">Export</el-button>
-          <el-button
-            type="primary"
-            class="w-70 h-32"
-            @click="$router.push({ name: RouteName.CREATE_STOCK_ORDER })"
-          >
-            Create
-          </el-button>
-        </div>
-      </div>
+      <!-- 标题 -->
+      <h3 class="heading-h2-20px-medium">OBD List</h3>
       <div class="flex-between gap-12">
         <!-- 搜索栏 -->
         <el-input
