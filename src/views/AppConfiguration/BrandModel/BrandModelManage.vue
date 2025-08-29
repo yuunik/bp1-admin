@@ -137,7 +137,7 @@ const handleBrandStatusChange = () => {
           />
           <!-- desc -->
           <div class="flex flex-col gap-16">
-            <el-text>Logo</el-text>
+            <el-text class="w-full!">Logo</el-text>
             <!-- 更换 logo 图片 -->
             <el-button>Change</el-button>
           </div>
@@ -166,7 +166,7 @@ const handleBrandStatusChange = () => {
           <div class="flex gap-8">
             <!-- 标签 -->
             <label
-              class="w-112 heading-body-body-12px-medium neutrals-grey-3 h-32"
+              class="w-112 heading-body-body-12px-medium neutrals-grey-3 leading-32 h-32"
             >
               Status
             </label>
