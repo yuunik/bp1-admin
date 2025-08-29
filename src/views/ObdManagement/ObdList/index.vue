@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -127,7 +127,7 @@ const handleSortByCondition = useDebounceFn((data) => {
   getObdList()
 }, TimingPreset.DEBOUNCE)
 
-// 关闭 OBD
+const isInputBlur = ref(false)
 
 // 监听currentPage, 刷新列表
 watch(
@@ -139,10 +139,43 @@ watch(
 watch(
   () => userKeys.value,
   () => {
-    pagination.currentPage = 0
+    if (pagination.currentPage === 0) {
+      return getObdList()
+    }
     getObdList()
   },
 )
+
+const handleInputBlur = () => {
+  console.log('handleInputBlur')
+  isInputBlur.value = true
+}
+
+const handleInputFocus = () => {
+  console.log('handleInputFocus')
+  isInputBlur.value = false
+}
+
+// 计算显示的用户条件文本
+const userConditionText = computed(() => {
+  const conditions = []
+
+  // 检查是否选择了 With User
+  if (userKeys.value.includes('2')) {
+    conditions.push('With Users')
+  }
+
+  // 检查是否选择了 Without User
+  if (userKeys.value.includes('1')) {
+    conditions.push('Without User')
+  }
+
+  if (conditions.length > 0) {
+    return `Users: ${conditions.join(', ')}`
+  }
+
+  return 'Users'
+})
 
 // 网络请求
 getObdList()
@@ -151,37 +184,61 @@ getObdList()
 <template>
   <section class="flex h-full flex-col">
     <!-- OBD List Header -->
-    <div class="px-32 pb-16">
+    <div class="flex flex-col gap-16 px-32 pb-16">
       <!-- 标题 -->
       <h3 class="heading-h2-20px-medium">OBD List</h3>
-      <div class="flex-between gap-12">
+      <div class="flex-between condition-search-container h-24">
+        <!-- 状态搜索 -->
+        <el-dropdown>
+          <span
+            class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
+            :class="{
+              'text-[#006BF7]': userConditionText !== 'Users',
+              'border-[#006BF7]': userConditionText !== 'Users',
+              'border-[#CACFD8]': userConditionText === 'Users',
+            }"
+          >
+            {{ userConditionText }}
+            <i
+              class="icon-typesdropdown"
+              :class="{
+                'text-[#006BF7]': userConditionText !== 'Users',
+              }"
+            />
+          </span>
+          <template #dropdown>
+            <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
+              <div class="flex-between">
+                <span>User</span>
+                <el-button
+                  text
+                  :disabled="!userKeys.length"
+                  @click="userKeys = []"
+                >
+                  Clear
+                </el-button>
+              </div>
+              <el-checkbox-group v-model="userKeys">
+                <el-checkbox value="2">With User</el-checkbox>
+                <el-checkbox value="1">Without User</el-checkbox>
+              </el-checkbox-group>
+            </div>
+          </template>
+        </el-dropdown>
         <!-- 搜索栏 -->
         <el-input
           placeholder="Search..."
-          class="obd-list-search mt-16"
+          class="obd-list-search w-200! mt-16"
           v-model="searchText"
           @input="handleSearch"
+          @blur="handleInputBlur"
+          @focus="handleInputFocus"
         >
           <template #prefix>
             <!-- 前置搜索图标 -->
             <i class="icon-typessearch h-16 w-16" />
           </template>
         </el-input>
-        <!-- 状态搜索 -->
-        <el-dropdown>
-          <span
-            class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
-          >
-            Users
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <el-checkbox-group v-model="userKeys" class="p-8">
-              <el-checkbox value="2">With User</el-checkbox>
-              <el-checkbox value="1">Without User</el-checkbox>
-            </el-checkbox-group>
-          </template>
-        </el-dropdown>
       </div>
     </div>
     <!-- 分割线 -->
@@ -294,5 +351,27 @@ getObdList()
 :deep(.el-tooltip__trigger:focus),
 :deep(.el-tooltip__trigger:focus-visible) {
   outline: none;
+}
+
+:deep(.el-input) {
+  margin: 0;
+}
+
+.condition-search-container :deep(.search-input .el-input__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.condition-search-container :deep(.search-input .el-input__wrapper::after) {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--el-input-border-color, var(--el-border-color));
+  pointer-events: none;
 }
 </style>
