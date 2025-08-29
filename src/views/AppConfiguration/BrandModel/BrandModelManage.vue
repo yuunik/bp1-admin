@@ -9,13 +9,14 @@ import {
   getBrandModelInfoApi,
   modifyBrandInfoApi,
   modifyBrandModelApi,
+  modifyBrandNameApi,
 } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 
 // 车辆详情
-const brandModelInfo = reactive({})
+const brandModelInfo = ref({})
 
 // 编辑模式
 const isEdit = ref(false)
@@ -24,16 +25,16 @@ const isEdit = ref(false)
 const getBrandModelInfo = async (id) => {
   const { data } = await getBrandModelInfoApi(id)
   // 请求成功
-  Object.assign(brandModelInfo, data)
+  brandModelInfo.value = data
   // 记录品牌的编辑状态为 false
   data.isEdit = false
   // 更新面包屑
-  for (const item of brandModelInfo?.vehicleModelDtos) {
+  for (const item of brandModelInfo.value?.vehicleModelDtos) {
     // 记录型号的编辑状态为 false
     item.isEdit = false
   }
   // 更新面包屑
-  emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.brand)
+  emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.value.brand)
 }
 
 // 获取路由
@@ -78,18 +79,29 @@ const handleDeleteBrandModel = async (id) => {
 // 编辑车辆品牌型号
 const handleEditBrandInfo = async () => {
   await modifyBrandInfoApi({
-    brandId: brandModelInfo.id,
-    name: brandModelInfo.brand,
+    brandId: brandModelInfo.value.id,
+    name: brandModelInfo.value.brand,
     models:
-      brandModelInfo.vehicleModelDtos &&
-      brandModelInfo.vehicleModelDtos?.length > 0
-        ? brandModelInfo.vehicleModelDtos.map((item) => item.name)
+      brandModelInfo.value.vehicleModelDtos &&
+      brandModelInfo.value.vehicleModelDtos?.length > 0
+        ? brandModelInfo.value.vehicleModelDtos.map((item) => item.name)
         : '',
   })
   // 添加成功
   ElMessage.success('Edit Brand Model Success')
   // 跳转列表页
   router.back()
+}
+
+// 编辑车辆品牌名称
+const handleEditBrandName = async () => {
+  await modifyBrandNameApi({
+    id: brandModelInfo.value.id,
+    name: brandModelInfo.value.brand,
+  })
+  // 修改成功
+  ElMessage.success('Edit Brand Model Success')
+  getBrandModelInfo(route.params.id)
 }
 
 // 修改编辑模式
@@ -153,13 +165,28 @@ const handleBrandStatusChange = () => {
               Brand
             </label>
             <!-- 值 -->
-            <template v-if="isEdit">
-              <el-input v-model="brandModelInfo.brand" />
+            <template v-if="brandModelInfo.isEdit">
+              <el-input
+                class="brand-name-input"
+                v-model="brandModelInfo.brand"
+              />
+              <div class="flex gap-8">
+                <el-button @click="brandModelInfo.isEdit = false">
+                  Cancel
+                </el-button>
+                <el-button @click="handleEditBrandName" type="primary">
+                  Save
+                </el-button>
+              </div>
             </template>
             <template v-else>
               <el-text class="w-264 h-32">
                 {{ brandModelInfo?.brand ?? '-' }}
               </el-text>
+              <i
+                class="i-ep:edit ml-8 h-16 w-16 cursor-pointer"
+                @click="brandModelInfo.isEdit = true"
+              />
             </template>
           </div>
           <!-- 状态 -->
@@ -216,14 +243,70 @@ const handleBrandStatusChange = () => {
             <el-text v-else>{{ vehicleModel.name }}</el-text>
           </li>
         </ul>
+        <div class="table-container mx-32">
+          <el-table :data="brandModelInfo?.vehicleModelDtos">
+            <el-table-column type="selection" />
+            <el-table-column type="index" label="No." />
+            <el-table-column prop="name" label="Model">
+              <template #default="{ row }">
+                <el-input
+                  v-if="row.isEdit"
+                  placeholder="Enter..."
+                  class="h-32"
+                  v-model="row.name"
+                />
+                <span v-else>{{ row.name }}</span>
+              </template>
+            </el-table-column>
+            <!-- 操作 -->
+            <el-table-column column-key="actions" min-width="7%">
+              <template #default="{ row }">
+                <template v-if="!row.isEdit">
+                  <!-- 编辑 -->
+                  <i class="icon-edit-line mr-8 h-16 w-16 cursor-pointer" />
+                  <!-- 删除 -->
+                  <i class="icon-delete-bin-line h-16 w-16 cursor-pointer" />
+                </template>
+                <template v-else>
+                  <el-button type="primary">Add</el-button>
+                </template>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 新增按钮 -->
+          <el-button type="primary" text class="my-8 w-fit">
+            <template #icon>
+              <i class="icon-typesadd branding-colours-primary" />
+            </template>
+            <template #default>New Item</template>
+          </el-button>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <style scoped lang="scss">
+.brand-name-input :deep(.el-input__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.brand-name-input :deep(.el-input__wrapper::after) {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--el-input-border-color, var(--el-border-color));
+  pointer-events: none;
+}
+
 // 重置 el-input 样式
-:deep(.el-input) {
+:deep(.table-container .el-input) {
   @apply rounded-12 h-32;
 
   .el-input__wrapper {

@@ -17,6 +17,8 @@ const AppApi = Object.freeze({
   DELETE_AI_QUESTION: '/manager/aichat/delete',
   // 修改 AI 问题
   MODIFY_AI_QUESTION: '/manager/aichat/edit',
+  // 编辑车辆品牌名字
+  MODIFY_BRAND_NAME: '/manager/brand/edit',
   // 获取车辆品牌详情
   GET_BRAND_MODEL_INFO: '/manager/vehicle/brandinfo',
   // 新增车辆品牌
@@ -353,6 +355,19 @@ export const modifyBrandInfoApi = (params) => {
   data.append('isdelete', params.isdelete)
   return request({
     url: AppApi.MODIFY_BRAND_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+export const modifyBrandNameApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', params.id)
+  data.append('name', params.name)
+
+  return request({
+    url: AppApi.MODIFY_BRAND_NAME,
     method: 'POST',
     data,
   })
