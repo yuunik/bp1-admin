@@ -125,9 +125,9 @@ if (id) {
           <el-table-column type="expand">
             <template #default="{ row }">
               <el-table :data="row.dtcItemDtcDtos">
-                <el-table-column prop="dtcName" label="DTC Name" />
+                <el-table-column prop="name" label="DTC Name" />
                 <el-table-column prop="code" label="Code" />
-                <el-table-column prop="severity" label="Severity" />
+                <!--<el-table-column prop="severity" label="Severity" />-->
                 <el-table-column>
                   <template #default="{ row }">
                     <el-button class="rounded-full!">View Details</el-button>
