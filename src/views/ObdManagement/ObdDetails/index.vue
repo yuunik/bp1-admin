@@ -49,6 +49,12 @@ const handleUnbindUser = async () => {
   ElMessage.success('Unbind success')
 }
 
+const obdDetailsRef = ref(null)
+
+const handleScrollToBehaviorStatistics = () => {
+  obdDetailsRef.value.scrollToBehaviorStatistics()
+}
+
 // 获取路径中 id
 const {
   params: { id },
@@ -82,25 +88,63 @@ provide('getOBDInfo', getOBDInfo)
     <!-- divider -->
     <el-divider class="mt-16! mb-19!" />
     <!-- tabs -->
-    <el-tabs v-model="activeTabName" @tab-click="handleTabClick" class="ml-32">
-      <el-tab-pane
-        :label="ObdDetailsTabs.OBD_DETAILS"
-        :name="ObdDetailsTabs.OBD_DETAILS"
-      />
-      <el-tab-pane
-        :label="ObdDetailsTabs.BEHAVIOR_STATISTICS"
-        :name="ObdDetailsTabs.BEHAVIOR_STATISTICS"
-      />
-    </el-tabs>
+    <!--<el-tabs v-model="activeTabName" @tab-click="handleTabClick" class="ml-32">-->
+    <!--  <el-tab-pane-->
+    <!--    :label="ObdDetailsTabs.OBD_DETAILS"-->
+    <!--    :name="ObdDetailsTabs.OBD_DETAILS"-->
+    <!--  />-->
+    <!--  <el-tab-pane-->
+    <!--    :label="ObdDetailsTabs.BEHAVIOR_STATISTICS"-->
+    <!--    :name="ObdDetailsTabs.BEHAVIOR_STATISTICS"-->
+    <!--  />-->
+    <!--</el-tabs>-->
+    <div class="el-tabs el-tabs--top ml-32">
+      <div class="el-tabs__header is-top">
+        <div class="el-tabs__nav-wrap is-top">
+          <!---->
+          <div class="el-tabs__nav-scroll">
+            <div
+              class="el-tabs__nav is-top"
+              role="tablist"
+              style="transform: translateX(0px)"
+            >
+              <div
+                class="el-tabs__active-bar is-top"
+                style="width: 79px; transform: translateX(0px)"
+              ></div>
+              <div
+                class="el-tabs__item is-top is-active"
+                id="tab-OBD Details"
+                aria-controls="pane-OBD Details"
+                role="tab"
+                aria-selected="true"
+                tabindex="0"
+              >
+                OBD Details
+                <!---->
+              </div>
+              <div
+                class="el-tabs__item is-top"
+                id="tab-Behavior Statistics"
+                aria-controls="pane-Behavior Statistics"
+                role="tab"
+                aria-selected="false"
+                tabindex="-1"
+                @click="handleScrollToBehaviorStatistics"
+              >
+                Behavior Statistics
+                <!---->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
     <!-- divider -->
     <el-divider class="mb-16!" />
     <!-- content -->
-    <keep-alive>
-      <component
-        :is="tabPaneList.find((tab) => tab.key === activeTabName).component"
-        class="flex-1"
-      />
-    </keep-alive>
+    <obd-details ref="obdDetailsRef" />
   </section>
 </template>
 

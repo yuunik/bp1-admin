@@ -64,6 +64,7 @@ const chartData = ref({
 // 图表配置
 const chartOptions = ref({
   responsive: true,
+  maintainAspectRatio: false,
   plugins: {
     legend: { position: 'top' },
     title: {
@@ -105,6 +106,8 @@ const activeDays = computed(() => {
   }
   return `${Math.abs(dayjs(beginTime.value).diff(bindingTime, 'day'))} days`
 })
+
+const obdDetailRef = ref(null)
 
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
@@ -173,6 +176,12 @@ const getOBDConnectedCountList = async (id) => {
   }
 }
 
+const behaviorStatisticsRef = ref(null)
+const scrollToBehaviorStatistics = () => {
+  obdDetailRef.value.scrollTop =
+    behaviorStatisticsRef.value.getBoundingClientRect().top - 250
+}
+
 // 监听统计图标时间区间的变化, 重新获取数据
 watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)
@@ -199,10 +208,14 @@ watch(
   () => operationRecordParams.currentPage,
   () => getOBDOperationRecord(currentObdId.value),
 )
+
+defineExpose({
+  scrollToBehaviorStatistics,
+})
 </script>
 
 <template>
-  <div class="overflow-auto">
+  <div class="odb-detail-container overflow-auto" ref="obdDetailRef">
     <!-- OBD Info -->
     <div class="mx-32 mb-4 grid grid-cols-2 gap-x-24 gap-y-8">
       <div class="leading-32 flex gap-8">
@@ -344,7 +357,7 @@ watch(
       </div>
     </div>
     <!-- Behavior Statistics -->
-    <div class="mb-24">
+    <div class="mb-24" ref="behaviorStatisticsRef">
       <!-- title -->
       <h4
         class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
@@ -385,11 +398,7 @@ watch(
         class="h-600 mx-32 flex justify-center overflow-hidden"
         v-if="chartData.datasets && chartData.datasets.length > 0"
       >
-        <Line
-          :data="chartData"
-          :options="chartOptions"
-          class="overflow-hidden"
-        />
+        <Line :data="chartData" :options="chartOptions" />
       </div>
       <!-- obd records -->
       <div class="mt-20">
