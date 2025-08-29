@@ -22,9 +22,9 @@ const AppApi = Object.freeze({
   // 获取车辆品牌详情
   GET_BRAND_MODEL_INFO: '/manager/vehicle/brandinfo',
   // 新增车辆品牌
-  ADD_BRAND_MODEL: '/manager/brand/add',
+  ADD_BRAND: '/manager/brand/add',
   // 新增车辆品牌型号
-  ADD_BRAND_MODEL_MODEL: '/manager/model/add',
+  ADD_BRAND_MODEL: '/manager/model/add',
   // 修改车辆品牌型号
   MODIFY_BRAND_MODEL: '/manager/model/edit',
   // 获取实时数据预警列表
@@ -160,27 +160,6 @@ export const getBrandModelInfoApi = (id) => {
     data,
   })
 }
-
-/**
- * 新增车辆品牌型号
- * @param params 新增车辆品牌型号参数
- * @param params.name 车辆品牌名称
- * @param params.models 车辆品牌型号名称列表
- * @param params.logo 车辆品牌logo
- * @returns {Promise<ApiResponse<BrandModel>>}
- */
-// export const addBrandModelApi = (params) => {
-//   const data = new FormData()
-//   data.append('token', getToken())
-//   data.append('name', params.name)
-//   data.append('models', params.models)
-//   data.append('file', params.logo)
-//   return request({
-//     url: AppApi.ADD_BRAND_MODEL,
-//     method: 'POST',
-//     data,
-//   })
-// }
 
 /**
  * 获取实时数据预警列表
