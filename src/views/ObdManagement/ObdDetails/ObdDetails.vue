@@ -3,6 +3,7 @@ import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Line } from 'vue-chartjs'
 import { ElMessage } from 'element-plus'
+import dayjs from 'dayjs'
 
 import {
   getOBDBindHistoryApi,
@@ -17,12 +18,11 @@ import {
   getWarrantyEndDate,
 } from '@/utils/dateUtil.js'
 import BasePagination from '@/components/BasePagination/index.vue'
+import { getOBDConnectedCountListApi } from '@/apis/appApi.js'
+import { BehaviorStatisticsDate } from '@/utils/constantsUtil.js'
 
 // OBD 是否开启
 const isObdOn = computed(() => obdInfo.status === 10)
-
-// date Range
-const dateRange = ref('1')
 
 const route = useRoute()
 
@@ -53,69 +53,23 @@ const getOBDInfo = inject('getOBDInfo')
 // 当前的OBD id
 const currentObdId = ref('')
 
-// 日期标签（X轴）
-const labels = [
-  '03-05',
-  '03-06',
-  '03-07',
-  '03-08',
-  '03-09',
-  '03-10',
-  '03-11',
-  '03-12',
-  '03-13',
-  '03-14',
-  '03-15',
-  '03-16',
-  '03-17',
-  '03-18',
-  '03-19',
-  '03-20',
-  '03-21',
-  '03-22',
-  '03-23',
-  '03-24',
-  '03-25',
-  '03-26',
-  '03-27',
-  '03-28',
-  '03-29',
-  '03-30',
-  '03-31',
-  '04-01',
-  '04-02',
-  '04-03',
-]
+// OBD 链接量统计数据
+const obdConnectedCountList = ref([])
 
-// 模拟数据（Y轴）
-const dataPoints = [
-  10, 15, 20, 45, 30, 25, 18, 22, 28, 35, 40, 38, 32, 50, 42, 36, 30, 48, 40,
-  35, 28, 25, 20, 18, 22, 30, 32, 40, 38, 36,
-]
+// 图表数据
+const chartData = ref({
+  labels: [],
+  datasets: [],
+})
 
-const chartData = {
-  labels,
-  datasets: [
-    {
-      label: '访问量',
-      data: dataPoints,
-      fill: false,
-      borderColor: '#42A5F5',
-      backgroundColor: '#42A5F5',
-      tension: 0.3,
-      pointRadius: 4,
-      pointHoverRadius: 6,
-    },
-  ],
-}
-
-const chartOptions = {
+// 图表配置
+const chartOptions = ref({
   responsive: true,
   plugins: {
     legend: { position: 'top' },
     title: {
       display: true,
-      text: '每日访问趋势（03月 - 04月）',
+      text: 'Behavior Statistics',
     },
   },
   scales: {
@@ -124,7 +78,22 @@ const chartOptions = {
       max: 60,
     },
   },
-}
+})
+
+// 起始时间戳, (当天 0 时 0 分 0 秒)
+const beginTime = ref(dayjs().startOf('day').valueOf())
+
+// 截至时间戳, 初始值为 当前时间 + 7 天
+const endTime = ref(BehaviorStatisticsDate.SEVEN_DAYS)
+
+// 激活天数
+const activeDays = computed(() => {
+  const { bindingTime } = obdInfo.value
+  if (!bindingTime) {
+    return '0 days'
+  }
+  return `${Math.abs(dayjs(beginTime.value).diff(bindingTime, 'day'))} days`
+})
 
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
@@ -164,6 +133,40 @@ const getOBDOperationRecord = async (id) => {
   operationRecordParams.total = count
 }
 
+// 获取 OBD 链接量统计
+const getOBDConnectedCountList = async (id) => {
+  const { data } = await getOBDConnectedCountListApi({
+    obdId: id,
+    beginTime: beginTime.value,
+    endTime: endTime.value,
+  })
+  obdConnectedCountList.value = data
+  // 日期标签（X轴）
+  const labels = data.map((item) => item.Day)
+  // 模拟数据（Y轴）
+  const dataPoints = data.map((item) => item.Count)
+  chartData.value = {
+    labels,
+    datasets: [
+      {
+        label: 'Usage amount',
+        data: dataPoints,
+        fill: false,
+        borderColor: '#42A5F5',
+        backgroundColor: '#42A5F5',
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      },
+    ],
+  }
+}
+
+// 监听统计图标时间区间的变化, 重新获取数据
+watch(endTime, () => {
+  getOBDConnectedCountList(currentObdId.value)
+})
+
 onMounted(async () => {
   // 获取路径中 id
   const {
@@ -175,6 +178,7 @@ onMounted(async () => {
       getOBDBindHistoryList(id),
       getOBDBindVehicleList(id),
       getOBDOperationRecord(id),
+      getOBDConnectedCountList(id),
     ])
   }
 })
@@ -351,76 +355,73 @@ watch(
       <el-divider class="my-8!" />
       <!-- content -->
       <div class="flex-between mx-32 gap-24">
-        <div class="flex flex-1 flex-col gap-4">
-          <div class="leading-32 flex items-center">
-            <label for="date-range" class="w-113 h-32">Date Range</label>
-            <el-radio-group v-model="dateRange" class="ml-8">
-              <el-radio value="1">7 days</el-radio>
-              <el-radio value="2">30 days</el-radio>
-              <el-radio value="3">90 days</el-radio>
-            </el-radio-group>
-          </div>
-          <!--<div class="leading-32 flex items-center">-->
-          <!--  <label for="usage-score" class="w-113 h-32">Usage Score</label>-->
-          <!--  <span-->
-          <!--    id="usage-score"-->
-          <!--    class="heading-body-body-12px-regular text-neutrals-off-black"-->
-          <!--  >-->
-          <!--    60%-->
-          <!--  </span>-->
-          <!--</div>-->
+        <div class="leading-32 flex flex-1 items-center">
+          <label for="date-range" class="w-113 h-32">Date Range</label>
+          <el-radio-group v-model="endTime" class="ml-8">
+            <el-radio :value="BehaviorStatisticsDate.SEVEN_DAYS">
+              7 days
+            </el-radio>
+            <el-radio :value="BehaviorStatisticsDate.THIRTY_DAYS">
+              30 days
+            </el-radio>
+            <el-radio :value="BehaviorStatisticsDate.NINETY_DAYS">
+              90 days
+            </el-radio>
+          </el-radio-group>
         </div>
-        <div class="flex flex-1 flex-col gap-4">
-          <!-- Active Days -->
-          <div class="leading-32 flex items-center">
-            <label for="active-days" class="w-113 h-32">Active Days</label>
-            <span
-              id="active-days"
-              class="heading-body-body-12px-regular text-neutrals-off-black"
-            >
-              18 days
-            </span>
-          </div>
-          <!-- Avg. Daily Use -->
-          <!--<div class="leading-32 flex items-center">-->
-          <!--  <label for="avg-daily-use" class="w-113 h-32">Avg. Daily Use</label>-->
-          <!--  <span-->
-          <!--    id="avg-daily-use"-->
-          <!--    class="heading-body-body-12px-regular text-neutrals-off-black"-->
-          <!--  >-->
-          <!--    22 mins/day-->
-          <!--  </span>-->
-          <!--</div>-->
+        <!-- Active Days -->
+        <div class="leading-32 flex flex-1 items-center">
+          <label for="active-days" class="w-113 h-32">Active Days</label>
+          <span
+            id="active-days"
+            class="heading-body-body-12px-regular text-neutrals-off-black"
+          >
+            {{ activeDays }}
+          </span>
         </div>
       </div>
       <!-- chart -->
-      <div class="h-600 mx-32 flex justify-center overflow-hidden">
+      <div
+        class="h-600 mx-32 flex justify-center overflow-hidden"
+        v-if="chartData.datasets && chartData.datasets.length > 0"
+      >
         <Line
           :data="chartData"
           :options="chartOptions"
           class="overflow-hidden"
         />
       </div>
-      <!-- divider -->
-      <el-divider class="mt-24!" />
       <!-- obd records -->
-      <div class="mx-32">
-        <!-- table -->
-        <el-table :data="operationRecordList" v-if="operationRecordList.length">
-          <el-table-column label="Date">
-            <template #default="{ row }">
-              {{ getFullDate(row.createTime) }}
-            </template>
-          </el-table-column>
-          <el-table-column label="Operator">
-            <template #default="{ row }">
-              {{ row.userDto?.name || 'Admin' }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="description" label="Detail" />
-        </el-table>
-        <!-- pagination -->
-        <base-pagination v-model="operationRecordParams" />
+      <div class="mt-20">
+        <!-- title -->
+        <h4
+          class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
+        >
+          OBD Connected records
+        </h4>
+        <!-- divider -->
+        <el-divider />
+        <div class="mx-32">
+          <!-- table -->
+          <el-table
+            :data="operationRecordList"
+            v-if="operationRecordList.length"
+          >
+            <el-table-column label="Date">
+              <template #default="{ row }">
+                {{ getFullDate(row.createTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="Operator">
+              <template #default="{ row }">
+                {{ row.userDto?.name || 'Admin' }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="description" label="Detail" />
+          </el-table>
+          <!-- pagination -->
+          <base-pagination v-model="operationRecordParams" />
+        </div>
       </div>
     </div>
   </div>

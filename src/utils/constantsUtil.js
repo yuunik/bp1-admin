@@ -1,4 +1,6 @@
 // AI Chat Management 模块的常量定义
+import dayjs from 'dayjs'
+
 export const AIChatManagementTab = Object.freeze({
   PRESET_QUESTIONS: 'Preset Questions',
   USAGE_LIMIT: 'Usage Limit',
@@ -109,4 +111,11 @@ export const Menu = Object.freeze({
 export const TimingPreset = Object.freeze({
   DEBOUNCE: 300,
   THROTTLE: 100,
+})
+
+// 行为统计图标的日期选择的常量定义
+export const BehaviorStatisticsDate = Object.freeze({
+  SEVEN_DAYS: dayjs().startOf('day').add(7, 'day').valueOf(),
+  THIRTY_DAYS: dayjs().startOf('day').add(30, 'day').valueOf(),
+  NINETY_DAYS: dayjs().startOf('day').add(90, 'day').valueOf(),
 })

@@ -47,6 +47,8 @@ const AppApi = Object.freeze({
   GET_VERSION_INFO: '/manager/version/info',
   // 获取版本数据列表
   GET_VERSION_LIST: '/manager/version/getappversions',
+  // 获取 OBD 链接量统计
+  GET_OBD_LINK_STATISTICS: '/manager/obd/getobdconnectedcount',
 })
 
 // 获取 token
@@ -441,6 +443,28 @@ export const getAppVersionListApi = (params) => {
 
   return request({
     url: AppApi.GET_VERSION_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取OBD连接统计
+ * @param params
+ * @param params.obdId OBD id
+ * @param params.beginTime 统计的起始日期
+ * @param params.endTime 统计的结束日期
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getOBDConnectedCountListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdId', params.obdId)
+  data.append('beginTime', params.beginTime)
+  data.append('endTime', params.endTime)
+
+  return request({
+    url: AppApi.GET_OBD_LINK_STATISTICS,
     method: 'POST',
     data,
   })
