@@ -109,7 +109,7 @@ const activeDays = computed(() => {
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
   const { data } = await getOBDBindHistoryApi(id)
-  bindHistoryList.value = data
+  bindHistoryList.value.push(data)
 }
 
 // 获取 OBD 绑定车辆列表
@@ -269,26 +269,28 @@ watch(
       <!-- table -->
       <div class="mx-32">
         <el-table :data="bindHistoryList">
-          <el-table-column
-            prop="userDto.email"
-            label="Account"
-            :sortable="true"
-          />
+          <el-table-column prop="name" label="Name" :sortable="true">
+            <template #default="{ row }">
+              <span>{{ row.userId ? row.name : '-' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="email" label="Account" :sortable="true">
+            <template #default="{ row }">
+              <span>{{ row.userId ? row.email : '-' }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="bindingTime"
             label="Bound Date"
             :sortable="true"
           >
             <template #default="{ row }">
-              {{ getCommentTime(row.bindingTime) }}
+              {{ row.userId ? getCommentTime(row.bindingTime) : '-' }}
             </template>
-          </el-table-column>
-          <el-table-column prop="unboundDate" label="Unbound Date">
-            <template #default="{ row }">-</template>
           </el-table-column>
           <el-table-column prop="status" label="Status">
             <template #default="{ row }">
-              <span>{{ row.status === 0 ? 'Active' : 'Unbound' }}</span>
+              <span>{{ row.userId ? 'Active' : '-' }}</span>
             </template>
           </el-table-column>
           <el-table-column>
