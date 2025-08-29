@@ -54,9 +54,8 @@ const getOBDInfo = inject('getOBDInfo')
 const currentObdId = ref('')
 
 // OBD 链接量统计数据
-const obdConnectedCountList = ref([])
+const obdConnectedCountList = ref([]) // time - 7
 
-// 图表数据
 const chartData = ref({
   labels: [],
   datasets: [],
@@ -73,18 +72,30 @@ const chartOptions = ref({
     },
   },
   scales: {
+    x: {
+      grid: {
+        display: false, // 不显示横向网格线
+      },
+    },
     y: {
       beginAtZero: true,
       max: 60,
+      grid: {
+        color: '#F0F0F0', // 虚线颜色 (可自定义)
+      },
+      border: {
+        display: false, // 设置 y 轴是否显示
+        dash: [10, 10], // 虚线样式 (10像素 10 空白)
+      },
     },
   },
 })
 
-// 起始时间戳, (当天 0 时 0 分 0 秒)
-const beginTime = ref(dayjs().startOf('day').valueOf())
+// 起始时间戳, (当天结束时的时间戳)
+const endTime = ref(dayjs().endOf('day').valueOf())
 
-// 截至时间戳, 初始值为 当前时间 + 7 天
-const endTime = ref(BehaviorStatisticsDate.SEVEN_DAYS)
+// 截至时间戳, 初始值为 当前时间 - 7 天
+const beginTime = ref(BehaviorStatisticsDate.SEVEN_DAYS)
 
 // 激活天数
 const activeDays = computed(() => {
@@ -149,21 +160,25 @@ const getOBDConnectedCountList = async (id) => {
     labels,
     datasets: [
       {
-        label: 'Usage amount',
-        data: dataPoints,
-        fill: false,
-        borderColor: '#42A5F5',
-        backgroundColor: '#42A5F5',
-        tension: 0.3,
-        pointRadius: 4,
-        pointHoverRadius: 6,
+        label: 'OBD link count', // 图例和 tooltip 中显示的名称
+        data: dataPoints, // 数据点数组，对应每个 x 轴标签的值
+        fill: false, // 是否填充线条下方区域，false 表示不填充
+        borderColor: '#376DF7', // 折线的颜色
+        backgroundColor: '#376DF7', // 数据点的填充颜色（也可用于填充区域）
+        tension: 0.3, // 贝塞尔曲线的张力，0 表示直线，越大越平滑
+        pointRadius: 0, // 数据点的默认半径大小（单位：像素）
+        pointHoverRadius: 6, // 鼠标悬停时数据点的半径大小
       },
     ],
   }
 }
 
+const betweenDays = computed(() =>
+  Math.abs(dayjs(endTime.value).diff(beginTime.value, 'day')),
+)
+
 // 监听统计图标时间区间的变化, 重新获取数据
-watch(endTime, () => {
+watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)
 })
 
@@ -357,7 +372,7 @@ watch(
       <div class="flex-between mx-32 gap-24">
         <div class="leading-32 flex flex-1 items-center">
           <label for="date-range" class="w-113 h-32">Date Range</label>
-          <el-radio-group v-model="endTime" class="ml-8">
+          <el-radio-group v-model="beginTime" class="ml-8">
             <el-radio :value="BehaviorStatisticsDate.SEVEN_DAYS">
               7 days
             </el-radio>

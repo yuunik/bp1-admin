@@ -113,9 +113,14 @@ export const TimingPreset = Object.freeze({
   THROTTLE: 100,
 })
 
+// 当前时间
+const currentDay = dayjs().endOf('day')
 // 行为统计图标的日期选择的常量定义
 export const BehaviorStatisticsDate = Object.freeze({
-  SEVEN_DAYS: dayjs().startOf('day').add(7, 'day').valueOf(),
-  THIRTY_DAYS: dayjs().startOf('day').add(30, 'day').valueOf(),
-  NINETY_DAYS: dayjs().startOf('day').add(90, 'day').valueOf(),
+  // 7 天前的时间戳
+  SEVEN_DAYS: currentDay.subtract(7, 'day').valueOf(),
+  // 30 天前的时间戳
+  THIRTY_DAYS: currentDay.subtract(30, 'day').valueOf(),
+  // 90 天前的时间戳
+  NINETY_DAYS: currentDay.subtract(90, 'day').valueOf(),
 })
