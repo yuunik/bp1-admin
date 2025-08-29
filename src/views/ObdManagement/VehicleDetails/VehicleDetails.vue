@@ -1,6 +1,8 @@
 <script setup>
-import BasePagination from '@/components/BasePagination/index.vue'
+import { useRoute } from 'vue-router'
+
 import { getFullDate } from '@/utils/dateUtil.js'
+import { getFaultCodeListApi } from '@/apis/appApi.js'
 
 const pagination = reactive({
   currentPage: 0,
@@ -8,24 +10,10 @@ const pagination = reactive({
   total: 100,
 })
 
-const faultCodeList = reactive([
-  {
-    ecu: 'Engine Control Module 1',
-    faultCodes: 6,
-  },
-  {
-    ecu: 'Transmission Electronics',
-    faultCodes: 0,
-  },
-  {
-    ecu: 'Electronic Central Electric',
-    faultCodes: 2,
-  },
-  {
-    ecu: 'Brakes 1',
-    faultCodes: 6,
-  },
-])
+// 车辆故障码列表
+const faultCodeList = ref([])
+
+const route = useRoute()
 
 const scannedHistoryList = reactive([
   {
@@ -48,32 +36,27 @@ const scannedHistoryList = reactive([
   },
 ])
 
-const dataList = reactive([
-  {
-    dtcName: 'P0300',
-    code: 'P0300',
-    severity: 'Major',
-  },
-  {
-    dtcName: 'P0300',
-    code: 'P0300',
-    severity: 'Major',
-  },
-  {
-    dtcName: 'P0300',
-    code: 'P0300',
-    severity: 'Major',
-  },
-])
-
 // 获取提供的vehicleDetails信息
 const vehicleDetails = inject('vehicleDetails')
+
+// 获取车辆故障码列表
+const getFaultCodeList = async (id) => {
+  const { data } = await getFaultCodeListApi(id)
+  faultCodeList.value = data.dtcItemDtos
+}
 
 // 监听currentPage, 刷新列表
 watch(
   () => pagination.currentPage,
   () => {},
 )
+
+const {
+  params: { id },
+} = route
+if (id) {
+  getFaultCodeList(id)
+}
 </script>
 
 <template>
@@ -141,7 +124,7 @@ watch(
         <el-table :data="faultCodeList">
           <el-table-column type="expand">
             <template #default="{ row }">
-              <el-table :data="dataList">
+              <el-table :data="row.dtcItemDtcDtos">
                 <el-table-column prop="dtcName" label="DTC Name" />
                 <el-table-column prop="code" label="Code" />
                 <el-table-column prop="severity" label="Severity" />
@@ -153,8 +136,14 @@ watch(
               </el-table>
             </template>
           </el-table-column>
-          <el-table-column prop="ecu" label="ECU" />
-          <el-table-column prop="faultCodes" label="Fault Codes" sortable />
+          <el-table-column prop="systemName" label="ECU" />
+          <el-table-column label="Fault Codes" sortable>
+            <template #default="{ row }">
+              <template v-if="row.faultCount === 0">0</template>
+              <template v-else-if="row.faultCount === 1">1 DTC</template>
+              <template v-else>{{ row.faultCount }} DTCs</template>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>

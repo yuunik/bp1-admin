@@ -49,6 +49,8 @@ const AppApi = Object.freeze({
   GET_VERSION_LIST: '/manager/version/getappversions',
   // 获取 OBD 链接量统计
   GET_OBD_LINK_STATISTICS: '/manager/obd/getobdconnectedcount',
+  // 获取车辆故障码数据列表
+  GET_FAULT_CODE_LIST: '/manager/dtc/getfaultcodes',
 })
 
 // 获取 token
@@ -465,6 +467,23 @@ export const getOBDConnectedCountListApi = (params) => {
 
   return request({
     url: AppApi.GET_OBD_LINK_STATISTICS,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆故障码列表
+ * @param vehicleId 车辆 id
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getFaultCodeListApi = (vehicleId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('vehicleId', vehicleId)
+
+  return request({
+    url: AppApi.GET_FAULT_CODE_LIST,
     method: 'POST',
     data,
   })
