@@ -7,7 +7,7 @@ import { ElMessage } from 'element-plus'
 import BasePagination from '@/components/BasePagination/index.vue'
 import { closeOBDApi, getOBDListApi, unbindOBDApi } from '@/apis/obdApi.js'
 import { getLastUsedDate, getWarrantyEndDate } from '@/utils/dateUtil.js'
-import { RouteName } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 
 const router = useRouter()
 
@@ -27,11 +27,23 @@ const pagination = reactive({
   total: 0,
 })
 
+// 排序参数
+const sortParams = reactive({
+  sortKey: '',
+  sort: '',
+})
+
+// 筛选参数
+const userKeys = ref([])
+
 // 获取OBD 列表数据
 const getObdList = useDebounceFn(async () => {
   loading.value = true
   const { data, count } = await getOBDListApi({
     searchKey: searchText.value,
+    userKey: userKeys.value.join(','),
+    sortKey: sortParams.sortKey,
+    sort: sortParams.sort,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
@@ -75,13 +87,37 @@ const viewOBDDetail = (row, column) => {
 }
 
 const handleSearch = useDebounceFn(async () => {
+  if (pagination.currentPage === 0) {
+    return getObdList()
+  }
   pagination.currentPage = 0
 }, 500)
+
+const handleSortByCondition = useDebounceFn((data) => {
+  const { prop, order } = data
+  if (order) {
+    sortParams.sortKey = prop === 'simpleUserDto?.name' ? 'user' : prop
+    sortParams.sort = order === 'ascending' ? 'asc' : 'desc'
+  } else {
+    sortParams.sortKey = ''
+    sortParams.sort = ''
+  }
+  getObdList()
+}, TimingPreset.DEBOUNCE)
 
 // 监听currentPage, 刷新列表
 watch(
   () => pagination.currentPage,
   () => getObdList(),
+)
+
+// 监听 userKeys, 刷新列表
+watch(
+  () => userKeys.value,
+  () => {
+    pagination.currentPage = 0
+    getObdList()
+  },
 )
 
 // 网络请求
@@ -107,18 +143,35 @@ getObdList()
           </el-button>
         </div>
       </div>
-      <!-- 搜索栏 -->
-      <el-input
-        placeholder="Search..."
-        class="obd-list-search mt-16"
-        v-model="searchText"
-        @input="handleSearch"
-      >
-        <template #prefix>
-          <!-- 前置搜索图标 -->
-          <i class="icon-typessearch h-16 w-16" />
-        </template>
-      </el-input>
+      <div class="flex-between gap-12">
+        <!-- 搜索栏 -->
+        <el-input
+          placeholder="Search..."
+          class="obd-list-search mt-16"
+          v-model="searchText"
+          @input="handleSearch"
+        >
+          <template #prefix>
+            <!-- 前置搜索图标 -->
+            <i class="icon-typessearch h-16 w-16" />
+          </template>
+        </el-input>
+        <!-- 状态搜索 -->
+        <el-dropdown>
+          <span
+            class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
+          >
+            Users
+            <i class="icon-typesdropdown" />
+          </span>
+          <template #dropdown>
+            <el-checkbox-group v-model="userKeys">
+              <el-checkbox value="2">With User</el-checkbox>
+              <el-checkbox value="1">Without User</el-checkbox>
+            </el-checkbox-group>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
     <!-- 分割线 -->
     <el-divider />
@@ -137,40 +190,45 @@ getObdList()
       <!-- OBD 表格 -->
       <el-table
         :data="tableData"
-        class="flex-1"
+        class="obd-table flex-1"
         :fit="false"
         @selection-change="handleSelectionChange"
         @row-click="viewOBDDetail"
+        @sort-change="handleSortByCondition"
         row-class-name="clickable-row"
       >
         <!-- 勾选框 -->
         <el-table-column type="selection" />
         <!-- 设备 SN 码 -->
-        <el-table-column prop="sn" label="SN" :sortable="true" />
+        <el-table-column prop="sn" label="SN" sortable="custom" />
         <!-- 上次使用时间 -->
-        <el-table-column prop="updateTime" label="Last Used" :sortable="true">
+        <el-table-column prop="useTime" label="Last Used" sortable="custom">
           <template #default="{ row }">
             {{ getLastUsedDate(row.useTime) }}
           </template>
         </el-table-column>
         <!-- 保修期限 -->
         <el-table-column
-          prop="createTime"
+          prop="warrantyTime"
           label="Warranty End"
-          :sortable="true"
+          sortable="custom"
         >
           <template #default="{ row }">
             {{ getWarrantyEndDate(row.warrantyTime) }}
           </template>
         </el-table-column>
         <!-- 绑定时间 -->
-        <el-table-column prop="bindingTime" label="Bind Time" :sortable="true">
+        <el-table-column prop="bindingTime" label="Bind Time" sortable="custom">
           <template #default="{ row }">
             {{ getLastUsedDate(row.bindingTime) }}
           </template>
         </el-table-column>
         <!-- 使用者 -->
-        <el-table-column prop="simpleUserDto?.name" label="User">
+        <el-table-column
+          prop="simpleUserDto?.name"
+          label="User"
+          sortable="custom"
+        >
           <template #default="{ row }">
             {{ row.userDto?.name === '' ? '-' : row.userDto?.name }}
           </template>

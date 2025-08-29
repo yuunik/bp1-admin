@@ -165,7 +165,7 @@ const getOBDConnectedCountList = async (id) => {
         fill: false, // 是否填充线条下方区域，false 表示不填充
         borderColor: '#376DF7', // 折线的颜色
         backgroundColor: '#376DF7', // 数据点的填充颜色（也可用于填充区域）
-        tension: 0.3, // 贝塞尔曲线的张力，0 表示直线，越大越平滑
+        tension: 0, // 贝塞尔曲线的张力，0 表示直线，越大越平滑
         pointRadius: 0, // 数据点的默认半径大小（单位：像素）
         pointHoverRadius: 6, // 鼠标悬停时数据点的半径大小
       },

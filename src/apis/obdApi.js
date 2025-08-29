@@ -31,15 +31,18 @@ const { getToken } = useAuthToken()
 
 // 获取 OBD 列表
 /**
- * @param {{ searchKey?: string, page?: string, pageSize?: string }} params
+ * @param {{ searchKey?: string, page?: string, pageSize?: string, userKey?: number, sortKey?: string, sort?: string }} params
  * @returns {Promise<ApiResponse<OBDItem[]>>}
  */
 export const getOBDListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('searchKey', params?.searchKey ?? '')
-  data.append('page', params?.page ?? 0)
-  data.append('pageSize', params?.pageSize ?? 10)
+  data.append('searchKey', params.searchKey)
+  data.append('userKey', params.userKey)
+  data.append('sortKey', params.sortKey)
+  data.append('sort', params.sort)
+  data.append('page', params.page)
+  data.append('pageSize', params?.pageSize)
 
   return request({
     url: ObdApi.GET_OBD_LIST,

@@ -111,125 +111,121 @@ const handleBrandInputBlur = () => {
     <!-- divider -->
     <el-divider />
     <!-- content -->
-    <el-scrollbar class="min-h-0 flex-1" height="100px">
-      <!-- 品牌信息 -->
-      <div class="flex gap-24 px-32 pb-24 pt-16">
-        <!-- 品牌 logo -->
-        <div class="w-400 flex h-80 flex-1 gap-24">
-          <!-- logo -->
-          <el-avatar
-            :size="64"
-            :src="fileUpload.localFilePath"
-            fit="cover"
-            @error="errorAvatarHandler"
+    <!-- 品牌信息 -->
+    <div class="flex gap-24 px-32 pb-24 pt-16">
+      <!-- 品牌 logo -->
+      <div class="w-400 flex h-80 flex-1 gap-24">
+        <!-- logo -->
+        <el-avatar
+          :size="64"
+          :src="fileUpload.localFilePath"
+          fit="cover"
+          @error="errorAvatarHandler"
+        >
+          <!-- logo 加载失败的默认显示 -->
+          <i class="flex-center h-64 w-64">
+            <el-text class="heading-h1-26px-medium neutrals-off-black">
+              B
+            </el-text>
+          </i>
+        </el-avatar>
+        <!-- desc -->
+        <div class="flex flex-col gap-16">
+          <el-text>Upload Logo</el-text>
+          <!-- 更换 logo 图片 -->
+          <el-upload
+            :auto-upload="false"
+            :show-file-list="false"
+            :on-change="fileUpload.handleValidateImageUpload"
           >
-            <!-- logo 加载失败的默认显示 -->
-            <i class="flex-center h-64 w-64">
-              <el-text class="heading-h1-26px-medium neutrals-off-black">
-                B
-              </el-text>
-            </i>
-          </el-avatar>
-          <!-- desc -->
-          <div class="flex flex-col gap-16">
-            <el-text>Upload Logo</el-text>
-            <!-- 更换 logo 图片 -->
-            <el-upload
-              :on-change="fileUpload.handleValidateImageUpload"
-              :auto-upload="false"
-              :show-file-list="false"
-            >
-              <template #trigger>
-                <el-button>Upload</el-button>
+            <template #trigger>
+              <el-button>Upload</el-button>
+            </template>
+          </el-upload>
+        </div>
+      </div>
+      <!-- 品牌名称 -->
+      <div
+        class="w-384 bottom-border-only flex h-80 flex-1 justify-start gap-8"
+      >
+        <!-- 标签 -->
+        <label
+          class="w-112 heading-body-body-12px-medium neutrals-grey-3 leading-32 h-32"
+        >
+          Brand
+        </label>
+        <!-- 编辑状态 -->
+        <el-input
+          placeholder="Enter"
+          class="h-32"
+          v-model="pendingBrand.name"
+          v-if="pendingBrand.editing"
+          @keyup.enter="handleBrandInputBlur"
+        />
+        <!-- 值 -->
+        <el-text v-else class="h-full">{{ pendingBrand.name }}</el-text>
+      </div>
+    </div>
+    <!-- 型号信息-->
+    <div>
+      <!-- 标签信息 -->
+      <div class="items-center-safe box-border flex gap-8 px-32 py-7">
+        <h4>Model List</h4>
+        <!-- 型号数量 -->
+        <el-text class="neutrals-grey-3 flex-1">
+          {{ pendingBrandModelList.length }}
+        </el-text>
+      </div>
+      <!-- 分割线 -->
+      <el-divider class="mt-8" />
+      <!-- 车辆品牌型号表格 -->
+      <div class="px-32" v-if="pendingBrandModelList.length > 0">
+        <!-- 表头 -->
+        <div class="model-list-table-title flex gap-8">
+          <el-checkbox label="Model" class="ml-8" />
+        </div>
+        <!-- 型号列表 -->
+        <ul
+          class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 [&>li]:box-border [&>li]:flex [&>li]:h-[40px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
+        >
+          <li
+            v-for="(brandModel, index) in pendingBrandModelList"
+            :key="brandModel"
+            class="heading-body-body-12px-regular neutrals-off-black"
+          >
+            <el-checkbox v-if="brandModel.editing">
+              <template #default>
+                <el-input
+                  placeholder="Enter..."
+                  class="h-32"
+                  @keyup.enter="handleBrandModelInputBlur(index)"
+                  v-model="brandModel.brandModelName"
+                />
+                <!-- 删除待添加项 -->
+                <i
+                  class="icon icon-delete-bin-line ml-16"
+                  @click.stop.prevent="handleDeletePendingBrandModelItem(index)"
+                />
               </template>
-            </el-upload>
-          </div>
-        </div>
-        <!-- 品牌名称 -->
-        <div
-          class="w-384 bottom-border-only flex h-80 flex-1 justify-start gap-8"
-        >
-          <!-- 标签 -->
-          <label
-            class="w-112 heading-body-body-12px-medium neutrals-grey-3 h-32"
-          >
-            Brand
-          </label>
-          <!-- 编辑状态 -->
-          <el-input
-            placeholder="Enter"
-            class="h-32"
-            v-model="pendingBrand.name"
-            v-if="pendingBrand.editing"
-            @keyup.enter="handleBrandInputBlur"
-          />
-          <!-- 值 -->
-          <el-text v-else class="h-full">{{ pendingBrand.name }}</el-text>
-        </div>
+            </el-checkbox>
+            <!-- 品牌名称 -->
+            <el-text v-else>{{ brandModel.brandModelName }}</el-text>
+          </li>
+        </ul>
       </div>
-      <!-- 型号信息-->
-      <div>
-        <!-- 标签信息 -->
-        <div class="items-center-safe box-border flex gap-8 px-32 py-7">
-          <h4>Model List</h4>
-          <!-- 型号数量 -->
-          <el-text class="neutrals-grey-3 flex-1">
-            {{ pendingBrandModelList.length }}
-          </el-text>
-        </div>
-        <!-- 分割线 -->
-        <el-divider class="mt-8" />
-        <!-- 车辆品牌型号表格 -->
-        <div class="px-32" v-if="pendingBrandModelList.length > 0">
-          <!-- 表头 -->
-          <div class="model-list-table-title flex gap-8">
-            <el-checkbox label="Model" class="ml-8" />
-          </div>
-          <!-- 型号列表 -->
-          <ul
-            class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 [&>li]:box-border [&>li]:flex [&>li]:h-[40px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
-          >
-            <li
-              v-for="(brandModel, index) in pendingBrandModelList"
-              :key="brandModel"
-              class="heading-body-body-12px-regular neutrals-off-black"
-            >
-              <el-checkbox v-if="brandModel.editing">
-                <template #default>
-                  <el-input
-                    placeholder="Enter..."
-                    class="h-32"
-                    @keyup.enter="handleBrandModelInputBlur(index)"
-                    v-model="brandModel.brandModelName"
-                  />
-                  <!-- 删除待添加项 -->
-                  <i
-                    class="icon icon-delete-bin-line ml-16"
-                    @click.stop.prevent="
-                      handleDeletePendingBrandModelItem(index)
-                    "
-                  />
-                </template>
-              </el-checkbox>
-              <!-- 品牌名称 -->
-              <el-text v-else>{{ brandModel.brandModelName }}</el-text>
-            </li>
-          </ul>
-        </div>
-        <!-- 新增按钮 -->
-        <el-button
-          type="primary"
-          text
-          @click="handleAddPendingBrandModel"
-          class="ml-32"
-        >
-          <template #icon>
-            <i class="icon-typesadd" />
-          </template>
-          <template #default>New Item</template>
-        </el-button>
-      </div>
-    </el-scrollbar>
+      <!-- 新增按钮 -->
+      <el-button
+        type="primary"
+        text
+        @click="handleAddPendingBrandModel"
+        class="ml-32"
+      >
+        <template #icon>
+          <i class="icon-typesadd" />
+        </template>
+        <template #default>New Item</template>
+      </el-button>
+    </div>
   </section>
 </template>
 
