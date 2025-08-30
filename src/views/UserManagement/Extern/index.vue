@@ -1,18 +1,27 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, watch, computed } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination.vue'
-// 获取修理厂列表
-import { getMerchantListApi } from '@/apis/userApi.js'
+import {
+  getMerchantListApi,
+  getUserListApi,
+  adminUserStatusApi,
+  resetUserPasswordApi,
+} from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import { useDebounceFn } from '@vueuse/core'
+import { getLastUsedDate } from '@/utils/dateUtil.js'
+import { ElMessage } from 'element-plus'
 
 // 修理厂列表
 const merchantList = ref([])
 
+// 用户列表
+const userList = ref([])
+
 // 分页数据
-const pagination = reactive({
+const pagination = ref({
   currentPage: 0,
   pageSize: 15,
   total: 0,
@@ -24,15 +33,28 @@ const searchKey = ref('')
 // 当前tab页
 const activeTab = ref(UserManagementTab.PERSON)
 
+// 获取用户列表
+const getUserList = useDebounceFn(async () => {
+  const { data, count } = await getUserListApi({
+    searchKey: searchKey.value,
+    page: pagination.value.currentPage,
+    pageSize: pagination.value.pageSize,
+  })
+  // 记录总数
+  pagination.value.total = count
+  // 记录用户列表
+  userList.value = data
+}, 500)
+
 // 获取修理厂列表
 const getMerchantList = useDebounceFn(async () => {
   const { data, count } = await getMerchantListApi({
     searchKey: searchKey.value,
-    page: pagination.currentPage,
-    pageSize: pagination.pageSize,
+    page: pagination.value.currentPage,
+    pageSize: pagination.value.pageSize,
   })
   // 记录总数
-  pagination.total = count
+  pagination.value.total = count
   // 记录修理厂列表
   merchantList.value = data
 }, 500)
@@ -40,17 +62,99 @@ const getMerchantList = useDebounceFn(async () => {
 // 处理tab切换
 const handleTabChange = (tabName) => (activeTab.value = tabName)
 
-// 网络请求
-getMerchantList()
+// 管理员禁用、解禁用户
+const handleUserStatus = async (userId) => {
+  await adminUserStatusApi(userId)
+  // 提示
+  ElMessage.success('Success')
+  // 刷新列表
+  getUserList()
+}
+
+// 重置用户密码
+const handleResetPassword = async (userId) => {
+  await resetUserPasswordApi(userId)
+  // TODO 重置密码逻辑
+  ElMessage.success('Success')
+}
+
+// 根据 row.status 计算出当前行的菜单项
+const computedMenuItems = computed(() => (row) => {
+  const items = []
+
+  if (row.state === 0) {
+    items.push({ label: 'Unban', action: 'unban' })
+  } else if (row.state === 1) {
+    items.push(
+      { label: 'Reset Password', action: 'resetPassword' },
+      { label: 'Ban', action: 'ban' },
+    )
+  } else if (row.state === 2) {
+    items.push({ label: 'Reactivate', action: 'reactivate' })
+  }
+
+  return items
+})
+
+// 在 script setup 中添加
+const handleDropdownItemClick = (action, row) => {
+  switch (action) {
+    case 'unban':
+      handleUserStatus(row.id)
+      break
+    case 'ban':
+      break
+    case 'reactivate':
+      handleUserStatus(row.id)
+      break
+    case 'resetPassword':
+      handleResetPassword(row.id)
+      break
+    default:
+      console.warn('Unknown action:', action)
+  }
+}
+
+// 监听tab变化，获取对应列表
+watch(
+  () => activeTab.value,
+  (val) => {
+    // 切换tab, 清空分页参数
+    pagination.value = {
+      currentPage: 0,
+      pageSize: 15,
+      total: 0,
+    }
+    // 清空条件搜索文本
+    searchKey.value = ''
+    // 获取对应列表
+    if (val === UserManagementTab.PERSON) {
+      getUserList()
+    } else if (val === UserManagementTab.Workshop) {
+      getMerchantList()
+    }
+  },
+  {
+    immediate: true,
+  },
+)
 
 // 监听currentPage, 刷新列表
 watch(
-  () => pagination.currentPage,
-  () => getMerchantList(),
+  () => pagination.value.currentPage,
+  () => {
+    // 获取对应列表
+    if (activeTab.value === UserManagementTab.PERSON) {
+      getUserList()
+    } else if (activeTab.value === UserManagementTab.Workshop) {
+      getMerchantList()
+    }
+  },
 )
 </script>
 
 <template>
+  <!-- TODO 用户列表使用字段待确定.... -->
   <section class="flex h-full flex-col">
     <!-- Extern Header -->
     <div class="px-32 pb-16">
@@ -86,7 +190,7 @@ watch(
           </template>
         </el-input>
         <!-- 状态搜索 -->
-        <el-dropdown :hide-on-click="false">
+        <el-dropdown trigger="click">
           <span
             class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
           >
@@ -109,7 +213,121 @@ watch(
     <!-- 分割线 -->
     <el-divider />
     <!-- person 页 -->
-    <template v-if="activeTab === UserManagementTab.PERSON">1111</template>
+    <template v-if="activeTab === UserManagementTab.PERSON">
+      <!-- 表格容器 -->
+      <div
+        class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
+      >
+        <!-- 用户列表 -->
+        <el-table :data="userList" class="flex-1" :fit="false">
+          <!-- 勾选框 -->
+          <el-table-column type="selection" min-width="6%" />
+          <!-- 用户名称 -->
+          <el-table-column
+            prop="name"
+            label="Name"
+            :sortable="true"
+            min-width="17%"
+          >
+            <!-- 用户头像 -->
+            <template #default="{ row }">
+              <el-image
+                :src="getFullFilePath(row.logo)"
+                v-if="row.logo"
+                fit="cover"
+                alt="merchant logo"
+                class="mr-8 h-14 w-14"
+              />
+              <!-- 用户名称 -->
+              <el-text>{{ row?.name ?? '-' }}</el-text>
+            </template>
+          </el-table-column>
+          <!-- 用户邮箱 -->
+          <el-table-column
+            prop="email"
+            label="Email"
+            :sortable="true"
+            min-width="17%"
+          >
+            <template #default="{ row }">
+              <!-- 用户邮箱 -->
+              <el-text>
+                {{ row.email === '' ? '-' : row.email }}
+              </el-text>
+            </template>
+          </el-table-column>
+          <!-- 用户状态 -->
+          <el-table-column
+            prop="state"
+            label="Status"
+            :sortable="true"
+            min-width="11%"
+          >
+            <template #default="{ row }">
+              <!-- 用户状态 -->
+              <el-tag :type="row.state === 1 ? 'success' : 'info'">
+                {{ row?.state === 1 ? 'Active' : 'Disabled' }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <!-- OBD 数量 -->
+          <el-table-column
+            prop="commentCount"
+            label="OBD"
+            min-width="7%"
+            sortable
+          />
+          <!-- 车辆数量 -->
+          <el-table-column
+            prop="commentCount"
+            label="Vehicle"
+            min-width="9%"
+            sortable
+          />
+          <!-- 是否订阅 -->
+          <el-table-column
+            prop="commentCount"
+            label="Subscription"
+            min-width="11%"
+          />
+          <!-- 上次登录时间 -->
+          <el-table-column
+            prop="updateTime"
+            label="Last Login"
+            min-width="22%"
+            sortable
+          >
+            <template #default="{ row }">
+              <!-- 上次登录时间 -->
+              <el-text>
+                {{ getLastUsedDate(row.updateTime) }}
+              </el-text>
+            </template>
+          </el-table-column>
+          <!-- 操作栏 -->
+          <el-table-column align="center" min-width="11%">
+            <template #default="{ row }">
+              <el-dropdown trigger="click">
+                <i class="icon-more-2-line cursor-pointer" />
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item
+                      v-for="item in computedMenuItems(row)"
+                      :key="item.label"
+                      @click="handleDropdownItemClick(item.action, row)"
+                    >
+                      {{ item.label }}
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页器 -->
+        <base-pagination v-model="pagination" />
+      </div>
+    </template>
     <!-- workshop 页 -->
     <template v-if="activeTab === UserManagementTab.Workshop">
       <!-- 表格容器 -->
