@@ -4,7 +4,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
-import BasePagination from '@/components/BasePagination/index.vue'
+import BasePagination from '@/components/BasePagination.vue'
 import { closeOBDApi, getOBDListApi, unbindOBDApi } from '@/apis/obdApi.js'
 import { getLastUsedDate, getWarrantyEndDate } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'

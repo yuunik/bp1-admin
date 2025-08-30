@@ -3,7 +3,7 @@ import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
 import { getAppVersionListApi } from '@/apis/appApi.js'
-import BasePagination from '@/components/BasePagination/index.vue'
+import BasePagination from '@/components/BasePagination.vue'
 import { getCommentTime } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 

@@ -17,7 +17,7 @@ import {
   getLastUsedDate,
   getWarrantyEndDate,
 } from '@/utils/dateUtil.js'
-import BasePagination from '@/components/BasePagination/index.vue'
+import BasePagination from '@/components/BasePagination.vue'
 import { getOBDConnectedCountListApi } from '@/apis/appApi.js'
 import { BehaviorStatisticsDate } from '@/utils/constantsUtil.js'
 

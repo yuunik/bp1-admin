@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 
-import BasePagination from '@/components/BasePagination/index.vue'
+import BasePagination from '@/components/BasePagination.vue'
 // 获取修理厂列表
 import { getMerchantListApi } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'

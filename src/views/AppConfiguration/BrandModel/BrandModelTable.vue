@@ -3,7 +3,7 @@ import { ref, reactive } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
-import BasePagination from '@/components/BasePagination/index.vue'
+import BasePagination from '@/components/BasePagination.vue'
 import { getBrandModalListApi } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
