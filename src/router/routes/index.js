@@ -95,6 +95,20 @@ const constantRoutes = [
         path: '/obd-management/inventory',
         name: RouteName.INVENTORY,
         component: () => import('@/views/ObdManagement/Inventory/index.vue'),
+        children: [
+          // create stock order
+          {
+            path: '/obd-management/inventory/create-stock-order',
+            name: 'Inventory Create Stocker Order',
+            component: () =>
+              import('@/views/ObdManagement/Inventory/CreateStockOrder.vue'),
+            meta: {
+              title: 'Create Stock Order',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+        ],
         meta: {
           title: RouteName.INVENTORY,
           showInMenu: true,

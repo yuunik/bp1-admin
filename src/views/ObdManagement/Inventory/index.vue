@@ -1,4 +1,7 @@
 <script setup>
+import { ArrowDown } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+
 import BasePagination from '@/components/BasePagination.vue'
 
 const activeTab = ref('Inbound')
@@ -116,23 +119,35 @@ const inboundPageQueryParams = ref({
   pageSize: 15,
 })
 
+const router = useRouter()
+
 const handleTabChange = (tab) => (activeTab.value = tab)
 
 const handleCreateInventory = (e) => {
   console.log('click', e)
 }
+
+const handleCreateStockOrder = (command) =>
+  router.push({
+    name: 'Inventory Create Stocker Order',
+    query: { type: command },
+  })
 </script>
 
 <template>
-  <section class="box-border flex flex-col gap-16 px-32 pb-32">
+  <router-view v-if="$route.name === 'Inventory Create Stocker Order'" />
+  <section class="box-border flex flex-col gap-16 px-32 pb-32" v-else>
     <div class="flex-between h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">Inventory</h3>
-      <el-dropdown split-button type="primary" @click="handleCreateInventory">
-        Create
+      <el-dropdown trigger="click" @command="handleCreateStockOrder">
+        <el-button type="primary">
+          Create
+          <el-icon class="el-icon--right"><arrow-down /></el-icon>
+        </el-button>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>Inbound</el-dropdown-item>
-            <el-dropdown-item>Outbound</el-dropdown-item>
+            <el-dropdown-item command="inbound">Inbound</el-dropdown-item>
+            <el-dropdown-item command="outbound">Outbound</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -260,7 +275,7 @@ const handleCreateInventory = (e) => {
         </el-input>
       </div>
       <div class="flex-between flex flex-1 flex-col">
-        <el-table :data="inboundDataList" style="width: 100%" class="flex-1">
+        <el-table :data="inboundDataList" class="flex-1">
           <el-table-column type="selection" />
           <el-table-column prop="no" label="Inbound No." sortable />
           <el-table-column prop="user" label="User" sortable />
@@ -400,7 +415,12 @@ const handleCreateInventory = (e) => {
         </el-input>
       </div>
       <div class="flex-between flex flex-1 flex-col">
-        <el-table :data="inboundDataList" style="width: 100%" class="flex-1">
+        <el-table
+          :data="inboundDataList"
+          style="width: 100%"
+          class="flex-1"
+          row-class-name="clickable-row"
+        >
           <el-table-column type="selection" />
           <el-table-column prop="no" label="Outbound No." sortable />
           <el-table-column prop="user" label="User" sortable />
