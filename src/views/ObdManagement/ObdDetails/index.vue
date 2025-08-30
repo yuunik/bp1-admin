@@ -4,7 +4,6 @@ import { ElMessage } from 'element-plus'
 
 import { ObdDetailsTabs, RouteName } from '@/utils/constantsUtil.js'
 import ObdDetails from './ObdDetails.vue'
-import BehaviorStatistics from './BehaviorStatistics.vue'
 import { getOBDInfoApi, unbindOBDApi } from '@/apis/obdApi.js'
 
 // 当前激活的标签
@@ -25,18 +24,6 @@ const router = useRouter()
 // 点击标签
 const handleTabClick = (tab) => (activeTabName.value = tab)
 
-// tabPane 组件映射
-const tabPaneList = Object.freeze([
-  {
-    key: ObdDetailsTabs.OBD_DETAILS,
-    component: ObdDetails,
-  },
-  {
-    key: ObdDetailsTabs.BEHAVIOR_STATISTICS,
-    component: BehaviorStatistics,
-  },
-])
-
 // 获取 OBD 详情
 const getOBDInfo = async (id) => {
   const { data } = await getOBDInfoApi(id)
@@ -54,6 +41,9 @@ const obdDetailsRef = ref(null)
 const handleScrollToBehaviorStatistics = () => {
   obdDetailsRef.value.scrollToBehaviorStatistics()
 }
+
+const confirmUnbindUser = () =>
+  (obdDetailsRef.value.unbindUserDialogVisible = true)
 
 // 获取路径中 id
 const {
@@ -76,12 +66,13 @@ provide('getOBDInfo', getOBDInfo)
     @refresh="getOBDInfo"
   />
   <section class="flex h-full flex-col overflow-auto" v-else>
+    <el-button @click="confirmUnbindUser">test</el-button>
     <!-- header -->
     <div class="flex-between px-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         {{ obdInfo.sn }}
       </h3>
-      <el-button @click="handleUnbindUser" v-if="obdInfo.userDto?.id">
+      <el-button @click="confirmUnbindUser" v-if="obdInfo.userDto?.id">
         Unbind User
       </el-button>
     </div>

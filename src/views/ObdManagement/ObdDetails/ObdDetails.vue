@@ -98,6 +98,8 @@ const endTime = ref(dayjs().endOf('day').valueOf())
 // 截至时间戳, 初始值为 当前时间 - 7 天
 const beginTime = ref(BehaviorStatisticsDate.SEVEN_DAYS)
 
+const unbindUserDialogVisible = ref(false)
+
 // 激活天数
 const activeDays = computed(() => {
   const { bindingTime } = obdInfo.value
@@ -122,8 +124,8 @@ const getOBDBindVehicleList = async (id) => {
 }
 
 // 解绑 OBD 绑定的用户
-const handleUnbindUser = async (id) => {
-  await unbindOBDApi(id)
+const handleUnbindUser = async (row) => {
+  await unbindOBDApi(row.id)
   await getOBDBindHistoryList(id)
   // 触发刷新 OBD 详情
   await getOBDInfo?.(id)
@@ -211,6 +213,7 @@ watch(
 
 defineExpose({
   scrollToBehaviorStatistics,
+  unbindUserDialogVisible,
 })
 </script>
 
@@ -310,7 +313,7 @@ defineExpose({
             <template #default="{ row }">
               <el-button
                 v-if="row.status === 0"
-                @click.stop="handleUnbindUser(row.id)"
+                @click.stop="handleUnbindUser(row)"
                 class="rounded-full!"
               >
                 Unbind
@@ -401,7 +404,7 @@ defineExpose({
         <Line :data="chartData" :options="chartOptions" />
       </div>
       <!-- obd records -->
-      <div class="mt-20">
+      <div class="mt-20" v-if="operationRecordList.length">
         <!-- title -->
         <h4
           class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
@@ -412,10 +415,7 @@ defineExpose({
         <el-divider />
         <div class="mx-32">
           <!-- table -->
-          <el-table
-            :data="operationRecordList"
-            v-if="operationRecordList.length"
-          >
+          <el-table :data="operationRecordList">
             <el-table-column label="Date">
               <template #default="{ row }">
                 {{ getFullDate(row.createTime) }}
@@ -434,6 +434,34 @@ defineExpose({
       </div>
     </div>
   </div>
+  <el-dialog
+    v-model="unbindUserDialogVisible"
+    title="Unbind User ?"
+    align-center
+    width="304"
+    :show-close="false"
+  >
+    <div class="flex flex-col gap-16">
+      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+        You are about to unbind this user's OBD device. Once unbound, the device
+        will no longer be linked to this account or transmit data. Are you sure
+        you want to proceed?
+      </p>
+      <el-divider />
+      <div class="flex-between flex gap-16">
+        <el-button class="flex-1" @click="unbindUserDialogVisible = false">
+          Cancel
+        </el-button>
+        <el-button
+          type="danger"
+          class="flex-1"
+          @click="handleUnbindUser(obdInfo)"
+        >
+          Unbind
+        </el-button>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss"></style>
