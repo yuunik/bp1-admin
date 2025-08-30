@@ -1,4 +1,5 @@
 import { RouteName } from '@/utils/constantsUtil.js'
+import component from 'element-plus/es/components/tree-select/src/tree-select-option.mjs'
 
 const constantRoutes = [
   {
@@ -145,6 +146,19 @@ const constantRoutes = [
         path: '/user-management/internal',
         name: RouteName.INTERNAL,
         component: () => import('@/views/UserManagement/Internal/index.vue'),
+        children: [
+          {
+            path: '/user-management/internal/manage/:id',
+            name: 'Internal Manage',
+            component: () =>
+              import('@/views/UserManagement/Internal/InternalDetails.vue'),
+            meta: {
+              title: 'Internal Manage',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+        ],
         meta: {
           title: RouteName.INTERNAL,
           showInMenu: true,

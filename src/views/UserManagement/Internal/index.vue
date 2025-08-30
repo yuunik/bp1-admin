@@ -1,7 +1,13 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 const onRowClick = (_, column) => {
   const { no } = column
-  console.log('@@@@@@@@@@@@@', no)
+  if (no === 0 || no === 5) {
+    return
+  }
+  router.push({ name: 'Internal Manage', params: { id: '12432314231' } })
 }
 
 const internalDataList = ref([
@@ -120,7 +126,8 @@ const pageQueryParams = ref({
 </script>
 
 <template>
-  <section class="flex flex-col gap-16">
+  <router-view v-if="$route.name === 'Internal Manage'" />
+  <section class="flex flex-col gap-16" v-else>
     <!-- Header -->
     <div class="flex-between mx-32 h-32">
       <h3>Internal</h3>
