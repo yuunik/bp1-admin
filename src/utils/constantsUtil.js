@@ -124,3 +124,9 @@ export const BehaviorStatisticsDate = Object.freeze({
   // 90 天前的时间戳
   NINETY_DAYS: currentDay.subtract(90, 'day').valueOf(),
 })
+
+// 论坛模块的 tab 分页常量
+export const ForumManagementTab = Object.freeze({
+  POSTS: 'Posts',
+  COMMENTS: 'Comments',
+})

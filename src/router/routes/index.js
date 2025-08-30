@@ -195,6 +195,30 @@ const constantRoutes = [
     },
   },
   {
+    path: '/forum-management',
+    redirect: '/forum-management/list',
+    name: 'Forum Management Index',
+    component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/forum-management/list',
+        name: 'Forum Management',
+        component: () => import('@/views/ForumManagement/index.vue'),
+        meta: {
+          title: 'Forum Management',
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-dashboard',
+        },
+      },
+    ],
+    meta: {
+      title: 'Forum Management Index',
+      showInMenu: false,
+      showInBreadcrumb: false,
+    },
+  },
+  {
     path: '/app-configuration',
     redirect: '/app-configuration/version-control',
     name: RouteName.APP_MANAGEMENT,
