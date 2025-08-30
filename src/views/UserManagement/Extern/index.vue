@@ -13,6 +13,7 @@ import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getLastUsedDate } from '@/utils/dateUtil.js'
 import { ElMessage } from 'element-plus'
+import { Star } from '@element-plus/icons-vue'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -96,7 +97,7 @@ const computedMenuItems = computed(() => (row) => {
   return items
 })
 
-// 在 script setup 中添加
+// 处理 操作栏的事件
 const handleDropdownItemClick = (action, row) => {
   switch (action) {
     case 'unban':
@@ -112,6 +113,18 @@ const handleDropdownItemClick = (action, row) => {
       break
     default:
       console.warn('Unknown action:', action)
+  }
+}
+
+// 处理条件搜索
+const handleSearchByCondition = () => {
+  // 重置为第一页
+  pagination.value.currentPage = 0
+  // 重新获取列表
+  if (activeTab.value === UserManagementTab.PERSON) {
+    getUserList()
+  } else if (activeTab.value === UserManagementTab.Workshop) {
+    getMerchantList()
   }
 }
 
@@ -180,7 +193,7 @@ watch(
         <!-- 条件搜索 -->
         <el-input
           v-model="searchKey"
-          @input="getMerchantList"
+          @input="handleSearchByCondition"
           placeholder="Search..."
           class="extern-search mt-16"
         >
@@ -380,10 +393,12 @@ watch(
             min-width="12%"
           >
             <template #default="{ row }">
-              <!-- 星星图标 -->
-              <i class="icon icon-fi_star mr-8" />
-              <!-- 评分 -->
-              <el-text>{{ row?.rating ?? '-' }}</el-text>
+              <div class="row-center gap-8">
+                <!-- 星星图标 -->
+                <el-icon class="h-14 w-14"><Star /></el-icon>
+                <!-- 评分 -->
+                <el-text>{{ row?.rating ?? '-' }}</el-text>
+              </div>
             </template>
           </el-table-column>
           <!-- 修理厂状态 -->
@@ -397,7 +412,15 @@ watch(
           <!-- 操作栏 -->
           <el-table-column min-width="6%" align="center">
             <template #default>
-              <i class="icon-more-2-line cursor-pointer" />
+              <el-dropdown trigger="click">
+                <i class="icon-more-2-line cursor-pointer" />
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item>Reset Password</el-dropdown-item>
+                    <el-dropdown-item>Disable</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
