@@ -132,10 +132,24 @@ const handleCreateStockOrder = (command) =>
     name: 'Inventory Create Stocker Order',
     query: { type: command },
   })
+
+const handleViewInventoryDetails = (row, column) => {
+  const { no } = column
+  if (no === 0 || no === 7) {
+    return
+  }
+  router.push({
+    name: 'Inventory Details',
+    params: {
+      id: '123123',
+    },
+  })
+}
 </script>
 
 <template>
   <router-view v-if="$route.name === 'Inventory Create Stocker Order'" />
+  <router-view v-else-if="$route.name === 'Inventory Details'" />
   <section class="box-border flex flex-col gap-16 px-32 pb-32" v-else>
     <div class="flex-between h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">Inventory</h3>
@@ -275,8 +289,12 @@ const handleCreateStockOrder = (command) =>
         </el-input>
       </div>
       <div class="flex-between flex flex-1 flex-col">
-        <el-table :data="inboundDataList" class="flex-1">
-          <el-table-column type="selection" />
+        <el-table
+          :data="inboundDataList"
+          class="flex-1"
+          @row-click="handleViewInventoryDetails"
+        >
+          <el-table-column type="selection" name="good" />
           <el-table-column prop="no" label="Inbound No." sortable />
           <el-table-column prop="user" label="User" sortable />
           <el-table-column prop="category" label="Category" sortable />

@@ -108,6 +108,18 @@ const constantRoutes = [
               showInBreadcrumb: true,
             },
           },
+          // detail
+          {
+            path: '/obd-management/inventory/:id',
+            name: 'Inventory Details',
+            component: () =>
+              import('@/views/ObdManagement/Inventory/InventoryDetails.vue'),
+            meta: {
+              title: 'Inventory Details',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
         ],
         meta: {
           title: RouteName.INVENTORY,
