@@ -303,21 +303,21 @@ const handleViewInventoryDetails = (row, column) => {
             <template #default="{ row }">
               <template v-if="row.status === 'Waiting inbound'">
                 <i
-                  class="rounded-4 bg-status-colours-light-orange text-status-colours-orange h-24 p-8"
+                  class="rounded-4 bg-status-colours-light-orange text-status-colours-orange block h-24 w-fit p-8"
                 >
                   {{ row.status }}
                 </i>
               </template>
               <template v-else-if="row.status === 'In Stock'">
                 <i
-                  class="rounded-4 bg-status-colours-light-green text-status-colours-green h-24 p-8"
+                  class="rounded-4 bg-status-colours-light-green text-status-colours-green block h-24 w-fit p-8"
                 >
                   {{ row.status }}
                 </i>
               </template>
               <template v-else-if="row.status === 'Cancelled'">
                 <i
-                  class="rounded-4 bg-neutrals-grey-1 text-neutrals-grey-4 h-24 p-8"
+                  class="rounded-4 bg-neutrals-grey-1 text-neutrals-grey-4 block h-24 w-fit p-8"
                 >
                   {{ row.status }}
                 </i>
@@ -435,7 +435,6 @@ const handleViewInventoryDetails = (row, column) => {
       <div class="flex-between flex flex-1 flex-col">
         <el-table
           :data="inboundDataList"
-          style="width: 100%"
           class="flex-1"
           row-class-name="clickable-row"
         >
@@ -448,21 +447,21 @@ const handleViewInventoryDetails = (row, column) => {
             <template #default="{ row }">
               <template v-if="row.status === 'Waiting inbound'">
                 <i
-                  class="rounded-4 bg-status-colours-light-orange text-status-colours-orange h-24 p-8"
+                  class="rounded-4 bg-status-colours-light-orange text-status-colours-orange block h-24 w-fit p-8"
                 >
                   {{ row.status }}
                 </i>
               </template>
               <template v-else-if="row.status === 'In Stock'">
                 <i
-                  class="rounded-4 bg-status-colours-light-green text-status-colours-green h-24 p-8"
+                  class="rounded-4 bg-status-colours-light-green text-status-colours-green block h-24 w-fit p-8"
                 >
                   {{ row.status }}
                 </i>
               </template>
               <template v-else-if="row.status === 'Cancelled'">
                 <i
-                  class="rounded-4 bg-neutrals-grey-1 text-neutrals-grey-4 h-24 p-8"
+                  class="rounded-4 bg-neutrals-grey-1 text-neutrals-grey-4 block h-24 w-fit p-8"
                 >
                   {{ row.status }}
                 </i>
