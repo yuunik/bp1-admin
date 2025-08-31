@@ -29,10 +29,26 @@ const urls = ref([
   'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
   'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
 ])
+
+const articleRef = ref(null)
+
+const postRef = ref(null)
+
+const commentsRef = ref(null)
+
+watch(activeName, (val) => {
+  if (val === 'Post') {
+    postRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Comments') {
+    commentsRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Details') {
+    postRef.value.scrollIntoView({ behavior: 'smooth' })
+  }
+})
 </script>
 
 <template>
-  <article>
+  <div ref="articleRef" class="flex flex-col overflow-auto">
     <div
       class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
     >
@@ -47,9 +63,9 @@ const urls = ref([
     </el-tabs>
     <el-divider />
     <!-- 贴文详情 -->
-    <div class="mx-32 mb-24 mt-16">
+    <article class="mx-32 mb-24 mt-16 flex-1 overflow-auto">
       <!-- Post Header -->
-      <section class="flex flex-col gap-8">
+      <section class="flex flex-col gap-8" ref="postRef">
         <!-- 发帖人信息 -->
         <div class="h-76 row-center gap-16">
           <el-avatar
@@ -142,7 +158,7 @@ const urls = ref([
         </div>
       </section>
       <!-- 评论区 -->
-      <section class="mt-24 flex flex-col gap-8">
+      <section class="mt-24 flex flex-col gap-8" ref="commentsRef">
         <!-- 标题 -->
         <div class="heading-body-large-body-14px-medium row-center h-24 gap-2">
           <h4 class="text-neutrals-off-black">Comments</h4>
@@ -940,8 +956,8 @@ const urls = ref([
           </div>
         </div>
       </section>
-    </div>
-  </article>
+    </article>
+  </div>
 </template>
 
 <style scoped lang="scss">

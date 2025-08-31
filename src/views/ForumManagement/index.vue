@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import { ForumManagementTab } from '@/utils/constantsUtil.js'
 
-import Posts from './Posts.vue'
-import Comments from './Comments.vue'
+import Posts from './PostList.vue'
+import Comments from './CommentsList.vue'
 
 // 当前的tab
 const activeTab = ref(ForumManagementTab.POSTS)
