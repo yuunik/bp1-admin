@@ -9,6 +9,7 @@ import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
 
 import CompanyLogo from '@/assets/icons/company-logo.svg'
+import BaseDialog from '@/components/BaseDialog.vue'
 
 const userStore = useUserStore()
 // 获取用户相关信息
@@ -20,7 +21,60 @@ const dynamicBreadcrumbList = computed(() =>
 
 const isShowSettingsDialog = ref(false)
 
-const settingsRefs = ref(null)
+// 弹窗相关
+const dialogChangePasswordVisible = ref(false)
+
+// 修改密码相关
+const changePasswordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+
+// 显示密码
+const isShowPassword = ref(false)
+
+// 显示确认密码
+const isShowConfirmPasswordVisible = ref(false)
+
+// 确认退出弹窗状态
+const dialogConfirmLogoutVisible = ref(false)
+
+// 确认修改邮箱状态
+const dialogConfirmChangeEmailVisible = ref(false)
+
+// 修改邮箱表单
+const changeEmailForm = ref({
+  currentPassword: '',
+  newEmail: '',
+})
+
+// 展开当前的密码
+const isShowCurrentPassword = ref(false)
+
+// 打开修改密码弹窗
+const handleOpenChangePasswordDialog = () => {
+  // 打开弹窗
+  dialogChangePasswordVisible.value = true
+  // 关闭设置中心弹窗
+  isShowSettingsDialog.value = false
+}
+
+// 打开修改邮箱弹窗
+const handleOpenChangeEmailDialog = () => {
+  // 打开弹窗
+  dialogConfirmChangeEmailVisible.value = true
+  // 关闭设置中心弹窗
+  isShowSettingsDialog.value = false
+}
+
+// 打开确认退出弹窗
+const handleOpenConfirmLogoutDialog = () => {
+  // 打开弹窗
+  dialogConfirmLogoutVisible.value = true
+  // 关闭设置中心弹窗
+  isShowSettingsDialog.value = false
+}
 
 provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 </script>
@@ -82,7 +136,6 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
             'text-neutrals-off-white': isShowSettingsDialog,
           }"
           @click="isShowSettingsDialog = !isShowSettingsDialog"
-          ref="settingsRefs"
         >
           <!-- user avatar-->
           <i class="user-avatar">
@@ -122,25 +175,160 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       >
         <span
           class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
+          @click.self="handleOpenChangeEmailDialog"
         >
           Change Email
         </span>
         <span
           class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
+          @click="handleOpenChangePasswordDialog"
         >
           Change Password
         </span>
         <span
           class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
+          @click="handleOpenConfirmLogoutDialog"
         >
           Logout
         </span>
       </aside>
     </main>
   </div>
+  <!-- 修改密码弹窗 -->
+  <base-dialog
+    v-model="dialogChangePasswordVisible"
+    title="Change Password"
+    @cancel="dialogChangePasswordVisible = false"
+    @confirm="console.log('confirm')"
+  >
+    <template #content>
+      <el-form
+        ref="changePasswordForm"
+        :model="changePasswordForm"
+        label-width="140px"
+        label-position="left"
+        class="change-password-form"
+      >
+        <el-form-item label="Current Password">
+          <el-input
+            type="password"
+            v-model="changePasswordForm.currentPassword"
+            placeholder="Please enter your current password"
+          />
+        </el-form-item>
+        <el-form-item label="New Password">
+          <el-input
+            placeholder="Enter your password"
+            v-model="changePasswordForm.newPassword"
+            :type="isShowPassword ? 'text' : 'password'"
+          >
+            <template #suffix>
+              <i
+                :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                @click="isShowPassword = !isShowPassword"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="Confirm Password">
+          <el-input
+            placeholder="Enter your password"
+            v-model="changePasswordForm.confirmPassword"
+            :type="isShowConfirmPasswordVisible ? 'text' : 'password'"
+          >
+            <template #suffix>
+              <i
+                :class="`text-24 cursor-pointer ${isShowConfirmPasswordVisible ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                @click="
+                  isShowConfirmPasswordVisible = !isShowConfirmPasswordVisible
+                "
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </template>
+  </base-dialog>
+  <!-- 安全退出登录弹窗 -->
+  <base-dialog
+    v-model="dialogConfirmLogoutVisible"
+    title="Logout"
+    button-type="danger"
+    @cancel="dialogConfirmLogoutVisible = false"
+    @confirm="console.log('logOut')"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-medium text-neutrals-off-black">
+        Are you sure you want to logout?
+      </p>
+    </template>
+  </base-dialog>
+  <!-- 修改邮箱弹窗 -->
+  <base-dialog
+    v-model="dialogConfirmChangeEmailVisible"
+    title="Change Email"
+    @cancel="dialogConfirmChangeEmailVisible = false"
+    @confirm="console.log('changeEmail')"
+  >
+    <template #content>
+      <el-form
+        ref="changePasswordForm"
+        :model="changeEmailForm"
+        label-width="140px"
+        label-position="left"
+        class="change-password-form"
+      >
+        <el-form-item label="Email">
+          <el-input
+            v-model="changeEmailForm.newEmail"
+            placeholder="Please enter your new email"
+          />
+        </el-form-item>
+        <el-form-item label="Password">
+          <el-input
+            placeholder="Enter your password"
+            v-model="changeEmailForm.currentPassword"
+            :type="isShowCurrentPassword ? 'text' : 'password'"
+          >
+            <template #suffix>
+              <i
+                :class="`text-24 cursor-pointer ${isShowCurrentPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                @click="isShowCurrentPassword = !isShowCurrentPassword"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
+// 重置表单标签文字
+:deep(.el-form-item__label) {
+  font-size: 12px;
+  font-weight: 500;
+  color: #99a0ae;
+}
+
+.change-password-form :deep(.el-input__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.change-password-form :deep(.el-input__wrapper::after) {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--el-input-border-color, var(--el-border-color));
+  pointer-events: none;
+}
+
 .bg-container {
   // 公用背景色
   @extend %common-bg-style;
