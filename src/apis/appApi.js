@@ -64,9 +64,13 @@ const { getToken } = useAuthToken()
  * 获取车辆品牌列表
  * @returns {Promise<ApiResponse<BrandInfo[]>>}
  */
-export const getBrandModalListApi = () => {
+export const getBrandModalListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
 
   return request({
     url: AppApi.GET_BRAND_MODEL_LIST,

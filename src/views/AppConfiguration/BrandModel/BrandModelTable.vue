@@ -21,6 +21,12 @@ const pagination = reactive({
   total: 0,
 })
 
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
 // 获取Brand Model 列表数据
 const getBrandModelList = useDebounceFn(async () => {
   loading.value = true
@@ -28,6 +34,8 @@ const getBrandModelList = useDebounceFn(async () => {
     searchKey: searchText.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
   })
   // 更新分页数据
   pagination.total = count
@@ -38,11 +46,32 @@ const getBrandModelList = useDebounceFn(async () => {
 
 const router = useRouter()
 // 查看详情
-const viewVehicleDetail = (row) =>
+const viewVehicleDetail = (row, column) => {
+  if (no === 0 || no === 5) {
+    return
+  }
   router.push({
     name: 'BrandAndModelManagement',
     params: { id: row.id },
   })
+}
+
+// 排序查询
+const changeSortChange = (data) => {
+  const { prop, order } = data
+  console.log('@@@@@@@@', prop, data)
+  if (order === 'ascending') {
+    sortParams.sort = 'asc'
+    sortParams.sortBy = prop
+  } else if (order === 'descending') {
+    sortParams.sort = 'desc'
+    sortParams.sortBy = prop
+  } else if (!order) {
+    sortParams.sort = ''
+    sortParams.sortBy = ''
+  }
+  getBrandModelList()
+}
 
 // 网络请求
 getBrandModelList()
@@ -115,6 +144,7 @@ watch(
         :data="tableData"
         :loading="loading"
         @row-click="viewVehicleDetail"
+        @sort-change="changeSortChange"
         row-class-name="clickable-row"
         :fit="false"
       >
@@ -124,11 +154,16 @@ watch(
         <el-table-column
           prop="sort"
           label="Sort"
-          :sortable="true"
+          sortable="custom"
           min-width="8%"
         />
         <!-- 品牌名称 -->
-        <el-table-column label="Brand" :sortable="true" min-width="43%">
+        <el-table-column
+          prop="brand"
+          label="Brand"
+          sortable="custom"
+          min-width="43%"
+        >
           <template #default="{ row }">
             <div class="flex items-center">
               <el-image
@@ -150,7 +185,7 @@ watch(
         <el-table-column
           prop="modelCount"
           label="Model Count"
-          :sortable="true"
+          sortable="custom"
           min-width="19%"
         >
           <template #default="{ row }">
@@ -161,7 +196,7 @@ watch(
         <el-table-column
           prop="status"
           label="Status"
-          :sortable="true"
+          sortable="custom"
           min-width="18%"
           align="center"
         >
