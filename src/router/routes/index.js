@@ -39,11 +39,25 @@ const constantRoutes = [
     },
   },
   {
-    path: '/order-management',
-    name: RouteName.ORDER_MANAGEMENT,
+    path: '/orderManagement',
+    redirect: '/order-management',
+    name: 'OrderManagement',
     component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/order-management',
+        name: RouteName.ORDER_MANAGEMENT,
+        component: () => import('@/views/OrderManagement/index.vue'),
+        meta: {
+          title: RouteName.ORDER_MANAGEMENT,
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-order-management',
+        },
+      },
+    ],
     meta: {
-      title: RouteName.ORDER_MANAGEMENT,
+      title: 'OrderManagement',
       showInMenu: true,
       showInBreadcrumb: true,
       icon: 'icon-order-management',
