@@ -219,6 +219,7 @@ const constantRoutes = [
           title: 'Forum Management',
           showInMenu: true,
           showInBreadcrumb: true,
+          icon: 'icon-user-management',
         },
       },
     ],
@@ -226,6 +227,7 @@ const constantRoutes = [
       title: 'Forum Management',
       showInMenu: true,
       showInBreadcrumb: false,
+      icon: 'icon-user-management',
     },
   },
   {
@@ -353,6 +355,32 @@ const constantRoutes = [
       showInMenu: true,
       showInBreadcrumb: true,
       icon: 'icon-app-configuration',
+    },
+  },
+  // 系统设置
+  {
+    path: '/setting',
+    redirect: '/settings',
+    name: 'Setting',
+    component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/settings',
+        name: 'Settings',
+        component: () => import('@/views/Settings/index.vue'),
+        meta: {
+          title: 'Settings',
+          showInMenu: false,
+          showInBreadcrumb: true,
+          icon: 'icon-settings',
+        },
+      },
+    ],
+    meta: {
+      title: 'Setting',
+      showInMenu: false,
+      showInBreadcrumb: false,
+      icon: 'icon-settings',
     },
   },
   // 分享模块路由

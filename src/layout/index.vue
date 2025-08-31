@@ -37,7 +37,9 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         <menu-item :user-menu-routes="routes" />
       </el-menu>
       <!-- user center -->
-      <ul class="neutrals-grey-3 flex flex-col gap-16 p-8">
+      <ul
+        class="neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
+      >
         <li class="flex cursor-pointer items-center gap-8">
           <i class="icon-typesnotification text-16" />
           <span class="flex-1">Notifications</span>
@@ -48,8 +50,22 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
             1
           </i>
         </li>
-        <li class="item-style">
-          <i class="icon-typessetting" />
+        <li
+          :class="[
+            'item-style',
+            {
+              'bg-[#ffffff1a]': $route.name === 'Settings',
+              'text-neutrals-off-white': $route.name === 'Settings',
+            },
+          ]"
+          @click="$router.push({ name: 'Settings' })"
+        >
+          <i
+            class="icon-typessetting"
+            :class="{
+              'text-neutrals-off-white': $route.name === 'Settings',
+            }"
+          />
           <span>Settings</span>
         </li>
         <el-divider class="divider" />
