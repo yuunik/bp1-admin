@@ -47,6 +47,7 @@ const getBrandModelList = useDebounceFn(async () => {
 const router = useRouter()
 // 查看详情
 const viewVehicleDetail = (row, column) => {
+  const { no } = column
   if (no === 0 || no === 5) {
     return
   }
