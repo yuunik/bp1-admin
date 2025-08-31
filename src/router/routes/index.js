@@ -157,6 +157,17 @@ const constantRoutes = [
               showInBreadcrumb: true,
             },
           },
+          {
+            path: '/user-management/internal/create',
+            name: 'Create Internal User',
+            component: () =>
+              import('@/views/UserManagement/Internal/InternalUserCreate.vue'),
+            meta: {
+              title: 'Create Internal User',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
         ],
         meta: {
           title: RouteName.INTERNAL,

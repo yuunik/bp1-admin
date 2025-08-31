@@ -127,11 +127,17 @@ const pageQueryParams = ref({
 
 <template>
   <router-view v-if="$route.name === 'Internal Manage'" />
+  <router-view v-else-if="$route.name === 'Create Internal User'" />
   <section class="flex flex-col gap-16" v-else>
     <!-- Header -->
     <div class="flex-between mx-32 h-32">
       <h3>Internal</h3>
-      <el-button type="primary">Create</el-button>
+      <el-button
+        type="primary"
+        @click="$router.push({ name: 'Create Internal User' })"
+      >
+        Create
+      </el-button>
     </div>
     <!-- Search -->
     <div class="flex-between mx-32 flex h-24 gap-20">
