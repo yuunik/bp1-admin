@@ -1,4 +1,6 @@
 <script setup>
+import { useRouter } from 'vue-router'
+
 import BasePagination from '@/components/BasePagination.vue'
 
 const postList = ref([
@@ -134,17 +136,29 @@ const postList = ref([
   },
 ])
 
-const pagination = {
+const pagination = ref({
   pageSize: 10,
   total: 0,
   currentPage: 0,
+})
+
+const router = useRouter()
+
+const handleViewPostDetails = (row) => {
+  router.push({ name: 'Post Details', params: { id: row.id } })
 }
 </script>
 
 <template>
   <div class="pb-38 flex h-full flex-col px-32 pt-16">
     <!-- 贴文列表表格 -->
-    <el-table :data="postList" class="flex-1" :fit="false">
+    <el-table
+      :data="postList"
+      class="flex-1"
+      :fit="false"
+      row-class-name="clickable-row"
+      @row-click="handleViewPostDetails"
+    >
       <!-- 选择框 -->
       <el-table-column type="selection" column-key="selection" min-width="7%" />
       <!-- 用户 -->

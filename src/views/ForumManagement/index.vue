@@ -40,12 +40,7 @@ const tabMap = Object.freeze({
     <!-- 搜索栏 -->
     <div class="flex-between mx-32 flex">
       <!-- 条件搜索 -->
-      <el-input
-        placeholder="Search..."
-        class="brand-model-search"
-        v-model="searchText"
-        @input="getBrandModelList"
-      >
+      <el-input placeholder="Search..." class="brand-model-search">
         <template #prefix>
           <!-- 前置搜索图标 -->
           <i class="icon-typessearch h-16 w-16" />

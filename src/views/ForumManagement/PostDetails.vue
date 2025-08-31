@@ -1,5 +1,5 @@
 <script setup>
-import { CircleCheckFilled, MoreFilled } from '@element-plus/icons-vue'
+import { CircleCheckFilled } from '@element-plus/icons-vue'
 
 const activeName = ref('Details')
 
