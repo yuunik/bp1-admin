@@ -383,6 +383,32 @@ const constantRoutes = [
       icon: 'icon-settings',
     },
   },
+  // 通知设置
+  {
+    path: '/notification',
+    redirect: '/notifications',
+    name: 'Notification',
+    component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/notifications',
+        name: 'Notifications',
+        component: () => import('@/views/Notifications/index.vue'),
+        meta: {
+          title: 'Notifications',
+          showInMenu: false,
+          showInBreadcrumb: true,
+          icon: 'icon-settings',
+        },
+      },
+    ],
+    meta: {
+      title: 'Setting',
+      showInMenu: false,
+      showInBreadcrumb: false,
+      icon: 'icon-settings',
+    },
+  },
   // 分享模块路由
   {
     path: '/share',

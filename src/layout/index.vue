@@ -98,12 +98,24 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       <ul
         class="neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
       >
-        <li class="item-style">
+        <li
+          :class="[
+            'item-style',
+            {
+              'bg-[#ffffff1a]': $route.name === 'Notifications',
+              'text-neutrals-off-white': $route.name === 'Notifications',
+            },
+          ]"
+          @click="$router.push({ name: 'Notifications' })"
+        >
           <i class="icon-typesnotification text-16" />
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
           <i
             class="icon-typesnotification-dot heading-caption-caption-10px-medium3 neutrals-grey-3"
+            :class="{
+              'text-neutrals-off-white': $route.name === 'Notifications',
+            }"
           >
             1
           </i>
