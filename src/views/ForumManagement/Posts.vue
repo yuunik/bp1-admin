@@ -228,8 +228,7 @@ const pagination = {
             <i class="icon-more-2-line cursor-pointer" />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>Reset Password</el-dropdown-item>
-                <el-dropdown-item>Disable</el-dropdown-item>
+                <el-dropdown-item>Delete</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>

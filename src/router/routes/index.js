@@ -1,5 +1,4 @@
 import { RouteName } from '@/utils/constantsUtil.js'
-import component from 'element-plus/es/components/tree-select/src/tree-select-option.mjs'
 
 const constantRoutes = [
   {
@@ -197,24 +196,35 @@ const constantRoutes = [
   {
     path: '/forum-management',
     redirect: '/forum-management/list',
-    name: 'Forum Management Index',
+    name: 'Forum Management',
     component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/forum-management/list',
-        name: 'Forum Management',
+        name: 'Forum Management List',
         component: () => import('@/views/ForumManagement/index.vue'),
+        children: [
+          {
+            path: '/forum-management/post-details/:id',
+            name: 'Post Details',
+            component: () => import('@/views/ForumManagement/PostDetails.vue'),
+            meta: {
+              title: 'Post Details',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+        ],
         meta: {
           title: 'Forum Management',
           showInMenu: true,
           showInBreadcrumb: true,
-          icon: 'icon-dashboard',
         },
       },
     ],
     meta: {
-      title: 'Forum Management Index',
-      showInMenu: false,
+      title: 'Forum Management',
+      showInMenu: true,
       showInBreadcrumb: false,
     },
   },

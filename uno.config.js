@@ -104,6 +104,8 @@ export default defineConfig({
       'text-neutrals-grey-3': 'text-[#99A0AE]',
       'text-neutrals-grey-4': 'text-[#6F7788]',
       'text-branding-light-blue': 'text-[#E5F0FE]',
+      'text-sub-600': 'text-[#525866]',
+      'text-strong-950': 'text-[#0E121B]',
       'poppins-28px-semibold': 'text-28/32 font-semibold',
       'poppins-16px-semibold': 'text-16 font-semibold',
       'poppins-12px-semibold': 'text-12 font-semibold',

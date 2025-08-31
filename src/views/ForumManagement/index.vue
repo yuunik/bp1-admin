@@ -19,7 +19,8 @@ const tabMap = Object.freeze({
 </script>
 
 <template>
-  <section class="flex h-full flex-col gap-16">
+  <router-view v-if="$route.name === 'Post Details'" />
+  <section class="flex h-full flex-col gap-16" v-else>
     <!-- Forum Management Header -->
     <div class="px-32">
       <!-- 标题 -->
