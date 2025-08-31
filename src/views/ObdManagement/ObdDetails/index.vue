@@ -66,7 +66,6 @@ provide('getOBDInfo', getOBDInfo)
     @refresh="getOBDInfo"
   />
   <section class="flex h-full flex-col overflow-auto" v-else>
-    <el-button @click="confirmUnbindUser">test</el-button>
     <!-- header -->
     <div class="flex-between px-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
