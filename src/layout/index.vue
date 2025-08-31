@@ -18,6 +18,10 @@ const dynamicBreadcrumbList = computed(() =>
   route.matched.map((item) => ({ ...item })),
 )
 
+const isShowSettingsDialog = ref(false)
+
+const settingsRefs = ref(null)
+
 provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 </script>
 
@@ -40,7 +44,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       <ul
         class="neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
       >
-        <li class="flex cursor-pointer items-center gap-8">
+        <li class="item-style">
           <i class="icon-typesnotification text-16" />
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
@@ -61,7 +65,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           @click="$router.push({ name: 'Settings' })"
         >
           <i
-            class="icon-typessetting"
+            class="icon-typessetting item-style"
             :class="{
               'text-neutrals-off-white': $route.name === 'Settings',
             }"
@@ -70,7 +74,16 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         </li>
         <el-divider class="divider" />
         <!-- 底部用户信息相关设置 -->
-        <li class="item-style">
+        <li
+          v-click-outside="() => (isShowSettingsDialog = false)"
+          class="item-style"
+          :class="{
+            'bg-[#ffffff1a]': isShowSettingsDialog,
+            'text-neutrals-off-white': isShowSettingsDialog,
+          }"
+          @click="isShowSettingsDialog = !isShowSettingsDialog"
+          ref="settingsRefs"
+        >
           <!-- user avatar-->
           <i class="user-avatar">
             <!-- 用户名字缩写 -->
@@ -97,11 +110,32 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       </div>
     </nav>
     <!-- content -->
-    <main class="content-container">
+    <main class="content-container relative">
       <!-- breadcrumb -->
       <breadcrumb class="shrink-0" />
       <!-- router view -->
       <router-view class="flex-1 overflow-auto" />
+      <!-- 设置中心 -->
+      <aside
+        class="w-150 rounded-8 shadow-default text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
+        v-if="isShowSettingsDialog"
+      >
+        <span
+          class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
+        >
+          Change Email
+        </span>
+        <span
+          class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
+        >
+          Change Password
+        </span>
+        <span
+          class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
+        >
+          Logout
+        </span>
+      </aside>
     </main>
   </div>
 </template>
@@ -118,7 +152,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 底部用户信息相关设置
   .item-style {
-    @apply flex cursor-pointer items-center gap-8;
+    @apply hover:text-neutrals-off-white flex cursor-pointer items-center gap-8 hover:bg-[#ffffff1a];
 
     // user avatar
     .user-avatar {

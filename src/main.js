@@ -22,12 +22,15 @@ import 'virtual:uno.css'
 // svg 图标
 import 'virtual:svg-icons-register'
 import '@/utils/chart.js'
+import clickOutside from '@/directives/clickOutside.js'
 
 const app = createApp(App)
 const header = createHead()
 
 // 防抖指令
 app.directive('debounce', debounce)
+// 点击目标以外的区域后, 执行的指令
+app.directive('click-outside', clickOutside)
 
 app.use(header)
 app.use(store)
