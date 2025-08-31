@@ -193,6 +193,19 @@ const constantRoutes = [
         path: '/user-management/extern',
         name: RouteName.EXTERN,
         component: () => import('@/views/UserManagement/Extern/index.vue'),
+        children: [
+          {
+            path: '/user-management/extern/manage/:id',
+            name: 'External Manage',
+            component: () =>
+              import('@/views/UserManagement/Extern/ExternManagement.vue'),
+            meta: {
+              title: 'External Manage',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+        ],
         meta: {
           title: RouteName.EXTERN,
           showInMenu: true,

@@ -59,7 +59,6 @@ const viewVehicleDetail = (row, column) => {
 // 排序查询
 const changeSortChange = (data) => {
   const { prop, order } = data
-  console.log('@@@@@@@@', prop, data)
   if (order === 'ascending') {
     sortParams.sort = 'asc'
     sortParams.sortBy = prop

@@ -1,6 +1,9 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
+import { Star } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination.vue'
 import {
@@ -12,8 +15,6 @@ import {
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getLastUsedDate } from '@/utils/dateUtil.js'
-import { ElMessage } from 'element-plus'
-import { Star } from '@element-plus/icons-vue'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -31,8 +32,22 @@ const pagination = ref({
 // 搜索条件
 const searchKey = ref('')
 
+// 用户列表排序
+const userSortParams = ref({
+  sort: '',
+  sortBy: '',
+})
+
+// 修理厂列表排序
+const merchantSortParams = ref({
+  sort: '',
+  sortBy: '',
+})
+
 // 当前tab页
 const activeTab = ref(UserManagementTab.PERSON)
+
+const router = useRouter()
 
 // 获取用户列表
 const getUserList = useDebounceFn(async () => {
@@ -40,6 +55,8 @@ const getUserList = useDebounceFn(async () => {
     searchKey: searchKey.value,
     page: pagination.value.currentPage,
     pageSize: pagination.value.pageSize,
+    sort: userSortParams.value.sort,
+    sortBy: userSortParams.value.sortBy,
   })
   // 记录总数
   pagination.value.total = count
@@ -53,6 +70,8 @@ const getMerchantList = useDebounceFn(async () => {
     searchKey: searchKey.value,
     page: pagination.value.currentPage,
     pageSize: pagination.value.pageSize,
+    sort: merchantSortParams.value.sort,
+    sortBy: merchantSortParams.value.sortBy,
   })
   // 记录总数
   pagination.value.total = count
@@ -75,7 +94,6 @@ const handleUserStatus = async (userId) => {
 // 重置用户密码
 const handleResetPassword = async (userId) => {
   await resetUserPasswordApi(userId)
-  // TODO 重置密码逻辑
   ElMessage.success('Success')
 }
 
@@ -128,6 +146,65 @@ const handleSearchByCondition = () => {
   }
 }
 
+// 处理用户列表排序
+const handleUserSortChange = (data) => {
+  const { prop, order } = data
+  if (order === 'ascending') {
+    userSortParams.value.sort = 'asc'
+    userSortParams.value.sortBy = prop
+  } else if (order === 'descending') {
+    userSortParams.value.sort = 'desc'
+    userSortParams.value.sortBy = prop
+  } else if (!order) {
+    userSortParams.value.sort = ''
+    userSortParams.value.sortBy = ''
+  }
+  getUserList()
+}
+
+// 处理修理厂列表排序
+const handleMerchantSortChange = (data) => {
+  const { prop, order } = data
+  if (order === 'ascending') {
+    merchantSortParams.value.sort = 'asc'
+    merchantSortParams.value.sortBy = prop
+  } else if (order === 'descending') {
+    merchantSortParams.value.sort = 'desc'
+    merchantSortParams.value.sortBy = prop
+  } else if (!order) {
+    merchantSortParams.value.sort = ''
+    merchantSortParams.value.sortBy = ''
+  }
+  getMerchantList()
+}
+
+// 处理行点击事件
+const handleUserRowClick = (row, column) => {
+  const { no } = column
+  if (no === 0 || no === 8) {
+    return
+  }
+  // 跳转到用户详情页
+  router.push({
+    name: 'External Manage',
+    params: { id: row.id },
+    query: { type: 'user' },
+  })
+}
+
+const handleMerchantRowClick = (row, column) => {
+  const { no } = column
+  if (no === 0 || no === 5) {
+    return
+  }
+  // 跳转到修理厂详情页
+  router.push({
+    name: 'External Manage',
+    params: { id: row.id },
+    query: { type: 'merchant' },
+  })
+}
+
 // 监听tab变化，获取对应列表
 watch(
   () => activeTab.value,
@@ -168,7 +245,8 @@ watch(
 
 <template>
   <!-- TODO 用户列表使用字段待确定.... -->
-  <section class="flex h-full flex-col">
+  <router-view v-if="$route.name === 'External Manage'" />
+  <section class="flex h-full flex-col" v-else>
     <!-- Extern Header -->
     <div class="px-32 pb-16">
       <!-- 标题栏 -->
@@ -232,14 +310,21 @@ watch(
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
       >
         <!-- 用户列表 -->
-        <el-table :data="userList" class="flex-1" :fit="false">
+        <el-table
+          :data="userList"
+          class="flex-1"
+          :fit="false"
+          @sort-change="handleUserSortChange"
+          @row-click="handleUserRowClick"
+          row-class-name="clickable-row"
+        >
           <!-- 勾选框 -->
           <el-table-column type="selection" min-width="6%" />
           <!-- 用户名称 -->
           <el-table-column
             prop="name"
             label="Name"
-            :sortable="true"
+            sortable="custom"
             min-width="17%"
           >
             <!-- 用户头像 -->
@@ -259,7 +344,7 @@ watch(
           <el-table-column
             prop="email"
             label="Email"
-            :sortable="true"
+            sortable="custom"
             min-width="17%"
           >
             <template #default="{ row }">
@@ -273,7 +358,7 @@ watch(
           <el-table-column
             prop="state"
             label="Status"
-            :sortable="true"
+            sortable="custom"
             min-width="11%"
           >
             <template #default="{ row }">
@@ -288,14 +373,14 @@ watch(
             prop="commentCount"
             label="OBD"
             min-width="7%"
-            sortable
+            sortable="custom"
           />
           <!-- 车辆数量 -->
           <el-table-column
             prop="commentCount"
             label="Vehicle"
             min-width="9%"
-            sortable
+            sortable="custom"
           />
           <!-- 是否订阅 -->
           <el-table-column
@@ -308,7 +393,7 @@ watch(
             prop="updateTime"
             label="Last Login"
             min-width="22%"
-            sortable
+            sortable="custom"
           >
             <template #default="{ row }">
               <!-- 上次登录时间 -->
@@ -348,14 +433,21 @@ watch(
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
       >
         <!-- 修理厂列表 -->
-        <el-table :data="merchantList" class="flex-1" :fit="false">
+        <el-table
+          :data="merchantList"
+          class="flex-1"
+          :fit="false"
+          @sort-change="handleMerchantSortChange"
+          @row-click="handleMerchantRowClick"
+          row-class-name="clickable-row"
+        >
           <!-- 勾选框 -->
           <el-table-column type="selection" min-width="6%" />
           <!-- 修理厂名称 -->
           <el-table-column
             prop="name"
             label="Name"
-            :sortable="true"
+            sortable="custom"
             min-width="29%"
           >
             <!-- 修理厂 logo -->
@@ -375,7 +467,7 @@ watch(
           <el-table-column
             prop="userDto?.email"
             label="Email"
-            :sortable="true"
+            sortable="custom"
             min-width="29%"
           >
             <template #default="{ row }">
@@ -389,7 +481,7 @@ watch(
           <el-table-column
             prop="rating"
             label="Reveiw"
-            :sortable="true"
+            sortable="custom"
             min-width="12%"
           >
             <template #default="{ row }">
