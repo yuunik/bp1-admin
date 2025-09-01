@@ -10,21 +10,7 @@ import IconsResolver from 'unplugin-icons/resolver'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
-  // 加载 .env 文件
-  const env = loadEnv(mode, process.cwd())
-
-  // api 基地址
-  const baseApi = env.VITE_BASE_URL_API
-  // 文件基地址
-  const fileApi = env.VITE_BASE_URL_FILE
-
-  // 服务器地址
-  const serverApi = env.VITE_SERVER_URL_API
-  const serverFileApi = env.VITE_SERVER_URL_FILE
-
-  const isLocal = mode === '.env.local'
-
+export default defineConfig(() => {
   return {
     plugins: [
       Vue(),
@@ -87,20 +73,6 @@ export default defineConfig(({ mode }) => {
       port: 3333,
       host: '0.0.0.0',
       open: true,
-      proxy: isLocal
-        ? {
-            [baseApi]: {
-              target: serverApi,
-              changeOrigin: true,
-              rewrite: (path) => path.replace(new RegExp(`^${baseApi}`), ''),
-            },
-            [fileApi]: {
-              target: serverApi,
-              changeOrigin: true,
-              rewrite: (path) => path.replace(new RegExp(`^${fileApi}`), ''),
-            },
-          }
-        : undefined,
     },
     css: {
       preprocessorOptions: {
