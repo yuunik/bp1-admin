@@ -111,3 +111,19 @@ export const getFullDate = (timestamp) => {
 export const isDateExpired = (timestamp) => {
   return dayjs().isAfter(dayjs(timestamp))
 }
+
+/**
+ * 获取完整的日期, 格式为 "29 Jul 2025 02:39 pm"
+ * @param timestamp
+ * @returns {string}
+ */
+export const getDateWithDDMMMYYYYhhmma = (timestamp) => {
+  // 时间戳为空则返回 '-'
+  if (!timestamp) {
+    return '-'
+  }
+  // 时间戳转日期
+  const date = dayjs(timestamp)
+  // 格式化日期, 如 "Generated: 22 Aug 2024 10:30am"
+  return date.format('DD MMM YYYY hh:mm a')
+}

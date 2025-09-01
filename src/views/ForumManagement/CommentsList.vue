@@ -150,7 +150,38 @@ const handleViewPostDetails = (row) => {
 </script>
 
 <template>
-  <div class="pb-38 flex h-full flex-col px-32 pt-16">
+  <!-- 搜索栏 -->
+  <div class="flex-between mx-32 flex">
+    <!-- 条件搜索 -->
+    <el-input placeholder="Search..." class="brand-model-search">
+      <template #prefix>
+        <!-- 前置搜索图标 -->
+        <i class="icon-typessearch h-16 w-16" />
+      </template>
+    </el-input>
+    <!-- 状态搜索 -->
+    <el-dropdown :hide-on-click="false">
+      <span
+        class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
+      >
+        Status
+        <i class="icon-typesdropdown" />
+      </span>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item>Action 1</el-dropdown-item>
+          <el-dropdown-item>Action 2</el-dropdown-item>
+          <el-dropdown-item>Action 3</el-dropdown-item>
+          <el-dropdown-item disabled>Action 4</el-dropdown-item>
+          <el-dropdown-item divided>Action 5</el-dropdown-item>
+          <el-dropdown-item divided>Action 6</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+  </div>
+  <!-- 分割线 -->
+  <el-divider class="diver" />
+  <div class="pb-38 flex h-full flex-1 flex-col overflow-auto px-32 pt-16">
     <!-- 评论列表表格 -->
     <el-table
       :data="postList"

@@ -37,40 +37,9 @@ const tabMap = Object.freeze({
         :name="ForumManagementTab.COMMENTS"
       />
     </el-tabs>
-    <!-- 搜索栏 -->
-    <div class="flex-between mx-32 flex">
-      <!-- 条件搜索 -->
-      <el-input placeholder="Search..." class="brand-model-search">
-        <template #prefix>
-          <!-- 前置搜索图标 -->
-          <i class="icon-typessearch h-16 w-16" />
-        </template>
-      </el-input>
-      <!-- 状态搜索 -->
-      <el-dropdown :hide-on-click="false">
-        <span
-          class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
-        >
-          Status
-          <i class="icon-typesdropdown" />
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item>Action 1</el-dropdown-item>
-            <el-dropdown-item>Action 2</el-dropdown-item>
-            <el-dropdown-item>Action 3</el-dropdown-item>
-            <el-dropdown-item disabled>Action 4</el-dropdown-item>
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
-            <el-dropdown-item divided>Action 6</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
-    <!-- 分割线 -->
-    <el-divider class="diver" />
     <!-- tab 内容区 -->
     <keep-alive>
-      <component :is="tabMap[activeTab]" class="min-h-0 flex-1 overflow-auto" />
+      <component :is="tabMap[activeTab]" />
     </keep-alive>
   </section>
 </template>
@@ -90,14 +59,5 @@ const tabMap = Object.freeze({
 // 重置激活状态的文字颜色
 :deep(.el-switch__label.is-active) {
   color: $neutrals-grey-4;
-}
-
-// 搜索框
-.brand-model-search {
-  // 输入框样式重置
-  :deep(.el-input__wrapper) {
-    box-shadow: none;
-    background-color: transparent;
-  }
 }
 </style>
