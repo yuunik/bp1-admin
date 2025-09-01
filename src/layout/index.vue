@@ -1,7 +1,8 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { computed, provide } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 import routes from '@/router/routes/index.js'
 import { useUserStore } from '@/store/index.js'
@@ -10,11 +11,17 @@ import Breadcrumb from './components/Breadcrumb/index.vue'
 
 import CompanyLogo from '@/assets/icons/company-logo.svg'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { RouteName } from '@/utils/constantsUtil.js'
 
 const userStore = useUserStore()
+
 // 获取用户相关信息
 const { username, userRole, usernameAbbr } = storeToRefs(userStore)
+
 const route = useRoute()
+
+const router = useRouter()
+
 const dynamicBreadcrumbList = computed(() =>
   route.matched.map((item) => ({ ...item })),
 )
@@ -74,6 +81,15 @@ const handleOpenConfirmLogoutDialog = () => {
   dialogConfirmLogoutVisible.value = true
   // 关闭设置中心弹窗
   isShowSettingsDialog.value = false
+}
+
+// 用户安全退出
+const handleLogout = async () => {
+  await userStore.logout()
+  // 提示
+  ElMessage.success('Logout success')
+  // 路由跳转
+  router.push({ name: RouteName.LOGIN })
 }
 
 provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
@@ -182,7 +198,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       <router-view class="flex-1 overflow-y-auto overflow-x-hidden" />
       <!-- 设置中心 -->
       <aside
-        class="w-150 rounded-8 shadow-default text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
+        class="z-999 w-150 rounded-8 shadow-default bg-neutrals-white text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
         v-if="isShowSettingsDialog"
       >
         <span
@@ -267,7 +283,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
     title="Logout"
     button-type="danger"
     @cancel="dialogConfirmLogoutVisible = false"
-    @confirm="console.log('logOut')"
+    @confirm="handleLogout"
   >
     <template #content>
       <p class="heading-body-body-12px-medium text-neutrals-off-black">

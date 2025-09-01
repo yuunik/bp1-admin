@@ -43,7 +43,7 @@ const confirm = () => {
     <slot name="content" />
     <template #footer>
       <el-button @click="cancel">{{ cancelText }}</el-button>
-      <el-button :type="buttonType" @click="dialogVisible = false">
+      <el-button :type="buttonType" @click="confirm">
         {{ confirmText }}
       </el-button>
     </template>

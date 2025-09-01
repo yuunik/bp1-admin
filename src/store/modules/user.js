@@ -50,7 +50,7 @@ const useUserStore = defineStore('user', () => {
   }
 
   // 清除用户信息
-  const clearInfo = () => {
+  const clearInfo = async () => {
     token.value = ''
     userInfo.value = {}
   }

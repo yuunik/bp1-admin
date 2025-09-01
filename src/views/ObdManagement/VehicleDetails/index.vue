@@ -2,11 +2,10 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { TimingPreset, VehicleDetailTabs } from '@/utils/constantsUtil.js'
+import { VehicleDetailTabs } from '@/utils/constantsUtil.js'
 import { getVehicleInfoApi } from '@/apis/obdApi.js'
 import { getFullDate } from '@/utils/dateUtil.js'
 import { getFaultCodeListApi } from '@/apis/appApi.js'
-import { useDebounceFn } from '@vueuse/core'
 
 const activeTabName = ref(VehicleDetailTabs.VEHICLE_DETAILS)
 
@@ -80,50 +79,9 @@ watch(activeTabName, (val) => {
   }
 })
 
-const sectionOffsets = ref(null)
-
-const updateSectionOffsets = () => {
-  if (!vehicleDetailRef.value) return
-
-  const scrollContainer = vehicleDetailRef.value.wrapRef
-
-  const containerTop = scrollContainer.getBoundingClientRect().top
-
-  sectionOffsets.value = {
-    [VehicleDetailTabs.VEHICLE_DETAILS]: 0, // 车辆详情在顶部
-    [VehicleDetailTabs.FAULT_CODES]: faultCodesRef.value?.offsetTop || 0,
-    [VehicleDetailTabs.SCANNED_HISTORY]:
-      scannedHistoryRef.value?.offsetTop || 0,
-  }
+const handleScroll = (scrollData) => {
+  console.log(scrollData, '##############')
 }
-
-// 根据滚动位置判断当前区域
-const getCurrentSection = (scrollTop) => {
-  const offsets = sectionOffsets.value
-  const threshold = 100 // 阈值，可以调整
-
-  if (scrollTop < offsets[VehicleDetailTabs.FAULT_CODES] - threshold) {
-    return VehicleDetailTabs.VEHICLE_DETAILS
-  } else if (
-    scrollTop <
-    offsets[VehicleDetailTabs.SCANNED_HISTORY] - threshold
-  ) {
-    return VehicleDetailTabs.FAULT_CODES
-  } else {
-    return VehicleDetailTabs.SCANNED_HISTORY
-  }
-}
-
-const handleScroll = useDebounceFn(() => {
-  if (isScrolling.value) return // 如果是程序触发的滚动，不处理
-
-  const scrollTop = e.target.scrollTop
-  const currentSection = getCurrentSection(scrollTop)
-
-  if (currentSection !== activeTabName.value) {
-    activeTabName.value = currentSection
-  }
-}, TimingPreset.DEBOUNCE)
 
 onMounted(async () => {
   // 获取页面路径id, 发起请求
@@ -160,7 +118,11 @@ onMounted(async () => {
       />
     </el-tabs>
     <!-- content, 滚动区域 -->
-    <el-scrollbar class="flex flex-1 flex-col" ref="vehicleDetailRef">
+    <el-scrollbar
+      class="flex flex-1 flex-col"
+      ref="vehicleDetailRef"
+      @scroll="handleScroll"
+    >
       <!-- vehicle info -->
       <div class="mx-32 mt-6 flex max-w-full justify-between gap-24">
         <div class="flex-1">
