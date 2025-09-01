@@ -27,7 +27,11 @@ const tabMap = Object.freeze({
       <h3 class="heading-h2-20px-medium">Forum Management</h3>
     </div>
     <!-- tabs 栏 -->
-    <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="mx-32">
+    <el-tabs
+      v-model="activeTab"
+      @tab-change="handleTabChange"
+      class="tabs-container"
+    >
       <el-tab-pane
         :label="ForumManagementTab.POSTS"
         :name="ForumManagementTab.POSTS"
@@ -59,5 +63,9 @@ const tabMap = Object.freeze({
 // 重置激活状态的文字颜色
 :deep(.el-switch__label.is-active) {
   color: $neutrals-grey-4;
+}
+
+.tabs-container :deep(.el-tabs__header) {
+  border-bottom: none;
 }
 </style>

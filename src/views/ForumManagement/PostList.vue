@@ -58,12 +58,6 @@ const getPostList = async () => {
 // 错误处理
 const errorHandler = () => true
 
-// 状态搜索切换
-const handleTypeChange = (command) => {
-  conditionSearchParams.type = command
-  refresh()
-}
-
 // 搜索
 const handleSearchByInput = useDebounceFn(async () => {
   pagination.currentPage = 0
@@ -229,13 +223,4 @@ watch(
   </div>
 </template>
 
-<style scoped lang="scss">
-// 搜索框
-.brand-model-search {
-  // 输入框样式重置
-  :deep(.el-input__wrapper) {
-    box-shadow: none;
-    background-color: transparent;
-  }
-}
-</style>
+<style scoped lang="scss"></style>

@@ -2,191 +2,120 @@
 import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination.vue'
+import { getCommentListApi, getForumListApi } from '@/apis/forumApi.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import { useDebounceFn } from '@vueuse/core'
+import { TimingPreset } from '@/utils/constantsUtil.js'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
-const postList = ref([
-  {
-    id: 1,
-    user: 'Bessie Cooper',
-    avatar: 'https://randomuser.me/api/portraits/women/45.jpg',
-    content: 'Five examples of why internal co...',
-    reports: 6,
-    comments: 685,
-    status: 'Reported',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 2,
-    user: 'Esther Howard',
-    avatar: 'https://randomuser.me/api/portraits/women/68.jpg',
-    content: 'Covid 19 policy updates',
-    reports: 3,
-    comments: 630,
-    status: 'Reported',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 3,
-    user: 'Jenny Wilson',
-    avatar: 'https://randomuser.me/api/portraits/women/25.jpg',
-    content: 'Employee engagement poll...',
-    reports: 1,
-    comments: 742,
-    status: 'Reported',
-    date: '15 May 2025 9:30 am',
-  },
-  {
-    id: 4,
-    user: 'Jerome Bell',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    content: 'Company business travel...',
-    reports: null,
-    comments: 226,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 5,
-    user: 'Floyd Miles',
-    avatar: 'https://randomuser.me/api/portraits/men/64.jpg',
-    content: 'UK employee benefits and han...',
-    reports: null,
-    comments: 356,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 6,
-    user: 'Wade Warren',
-    avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-    content: 'Annual security training is coming',
-    reports: null,
-    comments: 810,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 7,
-    user: 'Jacob Jones',
-    avatar: 'https://randomuser.me/api/portraits/men/45.jpg',
-    content: '5 ways to improve team collaborati...',
-    reports: null,
-    comments: 342,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 8,
-    user: 'Annette Black',
-    avatar: 'https://randomuser.me/api/portraits/women/58.jpg',
-    content: 'Inclusion and diversity - How y...',
-    reports: null,
-    comments: 695,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 9,
-    user: 'Kathryn Murphy',
-    avatar: 'https://randomuser.me/api/portraits/women/28.jpg',
-    content: 'Customer stories - See how our pr...',
-    reports: null,
-    comments: 543,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 10,
-    user: 'Marvin McKinney',
-    avatar: 'https://randomuser.me/api/portraits/men/50.jpg',
-    content: 'Holiday schedules for US employees',
-    reports: null,
-    comments: 519,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 11,
-    user: 'Jane Cooper',
-    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-    content: 'Training center important updat...',
-    reports: null,
-    comments: 450,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 12,
-    user: 'Guy Hawkins',
-    avatar: 'https://randomuser.me/api/portraits/men/42.jpg',
-    content: 'Workplace communication:...',
-    reports: null,
-    comments: 284,
-    status: 'Normal',
-    date: '15 May 2025 9:00 am',
-  },
-  {
-    id: 13,
-    user: 'Eleanor Pena',
-    avatar: 'https://randomuser.me/api/portraits/women/32.jpg',
-    content: 'Welcome our new hires in custome...',
-    reports: null,
-    comments: 330,
-    status: 'Normal',
-    date: '15 May 2025 8:30 am',
-  },
-])
+const commentList = ref([])
 
-const pagination = ref({
+// 分页参数
+const pagination = reactive({
   pageSize: 10,
   total: 0,
   currentPage: 0,
 })
 
+// 条件搜索参数
+const conditionSearchParams = reactive({
+  searchText: '',
+  type: '',
+})
+
+// 筛选参数列表
+const filterParams = ref([
+  {
+    label: 'Article',
+    value: '0',
+  },
+  {
+    label: 'Question',
+    value: '1',
+  },
+])
+
 const router = useRouter()
+
+// 获取帖子列表
+const getCommentList = async () => {
+  const { data } = await getCommentListApi({
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    searchKey: conditionSearchParams.searchText,
+    type: conditionSearchParams.type,
+  })
+  commentList.value = data
+}
+
+// 搜索
+const handleSearchByInput = useDebounceFn(async () => {
+  pagination.currentPage = 0
+  const { data } = await getCommentListApi({
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    searchKey: conditionSearchParams.searchText,
+    type: conditionSearchParams.type,
+  })
+  commentList.value = data
+}, TimingPreset.DEBOUNCE)
+
+// 筛选
+const handleSearchByType = (val) => {
+  conditionSearchParams.type = val
+  refresh()
+}
+
+// 刷新
+const refresh = () => {
+  if (pagination.currentPage === 0) {
+    getCommentList()
+  }
+  pagination.currentPage = 0
+}
 
 const handleViewPostDetails = (row) => {
   router.push({ name: 'Post Details', params: { id: row.id } })
 }
+
+// 错误处理
+const errorHandler = () => true
+
+// 网络请求
+getCommentList()
+
+// 监听翻页
+watch(
+  () => pagination.currentPage,
+  () => {
+    getCommentList()
+  },
+)
 </script>
 
 <template>
-  <!-- 搜索栏 -->
-  <div class="flex-between mx-32 flex">
-    <!-- 条件搜索 -->
-    <el-input placeholder="Search..." class="brand-model-search">
-      <template #prefix>
-        <!-- 前置搜索图标 -->
-        <i class="icon-typessearch h-16 w-16" />
-      </template>
-    </el-input>
+  <div class="flex-between mx-32 flex gap-8">
     <!-- 状态搜索 -->
-    <el-dropdown :hide-on-click="false">
-      <span
-        class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
-      >
-        Status
-        <i class="icon-typesdropdown" />
-      </span>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item>Action 1</el-dropdown-item>
-          <el-dropdown-item>Action 2</el-dropdown-item>
-          <el-dropdown-item>Action 3</el-dropdown-item>
-          <el-dropdown-item disabled>Action 4</el-dropdown-item>
-          <el-dropdown-item divided>Action 5</el-dropdown-item>
-          <el-dropdown-item divided>Action 6</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
+    <base-filter-panel
+      :section-list="filterParams"
+      condition-text="Type"
+      @search="handleSearchByType"
+    />
+    <!-- 条件搜索 -->
+    <base-filter-input
+      v-model="conditionSearchParams.searchText"
+      @input-change="handleSearchByInput"
+    />
   </div>
   <!-- 分割线 -->
   <el-divider class="diver" />
   <div class="pb-38 flex h-full flex-1 flex-col overflow-auto px-32 pt-16">
     <!-- 评论列表表格 -->
     <el-table
-      :data="postList"
+      :data="commentList"
       class="flex-1"
-      :fit="false"
       row-class-name="clickable-row"
       @row-click="handleViewPostDetails"
     >
@@ -203,19 +132,20 @@ const handleViewPostDetails = (row) => {
         <template #default="{ row }">
           <div class="flex items-center">
             <el-avatar
-              v-if="row.avatar"
+              v-if="row.userDto?.logo"
               fit="cover"
-              :src="row.avatar"
+              :src="getFullFilePath(row.userDto?.logo)"
               class="mr-8 h-20 w-20"
               alt="brand icon"
               shape="circle"
               :size="20"
+              @error="errorHandler"
             >
               <template #error>
                 <i class="i-ep:picture" />
               </template>
             </el-avatar>
-            <el-text>{{ row.user }}</el-text>
+            <el-text>{{ row.userDto?.name || '-' }}</el-text>
           </div>
         </template>
       </el-table-column>
@@ -247,7 +177,9 @@ const handleViewPostDetails = (row) => {
         min-width="12%"
       >
         <template #default="{ row }">
-          {{ row.status }}
+          <el-tag :type="row.tipOffCount ? 'danger' : 'success'">
+            {{ row.tipOffCount ? 'Reported' : 'Normal' }}
+          </el-tag>
         </template>
       </el-table-column>
       <!-- 日期 -->
@@ -257,7 +189,11 @@ const handleViewPostDetails = (row) => {
         sortable
         column-key="date"
         min-width="19%"
-      />
+      >
+        <template #default="{ row }">
+          {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
+        </template>
+      </el-table-column>
       <!-- 操作 -->
       <el-table-column column-key="actions" min-width="6%">
         <template #default>
@@ -277,12 +213,4 @@ const handleViewPostDetails = (row) => {
   </div>
 </template>
 
-<style scoped lang="scss">
-:deep(.el-table__header) {
-  @apply w-full!;
-}
-
-:deep(.el-table__body) {
-  @apply w-full!;
-}
-</style>
+<style scoped lang="scss"></style>

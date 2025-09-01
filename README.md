@@ -190,7 +190,7 @@ Create corresponding environment files in the project root directory:
 
 ### Forum Management 模块
 
-- 完成 Forum Management 页面的ui, 未找到数据接口, 等待后续确认
+- 完成 Forum Management 页面的所有功能
 - 完成 Post Details 页面的ui, 未找到数据接口, 等待后续确认
 
 ### Settings 模块
