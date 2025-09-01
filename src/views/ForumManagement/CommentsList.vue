@@ -76,7 +76,12 @@ const refresh = () => {
   pagination.currentPage = 0
 }
 
-const handleViewPostDetails = (row) => {
+// 查看帖子详情
+const handleViewPostDetails = (row, column) => {
+  const { no } = column
+  if (no === 0 || no === 6) {
+    return
+  }
   router.push({ name: 'Post Details', params: { id: row.id } })
 }
 

@@ -2,13 +2,15 @@
 import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination.vue'
-import { getForumListApi } from '@/apis/forumApi.js'
+import { deleteForumApi, getForumListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useDebounceFn } from '@vueuse/core'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import BaseDialog from '@/components/BaseDialog.vue'
+import { ElMessage } from 'element-plus'
 
 // 帖子列表
 const postList = ref([])
@@ -40,7 +42,16 @@ const filterParams = ref([
   },
 ])
 
-const handleViewPostDetails = (row) => {
+const dialogConfirmDeletePostVisible = ref(false)
+
+const selectedPostId = ref('')
+
+// 帖子详情
+const handleViewPostDetails = (row, column) => {
+  const { no } = column
+  if (no === 0 || no === 7) {
+    return
+  }
   router.push({ name: 'Post Details', params: { id: row.id } })
 }
 
@@ -82,6 +93,23 @@ const refresh = () => {
     getPostList()
   }
   pagination.currentPage = 0
+}
+
+// 删除论坛
+const handleDeleteForum = async () => {
+  try {
+    await deleteForumApi(selectedPostId.value)
+    // 提示
+    ElMessage.success('Delete successfully')
+    refresh()
+  } finally {
+    dialogConfirmDeletePostVisible.value = false
+  }
+}
+
+const openConfirmDeleteDialog = (id) => {
+  selectedPostId.value = id
+  dialogConfirmDeletePostVisible.value = true
 }
 
 // 网络请求
@@ -206,12 +234,14 @@ watch(
       </el-table-column>
       <!-- 操作 -->
       <el-table-column column-key="actions" min-width="6%">
-        <template #default>
+        <template #default="{ row }">
           <el-dropdown trigger="click">
             <i class="icon-more-2-line cursor-pointer" />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>Delete</el-dropdown-item>
+                <el-dropdown-item @click="openConfirmDeleteDialog(row.id)">
+                  Delete
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -221,6 +251,20 @@ watch(
     <!-- 添加按钮 -->
     <base-pagination v-model="pagination" />
   </div>
+  <!-- 是否删除贴文弹窗 -->
+  <base-dialog
+    v-model="dialogConfirmDeletePostVisible"
+    title="Logout"
+    button-type="danger"
+    @cancel="dialogConfirmDeletePostVisible = false"
+    @confirm="handleDeleteForum"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-medium text-neutrals-off-black">
+        Are you sure you want to delete this post?
+      </p>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss"></style>
