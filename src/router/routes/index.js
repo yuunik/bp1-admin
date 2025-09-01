@@ -491,9 +491,20 @@ const constantRoutes = [
       {
         path: '/share/vehicle-report/:id',
         name: 'Vehicle Report',
-        component: () => import('@/share/ReportInfo.vue'),
+        component: () => import('@/share/VehicleReportInfo.vue'),
         meta: {
           title: 'Vehicle Report',
+          showInMenu: false,
+          showInBreadcrumb: false,
+        },
+      },
+      // 车辆 DTCs 报告页
+      {
+        path: '/share/vehicle-dtcs-report/:id',
+        name: 'Vehicle DTCs Report',
+        component: () => import('@/share/VehicleDTCsReportInfo.vue'),
+        meta: {
+          title: 'Vehicle DTCs Report',
           showInMenu: false,
           showInBreadcrumb: false,
         },

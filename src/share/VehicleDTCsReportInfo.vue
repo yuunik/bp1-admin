@@ -3,7 +3,11 @@ import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
 import { useRoute } from 'vue-router'
 
-import { getImgUrlToBase64, getVehicleReportInfoApi } from '@/apis/shareApi.js'
+import {
+  getImgUrlToBase64,
+  getVehicleDtcReportInfoApi,
+  getVehicleReportInfoApi,
+} from '@/apis/shareApi.js'
 import { getFullDate, getVehicleReportGeneratedTime } from '@/utils/dateUtil.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
@@ -29,7 +33,7 @@ const showExportButton = ref(true)
 const isLoading = ref(false)
 
 // 车辆报告详情
-const vehicleReportInfo = reactive({})
+const vehicleDTCsReportInfo = reactive({})
 
 const route = useRoute()
 
@@ -123,16 +127,16 @@ const exportPDF = () => {
 }
 
 const vehicleImg = ref('')
-// 获取车辆报告详情
-const getVehicleReportInfo = async (id) => {
+// 获取车辆 DTCs 报告详情
+const getVehicleDTCsReportInfo = async (id) => {
   isLoading.value = true
   try {
-    const { data } = await getVehicleReportInfoApi(id)
+    const { data } = await getVehicleDtcReportInfoApi(id)
     // 获取成功
-    Object.assign(vehicleReportInfo, data)
+    Object.assign(vehicleDTCsReportInfo, data)
     // 将网络图片转为本地图片
     const res = await getImgUrlToBase64(
-      getFullFilePath(vehicleReportInfo.vehicleDto?.cover),
+      getFullFilePath(vehicleDTCsReportInfo.vehicleDto?.cover),
     )
     vehicleImg.value = res
     isLoading.value = false
@@ -146,25 +150,25 @@ const getVehicleReportInfo = async (id) => {
 const { id } = route.params
 if (id) {
   // 获取到id
-  getVehicleReportInfo(id)
+  getVehicleDTCsReportInfo(id)
 }
 
 // 系统分类列表
 const systemCategoryList = computed(() => [
-  ...new Set(vehicleReportInfo.reportDtcItemDtos.map((item) => item.type)),
+  ...new Set(vehicleDTCsReportInfo.reportDtcItemDtos.map((item) => item.type)),
 ])
 
 // 是否有 fault code 列表
 const hasFaultCodeList = computed(
   () =>
-    vehicleReportInfo.reportDtcItemDtos &&
-    vehicleReportInfo.reportDtcItemDtos.length > 0,
+    vehicleDTCsReportInfo.reportDtcItemDtos &&
+    vehicleDTCsReportInfo.reportDtcItemDtos.length > 0,
 )
 
 // 引擎分类
 const engineItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.ENGINE,
       )
     : [],
@@ -183,7 +187,7 @@ const engineSystemDtcCount = computed(() =>
 // 变速箱分类
 const transmissionItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.TRANSMISSION,
       )
     : [],
@@ -202,7 +206,7 @@ const transmissionSystemDtcCount = computed(() =>
 // 制动分类
 const brakesItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.BRAKES,
       )
     : [],
@@ -221,7 +225,7 @@ const brakesSystemDtcCount = computed(() =>
 // 电气分类
 const electricalItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.ELECTRICAL,
       )
     : [],
@@ -240,7 +244,7 @@ const electricalSystemDtcCount = computed(() =>
 // 底盘分类
 const chassisItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.CHASSIS,
       )
     : [],
@@ -259,7 +263,7 @@ const chassisSystemDtcCount = computed(() =>
 // 车身分类
 const bodyAndTrimItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.BODY_AND_TRIM,
       )
     : [],
@@ -278,7 +282,7 @@ const bodyAndTrimSystemDtcCount = computed(() =>
 // 其他分类
 const otherItemList = computed(() =>
   hasFaultCodeList.value
-    ? vehicleReportInfo.reportDtcItemDtos.filter(
+    ? vehicleDTCsReportInfo.reportDtcItemDtos.filter(
         (item) => item.type === VehicleEcuCategory.OTHER,
       )
     : [],
@@ -308,10 +312,10 @@ const categoryIconMap = Object.freeze({
   <div class="report-container flex flex-col px-40 py-32" v-loading="isLoading">
     <header class="flex flex-col gap-4">
       <h1 class="poppins-28px-semibold text-neutrals-off-black">
-        Vehicle Report
+        Vehicle DTCs Report
       </h1>
       <h2 class="poppins-12px-medium text-neutrals-grey-4">
-        {{ getVehicleReportGeneratedTime(vehicleReportInfo.createTime) }}
+        {{ getVehicleReportGeneratedTime(vehicleDTCsReportInfo.createTime) }}
       </h2>
     </header>
     <main class="relative">
@@ -320,7 +324,7 @@ const categoryIconMap = Object.freeze({
         <!-- 车辆信息 -->
         <section class="my-16 flex items-center gap-32">
           <el-image
-            :src="getFullFilePath(vehicleReportInfo.vehicleDto?.cover)"
+            :src="getFullFilePath(vehicleDTCsReportInfo.vehicleDto?.cover)"
             alt="user vehicle image"
             class="w-200 rounded-16"
             fit="cover"
@@ -339,7 +343,7 @@ const categoryIconMap = Object.freeze({
             <h2 class="items-centers flex">
               <em class="poppins-20px-semibold text-neutrals-blue not-italic">
                 {{
-                  `${vehicleReportInfo.brand} ${vehicleReportInfo.model} ${vehicleReportInfo.year}` ||
+                  `${vehicleDTCsReportInfo.brand} ${vehicleDTCsReportInfo.model} ${vehicleDTCsReportInfo.year}` ||
                   '-'
                 }}
               </em>
@@ -350,7 +354,7 @@ const categoryIconMap = Object.freeze({
                 <el-text
                   class="poppins-10px-regular text-truncate flex-[1_1_189px]"
                 >
-                  {{ vehicleReportInfo.vin || '-' }}
+                  {{ vehicleDTCsReportInfo.vin || '-' }}
                 </el-text>
               </li>
               <li class="flex items-center">
@@ -360,7 +364,7 @@ const categoryIconMap = Object.freeze({
                 <el-text
                   class="poppins-10px-regular text-truncate flex-[1_1_189px]"
                 >
-                  {{ vehicleReportInfo.licensePlate || '-' }}
+                  {{ vehicleDTCsReportInfo.licensePlate || '-' }}
                 </el-text>
               </li>
               <li class="flex items-center">
@@ -370,166 +374,13 @@ const categoryIconMap = Object.freeze({
                 <el-text
                   class="poppins-10px-regular text-truncate flex-[1_1_189px]"
                 >
-                  {{ getFormatNumber(vehicleReportInfo.mileage) || '-' }} km
+                  {{ getFormatNumber(vehicleDTCsReportInfo.mileage) || '-' }} km
                 </el-text>
               </li>
             </ul>
           </div>
         </section>
         <div class="flex flex-col gap-24">
-          <!-- 车辆评分 -->
-          <section
-            class="bg-branding-primary rounded-16 text-neutrals-white flex gap-16 p-12"
-          >
-            <!-- 评分 -->
-            <h2 class="flex flex-col gap-4">
-              <em class="hanno-20px-regular not-italic">
-                {{ vehicleReportInfo.modificationCount }}
-              </em>
-              <span class="text-10px-regular">out of 10</span>
-            </h2>
-            <!-- 分割线 -->
-            <el-divider direction="vertical" class="bg-neutrals-grey-4!" />
-            <!-- 车辆评分等级 -->
-            <div class="flex flex-1 flex-col gap-8">
-              <span class="roboto-12px-semibold">Evaluation Level</span>
-              <p class="text-neutrals-grey-2 text-10px-regular">
-                {{ vehicleReportInfo.explain || '-' }}
-              </p>
-            </div>
-          </section>
-          <!-- 总览 -->
-          <section class="section-container">
-            <h3 class="section-header">
-              <em class="title">Overview</em>
-            </h3>
-            <!-- Issues -->
-            <div class="flex flex-col gap-8">
-              <h4 class="ml-8">
-                <span class="poppins-10px-medium">Issues</span>
-              </h4>
-              <div class="flex gap-8">
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <el-image
-                    :src="FaultCodesIcon"
-                    class="h-24 w-24"
-                    fit="cover"
-                  />
-                  <p
-                    :class="[
-                      'poppins-10px-semibold',
-                      vehicleReportInfo.faultCodeCount > 0
-                        ? 'text-status-colours-red'
-                        : 'text-neutrals-off-black',
-                    ]"
-                  >
-                    {{
-                      vehicleReportInfo.faultCodeCount
-                        ? `${vehicleReportInfo.faultCodeCount} Fault Codes`
-                        : '0 Fault Code'
-                    }}
-                  </p>
-                </div>
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <base-svg-icon
-                    name="prediction-icon"
-                    size="24px"
-                    :color="
-                      vehicleReportInfo.reportPredictionDtos?.length > 0
-                        ? '#EF3C30'
-                        : '#6F7788'
-                    "
-                  ></base-svg-icon>
-                  <p
-                    :class="[
-                      'poppins-10px-semibold',
-                      vehicleReportInfo.reportPredictionDtos?.length > 0
-                        ? 'text-status-colours-red'
-                        : 'text-neutrals-off-black',
-                    ]"
-                  >
-                    {{
-                      `${vehicleReportInfo.reportPredictionDtos?.length} Prediction`
-                    }}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <!-- Expense Records -->
-            <div class="flex flex-col gap-8">
-              <h4 class="ml-8">
-                <span class="poppins-10px-medium">Expense Records</span>
-              </h4>
-              <div class="flex gap-8">
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <base-svg-icon
-                    name="fi_tool"
-                    size="24px"
-                    color="#6F7788"
-                  ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
-                    {{ vehicleReportInfo.repairCount ?? '-' }} Repair
-                  </p>
-                </div>
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <base-svg-icon
-                    name="fi_file-minus"
-                    size="24px"
-                    color="#6F7788"
-                  ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
-                    {{ vehicleReportInfo.maintenanceCount ?? '-' }}
-                    Maintenance
-                  </p>
-                </div>
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <base-svg-icon
-                    name="fuel-level"
-                    size="24px"
-                    color="#6F7788"
-                  ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
-                    {{ vehicleReportInfo.fuelCount ?? '-' }} Fuel
-                  </p>
-                </div>
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <base-svg-icon
-                    name="services-icon"
-                    size="24px"
-                    color="#6F7788"
-                  ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
-                    {{ vehicleReportInfo.seiviceCount ?? '-' }} Services
-                  </p>
-                </div>
-                <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
-                >
-                  <base-svg-icon
-                    name="modification"
-                    size="24px"
-                    color="#6F7788"
-                  ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
-                    {{ vehicleReportInfo.modificationCount ?? '-' }}
-                    Modification
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
           <!-- Vehicle Information -->
           <section class="section-container">
             <h3 class="section-header">
@@ -541,51 +392,52 @@ const categoryIconMap = Object.freeze({
               <li>
                 <label>Vehicle Type</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.vehicleType || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.vehicleType || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Primary Colour</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.primaryColour || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.primaryColour || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Manufacturing Year</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.year || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.year || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Chassis No.</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.vin || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.vin || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Original Reg. Date</label>
                 <el-text>
                   {{
-                    getFullDate(vehicleReportInfo.vehicleDto?.createTime) || '-'
+                    getFullDate(vehicleDTCsReportInfo.vehicleDto?.createTime) ||
+                    '-'
                   }}
                 </el-text>
               </li>
               <li>
                 <label>Transfer Count</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.transferCount || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.transferCount || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>COE Category</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.coeCategory || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.coeCategory || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Engine Capacity</label>
                 <el-text>
-                  {{ vehicleReportInfo.vehicleDto?.engineCapacity || '-' }}
+                  {{ vehicleDTCsReportInfo.vehicleDto?.engineCapacity || '-' }}
                 </el-text>
               </li>
             </ul>
@@ -594,8 +446,8 @@ const categoryIconMap = Object.freeze({
           <section
             class="section-container"
             v-if="
-              vehicleReportInfo.reportDtcItemDtos &&
-              vehicleReportInfo.reportDtcItemDtos.length > 0
+              vehicleDTCsReportInfo.reportDtcItemDtos &&
+              vehicleDTCsReportInfo.reportDtcItemDtos.length > 0
             "
           >
             <h3 class="section-header">
@@ -1337,219 +1189,6 @@ const categoryIconMap = Object.freeze({
                 </div>
                 <el-divider />
               </template>
-            </div>
-          </section>
-          <!-- Prediction -->
-          <section
-            class="section-container"
-            v-if="
-              vehicleReportInfo.reportPredictionDtos &&
-              vehicleReportInfo.reportPredictionDtos.length > 0
-            "
-          >
-            <h3 class="section-header">
-              <em class="title">Prediction</em>
-            </h3>
-            <!-- table -->
-            <div>
-              <!-- theader -->
-              <el-row
-                class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold"
-                :gutter="16"
-              >
-                <el-col :span="2"></el-col>
-                <el-col :span="11">Category</el-col>
-                <el-col :span="11">Condition</el-col>
-              </el-row>
-              <!-- tbody -->
-              <template
-                v-for="predictionDto in vehicleReportInfo.reportPredictionDtos"
-                :key="predictionDto.id"
-              >
-                <el-row class="flex items-center">
-                  <el-col :span="2">
-                    <el-image
-                      :src="
-                        getFullFilePath(predictionDto?.predictionsToMGDto?.logo)
-                      "
-                      fit="cover"
-                      class="h-16 w-16"
-                    >
-                      <template #error>
-                        <el-image
-                          src="https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png"
-                          fit="cover"
-                          class="h-16 w-16"
-                        />
-                      </template>
-                    </el-image>
-                  </el-col>
-                  <el-col
-                    :span="11"
-                    class="poppins-10px-regular text-neutrals-off-black"
-                  >
-                    {{ predictionDto.name }}
-                  </el-col>
-                  <el-col :span="11">
-                    <span
-                      :class="[
-                        'poppins-10px-semibold',
-                        {
-                          'text-status-colours-red': predictionDto.value <= 0.3,
-                          'text-neutrals-off-black':
-                            predictionDto.value > 0.3 &&
-                            predictionDto.value < 0.8,
-                          'text-status-colours-green':
-                            predictionDto.value >= 0.8,
-                        },
-                      ]"
-                    >
-                      {{ predictionDto.value * 100 }} %
-                    </span>
-                  </el-col>
-                </el-row>
-                <el-divider class="divider-neutral-grey-4-1px!" />
-              </template>
-            </div>
-          </section>
-          <!-- Expense Records -->
-          <section
-            class="section-container"
-            v-if="
-              vehicleReportInfo.reportCategoryDtos &&
-              vehicleReportInfo.reportCategoryDtos.length > 0
-            "
-          >
-            <h3 class="section-header">
-              <em class="title">Expense Records</em>
-            </h3>
-            <!-- total cost -->
-            <h4 class="text-neutrals-off-black flex items-center gap-8">
-              <span class="poppins-10px-regular">Total Cost (SGD):</span>
-              <strong class="poppins-16px-semibold not-italic">
-                $
-                {{
-                  vehicleReportInfo.reportCategoryDtos?.reduce(
-                    (acc, cur) => acc + parseFloat(cur.amount),
-                    0,
-                  )
-                }}
-              </strong>
-            </h4>
-            <!-- table category -->
-            <div class="flex flex-col gap-8">
-              <!-- title -->
-              <h5
-                class="border-b-solid poppins-12px-semibold text-neutrals-off-black border-b border-b-[#1B1A1E] px-12 pb-4"
-              >
-                Category
-              </h5>
-              <!-- theader -->
-              <el-row
-                class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold"
-                :gutter="16"
-              >
-                <el-col :span="3"></el-col>
-                <el-col :span="7">Category</el-col>
-                <el-col :span="7">Expense (SGD)</el-col>
-                <el-col :span="7">Percentage</el-col>
-              </el-row>
-              <!-- tbody -->
-              <template
-                v-for="categoryDto in vehicleReportInfo.reportCategoryDtos"
-                :key="categoryDto.category"
-              >
-                <el-row class="flex-center flex">
-                  <el-col :span="3">
-                    <el-image
-                      :src="categoryIconMap[categoryDto.category]"
-                      fit="cover"
-                      class="h-16 w-16"
-                    />
-                  </el-col>
-                  <el-col
-                    :span="7"
-                    class="poppins-10px-regular text-neutrals-off-black"
-                  >
-                    {{ categoryDto.category }}
-                  </el-col>
-                  <el-col :span="7">
-                    <span class="poppins-10px-semibold text-neutrals-off-black">
-                      $ {{ categoryDto.amount }}
-                    </span>
-                  </el-col>
-                  <el-col :span="7">
-                    <span class="poppins-10px-semibold text-neutrals-off-black">
-                      {{ categoryDto.percentage * 100 }} %
-                    </span>
-                  </el-col>
-                </el-row>
-                <el-divider class="divider-neutral-grey-4-1px!" />
-              </template>
-            </div>
-            <!-- modules records -->
-            <div
-              class="flex flex-col gap-8"
-              v-if="vehicleReportInfo.reportExpenseDtos.length"
-            >
-              <!-- title -->
-              <h5
-                class="border-b-solid poppins-12px-semibold text-neutrals-off-black border-b border-b-[#1B1A1E] px-12 pb-4"
-              >
-                Records({{ vehicleReportInfo.reportExpenseDtos.length }})
-              </h5>
-              <!-- record -->
-              <div
-                v-for="expenseDto in vehicleReportInfo.reportExpenseDtos"
-                :key="expenseDto.id"
-                class="flex flex-col gap-8"
-              >
-                <!-- record date -->
-                <div class="poppins-10px-regular flex items-center gap-12 py-8">
-                  <p>05 Feb 2025</p>
-                  <div class="flex items-center gap-8">
-                    <el-avatar
-                      :src="getFullFilePath(expenseDto.logo)"
-                      fit="cover"
-                      :size="16"
-                    />
-                    <span>ORCA Automotive</span>
-                  </div>
-                </div>
-                <!-- thead -->
-                <el-row
-                  class="bg-neutrals-grey-1 rounded-t-8 poppins-10px-semibold"
-                  :gutter="16"
-                >
-                  <el-col :span="10">Item</el-col>
-                  <el-col :span="7">Quantity</el-col>
-                  <el-col :span="7">Amount (SGD)</el-col>
-                </el-row>
-                <!-- tbody -->
-                <template
-                  v-if="
-                    expenseDto.reportExpenseItemDtos &&
-                    expenseDto.reportExpenseItemDtos.length > 0
-                  "
-                  v-for="expenseItemDto in expenseDto.reportExpenseItemDtos"
-                  :key="expenseItemDto.id"
-                >
-                  <el-row class="poppins-10px-regular flex items-center">
-                    <el-col :span="10" class="flex flex-col">
-                      <span>
-                        {{ expenseItemDto.name }}
-                        <br />
-                        {{ expenseItemDto.category || 'Uncategorized' }}
-                      </span>
-                    </el-col>
-                    <el-col :span="7">
-                      {{ expenseItemDto.quantity }}
-                    </el-col>
-                    <el-col :span="7">${{ expenseItemDto.amount }}</el-col>
-                  </el-row>
-                  <el-divider class="divider-neutral-grey-4-1px!" />
-                </template>
-              </div>
             </div>
           </section>
         </div>

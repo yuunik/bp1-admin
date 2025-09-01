@@ -12,6 +12,8 @@ const ShareApi = Object.freeze({
   GET_AI_QUESTION_INFO: '/aichat/info',
   // 获取车辆报告详情
   GET_VEHICLE_REPORT_INFO: '/report/getreportinfo',
+  // 获取车辆 DTCs 报告详情
+  GET_VEHICLE_DTC_REPORT_INFO: '/dtc/getdtcreportinfo',
 })
 
 /**
@@ -54,6 +56,21 @@ export const getVehicleReportInfoApi = (id) => {
   data.append('reportId', id)
   return request({
     url: ShareApi.GET_VEHICLE_REPORT_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆 DTCs 报告详情
+ * @param id 车辆 DTCs 报告id
+ * @returns {Promise<ApiResponse<VehicleDtcReport>>}
+ */
+export const getVehicleDtcReportInfoApi = (id) => {
+  const data = new FormData()
+  data.append('reportId', id)
+  return request({
+    url: ShareApi.GET_VEHICLE_DTC_REPORT_INFO,
     method: 'POST',
     data,
   })
