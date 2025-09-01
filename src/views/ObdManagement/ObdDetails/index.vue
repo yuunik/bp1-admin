@@ -26,6 +26,7 @@ import { Line } from 'vue-chartjs'
 import { onMounted } from 'vue'
 import dayjs from 'dayjs'
 import { getOBDConnectedCountListApi, openOBDApi } from '@/apis/appApi.js'
+import BasePagination from '@/components/BasePagination.vue'
 
 // 当前激活的标签
 const activeTabName = ref(ObdDetailsTabs.OBD_DETAILS)
@@ -33,8 +34,8 @@ const activeTabName = ref(ObdDetailsTabs.OBD_DETAILS)
 // OBD 信息
 const obdInfo = ref({})
 
-// 当前 OBD 的id
-const currentOBDId = ref('')
+// 当前的OBD id
+const currentObdId = computed(() => obdInfo.value.id)
 
 // 路由
 const route = useRoute()
@@ -50,12 +51,15 @@ const getOBDInfo = async (id) => {
 
 // 解绑 OBD 绑定的用户
 const handleUnbindUser = async () => {
-  await unbindOBDApi(currentOBDId.value)
-  await getOBDInfo(id)
-  ElMessage.success('Unbind success')
+  console.log(currentObdId.value, '@@@@@@@@@@@@@@')
+  try {
+    await unbindOBDApi(currentObdId.value)
+    await getOBDInfo(currentObdId.value)
+    ElMessage.success('Unbind success')
+  } finally {
+    unbindUserDialogVisible.value = false
+  }
 }
-
-const obdDetailsRef = ref(null)
 
 // 绑定车辆列表
 const boundVehicleList = ref([])
@@ -72,9 +76,6 @@ const operationRecordParams = reactive({
 
 // obd 操作记录列表
 const operationRecordList = ref([])
-
-// 当前的OBD id
-const currentObdId = ref('')
 
 // OBD 链接量统计数据
 const obdConnectedCountList = ref([]) // time - 7
@@ -196,10 +197,6 @@ const getOBDConnectedCountList = async (id) => {
 }
 
 const behaviorStatisticsRef = ref(null)
-const scrollToBehaviorStatistics = () => {
-  obdDetailRef.value.scrollTop =
-    behaviorStatisticsRef.value.getBoundingClientRect().top - 250
-}
 
 // 开启OBD
 const openOBD = async (obdId) => {
@@ -207,7 +204,7 @@ const openOBD = async (obdId) => {
   // 提示
   ElMessage.success('Open success')
   // 刷新
-  getOBDInfo?.(obdId)
+  getOBDInfo(obdId)
 }
 
 // 关闭 OBD
@@ -216,7 +213,7 @@ const handleCloseOBD = async (obdId) => {
   // 关闭成功
   ElMessage.success('Close success')
   // 刷新
-  getOBDInfo?.(obdId)
+  getOBDInfo(obdId)
 }
 
 // 处理OBD 状态的切换
@@ -263,7 +260,6 @@ onMounted(async () => {
     params: { id },
   } = route
   if (id) {
-    currentObdId.value = id
     await Promise.all([
       getOBDInfo(id),
       getOBDBindHistoryList(id),
@@ -426,7 +422,7 @@ watch(
             <el-table-column>
               <template #default="{ row }">
                 <el-button
-                  v-if="row.status === 0"
+                  v-if="row.userId"
                   @click.stop="handleUnbindUser(row)"
                   class="rounded-full!"
                 >
@@ -548,6 +544,7 @@ watch(
         </div>
       </div>
     </el-scrollbar>
+    <!-- 解绑用户 -->
     <el-dialog
       v-model="unbindUserDialogVisible"
       title="Unbind User ?"
@@ -566,11 +563,7 @@ watch(
           <el-button class="flex-1" @click="unbindUserDialogVisible = false">
             Cancel
           </el-button>
-          <el-button
-            type="danger"
-            class="flex-1"
-            @click="handleUnbindUser(obdInfo)"
-          >
+          <el-button type="danger" class="flex-1" @click="handleUnbindUser">
             Unbind
           </el-button>
         </div>
