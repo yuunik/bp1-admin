@@ -6,13 +6,14 @@ import { useRouter } from 'vue-router'
 import BasePagination from '@/components/BasePagination.vue'
 import { getBrandModalListApi } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import { TimingPreset } from '@/utils/constantsUtil.js'
 
 // 响应式数据
 const loading = ref(false)
-// 搜索文本
-const searchText = ref('')
+
 // Brand Model 列表数据
-const tableData = reactive([])
+const tableData = ref([])
 
 // 分页数据
 const pagination = reactive({
@@ -27,20 +28,27 @@ const sortParams = reactive({
   sortBy: '',
 })
 
+// 条件搜索参数
+const conditionSearchParams = reactive({
+  searchText: '',
+  status: '',
+})
+
 // 获取Brand Model 列表数据
 const getBrandModelList = useDebounceFn(async () => {
   loading.value = true
   const { data, count } = await getBrandModalListApi({
-    searchKey: searchText.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
+    searchKey: conditionSearchParams.searchText,
+    status: conditionSearchParams.status,
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
   })
   // 更新分页数据
   pagination.total = count
   // 更新表格数据
-  Object.assign(tableData, data)
+  tableData.value = data
   loading.value = false
 }, 500)
 
@@ -73,6 +81,20 @@ const changeSortChange = (data) => {
   getBrandModelList()
 }
 
+// 搜索
+const handleSearchByInput = useDebounceFn(async () => {
+  pagination.currentPage = 0
+  const { data } = await getBrandModalListApi({
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    searchKey: conditionSearchParams.searchText,
+    status: conditionSearchParams.status,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+  })
+  tableData.value = data
+}, TimingPreset.DEBOUNCE)
+
 // 网络请求
 getBrandModelList()
 
@@ -86,7 +108,7 @@ watch(
 <template>
   <section class="flex h-full flex-col">
     <!-- Brand Model Header -->
-    <div class="px-32 pb-16">
+    <div class="flex flex-col gap-16 px-32 pb-16">
       <!-- 标题栏 -->
       <div class="flex-between">
         <h3 class="heading-h2-20px-medium">Brand & Model</h3>
@@ -100,19 +122,7 @@ watch(
         </el-button>
       </div>
       <!-- 搜索栏 -->
-      <div class="flex-between flex">
-        <!-- 条件搜索 -->
-        <el-input
-          placeholder="Search..."
-          class="brand-model-search mt-16"
-          v-model="searchText"
-          @input="getBrandModelList"
-        >
-          <template #prefix>
-            <!-- 前置搜索图标 -->
-            <i class="icon-typessearch h-16 w-16" />
-          </template>
-        </el-input>
+      <div class="flex-between h-24">
         <!-- 状态搜索 -->
         <el-dropdown :hide-on-click="false">
           <span
@@ -132,6 +142,11 @@ watch(
             </el-dropdown-menu>
           </template>
         </el-dropdown>
+        <!-- 条件搜索 -->
+        <base-filter-input
+          v-model="conditionSearchParams.searchText"
+          @input-change="handleSearchByInput"
+        />
       </div>
     </div>
     <!-- 分割线 -->
@@ -159,7 +174,7 @@ watch(
         />
         <!-- 品牌名称 -->
         <el-table-column
-          prop="brand"
+          prop="name"
           label="Brand"
           sortable="custom"
           min-width="43%"
