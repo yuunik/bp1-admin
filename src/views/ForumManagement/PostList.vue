@@ -254,7 +254,7 @@ watch(
   <!-- 是否删除贴文弹窗 -->
   <base-dialog
     v-model="dialogConfirmDeletePostVisible"
-    title="Logout"
+    title="Delete Post"
     button-type="danger"
     @cancel="dialogConfirmDeletePostVisible = false"
     @confirm="handleDeleteForum"

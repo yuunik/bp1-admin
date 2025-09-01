@@ -9,6 +9,8 @@ import { useDebounceFn } from '@vueuse/core'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import BaseDialog from '@/components/BaseDialog.vue'
+import { ElMessage } from 'element-plus'
 
 const commentList = ref([])
 
@@ -36,6 +38,12 @@ const filterParams = ref([
     value: '1',
   },
 ])
+
+// 删除评论弹窗
+const dialogConfirmDeleteCommentVisible = ref(false)
+
+// 当前选中的评论 id
+const selectedCommentId = ref('')
 
 const router = useRouter()
 
@@ -87,6 +95,28 @@ const handleViewPostDetails = (row, column) => {
 
 // 错误处理
 const errorHandler = () => true
+
+// 打开删除评论弹窗
+const handleOpenDeleteCommentDialog = (id) => {
+  // 设置选中评论 id
+  selectedCommentId.value = id
+  // 打开弹窗
+  dialogConfirmDeleteCommentVisible.value = true
+}
+
+// 删除评论
+const handleDeleteComment = async () => {
+  try {
+    await getCommentListApi(selectedCommentId.value)
+    // 提示
+    ElMessage.success('Delete successfully')
+    // 刷新列表
+    refresh()
+  } finally {
+    // 关闭弹窗
+    dialogConfirmDeleteCommentVisible.value = false
+  }
+}
 
 // 网络请求
 getCommentList()
@@ -201,12 +231,16 @@ watch(
       </el-table-column>
       <!-- 操作 -->
       <el-table-column column-key="actions" min-width="6%">
-        <template #default>
+        <template #default="{ row }">
           <el-dropdown trigger="click">
             <i class="icon-more-2-line cursor-pointer" />
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>Delete</el-dropdown-item>
+                <el-dropdown-item
+                  @click="handleOpenDeleteCommentDialog(row.id)"
+                >
+                  Delete
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -216,6 +250,20 @@ watch(
     <!-- 添加按钮 -->
     <base-pagination v-model="pagination" />
   </div>
+  <!-- 是否删除评论弹窗 -->
+  <base-dialog
+    v-model="dialogConfirmDeleteCommentVisible"
+    title="Delete comment ?"
+    button-type="danger"
+    @cancel="dialogConfirmDeleteCommentVisible = false"
+    @confirm="handleDeleteComment"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-medium text-neutrals-off-black">
+        Are you sure you want to delete this comment?
+      </p>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss"></style>

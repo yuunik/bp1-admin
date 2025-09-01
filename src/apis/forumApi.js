@@ -12,6 +12,8 @@ const ForumApi = Object.freeze({
   GET_COMMENT_LIST: '/manager/comment/comments',
   // 删除论坛接口
   DELETE_FORUM: '/manager/forum/delete',
+  // 删除评论接口
+  DELETE_COMMENT: '/manager/comment/delete',
 })
 
 // 获取 token
@@ -54,6 +56,17 @@ export const deleteForumApi = (forumId) => {
 
   return request({
     url: ForumApi.DELETE_FORUM,
+    method: 'POST',
+    data,
+  })
+}
+
+export const deleteCommentApi = (commentId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('commentId', commentId)
+  return request({
+    url: ForumApi.DELETE_COMMENT,
     method: 'POST',
     data,
   })

@@ -364,6 +364,12 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
   // 菜单栏
   .nav-menu {
     @apply w-210 flex-1 overflow-hidden border-none;
+
+    :deep(.el-menu-item) {
+      &:not(:last-child) {
+        margin-bottom: 4px;
+      }
+    }
   }
 
   // 底部用户信息相关设置
