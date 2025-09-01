@@ -186,7 +186,7 @@ Create corresponding environment files in the project root directory:
 
 - 完成 External 页面的ui, 及接口接入工作
 - 完成 Create Workshp 页面所有功能
-- External Details 页面的ui待做
+- 完成 External Details 页面的ui, 未找到数据接口, 等待后续确认
 
 ### Forum Management 模块
 
