@@ -244,62 +244,67 @@ watch(
 </script>
 
 <template>
-  <!-- TODO 用户列表使用字段待确定.... -->
   <router-view v-if="$route.name === 'External Manage'" />
+  <router-view v-else-if="$route.name === 'Create Workshop'" />
   <section class="flex h-full flex-col" v-else>
     <!-- Extern Header -->
-    <div class="px-32 pb-16">
+    <div class="flex-between mx-32 mb-16 h-32">
       <!-- 标题栏 -->
-      <div class="flex-between">
-        <h3 class="heading-h2-20px-medium">Extern</h3>
-        <!-- 创建修理厂按钮 -->
-        <el-button type="primary" class="w-70 h-32">Create</el-button>
-      </div>
-      <!-- tab 栏 -->
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane
-          :label="UserManagementTab.PERSON"
-          :name="UserManagementTab.PERSON"
-        />
-        <el-tab-pane
-          :label="UserManagementTab.Workshop"
-          :name="UserManagementTab.Workshop"
-        />
-      </el-tabs>
-      <!-- 搜索栏 -->
-      <div class="flex-between flex">
-        <!-- 条件搜索 -->
-        <el-input
-          v-model="searchKey"
-          @input="handleSearchByCondition"
-          placeholder="Search..."
-          class="extern-search mt-16"
+      <h3 class="heading-h2-20px-medium">Extern</h3>
+      <!-- 创建修理厂按钮 -->
+      <el-button
+        type="primary"
+        class="w-70 h-32"
+        @click="$router.push({ name: 'Create Workshop' })"
+        v-show="activeTab === UserManagementTab.Workshop"
+      >
+        Create
+      </el-button>
+    </div>
+    <!-- tab 栏 -->
+    <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+      <el-tab-pane
+        :label="UserManagementTab.PERSON"
+        :name="UserManagementTab.PERSON"
+      />
+      <el-tab-pane
+        :label="UserManagementTab.Workshop"
+        :name="UserManagementTab.Workshop"
+      />
+    </el-tabs>
+    <!-- 搜索栏 -->
+    <div class="flex-between mx-32">
+      <!-- 条件搜索 -->
+      <el-input
+        v-model="searchKey"
+        @input="handleSearchByCondition"
+        placeholder="Search..."
+        class="extern-search mt-16"
+      >
+        <template #prefix>
+          <!-- 前置搜索图标 -->
+          <i class="icon-typessearch h-16 w-16" />
+        </template>
+      </el-input>
+      <!-- 状态搜索 -->
+      <el-dropdown trigger="click">
+        <span
+          class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
         >
-          <template #prefix>
-            <!-- 前置搜索图标 -->
-            <i class="icon-typessearch h-16 w-16" />
-          </template>
-        </el-input>
-        <!-- 状态搜索 -->
-        <el-dropdown trigger="click">
-          <span
-            class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
-          >
-            Status
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item>Action 1</el-dropdown-item>
-              <el-dropdown-item>Action 2</el-dropdown-item>
-              <el-dropdown-item>Action 3</el-dropdown-item>
-              <el-dropdown-item disabled>Action 4</el-dropdown-item>
-              <el-dropdown-item divided>Action 5</el-dropdown-item>
-              <el-dropdown-item divided>Action 6</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
+          Status
+          <i class="icon-typesdropdown" />
+        </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item>Action 1</el-dropdown-item>
+            <el-dropdown-item>Action 2</el-dropdown-item>
+            <el-dropdown-item>Action 3</el-dropdown-item>
+            <el-dropdown-item disabled>Action 4</el-dropdown-item>
+            <el-dropdown-item divided>Action 5</el-dropdown-item>
+            <el-dropdown-item divided>Action 6</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
     <!-- 分割线 -->
     <el-divider />
@@ -362,7 +367,7 @@ watch(
             min-width="11%"
           >
             <template #default="{ row }">
-              <!-- 用户状态 -->
+              <!-- 用户状态, state 为 1, 激活, 为 0, 删除 , 为2, 禁用-->
               <el-tag :type="row.state === 1 ? 'success' : 'info'">
                 {{ row?.state === 1 ? 'Active' : 'Disabled' }}
               </el-tag>
@@ -370,24 +375,39 @@ watch(
           </el-table-column>
           <!-- OBD 数量 -->
           <el-table-column
-            prop="commentCount"
+            prop="obdCount"
             label="OBD"
             min-width="7%"
             sortable="custom"
-          />
+          >
+            <template #default="{ row }">
+              <!-- OBD 数量 -->
+              <el-text>{{ row.obdCount || '-' }}</el-text>
+            </template>
+          </el-table-column>
           <!-- 车辆数量 -->
           <el-table-column
-            prop="commentCount"
+            prop="vehicleCount"
             label="Vehicle"
             min-width="9%"
             sortable="custom"
-          />
+          >
+            <template #default="{ row }">
+              <!-- 车辆数量 -->
+              <el-text>{{ row.vehicleCount || '-' }}</el-text>
+            </template>
+          </el-table-column>
           <!-- 是否订阅 -->
           <el-table-column
-            prop="commentCount"
+            prop="subscription"
             label="Subscription"
             min-width="11%"
-          />
+          >
+            <template #default="{ row }">
+              <!-- 是否订阅 -->
+              <el-text>{{ row.subscription || '-' }}</el-text>
+            </template>
+          </el-table-column>
           <!-- 上次登录时间 -->
           <el-table-column
             prop="updateTime"

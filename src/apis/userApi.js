@@ -16,6 +16,8 @@ const UserApi = Object.freeze({
   ADMIN_USER_STATUS: '/manager/user/banned',
   // 重置用户密码
   RESET_USER_PASSWORD: '/manager/user/resetpassword',
+  // 新增修理厂
+  ADD_MERCHANT: '/manager/merchant/add',
 })
 
 // 获取 token
@@ -88,6 +90,32 @@ export const resetUserPasswordApi = (userId) => {
 
   return request({
     url: UserApi.RESET_USER_PASSWORD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 新增修理厂
+ * @param params
+ * @returns {*}
+ */
+export const addMerchantApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('email', params.email)
+  data.append('name', params.name)
+  data.append('password', params.password)
+  data.append('businessHours', params.operatingHours)
+  data.append('address', params.address)
+  data.append('postalCode', params.postalCode)
+  data.append('phoneCountry', '+' + params.phoneCountry)
+  data.append('phoneNumber', params.phoneNumber)
+  data.append('une', params.une)
+  data.append('file', params.file)
+
+  return request({
+    url: UserApi.ADD_MERCHANT,
     method: 'POST',
     data,
   })

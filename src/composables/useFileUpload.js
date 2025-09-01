@@ -13,9 +13,12 @@ const useFileUpload = () => {
   // 待上传的文件
   const uploadFile = ref(null)
 
+  // 文件名
+  const uploadFileName = ref('')
+
   // 上传图片的基本校验
   const handleValidateImageUpload = (file) => {
-    const { raw } = file
+    const { raw, name } = file
     // 文件类型校验
     const isImage = raw.type.startsWith('image/')
     if (!isImage) {
@@ -27,11 +30,14 @@ const useFileUpload = () => {
     localFilePath.value = URL.createObjectURL(raw)
     // 记录待上传的文件
     uploadFile.value = raw
+    // 文件名
+    uploadFileName.value = name
   }
 
   return {
     localFilePath,
     uploadFile,
+    uploadFileName,
     handleValidateImageUpload,
   }
 }

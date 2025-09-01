@@ -205,6 +205,18 @@ const constantRoutes = [
               showInBreadcrumb: true,
             },
           },
+          // 创建商家
+          {
+            path: '/user-management/extern/workshop/create',
+            name: 'Create Workshop',
+            component: () =>
+              import('@/views/UserManagement/Extern/CreateWorkshop.vue'),
+            meta: {
+              title: 'Create Workshop',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
         ],
         meta: {
           title: RouteName.EXTERN,
