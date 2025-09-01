@@ -175,11 +175,11 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       </div>
     </nav>
     <!-- content -->
-    <main class="content-container relative">
+    <main class="content-container">
       <!-- breadcrumb -->
       <breadcrumb class="shrink-0" />
       <!-- router view -->
-      <router-view class="flex-1 overflow-auto" />
+      <router-view class="flex-1 overflow-y-auto overflow-x-hidden" />
       <!-- 设置中心 -->
       <aside
         class="w-150 rounded-8 shadow-default text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
@@ -378,7 +378,8 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply rounded-8 flex h-full flex-1 flex-col;
+    @apply rounded-8 relative flex h-full flex-col;
+    width: calc(100% - 218px);
     background-color: $neutrals-off-white;
   }
 }

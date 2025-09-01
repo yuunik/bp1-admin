@@ -40,19 +40,27 @@
 }
 
 // 重置 el-tab 的样式
-.el-tabs__nav-wrap::after {
-  // tabs 栏底部线隐藏
-  display: none;
-}
-
 .el-tabs {
-  // tabs 栏margin重置
-  margin: 16px 0;
-}
 
-.el-tabs__header {
-  // tabs 头部栏margin重置
-  margin: 0;
+  .el-tabs__content {
+    display: none;
+  }
+
+  .el-tabs__header {
+    // tabs 头部栏margin重置
+    margin: 0 !important;
+    // tabs 头部栏底部边框重置
+    border-bottom: 1px solid #dadde5;
+
+    .el-tabs__nav-wrap {
+      margin-left: 32px;
+    }
+
+    .el-tabs__nav-wrap::after {
+      // tabs 栏底部线隐藏
+      display: none;
+    }
+  }
 }
 
 // 重置 el-button 的样式
