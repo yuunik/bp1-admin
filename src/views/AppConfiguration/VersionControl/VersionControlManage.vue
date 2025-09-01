@@ -117,7 +117,11 @@ if (id) {
         <dt>Update Prompt</dt>
         <dd v-show="!isEditMode">{{ appVersionInfo.content || '-' }}</dd>
         <dd v-show="isEditMode">
-          <el-input v-model="appVersionInfo.content" />
+          <el-input
+            v-model="appVersionInfo.content"
+            type="textarea"
+            :rows="15"
+          />
         </dd>
       </dl>
     </div>
