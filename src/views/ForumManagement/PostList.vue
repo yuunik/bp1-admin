@@ -8,6 +8,7 @@ import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useDebounceFn } from '@vueuse/core'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
 // 帖子列表
 const postList = ref([])
@@ -104,23 +105,16 @@ watch(
 <template>
   <!-- 搜索栏 -->
   <div class="flex-between mx-32 flex gap-8">
-    <!-- 条件搜索 -->
-    <el-input
-      placeholder="Search..."
-      class="brand-model-search"
-      v-model="conditionSearchParams.searchText"
-      @input="handleSearchByInput"
-    >
-      <template #prefix>
-        <!-- 前置搜索图标 -->
-        <i class="icon-typessearch h-16 w-16" />
-      </template>
-    </el-input>
     <!-- 状态搜索 -->
     <base-filter-panel
       :section-list="filterParams"
       condition-text="Type"
       @search="handleSearchByType"
+    />
+    <!-- 条件搜索 -->
+    <base-filter-input
+      v-model="conditionSearchParams.searchText"
+      @input-change="handleSearchByInput"
     />
   </div>
   <!-- 分割线 -->
