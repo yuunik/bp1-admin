@@ -1,8 +1,9 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 import BasePagination from '@/components/BasePagination.vue'
-import { getCommentListApi, getForumListApi } from '@/apis/forumApi.js'
+import { getCommentListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useDebounceFn } from '@vueuse/core'
@@ -10,7 +11,6 @@ import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
-import { ElMessage } from 'element-plus'
 
 const commentList = ref([])
 

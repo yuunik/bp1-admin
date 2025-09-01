@@ -15,6 +15,7 @@ import {
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getLastUsedDate } from '@/utils/dateUtil.js'
+import BaseDialog from '@/components/BaseDialog.vue'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -46,6 +47,12 @@ const merchantSortParams = ref({
 
 // 当前tab页
 const activeTab = ref(UserManagementTab.PERSON)
+
+// 重置密码弹窗
+const dialogResetPasswordVisible = ref(false)
+
+// 重置密码的用户信息
+const resetPasswordUser = ref(null)
 
 const router = useRouter()
 
@@ -92,9 +99,13 @@ const handleUserStatus = async (userId) => {
 }
 
 // 重置用户密码
-const handleResetPassword = async (userId) => {
-  await resetUserPasswordApi(userId)
+const handleResetPassword = async (row) => {
+  await resetUserPasswordApi(row.id)
   ElMessage.success('Success')
+  // 记录重置用户信息
+  resetPasswordUser.value = row
+  // 打开弹窗
+  dialogResetPasswordVisible.value = true
 }
 
 // 根据 row.status 计算出当前行的菜单项
@@ -127,7 +138,7 @@ const handleDropdownItemClick = (action, row) => {
       handleUserStatus(row.id)
       break
     case 'resetPassword':
-      handleResetPassword(row.id)
+      handleResetPassword(row)
       break
     default:
       console.warn('Unknown action:', action)
@@ -203,6 +214,21 @@ const handleMerchantRowClick = (row, column) => {
     params: { id: row.id },
     query: { type: 'merchant' },
   })
+}
+
+// 复制重置信息
+const handleCopyPassword = async () => {
+  try {
+    await navigator.clipboard.writeText(
+      `Person name: ${resetPasswordUser.value.name}\n Email: ${resetPasswordUser.value.email} \n Password: 32523213`,
+    )
+    // 提示
+    ElMessage.success(
+      'The "Reset Password" information has been successfully copied. You can paste it now.',
+    )
+  } catch (err) {
+    console.error('复制失败:', err)
+  }
 }
 
 // 监听tab变化，获取对应列表
@@ -541,6 +567,26 @@ watch(
       </div>
     </template>
   </section>
+  <!-- 密码提示弹窗 -->
+  <base-dialog
+    v-model="dialogResetPasswordVisible"
+    title="Reset Password"
+    @cancel="dialogResetPasswordVisible = false"
+    @confirm="handleCopyPassword"
+  >
+    <template #content>
+      <dl
+        class="[&>dt]:leading-80 grid grid-cols-[80px_1fr] items-center gap-x-8 [&>dt]:h-80"
+      >
+        <dt class="heading-body-body-12px-medium">Person name</dt>
+        <dd>{{ resetPasswordUser.name }}</dd>
+        <dt>Email</dt>
+        <dd>{{ resetPasswordUser.email }}</dd>
+        <dt>Password</dt>
+        <dd>32523213</dd>
+      </dl>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
