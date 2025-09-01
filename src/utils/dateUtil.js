@@ -102,3 +102,12 @@ export const getFullDate = (timestamp) => {
   const date = dayjs(timestamp)
   return date.format('DD MMM YYYY')
 }
+
+/**
+ * 判断时间戳是否过期
+ * @param timestamp
+ * @returns {boolean}
+ */
+export const isDateExpired = (timestamp) => {
+  return dayjs().isAfter(dayjs(timestamp))
+}

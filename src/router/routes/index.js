@@ -35,7 +35,7 @@ const constantRoutes = [
     meta: {
       title: RouteName.LAYOUT,
       showInMenu: false,
-      showInBreadcrumb: true,
+      showInBreadcrumb: false,
     },
   },
   {

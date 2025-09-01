@@ -55,6 +55,8 @@ const AppApi = Object.freeze({
   GET_FAULT_CODE_LIST: '/manager/dtc/getfaultcodes',
   // 删除车辆品牌型号
   DELETE_BRAND_MODEL: '/manager/model/delete',
+  // 开启 OBD
+  OPEN_OBD_LINK: '/manager/obd/open',
 })
 
 // 获取 token
@@ -492,6 +494,18 @@ export const deleteBrandModelApi = (modelId) => {
 
   return request({
     url: AppApi.DELETE_BRAND_MODEL,
+    method: 'POST',
+    data,
+  })
+}
+
+export const openOBDApi = (obdIds) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdIds', obdIds)
+
+  return request({
+    url: AppApi.OPEN_OBD_LINK,
     method: 'POST',
     data,
   })

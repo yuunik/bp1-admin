@@ -6,6 +6,7 @@ import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
 
 import {
+  closeOBDApi,
   getOBDBindHistoryApi,
   getOBDBindVehiclesApi,
   getOBDOperationRecordsApi,
@@ -16,13 +17,11 @@ import {
   getFullDate,
   getLastUsedDate,
   getWarrantyEndDate,
+  isDateExpired,
 } from '@/utils/dateUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
-import { getOBDConnectedCountListApi } from '@/apis/appApi.js'
+import { getOBDConnectedCountListApi, openOBDApi } from '@/apis/appApi.js'
 import { BehaviorStatisticsDate } from '@/utils/constantsUtil.js'
-
-// OBD 是否开启
-const isObdOn = computed(() => obdInfo.status === 10)
 
 const route = useRoute()
 
@@ -111,6 +110,9 @@ const activeDays = computed(() => {
 
 const obdDetailRef = ref(null)
 
+// OBD 是否开启
+const isObdOn = ref(false)
+
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
   const { data } = await getOBDBindHistoryApi(id)
@@ -184,6 +186,33 @@ const scrollToBehaviorStatistics = () => {
     behaviorStatisticsRef.value.getBoundingClientRect().top - 250
 }
 
+// 开启OBD
+const openOBD = async (obdId) => {
+  await openOBDApi(obdId)
+  // 提示
+  ElMessage.success('Open success')
+  // 刷新
+  getOBDInfo?.(obdId)
+}
+
+// 关闭 OBD
+const handleCloseOBD = async (obdId) => {
+  await closeOBDApi(obdId)
+  // 关闭成功
+  ElMessage.success('Close success')
+  // 刷新
+  getOBDInfo?.(obdId)
+}
+
+// 处理OBD 状态的切换
+const handleIsObdChange = (val) => {
+  if (val === true) {
+    openOBD(currentObdId.value)
+  } else {
+    handleCloseOBD(currentObdId.value)
+  }
+}
+
 // 监听统计图标时间区间的变化, 重新获取数据
 watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)
@@ -203,6 +232,8 @@ onMounted(async () => {
       getOBDConnectedCountList(id),
     ])
   }
+  // obdInfo.status 为 10 时, 为 关闭状态
+  isObdOn.value = obdInfo.value.status !== 10
 })
 
 // 监听currentPage, 刷新列表
@@ -238,6 +269,7 @@ defineExpose({
           class="h-20 w-32"
           active-text="On"
           inactive-text="Off"
+          @change="handleIsObdChange"
         />
       </div>
       <div class="leading-32 flex gap-8">
@@ -251,15 +283,28 @@ defineExpose({
           {{ obdInfo.sn }}
         </span>
       </div>
-      <div class="leading-32 flex gap-8">
+      <div class="leading-32 flex h-32 gap-8">
         <label for="warranty-end" class="w-112 leading-32 h-32">
           Warranty End
         </label>
-        <div id="warranty-end" class="text-neutrals-off-black flex flex-1">
-          <span class="heading-body-body-12px-regular items-center">
-            {{ getWarrantyEndDate(obdInfo.warrantyTime) }}
-          </span>
-          <el-tag type="success" class="rounded-4 ml-8">Valid</el-tag>
+        <div
+          id="warranty-end"
+          class="text-neutrals-off-black row-center h-32 flex-1"
+        >
+          <template v-if="obdInfo.warrantyTime">
+            <span class="heading-body-body-12px-regular items-center">
+              {{ getWarrantyEndDate(obdInfo.warrantyTime) }}
+            </span>
+            <el-tag
+              :type="isDateExpired(obdInfo.warrantyTime) ? 'danger' : 'success'"
+              class="rounded-4 ml-8"
+            >
+              {{ isDateExpired(obdInfo.warrantyTime) ? 'Expired' : 'Valid' }}
+            </el-tag>
+          </template>
+          <template v-else>
+            <span class="heading-body-body-12px-regular items-center">-</span>
+          </template>
         </div>
       </div>
       <div class="leading-32 flex gap-8">
