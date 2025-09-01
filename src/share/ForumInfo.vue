@@ -15,7 +15,6 @@ import LikeIcon from '@/assets/icons/fi_like.svg'
 import CommentIcon from '@/assets/icons/fi_message-square.svg'
 // 收藏图标
 import FavoriteIcon from '@/assets/icons/fi_star_b.svg'
-import { useHead } from '@unhead/vue'
 
 // 获取路由
 const route = useRoute()
@@ -41,24 +40,6 @@ if (forumId) {
 
 // 头像加载失败的回调
 const handleErrorImage = () => true
-
-const metaList = computed(() => {
-  return [
-    {
-      name: 'viewport',
-      content:
-        'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no',
-    },
-    {
-      name: 'apple-itunes-app',
-      content: 'app-id=6748522066',
-    },
-  ]
-})
-
-useHead({
-  meta: metaList,
-})
 </script>
 
 <template>

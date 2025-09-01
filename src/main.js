@@ -1,5 +1,4 @@
 import { createApp } from 'vue'
-import { createHead } from '@unhead/vue/client'
 
 import App from './App.vue'
 import store from '@/store/index.js'
@@ -25,14 +24,12 @@ import '@/utils/chart.js'
 import clickOutside from '@/directives/clickOutside.js'
 
 const app = createApp(App)
-const header = createHead()
 
 // 防抖指令
 app.directive('debounce', debounce)
 // 点击目标以外的区域后, 执行的指令
 app.directive('click-outside', clickOutside)
 
-app.use(header)
 app.use(store)
 app.use(router)
 // 注册全局 SvgIcon
