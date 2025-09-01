@@ -2,7 +2,7 @@
 import { reactive } from 'vue'
 import { useRoute } from 'vue-router'
 
-import Scaffold from '@/components/Scaffold/index.vue'
+import AppScaffold from '@/components/AppScaffold.vue'
 import { getForumInfoApi } from '@/apis/shareApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getCommentTime } from '@/utils/dateUtil.js'
@@ -43,7 +43,7 @@ const handleErrorImage = () => true
 </script>
 
 <template>
-  <scaffold
+  <app-scaffold
     footer-gap="gap-16"
     footer-display="flex items-center"
     content-py="py-8"
@@ -169,7 +169,7 @@ const handleErrorImage = () => true
         <el-text>{{ forumInfo?.commentCount ?? '-' }}</el-text>
       </div>
     </template>
-  </scaffold>
+  </app-scaffold>
 </template>
 
 <style scoped lang="scss">

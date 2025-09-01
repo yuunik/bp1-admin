@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import VueMarkdown from 'vue-markdown-render'
 
-import Scaffold from '@/components/Scaffold/index.vue'
+import AppScaffold from '@/components/AppScaffold.vue'
 // 获取 ai 问答详情
 import { getAiQuestionInfoApi } from '@/apis/shareApi.js'
 
@@ -31,7 +31,7 @@ if (id) {
 </script>
 
 <template>
-  <scaffold
+  <app-scaffold
     :is-title-visible="true"
     app-bar-title="AI Assistant"
     footer-py="py-8"
@@ -65,7 +65,7 @@ if (id) {
       <!-- send icon -->
       <el-image :src="SendIcon" class="h-32 w-32" fit="cover" />
     </template>
-  </scaffold>
+  </app-scaffold>
 </template>
 
 <style scoped lang="scss"></style>
