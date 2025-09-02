@@ -174,6 +174,10 @@ export const getAdminListApi = (params) => {
   data.append('searchKey', params.searchKey)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
+  data.append('status', params.status)
+  data.append('role', params.role)
 
   return request({
     url: UserCenterApi.GET_ADMIN_LIST,

@@ -90,7 +90,7 @@ const handleSearchByType = (val) => {
 // 刷新
 const refresh = () => {
   if (pagination.currentPage === 0) {
-    getPostList()
+    return getPostList()
   }
   pagination.currentPage = 0
 }

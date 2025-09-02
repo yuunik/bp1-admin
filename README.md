@@ -195,7 +195,10 @@ Create corresponding environment files in the project root directory:
 
 ### Settings 模块
 
-- 完成 Settings 页面的ui, 未找到数据接口, 等待后续确认
+- 完成 Settings 页面的所有功能
+
+### User Center 模块
+- 完成 User Center 页面的所有功能, 只剩修该管理员邮箱的功能未做
 
 ### Notification 模块
 

@@ -1,7 +1,18 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
+import { getAdminListApi } from '@/apis/userCenterApi.js'
+import BasePagination from '@/components/BasePagination.vue'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import { useDebounceFn } from '@vueuse/core'
+import { getForumListApi } from '@/apis/forumApi.js'
+import { TimingPreset } from '@/utils/constantsUtil.js'
+import { useSort } from '@/composables/useSort.js'
+
 const router = useRouter()
+
+// 查看详情
 const onRowClick = (_, column) => {
   const { no } = column
   if (no === 0 || no === 5) {
@@ -10,119 +21,118 @@ const onRowClick = (_, column) => {
   router.push({ name: 'Internal Manage', params: { id: '12432314231' } })
 }
 
-const internalDataList = ref([
+// 账号状态筛选
+const statusFilterParams = [
   {
-    id: 1,
-    name: 'Ralph Edwards',
-    status: 'Active',
-    email: 'tim.jennings@example.com',
-    role: 'Admin',
+    label: 'Disabled',
+    value: '0',
   },
   {
-    id: 2,
-    name: 'Kristin Watson',
-    status: 'Active',
-    email: 'debra.holt@example.com',
-    role: 'Admin',
+    label: 'Active',
+    value: '1',
   },
-  {
-    id: 3,
-    name: 'Guy Hawkins',
-    status: 'Disabled',
-    email: 'michelle.rivera@example.com',
-    role: 'Admin',
-  },
-  {
-    id: 4,
-    name: 'Bessie Cooper',
-    status: 'Disabled',
-    email: 'sara.cruz@example.com',
-    role: 'Support',
-  },
-  {
-    id: 5,
-    name: 'Brooklyn Simmons',
-    status: 'Active',
-    email: 'willie.jennings@example.com',
-    role: 'Technician',
-  },
-  {
-    id: 6,
-    name: 'Theresa Webb',
-    status: 'Active',
-    email: 'curtis.weaver@example.com',
-    role: 'Support',
-  },
-  {
-    id: 7,
-    name: 'Cameron Williamson',
-    status: 'Active',
-    email: 'kenzi.lawson@example.com',
-    role: 'Technician',
-  },
-  {
-    id: 8,
-    name: 'Jenny Wilson',
-    status: 'Disabled',
-    email: 'dolores.chambers@example.com',
-    role: 'Support',
-  },
-  {
-    id: 9,
-    name: 'Courtney Henry',
-    status: 'Disabled',
-    email: 'tanya.hill@example.com',
-    role: 'Support',
-  },
-  {
-    id: 10,
-    name: 'Esther Howard',
-    status: 'Disabled',
-    email: 'deanna.curtis@example.com',
-    role: 'Technician',
-  },
-  {
-    id: 11,
-    name: 'Jane Cooper',
-    status: 'Active',
-    email: 'alma.lawson@example.com',
-    role: 'Technician',
-  },
-  {
-    id: 12,
-    name: 'Ronald Richards',
-    status: 'Active',
-    email: 'georgia.young@example.com',
-    role: 'Admin',
-  },
-  {
-    id: 13,
-    name: 'Robert Fox',
-    status: 'Active',
-    email: 'michael.mitc@example.com',
-    role: 'Support',
-  },
-  {
-    id: 14,
-    name: 'Dianne Russell',
-    status: 'Active',
-    email: 'debbie.baker@example.com',
-    role: 'Technician',
-  },
-  {
-    id: 15,
-    name: 'Arlene McCoy',
-    status: 'Active',
-    email: 'nevaeh.simmons@example.com',
-    role: 'Support',
-  },
-])
+]
 
-const pageQueryParams = ref({
+// 角色筛选
+const roleFilterParams = [
+  {
+    label: 'Admin',
+    value: 'Admin',
+  },
+  {
+    label: 'Support',
+    value: 'Support',
+  },
+  {
+    label: 'User',
+    value: 'User',
+  },
+]
+
+// 管理员列表
+const internalDataList = ref([])
+
+// 分页参数
+const pageQueryParams = reactive({
   currentPage: 0,
   total: 0,
   pageSize: 15,
 })
+
+// 条件查询参数
+const conditionSearchParams = reactive({
+  searchKey: '',
+  status: '',
+  role: '',
+  sort: '',
+})
+
+// 排序查询
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
+// 获取管理员列表
+const getAdminList = async () => {
+  const { data } = await getAdminListApi({
+    searchKey: conditionSearchParams.searchKey,
+    status: conditionSearchParams.status,
+    role: conditionSearchParams.role,
+    page: pageQueryParams.currentPage,
+    pageSize: pageQueryParams.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+  })
+  internalDataList.value = data
+}
+
+// 排序功能函数
+const sort = useSort(sortParams, () => getAdminList())
+
+// 账号状态筛选
+const handleSearchByStatus = (val) => {
+  conditionSearchParams.status = val
+  refresh()
+}
+
+// 账号角色筛选
+const handleSearchByRole = (val) => {
+  conditionSearchParams.role = val
+  refresh()
+}
+
+// 网络请求
+getAdminList()
+
+// 刷新页面
+const refresh = () => {
+  if (!pageQueryParams.currentPage) {
+    return getAdminList()
+  }
+  getAdminList()
+}
+
+// 条件搜索
+const handleSearchByInput = useDebounceFn(async () => {
+  pageQueryParams.currentPage = 0
+  const { data } = await getAdminListApi({
+    searchKey: conditionSearchParams.searchKey,
+    status: conditionSearchParams.status,
+    role: conditionSearchParams.role,
+    page: pageQueryParams.currentPage,
+    pageSize: pageQueryParams.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+  })
+  internalDataList.value = data
+}, TimingPreset.DEBOUNCE)
+
+// 监听当前页的变化
+watch(
+  () => pageQueryParams.currentPage,
+  () => getAdminList(),
+)
 </script>
 
 <template>
@@ -141,58 +151,26 @@ const pageQueryParams = ref({
     </div>
     <!-- Search -->
     <div class="flex-between mx-32 flex h-24 gap-20">
+      <!-- 筛选查询 -->
       <div class="flex gap-8">
-        <!-- 状态搜索 -->
-        <el-dropdown>
-          <span
-            class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
-          >
-            Status
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
-              <div class="flex-between">
-                <span>Status</span>
-                <el-button text>Clear</el-button>
-              </div>
-              <el-checkbox-group>
-                <el-checkbox value="1">Active</el-checkbox>
-                <el-checkbox value="2">Disabled</el-checkbox>
-              </el-checkbox-group>
-            </div>
-          </template>
-        </el-dropdown>
-        <!-- 状态搜索 -->
-        <el-dropdown>
-          <span
-            class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
-          >
-            Role
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
-              <div class="flex-between">
-                <span>Role</span>
-                <el-button text>Clear</el-button>
-              </div>
-              <el-checkbox-group>
-                <el-checkbox value="1">Admin</el-checkbox>
-                <el-checkbox value="2">Support</el-checkbox>
-                <el-checkbox value="2">Technician</el-checkbox>
-              </el-checkbox-group>
-            </div>
-          </template>
-        </el-dropdown>
+        <!-- 账号状态筛选 -->
+        <base-filter-panel
+          :section-list="statusFilterParams"
+          condition-text="Status"
+          @search="handleSearchByStatus"
+        />
+        <!-- 账号角色筛选 -->
+        <base-filter-panel
+          :section-list="roleFilterParams"
+          condition-text="Role"
+          @search="handleSearchByRole"
+        />
       </div>
-      <!-- 搜索栏 -->
-      <el-input placeholder="Search..." class="internal-list-search w-200!">
-        <template #prefix>
-          <!-- 前置搜索图标 -->
-          <i class="icon-typessearch h-16 w-16" />
-        </template>
-      </el-input>
+      <!-- 条件搜索 -->
+      <base-filter-input
+        v-model="conditionSearchParams.searchKey"
+        @input-change="handleSearchByInput"
+      />
     </div>
     <!-- Divider -->
     <el-divider />
@@ -203,31 +181,19 @@ const pageQueryParams = ref({
         @row-click="onRowClick"
         row-class-name="clickable-row"
         class="flex-1"
+        @sort-change="sort"
       >
         <el-table-column type="selection" width="55" />
-        <el-table-column label="Name" prop="name" sortable />
-        <el-table-column label="Status" prop="status">
+        <el-table-column label="Name" prop="name" sortable="custom" />
+        <el-table-column label="Status" prop="state">
           <template #default="{ row }">
-            <i
-              :class="[
-                'block',
-                'p-8',
-                'w-fit',
-                'rounded-4',
-                'leading-24',
-                {
-                  'bg-status-colours-light-green': row.status === 'Active',
-                  'text-status-colours-green': row.status === 'Active',
-                  'bg-neutrals-grey-1': row.status === 'Disabled',
-                  'text-neutrals-grey-4': row.status === 'Disabled',
-                },
-              ]"
-            >
-              {{ row.status }}
-            </i>
+            <!-- state 为 0, 为 Disabled, state 为 1 , 则 Active -->
+            <el-tag :type="row.state ? 'success' : 'danger'">
+              {{ row.state ? 'Active' : 'Disabled' }}
+            </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Email" prop="email" sortable />
+        <el-table-column label="Email" prop="email" sortable="custom" />
         <el-table-column label="Role" prop="role" />
         <!-- 操作 -->
         <el-table-column align="center" prop="actions" width="100">

@@ -79,7 +79,7 @@ const handleSearchByType = (val) => {
 // 刷新
 const refresh = () => {
   if (pagination.currentPage === 0) {
-    getCommentList()
+    return getCommentList()
   }
   pagination.currentPage = 0
 }

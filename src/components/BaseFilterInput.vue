@@ -38,9 +38,10 @@ watch(isShowInputContent, (val) => {
     placeholder="Search..."
     class="w-300! h-24"
     v-model="searchKeywords"
-    @blur="isShowInputContent = false"
+    @clear="isShowInputContent = false"
     @input="handleInput"
     ref="inputRef"
+    clearable
   />
 </template>
 

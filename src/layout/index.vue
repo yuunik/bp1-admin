@@ -89,7 +89,7 @@ const handleOpenConfirmLogoutDialog = () => {
 const handleLogout = async () => {
   await userStore.logout()
   // 提示
-  ElMessage.success('Logout success')
+  ElMessage.success('Logout successfully')
   // 路由跳转
   router.push({ name: RouteName.LOGIN })
 }
@@ -148,7 +148,12 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           ]"
           @click="$router.push({ name: 'Notifications' })"
         >
-          <i class="icon-typesnotification text-16" />
+          <i
+            class="icon-typesnotification text-16"
+            :class="{
+              'text-neutrals-off-white': $route.name === 'Notifications',
+            }"
+          />
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
           <i
@@ -192,7 +197,12 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           <!-- user avatar-->
           <i class="user-avatar">
             <!-- 用户名字缩写 -->
-            <span class="heading-body-body-12px-medium">
+            <span
+              class="heading-body-body-12px-medium"
+              :class="{
+                'text-neutrals-off-white': isShowSettingsDialog,
+              }"
+            >
               {{ usernameAbbr }}
             </span>
           </i>
