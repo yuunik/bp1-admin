@@ -16,6 +16,7 @@ import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getLastUsedDate } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { useSort } from '@/composables/useSort.js'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -34,13 +35,13 @@ const pagination = ref({
 const searchKey = ref('')
 
 // 用户列表排序
-const userSortParams = ref({
+const userSortParams = reactive({
   sort: '',
   sortBy: '',
 })
 
 // 修理厂列表排序
-const merchantSortParams = ref({
+const merchantSortParams = reactive({
   sort: '',
   sortBy: '',
 })
@@ -58,12 +59,13 @@ const router = useRouter()
 
 // 获取用户列表
 const getUserList = useDebounceFn(async () => {
+  console.log('getUserList', userSortParams)
   const { data, count } = await getUserListApi({
     searchKey: searchKey.value,
     page: pagination.value.currentPage,
     pageSize: pagination.value.pageSize,
-    sort: userSortParams.value.sort,
-    sortBy: userSortParams.value.sortBy,
+    sort: userSortParams.sort,
+    sortBy: userSortParams.sortBy,
   })
   // 记录总数
   pagination.value.total = count
@@ -77,8 +79,8 @@ const getMerchantList = useDebounceFn(async () => {
     searchKey: searchKey.value,
     page: pagination.value.currentPage,
     pageSize: pagination.value.pageSize,
-    sort: merchantSortParams.value.sort,
-    sortBy: merchantSortParams.value.sortBy,
+    sort: merchantSortParams.sort,
+    sortBy: merchantSortParams.sortBy,
   })
   // 记录总数
   pagination.value.total = count
@@ -160,36 +162,12 @@ const handleSearchByCondition = () => {
 }
 
 // 处理用户列表排序
-const handleUserSortChange = (data) => {
-  const { prop, order } = data
-  if (order === 'ascending') {
-    userSortParams.value.sort = 'asc'
-    userSortParams.value.sortBy = prop
-  } else if (order === 'descending') {
-    userSortParams.value.sort = 'desc'
-    userSortParams.value.sortBy = prop
-  } else if (!order) {
-    userSortParams.value.sort = ''
-    userSortParams.value.sortBy = ''
-  }
-  getUserList()
-}
+const handleUserSortChange = useSort(userSortParams, () => getUserList())
 
 // 处理修理厂列表排序
-const handleMerchantSortChange = (data) => {
-  const { prop, order } = data
-  if (order === 'ascending') {
-    merchantSortParams.value.sort = 'asc'
-    merchantSortParams.value.sortBy = prop
-  } else if (order === 'descending') {
-    merchantSortParams.value.sort = 'desc'
-    merchantSortParams.value.sortBy = prop
-  } else if (!order) {
-    merchantSortParams.value.sort = ''
-    merchantSortParams.value.sortBy = ''
-  }
-  getMerchantList()
-}
+const handleMerchantSortChange = useSort(merchantSortParams, () =>
+  getMerchantList(),
+)
 
 // 处理行点击事件
 const handleUserRowClick = (row, column) => {

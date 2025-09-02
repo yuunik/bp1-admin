@@ -34,6 +34,8 @@ export const getMerchantListApi = (params) => {
   data.append('searchKey', params.searchKey)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
 
   return request({
     url: UserApi.GET_MERCHANT_LIST,
@@ -53,6 +55,8 @@ export const getUserListApi = (params) => {
   data.append('searchKey', params.searchKey)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
 
   return request({
     url: UserApi.GET_USER_LIST,
