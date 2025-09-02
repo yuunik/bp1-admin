@@ -7,9 +7,13 @@ import {
   editAdminInfoApi,
 } from '@/apis/userCenterApi.js'
 import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
+import { TimingPreset } from '@/utils/constantsUtil.js'
 
 // 获取路由
 const route = useRoute()
+
+const emit = defineEmits(['openResetPasswordDialog'])
 
 const logAndNoteDataList = ref([
   {
@@ -35,7 +39,20 @@ const logAndNoteDataList = ref([
 // 管理员信息
 const adminDetails = ref({})
 
+// 表单数据
 const formRef = ref(null)
+
+// 账号状态
+const accountStatus = computed(() =>
+  adminDetails.value.state === 1 ? 'Active' : 'Disabled',
+)
+
+const buttonText = computed(() =>
+  adminDetails.value.state === 1 ? 'Disable' : 'Enable',
+)
+
+// 账号状态(1 为正常, 2 为禁用)
+const isActive = ref(-1)
 
 // 表单校验规则
 const adminInfoFormRules = reactive({
@@ -69,21 +86,42 @@ const adminInfoFormRules = reactive({
 const getAdminInfo = async (id) => {
   const { data } = await adminInfoApi(id)
   adminDetails.value = { ...data, isEditing: false }
+  // 记录原有管理员账号状态
+  isActive.value = adminDetails.value.state
 }
+
+// 禁用管理员
+const disableAdmin = useDebounceFn(async () => {
+  await adminStatusApi(adminDetails.value.id)
+  // 提示
+  ElMessage.success(`${buttonText.value} successfully`)
+  getAdminInfo(adminDetails.value.id)
+}, TimingPreset.DEBOUNCE)
 
 // 编辑管理员信息
 const editAdminInfo = async () => {
   // 表单校验
   await formRef.value.validate()
   try {
-    // 修改管理员信息与账号状态
-    await Promise.all([
-      editAdminInfoApi({
-        name: adminDetails.value.name,
-        userId: adminDetails.value.id,
-      }),
-      adminStatusApi(adminDetails.value.id),
-    ])
+    // 比较新的管理员账号状态
+    if (isActive.value === adminDetails.value.state) {
+      // 修改管理员信息
+      await Promise.all([
+        editAdminInfoApi({
+          name: adminDetails.value.name,
+          userId: adminDetails.value.id,
+        }),
+      ])
+    } else {
+      // 修改管理员信息与账号状态
+      await Promise.all([
+        editAdminInfoApi({
+          name: adminDetails.value.name,
+          userId: adminDetails.value.id,
+        }),
+        adminStatusApi(adminDetails.value.id),
+      ])
+    }
     // 提示
     ElMessage.success('Modify successfully')
     getAdminInfo()
@@ -92,6 +130,11 @@ const editAdminInfo = async () => {
     adminDetails.value.isEditing = false
   }
 }
+
+// 打开重置密码弹窗
+const openResetPasswordDialog = useDebounceFn(() => {
+  emit('openResetPasswordDialog', adminDetails.value)
+}, TimingPreset.DEBOUNCE)
 
 // 组件创建时, 获取路径参数
 const {
@@ -112,8 +155,10 @@ if (id) {
       </h3>
       <div class="flex gap-8">
         <template v-if="!adminDetails.isEditing">
-          <el-button>Disable</el-button>
-          <el-button>Reset Password</el-button>
+          <el-button @click="disableAdmin">
+            {{ buttonText }}
+          </el-button>
+          <el-button @click="openResetPasswordDialog">Reset Password</el-button>
           <el-button type="primary" @click="adminDetails.isEditing = true">
             Edit
           </el-button>
@@ -204,12 +249,8 @@ if (id) {
                   {{ value === 1 ? 'Active' : 'Disabled' }}
                 </el-tag>
               </template>
-              <el-option
-                label="Active"
-                :value="1"
-                v-if="adminDetails.status === 2"
-              />
-              <el-option label="Disabled" :value="2" v-else />
+              <el-option label="Active" :value="1" />
+              <el-option label="Disabled" :value="2" />
             </el-select>
           </el-form-item>
         </el-col>
