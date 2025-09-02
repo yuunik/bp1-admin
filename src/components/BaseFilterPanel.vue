@@ -59,11 +59,11 @@ watch(searchKeys, () => {
 
 <template>
   <!-- 状态搜索 -->
-  <div class="row-center h-24 gap-8">
+  <div class="row-center base-filter-panel h-24 gap-8">
     <!-- 触发框 -->
     <el-dropdown trigger="click" ref="conditionRef">
       <div
-        class="border-1 neutrals-grey-3 default-transition row-center h-24 w-fit cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
+        class="border-1 neutrals-grey-3 default-transition row-center box-border h-24 w-fit cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
         :class="
           searchKeyList.length
             ? 'border-[#006BF7] text-[#006BF7]'

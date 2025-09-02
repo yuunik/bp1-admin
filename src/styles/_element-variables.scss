@@ -81,3 +81,15 @@
 .el-tooltip__trigger:focus-visible {
   outline: none;
 }
+
+// 重置dropdown的触发框的样式
+.el-popper {
+  padding: 12px 16px 12px 16px !important;
+  box-sizing: border-box !important;
+  border-radius: 8px !important;
+}
+
+.el-popper__arrow {
+  // 隐藏小角
+  display: none;
+}
