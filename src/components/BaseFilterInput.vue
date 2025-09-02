@@ -9,9 +9,7 @@ const isShowInputContent = ref(false)
 
 const inputRef = ref(null)
 
-const handleInput = () => {
-  emit('inputChange')
-}
+const handleInput = () => emit('inputChange')
 
 watch(isShowInputContent, (val) => {
   if (val) {
@@ -40,6 +38,7 @@ watch(isShowInputContent, (val) => {
     v-model="searchKeywords"
     @clear="isShowInputContent = false"
     @input="handleInput"
+    @blur="handleBlur"
     ref="inputRef"
     clearable
   />

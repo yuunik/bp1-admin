@@ -1,16 +1,15 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
 
-import { getAdminListApi } from '@/apis/userCenterApi.js'
+import { adminStatusApi, getAdminListApi } from '@/apis/userCenterApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { useDebounceFn } from '@vueuse/core'
-import { getForumListApi } from '@/apis/forumApi.js'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import BaseDialog from '@/components/BaseDialog.vue'
-import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 
@@ -118,7 +117,7 @@ const refresh = () => {
   if (!pageQueryParams.currentPage) {
     return getAdminList()
   }
-  getAdminList()
+  pageQueryParams.currentPage === 0
 }
 
 // 条件搜索
@@ -174,6 +173,15 @@ const handleCopyPassword = async () => {
     // 关闭弹窗
     dialogResetPasswordVisible.value = false
   }
+}
+
+// 修改管理员账号的状态
+const handleUserStateChange = async (id) => {
+  await adminStatusApi(id)
+  // 提示
+  ElMessage.success('Modify successfully')
+  // 重新获取管理员列表
+  getAdminList()
 }
 
 // 监听当前页的变化
@@ -236,8 +244,8 @@ watch(
         <el-table-column label="Status" prop="state">
           <template #default="{ row }">
             <!-- state 为 0, 为 Disabled, state 为 1 , 则 Active -->
-            <el-tag :type="row.state ? 'success' : 'danger'">
-              {{ row.state ? 'Active' : 'Disabled' }}
+            <el-tag :type="row.state === 1 ? 'success' : 'danger'">
+              {{ row.state === 1 ? 'Active' : 'Disabled' }}
             </el-tag>
           </template>
         </el-table-column>
@@ -257,7 +265,9 @@ watch(
                   <el-dropdown-item @click="handleResetPassword(row)">
                     Reset Password
                   </el-dropdown-item>
-                  <el-dropdown-item>Enable</el-dropdown-item>
+                  <el-dropdown-item @click="handleUserStateChange(row.id)">
+                    {{ row.state === 1 ? 'Disable' : 'Enable' }}
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
