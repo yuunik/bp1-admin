@@ -146,7 +146,6 @@ const goToEditPage = (id) => {
 
 // 重置管理员密码
 const handleResetPassword = async (row) => {
-  console.log('?????????????????????', row)
   // TODO 修改管理员密码
   // const { data } = await resetUserPasswordApi(row.id)
   ElMessage.success('Success')
@@ -198,7 +197,7 @@ watch(
     @openResetPasswordDialog="handleResetPassword"
   />
   <router-view v-else-if="$route.name === 'Create Internal User'" />
-  <section class="flex flex-col gap-16" v-else>
+  <section class="flex h-full flex-col gap-16" v-else>
     <!-- Header -->
     <div class="flex-between mx-32 h-32">
       <h3>Internal</h3>
