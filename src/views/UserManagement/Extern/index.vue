@@ -230,6 +230,9 @@ const handleCopyPassword = async () => {
     )
   } catch (err) {
     ElMessage.error('Failed to copy, try again.')
+  } finally {
+    // 关闭对话框
+    dialogResetPasswordVisible.value = false
   }
 }
 
@@ -569,7 +572,7 @@ watch(
       </div>
     </template>
   </section>
-  <!-- 密码提示弹窗 -->
+  <!-- 重置密码提示弹窗 -->
   <base-dialog
     v-model="dialogResetPasswordVisible"
     title="Reset Password"
