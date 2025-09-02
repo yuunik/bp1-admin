@@ -60,7 +60,7 @@ const handleAddBrandModel = async () => {
       .filter((item) => item.brandModelName.trim() !== '')
       .map((item) => item.brandModelName.trim())
       .join(','),
-    logo: fileUpload.uploadFile.value,
+    logo: fileUpload.uploadFile.value || '',
   })
   // 添加成功
   ElMessage.success('Add Brand Model Success')
@@ -130,8 +130,15 @@ const handleBrandInputBlur = () => {
           </i>
         </el-avatar>
         <!-- desc -->
-        <div class="flex flex-col gap-16">
-          <el-text>Upload Logo</el-text>
+        <div class="flex flex-col">
+          <p class="heading-body-large-body-14px-medium text-strong-950 mb-12">
+            Upload Logo
+          </p>
+          <span
+            class="heading-body-body-12px-regular text-neutrals-grey-3 mb-16"
+          >
+            Min 400x400px, PNG or JPEG
+          </span>
           <!-- 更换 logo 图片 -->
           <el-upload
             :auto-upload="false"
