@@ -100,10 +100,12 @@ const handleUserStatus = async (userId) => {
 
 // 重置用户密码
 const handleResetPassword = async (row) => {
-  await resetUserPasswordApi(row.id)
+  const { data } = await resetUserPasswordApi(row.id)
   ElMessage.success('Success')
   // 记录重置用户信息
   resetPasswordUser.value = row
+  // 记录重置的用户密码
+  resetPasswordUser.value.resetPassword = data
   // 打开弹窗
   dialogResetPasswordVisible.value = true
 }
@@ -227,7 +229,7 @@ const handleCopyPassword = async () => {
       'The "Reset Password" information has been successfully copied. You can paste it now.',
     )
   } catch (err) {
-    console.error('复制失败:', err)
+    ElMessage.error('Failed to copy, try again.')
   }
 }
 
@@ -583,7 +585,7 @@ watch(
         <dt>Email</dt>
         <dd>{{ resetPasswordUser.email }}</dd>
         <dt>Password</dt>
-        <dd>32523213</dd>
+        <dd>{{ resetPasswordUser.resetPassword }}</dd>
       </dl>
     </template>
   </base-dialog>
