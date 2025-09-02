@@ -120,10 +120,10 @@ export const adminStatusApi = (userId) => {
  * @param params
  * @returns {Promise<axios.AxiosResponse<any>>}
  */
-export const uploadAdminLogoApi = (logo) => {
+export const uploadAdminLogoApi = (file) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('logo', logo)
+  data.append('file', file)
   return request({
     url: UserCenterApi.UPLOAD_ADMIN_LOGO,
     method: 'POST',

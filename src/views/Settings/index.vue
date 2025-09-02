@@ -1,16 +1,60 @@
 <script setup>
-import { ForumManagementTab } from '@/utils/constantsUtil.js'
+import { storeToRefs } from 'pinia'
+
+import BaseUpload from '@/components/BaseUpload.vue'
+import { useUserStore } from '@/store/index.js'
+import { editAdminInfoApi, uploadAdminLogoApi } from '@/apis/userCenterApi.js'
+import { ElMessage } from 'element-plus'
 
 const activeTab = ref('Profile Settings')
 
 const form = reactive({
   username: '',
-  email: '',
+  file: null,
 })
 
 const isEmailNotificationOn = ref(false)
 
 const isPushNotificationOn = ref(false)
+
+// 表单校验
+const formRules = {
+  username: [
+    {
+      required: true,
+      message: 'Please enter your full name.',
+      trigger: 'blur',
+    },
+  ],
+}
+
+const userStore = useUserStore()
+
+// 获取用户名字缩写
+const { usernameAbbr, userRole, username, userAvatar } = storeToRefs(userStore)
+// 获取用户名
+form.username = username.value
+
+// 获取上传的本地文件
+const handleGetLocalFile = (file) => (form.file = file)
+
+// 编辑管理员信息
+const handleModifyAdminInfo = async () => {
+  // 验证名字
+  if (!form.username) {
+    ElMessage.warning('Please enter the username')
+    return
+  }
+  // 上传管理员头像及修改管理员信息
+  await Promise.all([
+    uploadAdminLogoApi(form.file),
+    editAdminInfoApi({ name: form.username, userId: '' }),
+  ])
+  // 重新获取管理员信息
+  await userStore.fetchGetUserInfo()
+  // 提示
+  ElMessage.success('Modify successfully')
+}
 </script>
 
 <template>
@@ -23,42 +67,19 @@ const isPushNotificationOn = ref(false)
     <!-- 分割线 -->
     <el-divider class="diver" />
     <!-- tabs 栏 -->
-    <el-tabs v-model="activeTab" class="mx-32">
+    <el-tabs v-model="activeTab">
       <el-tab-pane label="Profile Settings" name="Profile Settings" />
       <el-tab-pane label="Notification Settings" name="Notification Settings" />
     </el-tabs>
-    <!-- 分割线 -->
-    <el-divider class="diver" />
     <!-- tab 内容区 -->
     <template v-if="activeTab === 'Profile Settings'">
       <div class="px-32 py-16">
         <!-- 上传 logo -->
-        <div class="w-400 flex h-80 flex-1 gap-24">
-          <!-- logo -->
-          <el-avatar
-            :size="64"
-            src="https://randomuser.me/api/portraits/men/42.jpg"
-            fit="cover"
-            @error="() => true"
-          >
-            <!-- logo 加载失败的默认显示 -->
-            <i class="flex-center h-64 w-64">
-              <el-text class="heading-h1-26px-medium neutrals-off-black">
-                B
-              </el-text>
-            </i>
-          </el-avatar>
-          <!-- desc -->
-          <div class="flex flex-col gap-16">
-            <el-text>Upload Logo</el-text>
-            <!-- 更换 logo 图片 -->
-            <el-upload :auto-upload="false" :show-file-list="false">
-              <template #trigger>
-                <el-button>Upload</el-button>
-              </template>
-            </el-upload>
-          </div>
-        </div>
+        <base-upload
+          :default-avatar-text="usernameAbbr"
+          :img-path="userAvatar"
+          @get-local-file="handleGetLocalFile"
+        />
         <!-- 分割线 -->
         <el-divider class="divider w-360! my-24!" />
         <!-- 表单 -->
@@ -67,20 +88,27 @@ const isPushNotificationOn = ref(false)
           label-width="112px"
           class="user-form-container"
           label-position="left"
+          :rules="formRules"
         >
           <!-- 用户名 -->
-          <el-form-item label="Full Name">
+          <el-form-item label="Full Name" prop="username">
             <el-input v-model="form.username" class="w-240!" />
           </el-form-item>
-          <!-- 邮箱 -->
+          <!-- 角色 -->
           <el-form-item label="Role">
-            <el-input v-model="form.email" class="w-240!" />
+            <el-input v-model="userRole" class="w-240!" disabled />
           </el-form-item>
         </el-form>
         <!-- 按键组 -->
         <div class="w-360 mt-24 flex gap-8">
           <el-button class="flex-1">Discard</el-button>
-          <el-button class="flex-1" type="primary">Apply Changes</el-button>
+          <el-button
+            class="flex-1"
+            type="primary"
+            @click="handleModifyAdminInfo"
+          >
+            Apply Changes
+          </el-button>
         </div>
       </div>
     </template>

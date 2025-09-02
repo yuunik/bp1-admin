@@ -1,10 +1,17 @@
 <script setup>
+import { onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
-defineProps({
+const { imgPath } = defineProps({
+  // 显示的图片文字
   defaultAvatarText: {
     type: String,
     default: 'A',
+  },
+  // 显示的图片路径
+  imgPath: {
+    type: String,
+    default: '',
   },
 })
 
@@ -41,6 +48,12 @@ const handleValidateImageUpload = (file) => {
   // 触发父组件事件
   emit('getLocalFile', raw)
 }
+
+// 组件挂载
+onMounted(() => {
+  // 获取图片路径
+  localFilePath.value = imgPath || ''
+})
 </script>
 
 <template>
@@ -62,7 +75,7 @@ const handleValidateImageUpload = (file) => {
     <!-- desc -->
     <div class="flex flex-col">
       <p class="heading-body-large-body-14px-medium text-strong-950 mb-12">
-        {{ uploadFileName.value ? uploadFileName.value : 'Upload logo' }}
+        {{ uploadFileName ? uploadFileName : 'Upload logo' }}
       </p>
       <span class="heading-body-body-12px-regular text-neutrals-grey-3 mb-16">
         Min 400x400px, PNG or JPEG
@@ -75,7 +88,7 @@ const handleValidateImageUpload = (file) => {
       >
         <template #trigger>
           <el-button>
-            {{ localFilePath.value ? 'Change' : 'Upload' }}
+            {{ localFilePath ? 'Change' : 'Upload' }}
           </el-button>
         </template>
       </el-upload>
