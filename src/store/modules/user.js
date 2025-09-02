@@ -6,7 +6,7 @@ import { useLocalStorage } from '@vueuse/core'
 
 const useUserStore = defineStore('user', () => {
   // state
-  const userInfo = ref({}) // 用户信息
+  const userInfo = useLocalStorage('userInfo', {}) // 用户信息
   const token = useLocalStorage('token', '') // 用户令牌
   const isLoading = ref(false) // 登录状态
 
@@ -56,8 +56,9 @@ const useUserStore = defineStore('user', () => {
   }
 
   // getters
+  const userId = computed(() => userInfo.value?.id || '')
   const username = computed(() => userInfo.value?.name || '') // 用户名字
-  const userRole = computed(() => userInfo.value?.role || 'Admin') // 用户角色户令牌
+  const userRole = computed(() => userInfo.value?.role || '') // 用户角色户令牌
   const usernameAbbr = computed(() => userInfo.value?.name?.slice(0, 1) || '') // 用户名字缩写
   const hasUserInfo = computed(() => Boolean(userInfo.value?.id)) // 是否有用户信息
 
@@ -71,6 +72,7 @@ const useUserStore = defineStore('user', () => {
     logout,
     clearInfo,
     // getters
+    userId,
     username,
     userRole,
     usernameAbbr,

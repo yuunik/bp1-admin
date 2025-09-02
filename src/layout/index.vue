@@ -12,11 +12,13 @@ import Breadcrumb from './components/Breadcrumb/index.vue'
 import CompanyLogo from '@/assets/icons/company-logo.svg'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
+import { modifyAdminPasswordApi } from '@/apis/userCenterApi.js'
+import { md5Encrypt } from '@/utils/md5Util.js'
 
 const userStore = useUserStore()
 
 // 获取用户相关信息
-const { username, userRole, usernameAbbr } = storeToRefs(userStore)
+const { userId, username, userRole, usernameAbbr } = storeToRefs(userStore)
 
 const route = useRoute()
 
@@ -32,7 +34,7 @@ const isShowSettingsDialog = ref(false)
 const dialogChangePasswordVisible = ref(false)
 
 // 修改密码相关
-const changePasswordForm = ref({
+const changePasswordForm = reactive({
   currentPassword: '',
   newPassword: '',
   confirmPassword: '',
@@ -89,6 +91,28 @@ const handleLogout = async () => {
   // 提示
   ElMessage.success('Logout success')
   // 路由跳转
+  router.push({ name: RouteName.LOGIN })
+}
+
+// 修改管理员密码
+const handleModifyAdminPassword = async () => {
+  if (changePasswordForm.confirmPassword !== changePasswordForm.newPassword) {
+    ElMessage.error('The two passwords do not match')
+    return
+  }
+  // 修改管理员密码
+  await modifyAdminPasswordApi({
+    userId: userId.value,
+    oldPassword: md5Encrypt(changePasswordForm.currentPassword),
+    password: md5Encrypt(changePasswordForm.confirmPassword),
+  })
+  // 关闭弹窗
+  dialogChangePasswordVisible.value = false
+  // 修改成功
+  ElMessage.success('Modify successfully')
+  // 清空用户信息
+  await userStore.logout()
+  // 跳转登录页面
   router.push({ name: RouteName.LOGIN })
 }
 
@@ -227,11 +251,10 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
     v-model="dialogChangePasswordVisible"
     title="Change Password"
     @cancel="dialogChangePasswordVisible = false"
-    @confirm="console.log('confirm')"
+    @confirm="handleModifyAdminPassword"
   >
     <template #content>
       <el-form
-        ref="changePasswordForm"
         :model="changePasswordForm"
         label-width="140px"
         label-position="left"
