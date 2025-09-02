@@ -1,4 +1,16 @@
 <script setup>
+import { useRoute } from 'vue-router'
+
+import {
+  adminInfoApi,
+  adminStatusApi,
+  editAdminInfoApi,
+} from '@/apis/userCenterApi.js'
+import { ElMessage } from 'element-plus'
+
+// 获取路由
+const route = useRoute()
+
 const logAndNoteDataList = ref([
   {
     date: '15 May 2025 9:00 am',
@@ -20,23 +32,76 @@ const logAndNoteDataList = ref([
   },
 ])
 
-const dataDetails = ref({
-  name: 'Theresa Webb',
-  email: 'tim.jennings@example.com',
-  role: 'Support',
-  phone: '+65 9876 5432',
-  status: 'Active',
-  isEditing: false,
+// 管理员信息
+const adminDetails = ref({})
+
+const formRef = ref(null)
+
+// 表单校验规则
+const adminInfoFormRules = reactive({
+  name: [
+    { required: true, message: 'Please enter your name', trigger: 'blur' },
+  ],
+  email: [
+    { required: true, message: 'Please enter your email', trigger: 'blur' },
+    {
+      type: 'email',
+      message: 'Please enter a valid email',
+      trigger: ['blur', 'change'],
+    },
+  ],
+  role: [
+    { required: true, message: 'Please select your role', trigger: 'change' },
+  ],
+  phone: [
+    {
+      required: true,
+      message: 'Please enter your phone number',
+      trigger: 'blur',
+    },
+  ],
+  status: [
+    { required: true, message: 'Please select your status', trigger: 'change' },
+  ],
 })
 
-const form = ref({
-  name: 'Theresa Webb',
-  email: 'tim.jennings@example.com',
-  role: 'Support',
-  phone: '+65 9876 5432',
-  status: 'Active',
-  isEditing: false,
-})
+// 获取管理员信息
+const getAdminInfo = async (id) => {
+  const { data } = await adminInfoApi(id)
+  adminDetails.value = { ...data, isEditing: false }
+}
+
+// 编辑管理员信息
+const editAdminInfo = async () => {
+  // 表单校验
+  await formRef.value.validate()
+  try {
+    // 修改管理员信息与账号状态
+    await Promise.all([
+      editAdminInfoApi({
+        name: adminDetails.value.name,
+        userId: adminDetails.value.id,
+      }),
+      adminStatusApi(adminDetails.value.id),
+    ])
+    // 提示
+    ElMessage.success('Modify successfully')
+    getAdminInfo()
+  } finally {
+    // 关闭编辑状态
+    adminDetails.value.isEditing = false
+  }
+}
+
+// 组件创建时, 获取路径参数
+const {
+  params: { id },
+} = route
+
+if (id) {
+  // 路径存在 id,获取数据
+  getAdminInfo(id)
+}
 </script>
 
 <template>
@@ -46,94 +111,105 @@ const form = ref({
         Theresa Webb
       </h3>
       <div class="flex gap-8">
-        <template v-if="!dataDetails.isEditing">
+        <template v-if="!adminDetails.isEditing">
           <el-button>Disable</el-button>
           <el-button>Reset Password</el-button>
-          <el-button type="primary" @click="dataDetails.isEditing = true">
+          <el-button type="primary" @click="adminDetails.isEditing = true">
             Edit
           </el-button>
         </template>
         <template v-else>
-          <el-button type="primary" @click="dataDetails.isEditing = true">
-            Save
-          </el-button>
+          <el-button type="primary" @click="editAdminInfo">Save</el-button>
         </template>
       </div>
     </div>
     <el-divider />
     <dl
       class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[112px_1fr_112px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
-      v-if="!dataDetails.isEditing"
+      v-if="!adminDetails.isEditing"
     >
       <dt>Name</dt>
-      <dd>{{ dataDetails.name }}</dd>
+      <dd>{{ adminDetails.name }}</dd>
 
       <dt>Email</dt>
-      <dd>{{ dataDetails.email }}</dd>
+      <dd>{{ adminDetails.email }}</dd>
       <dt>Role</dt>
-      <dd>{{ dataDetails.role }}</dd>
+      <dd>{{ adminDetails.role }}</dd>
       <dt>Phone</dt>
-      <dd>{{ dataDetails.phone }}</dd>
-
+      <dd>{{ adminDetails.phone || '-' }}</dd>
       <dt>Status</dt>
       <dd>
-        <el-tag type="success">{{ dataDetails.status }}</el-tag>
+        <!-- state 为 0, 为 Disabled, state 为 1 , 则 Active -->
+        <el-tag :type="adminDetails.state === 1 ? 'success' : 'danger'">
+          {{ adminDetails.state === 1 ? 'Active' : 'Disabled' }}
+        </el-tag>
       </dd>
     </dl>
     <el-form
-      :model="form"
+      :model="adminDetails"
       label-width="112px"
       label-position="left"
       class="form-container mx-32"
+      :rules="adminInfoFormRules"
+      ref="formRef"
       v-else
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="Name">
-            <el-input v-model="form.name" placeholder="Enter name" />
+          <el-form-item label="Name" prop="name">
+            <el-input v-model="adminDetails.name" placeholder="Enter name" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Email">
-            <el-input v-model="form.email" readonly />
+          <el-form-item label="Email" prop="email">
+            <el-input v-model="adminDetails.email" readonly />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
-          <el-form-item label="Role">
+          <el-form-item label="Role" prop="role">
             <el-select
-              v-model="form.role"
+              v-model="adminDetails.role"
               placeholder="Select role"
               style="width: 100%"
             >
-              <el-option label="In Stock" value="In Stock" />
-              <el-option label="Waiting inbound" value="Waiting inbound" />
-              <el-option label="Cancelled" value="Cancelled" />
+              <el-option label="Admin" value="Admin" />
+              <el-option label="Support" value="Support" />
+              <el-option label="Support" value="Support" />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Phone">
-            <el-input v-model="form.phone" style="width: 100%" />
+          <el-form-item label="Phone" prop="phone">
+            <el-input v-model="adminDetails.phone" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Status*">
+          <el-form-item label="Status*" prop="status">
             <el-select
-              v-model="form.status"
+              v-model="adminDetails.status"
               placeholder="Select category"
               style="width: 100%"
             >
+              <!--<template #prefix>-->
+              <!--  <el-tag-->
+              <!--    :type="adminDetails.status === 1 ? 'success' : 'danger'"-->
+              <!--  >-->
+              <!--    {{ adminDetails.status === 1 ? 'Active' : 'Disabled' }}-->
+              <!--  </el-tag>-->
+              <!--</template>-->
               <template #label="{ value }">
-                <el-tag
-                  type="success"
-                  class="bg-status-colours-light-green text-status-colours-green rounded-4! p-8"
-                >
-                  {{ value }}
+                <!-- state 为 0, 为 Disabled, state 为 1 , 则 Active -->
+                <el-tag :type="value === 1 ? 'success' : 'danger'">
+                  {{ value === 1 ? 'Active' : 'Disabled' }}
                 </el-tag>
               </template>
-              <el-option label="Active" value="Active" />
-              <el-option label="Unbound" value="Unbound" />
+              <el-option
+                label="Active"
+                :value="1"
+                v-if="adminDetails.status === 2"
+              />
+              <el-option label="Disabled" :value="2" v-else />
             </el-select>
           </el-form-item>
         </el-col>
@@ -145,12 +221,7 @@ const form = ref({
       <div class="flex-between mx-32 h-24">
         <h4>Logs & Note</h4>
         <!-- 新增按钮 -->
-        <el-button
-          type="primary"
-          text
-          class="my-8 w-fit"
-          @click="addNewMaintenanceItem"
-        >
+        <el-button type="primary" text class="my-8 w-fit">
           <template #icon>
             <i class="icon-typesadd branding-colours-primary" />
           </template>

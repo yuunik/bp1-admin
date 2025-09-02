@@ -14,12 +14,12 @@ import BaseDialog from '@/components/BaseDialog.vue'
 const router = useRouter()
 
 // 查看详情
-const onRowClick = (_, column) => {
+const onRowClick = (row, column) => {
   const { no } = column
   if (no === 0 || no === 5) {
     return
   }
-  router.push({ name: 'Internal Manage', params: { id: '12432314231' } })
+  router.push({ name: 'Internal Manage', params: { id: row.id } })
 }
 
 // 账号状态筛选
