@@ -32,10 +32,7 @@ const cancel = () => {
 }
 
 // 确认按钮点击
-const confirm = () => {
-  emit('confirm')
-  dialogVisible.value = false // 通常 confirm 后关闭
-}
+const confirm = () => emit('confirm')
 </script>
 
 <template>

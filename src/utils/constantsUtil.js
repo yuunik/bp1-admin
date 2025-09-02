@@ -110,7 +110,7 @@ export const Menu = Object.freeze({
 // 节流和防抖的常量定义
 export const TimingPreset = Object.freeze({
   DEBOUNCE: 300,
-  THROTTLE: 100,
+  THROTTLE: 60000,
 })
 
 // 当前时间

@@ -2,7 +2,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn, useThrottleFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 
 import { useUserStore } from '@/store'
@@ -10,7 +10,13 @@ import { useUserStore } from '@/store'
 // 静态资源
 import Logo from '@/assets/icons/company-logo.svg'
 import GreetingIcon from '@/assets/icons/waving-hand.svg'
-import { RouteName } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
+import BaseDialog from '@/components/BaseDialog.vue'
+import {
+  forgetPasswordSendCodeApi,
+  resetAdminPasswordApi,
+} from '@/apis/userCenterApi.js'
+import { md5Encrypt } from '@/utils/md5Util.js'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -27,6 +33,73 @@ const loginForm = reactive({
   password: '',
 })
 
+// 忘记密码表单数据
+const forgetPasswordForm = reactive({
+  email: '',
+  code: '',
+  newPassword: '',
+  confirmPassword: '',
+})
+
+// 忘记密码弹窗
+const dialogForgetPasswordVisible = ref(false)
+
+// 新密码是否显示
+const isShowNewPassword = ref(false)
+
+// 新密码(二次确认)是否显示
+const isShowConfirmNewPassword = ref(false)
+
+// 验证码是否发送
+const isSendCode = ref(false)
+
+// 邮箱输入框
+const forgetEmailInputRef = ref(null)
+
+// 定时器
+const timer = ref(null)
+
+// 倒计时时间
+const countDownTime = ref(60)
+
+// 倒计时 60 秒
+const countDown = () => {
+  isSendCode.value = true
+  timer.value = setInterval(() => {
+    countDownTime.value--
+    if (countDownTime.value <= 0) {
+      clearInterval(timer.value)
+      timer.value = null
+      countDownTime.value = 60
+      isSendCode.value = false
+    }
+  }, 1000)
+}
+
+// 忘记密码发送验证码
+const forgetPasswordSendCode = useDebounceFn(async () => {
+  if (isSendCode.value) {
+    return
+  }
+  if (!forgetPasswordForm.email) {
+    ElMessage.info('Please enter the email to receive the reset code.')
+    // 邮箱输入框聚焦
+    forgetEmailInputRef.value.focus()
+    return
+  }
+
+  // 开始倒计时
+  countDown()
+
+  try {
+    await forgetPasswordSendCodeApi(forgetPasswordForm.email)
+    // 验证码发送成功, 请检查邮箱的验证码
+    ElMessage.success('Verification code sent. Please check your email.')
+  } catch {
+    ElMessage.error('Failed to send code. Please try again.')
+  }
+}, TimingPreset.DEBOUNCE)
+
 // 用户登录
 const handleLogin = useDebounceFn(async () => {
   try {
@@ -38,7 +111,32 @@ const handleLogin = useDebounceFn(async () => {
     // 登录失败, 实现错误提示
     ElMessage.error(message)
   }
-}, 500)
+}, TimingPreset.DEBOUNCE)
+
+// 忘记密码, 重新设置密码
+const handleResetPassword = useDebounceFn(async () => {
+  if (!forgetPasswordForm.newPassword || !forgetPasswordForm.confirmPassword) {
+    ElMessage.warning('Password is required.')
+    return
+  }
+  // 重设密码
+  await resetAdminPasswordApi({
+    code: forgetPasswordForm.code,
+    newPassword: md5Encrypt(forgetPasswordForm.newPassword),
+    confirmPassword: md5Encrypt(forgetPasswordForm.confirmPassword),
+  })
+  ElMessage.success('Password reset successful. Please log in again.')
+  dialogForgetPasswordVisible.value = false
+})
+
+watch(dialogForgetPasswordVisible, (val) => {
+  if (!val) {
+    forgetPasswordForm.email = ''
+    forgetPasswordForm.code = ''
+    forgetPasswordForm.newPassword = ''
+    forgetPasswordForm.confirmPassword = ''
+  }
+})
 </script>
 
 <template>
@@ -122,7 +220,12 @@ const handleLogin = useDebounceFn(async () => {
               </el-input>
             </el-form-item>
           </el-form>
-          <p class="heading-body-body-12px-medium">Forgot Password?</p>
+          <p
+            class="heading-body-body-12px-medium text-neutrals-off-black cursor-pointer hover:underline"
+            @click="dialogForgetPasswordVisible = true"
+          >
+            Forgot Password?
+          </p>
         </div>
         <el-button
           type="primary"
@@ -136,6 +239,78 @@ const handleLogin = useDebounceFn(async () => {
       </div>
     </main>
   </div>
+  <!-- 忘记密码弹窗 -->
+  <base-dialog
+    v-model="dialogForgetPasswordVisible"
+    title="Forget Password"
+    @cancel="dialogForgetPasswordVisible = false"
+    @confirm="handleResetPassword"
+  >
+    <template #content>
+      <el-form
+        ref="changePasswordForm"
+        :model="forgetPasswordForm"
+        label-width="140px"
+        label-position="left"
+        class="change-password-form"
+      >
+        <el-form-item label="Email">
+          <el-input
+            placeholder="Enter your email"
+            v-model="forgetPasswordForm.email"
+            ref="forgetEmailInputRef"
+            @keyup.enter="forgetPasswordSendCode"
+          />
+        </el-form-item>
+        <el-form-item label="Code">
+          <el-input
+            placeholder="Enter your code"
+            v-model="forgetPasswordForm.code"
+          >
+            <template #suffix>
+              <span
+                class="heading-body-body-12px-medium text-neutrals-grey-3 hover:text-neutrals-off-black whitespace-nowrap hover:underline"
+                @click.self="forgetPasswordSendCode"
+                :class="isSendCode ? 'cursor-not-allowed' : 'cursor-pointer'"
+              >
+                Send Code
+                <!-- 倒计时 -->
+                {{ isSendCode ? `( ${countDownTime} s )` : '' }}
+              </span>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="New Password">
+          <el-input
+            placeholder="Enter your password"
+            v-model="forgetPasswordForm.newPassword"
+            :type="isShowNewPassword ? 'text' : 'password'"
+          >
+            <template #suffix>
+              <i
+                :class="`text-24 cursor-pointer ${isShowNewPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                @click="isShowNewPassword = !isShowNewPassword"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="Confirm Password">
+          <el-input
+            placeholder="Enter your confirm password"
+            v-model="forgetPasswordForm.confirmPassword"
+            :type="isShowConfirmNewPassword ? 'text' : 'password'"
+          >
+            <template #suffix>
+              <i
+                :class="`text-24 cursor-pointer ${isShowConfirmNewPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                @click="isShowConfirmNewPassword = !isShowConfirmNewPassword"
+              />
+            </template>
+          </el-input>
+        </el-form-item>
+      </el-form>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -144,14 +319,14 @@ const handleLogin = useDebounceFn(async () => {
   @apply justify-between;
 }
 
-.bottom-border-only :deep(.el-input__wrapper) {
+:deep(.el-input__wrapper) {
   background-color: transparent !important;
   box-shadow: none !important;
   border: none !important;
   padding: 0 !important;
 }
 
-.bottom-border-only :deep(.el-input__wrapper::after) {
+:deep(.el-input__wrapper::after) {
   content: '';
   position: absolute;
   left: 0;
