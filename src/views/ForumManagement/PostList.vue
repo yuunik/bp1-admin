@@ -52,7 +52,11 @@ const handleViewPostDetails = (row, column) => {
   if (no === 0 || no === 7) {
     return
   }
-  router.push({ name: 'Post Details', params: { id: row.id } })
+  router.push({
+    name: 'Post Details',
+    params: { id: row.id },
+    query: { type: 'forum' },
+  })
 }
 
 // 获取帖子列表

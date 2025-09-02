@@ -2,10 +2,11 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { VehicleDetailTabs } from '@/utils/constantsUtil.js'
+import { EmitterEvent, VehicleDetailTabs } from '@/utils/constantsUtil.js'
 import { getVehicleInfoApi } from '@/apis/obdApi.js'
 import { getFullDate } from '@/utils/dateUtil.js'
 import { getFaultCodeListApi } from '@/apis/appApi.js'
+import emitter from '@/utils/emitterUtil.js'
 
 const activeTabName = ref(VehicleDetailTabs.VEHICLE_DETAILS)
 
@@ -24,6 +25,8 @@ const scannedHistoryRef = ref(null)
 const getVehicleDetails = async (id) => {
   const { data } = await getVehicleInfoApi(id)
   Object.assign(vehicleDetails, data)
+  // 更新面包屑
+  emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, data.OBDDto)
 }
 
 const pagination = reactive({

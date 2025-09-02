@@ -85,12 +85,16 @@ const refresh = () => {
 }
 
 // 查看帖子详情
-const handleViewPostDetails = (row, column) => {
+const handleViewCommentDetails = (row, column) => {
   const { no } = column
   if (no === 0 || no === 6) {
     return
   }
-  router.push({ name: 'Post Details', params: { id: row.id } })
+  router.push({
+    name: 'Post Details',
+    params: { id: row.id },
+    query: { type: 'coment' },
+  })
 }
 
 // 错误处理
@@ -152,7 +156,7 @@ watch(
       :data="commentList"
       class="flex-1"
       row-class-name="clickable-row"
-      @row-click="handleViewPostDetails"
+      @row-click="handleViewCommentDetails"
     >
       <!-- 选择框 -->
       <el-table-column type="selection" column-key="selection" min-width="7%" />

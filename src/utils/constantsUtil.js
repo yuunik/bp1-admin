@@ -23,6 +23,7 @@ export const UserManagementTab = Object.freeze({
 // emitter 通信事件常量定义
 export const EmitterEvent = Object.freeze({
   UPDATE_BREADCRUMB_LIST: 'updateBreadcrumbList',
+  UPDATE_BREADCRUMB_TITLE: 'updateBreadcrumbTitle',
 })
 
 // 路由模块名称的常量定义

@@ -1,7 +1,12 @@
 <script setup>
+import { useRoute } from 'vue-router'
 import { CircleCheckFilled } from '@element-plus/icons-vue'
 
+import { getCommentInfoApi, getForumInfoApi } from '@/apis/forumApi.js'
+
 const activeName = ref('Details')
+
+const route = useRoute()
 
 const reporterList = ref([
   {
@@ -32,19 +37,39 @@ const urls = ref([
 
 const articleRef = ref(null)
 
-const postRef = ref(null)
+const forumRef = ref({})
 
-const commentsRef = ref(null)
+const commentsRef = ref({})
 
 watch(activeName, (val) => {
   if (val === 'Post') {
-    postRef.value.scrollIntoView({ behavior: 'smooth' })
+    forumRef.value.scrollIntoView({ behavior: 'smooth' })
   } else if (val === 'Comments') {
     commentsRef.value.scrollIntoView({ behavior: 'smooth' })
   } else if (val === 'Details') {
-    postRef.value.scrollIntoView({ behavior: 'smooth' })
+    forumRef.value.scrollIntoView({ behavior: 'smooth' })
   }
 })
+
+// 获取论坛详情
+const getForumDetail = async (forumId) => {
+  const { data } = await getForumInfoApi(forumId)
+  Object.assign(forumInfo, data)
+}
+
+// 获取评论详情
+const getCommentDetail = async (commentId) => {
+  const { data } = await getCommentInfoApi(commentId)
+  Object.assign(commentInfo, data)
+}
+
+const {
+  params: { id },
+  query: { type },
+} = route
+if (id) {
+  type === 'forum' ? getForumDetail(id) : getCommentDetail(id)
+}
 </script>
 
 <template>
@@ -56,16 +81,15 @@ watch(activeName, (val) => {
       <el-button>Delete</el-button>
     </div>
     <el-divider />
-    <el-tabs v-model="activeName" class="mx-32">
+    <el-tabs v-model="activeName">
       <el-tab-pane label="Details" name="Details" />
       <el-tab-pane label="Post" name="Post" />
       <el-tab-pane label="Comments" name="Comments" />
     </el-tabs>
-    <el-divider />
     <!-- 贴文详情 -->
-    <article class="mx-32 mb-24 mt-16 flex-1 overflow-auto">
+    <el-scrollbar class="mx-32 mb-24 mt-16 flex-1">
       <!-- Post Header -->
-      <section class="flex flex-col gap-8" ref="postRef">
+      <section class="flex flex-col gap-8" ref="forumRef">
         <!-- 发帖人信息 -->
         <div class="h-76 row-center gap-16">
           <el-avatar
@@ -956,7 +980,7 @@ watch(activeName, (val) => {
           </div>
         </div>
       </section>
-    </article>
+    </el-scrollbar>
   </div>
 </template>
 

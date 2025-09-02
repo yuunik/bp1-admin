@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 
 import {
   BehaviorStatisticsDate,
+  EmitterEvent,
   ObdDetailsTabs,
   RouteName,
 } from '@/utils/constantsUtil.js'
@@ -27,6 +28,7 @@ import { onMounted } from 'vue'
 import dayjs from 'dayjs'
 import { getOBDConnectedCountListApi, openOBDApi } from '@/apis/appApi.js'
 import BasePagination from '@/components/BasePagination.vue'
+import emitter from '@/utils/emitterUtil.js'
 
 // 当前激活的标签
 const activeTabName = ref(ObdDetailsTabs.OBD_DETAILS)
@@ -47,11 +49,12 @@ const router = useRouter()
 const getOBDInfo = async (id) => {
   const { data } = await getOBDInfoApi(id)
   obdInfo.value = data
+  // 更新面包屑标题
+  emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, data.sn)
 }
 
 // 解绑 OBD 绑定的用户
 const handleUnbindUser = async () => {
-  console.log(currentObdId.value, '@@@@@@@@@@@@@@')
   try {
     await unbindOBDApi(currentObdId.value)
     await getOBDInfo(currentObdId.value)
@@ -151,10 +154,11 @@ const getOBDBindVehicleList = async (id) => {
 }
 
 // 查看 OBD 绑定的车辆详情
-const handleViewVehicleDetails = async (id) => {
+const handleViewVehicleDetails = async (id) =>
   router.push(`/obd-management/obd-list/obd-details/vehicle-details/${id}`)
-  // router.push({ name: RouteName.VIEW_VEHICLE, params: id })
-}
+// router.push(
+//   `/obd-management/obd-list/obd-details/vehicle-details/${id}?obdId=${nowObdId.value}`,
+// )
 
 // 获取 OBD 操作记录
 const getOBDOperationRecord = async (id) => {
@@ -254,12 +258,14 @@ watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)
 })
 
+const nowObdId = ref('')
 onMounted(async () => {
   // 获取路径中 id
   const {
     params: { id },
   } = route
   if (id) {
+    nowObdId.value = id
     await Promise.all([
       getOBDInfo(id),
       getOBDBindHistoryList(id),

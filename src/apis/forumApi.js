@@ -14,6 +14,14 @@ const ForumApi = Object.freeze({
   DELETE_FORUM: '/manager/forum/delete',
   // 删除评论接口
   DELETE_COMMENT: '/manager/comment/delete',
+  // 获取论坛详情接口
+  GET_FORUM_INFO: '/forum/info',
+  // 获取评论详情接口
+  GET_COMMENT_INFO: '/comment/info',
+  // 获取举报列表
+  GET_REPORT_LIST: '/manager/tipoff/tipoffs',
+  // 获取贴文所属的评论列表
+  GET_COMMENT_LIST_BY_FORUM: '/comment/get',
 })
 
 // 获取 token
@@ -67,6 +75,61 @@ export const deleteCommentApi = (commentId) => {
   data.append('commentId', commentId)
   return request({
     url: ForumApi.DELETE_COMMENT,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getForumInfoApi = (forumId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('forumId', forumId)
+
+  return request({
+    url: ForumApi.GET_FORUM_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getCommentInfoApi = (commentId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('commentId', commentId)
+
+  return request({
+    url: ForumApi.GET_COMMENT_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+// 获取贴文或评论的举报数据列表
+export const getReportListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('parentIds', params.parentIds)
+  data.append('types', params.types)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
+  return request({
+    url: ForumApi.GET_REPORT_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+// 获取贴文所属的评论列表
+export const getCommentListByForumApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('postId', params.postId)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
+  return request({
+    url: ForumApi.GET_COMMENT_LIST_BY_FORUM,
     method: 'POST',
     data,
   })
