@@ -16,11 +16,27 @@ const tabMap = Object.freeze({
   [ForumManagementTab.POSTS]: Posts,
   [ForumManagementTab.COMMENTS]: Comments,
 })
+
+// 切换到帖子列表
+const goToPostList = () => {
+  activeTab.value = ForumManagementTab.POSTS
+}
+
+// 跳转到评论列表
+const goToCommentList = () => {
+  activeTab.value = ForumManagementTab.COMMENTS
+}
 </script>
 
 <template>
-  <router-view v-if="$route.name === RouteName.POST_DETAILS" />
-  <router-view v-else-if="$route.name === RouteName.COMMENT_DETAILS" />
+  <router-view
+    v-if="$route.name === RouteName.POST_DETAILS"
+    @changeTabName="goToPostList"
+  />
+  <router-view
+    v-else-if="$route.name === RouteName.COMMENT_DETAILS"
+    @changeTabName="goToCommentList"
+  />
   <section class="flex h-full flex-col gap-16" v-else>
     <!-- Forum Management Header -->
     <div class="px-32">

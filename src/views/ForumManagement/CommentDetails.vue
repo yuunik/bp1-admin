@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   CircleCheckFilled,
   Picture as IconPicture,
@@ -21,11 +21,16 @@ import {
 } from '@/utils/dateUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
+const emit = defineEmits(['changeTabName'])
+
 // 当前选项卡
 const activeName = ref('Details')
 
 // 路由
 const route = useRoute()
+
+// 路由器
+const router = useRouter()
 
 // 贴文详情
 const postInfo = reactive({})
@@ -136,9 +141,17 @@ const errorHandler = () => true
 // 删除评论
 const handleDeleteComment = async (commentId) => {
   await deleteCommentApi(commentId)
+  if (commentId === currentCommentId.value) {
+    // 如果删除的是评论详细页的评论, 则回到评论列表页
+    router.push({ name: RouteName.FORUM_MANAGEMENT })
+    // 切换至评论列表页
+    emit('changeTabName')
+  } else {
+    // 刷新评论列表
+    getCommentList(postInfo.id)
+  }
   // 提示
   ElMessage.success('Delete successfully')
-  getCommentList(postInfo.id)
 }
 
 // 处理滚动事件
@@ -177,7 +190,9 @@ onMounted(async () => {
       class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
     >
       <h3 class="heading-h2-20px-medium">{{ RouteName.COMMENT_DETAILS }}</h3>
-      <el-button>Delete</el-button>
+      <el-button @click="handleDeleteComment(currentCommentId)">
+        Delete
+      </el-button>
     </div>
     <el-divider />
     <el-tabs v-model="activeName" @tab-change="handleTabChange">
@@ -222,11 +237,9 @@ onMounted(async () => {
               {{ reporterCount ? 'Reported' : 'Normal' }}
             </el-tag>
           </dd>
-          <dt class="row-center h-32">Status</dt>
+          <dt class="row-center h-32">Content</dt>
           <dd class="row-center h-32">
-            <el-tag :type="reporterCount ? 'danger' : 'success'">
-              {{ reporterCount ? 'Reported' : 'Normal' }}
-            </el-tag>
+            {{ commentInfo.content }}
           </dd>
         </dl>
       </section>
