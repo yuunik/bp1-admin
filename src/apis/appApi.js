@@ -211,9 +211,15 @@ export const modifyBrandModelNameApi = (params) => {
  * 获取汽车保养数据列表
  * @returns {Promise<ApiResponse<MaintenanceRecord[]>>}
  */
-export const getMaintenanceListApi = () => {
+export const getMaintenanceListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
+  data.append('searchKey', params.searchKey)
+  data.append('sortKey', params.sortBy)
+  data.append('sort', params.sort)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
   return request({
     url: AppApi.GET_MAINTENANCE_LIST,
     method: 'POST',
@@ -248,9 +254,15 @@ export const modifyMaintenanceDataApi = (params) => {
  * 获取预测数据列表
  * @returns {Promise<ApiResponse<PredictionData[]>>}
  */
-export const getPredictionListApi = () => {
+export const getPredictionListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
+  data.append('searchKey', params.searchKey)
+  data.append('sortKey', params.sortKey)
+  data.append('sort', params.sort)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
   return request({
     url: AppApi.GET_PREDICT_DATA_LIST,
     method: 'POST',

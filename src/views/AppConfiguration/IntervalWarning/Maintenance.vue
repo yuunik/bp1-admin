@@ -7,21 +7,38 @@ import {
 } from '@/apis/appApi.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import useFileUpload from '@/composables/useFileUpload.js'
+import { useSort } from '@/composables/useSort.js'
 
 // 保养数据默认图标
 import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
 
 // 保养数据
-const maintenanceList = reactive([])
+const maintenanceList = ref([])
+
+// 条件搜索参数
+const conditionParams = reactive({
+  searchKey: '',
+  sortBy: '',
+  sort: '',
+})
+
+// 分页参数
+const paginationParams = reactive({
+  page: 0,
+  total: 0,
+  pageSize: 15,
+})
 
 // 获取保养数据列表
 const getMaintenanceList = async () => {
-  const { data } = await getMaintenanceListApi()
-  const processData = data.map((item) => ({
+  const { data } = await getMaintenanceListApi({
+    ...conditionParams,
+    ...paginationParams,
+  })
+  maintenanceList.value = data.map((item) => ({
     ...item,
     editing: false,
   }))
-  maintenanceList.push(...processData)
 }
 
 // logo加载失败的回退行为
@@ -58,6 +75,9 @@ const handleMaintenanceIconChange = async (file, row) => {
   row.localLogo = fileUpload.localFilePath.value
 }
 
+// 排序函数
+const sort = useSort(conditionParams, () => getMaintenanceList())
+
 // 网络请求
 getMaintenanceList()
 </script>
@@ -65,9 +85,9 @@ getMaintenanceList()
 <template>
   <div class="flex flex-col px-32">
     <!-- 保养数据表格 -->
-    <el-table :data="maintenanceList" class="flex-1" :fit="false">
+    <el-table :data="maintenanceList" class="flex-1" @sort-change="sort">
       <!-- 序号 -->
-      <el-table-column type="index" label="No." :sortable="true" />
+      <el-table-column type="index" label="No." sortable="custom" />
       <!-- 图标 -->
       <el-table-column label="Icon">
         <template #default="{ row }">
@@ -102,7 +122,7 @@ getMaintenanceList()
         </template>
       </el-table-column>
       <!-- 保养数据名称 -->
-      <el-table-column prop="name" label="Maintenance Item" :sortable="true">
+      <el-table-column prop="name" label="Maintenance Item" sortable="custom">
         <template #default="{ row }">
           <template v-if="row?.editing">
             <el-input
@@ -117,7 +137,11 @@ getMaintenanceList()
         </template>
       </el-table-column>
       <!-- 建议保养公里数 -->
-      <el-table-column prop="mileage" label="Mileage Interval" :sortable="true">
+      <el-table-column
+        prop="mileage"
+        label="Mileage Interval"
+        sortable="custom"
+      >
         <template #default="{ row }">
           <template v-if="row?.editing">
             <el-input

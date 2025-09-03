@@ -21,24 +21,28 @@ const handleTabChange = (tab) => (activeTab.value = tab)
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
+  <section class="flex h-full flex-col gap-16">
     <!-- 标题 -->
     <h3 class="leading-32 h-32 px-32">
       {{ RouteName.INTERVAL_WARNING }}
     </h3>
+    <!-- tab 栏-->
+    <el-tabs
+      v-model="activeTab"
+      @tab-change="handleTabChange"
+      class="tabs-container"
+    >
+      <el-tab-pane
+        v-for="tab in tabArray"
+        :key="tab.key"
+        :label="tab.key"
+        :name="tab.key"
+      />
+    </el-tabs>
+    <!-- 分割线 -->
+    <el-divider />
     <!-- 内容 -->
     <div class="flex min-h-0 flex-1 flex-col">
-      <!-- tab 栏-->
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="px-32">
-        <el-tab-pane
-          v-for="tab in tabArray"
-          :key="tab.key"
-          :label="tab.key"
-          :name="tab.key"
-        />
-      </el-tabs>
-      <!-- 分割线 -->
-      <el-divider />
       <!-- tab 内容 -->
       <keep-alive>
         <component
@@ -51,6 +55,11 @@ const handleTabChange = (tab) => (activeTab.value = tab)
 </template>
 
 <style scoped lang="scss">
+// 取消 tabs 的下划线
+.tabs-container :deep(.el-tabs__header) {
+  border-bottom: none;
+}
+
 // 重置 el-input 的样式
 :deep(.el-input) {
   @apply rounded-12 h-32;
@@ -58,12 +67,5 @@ const handleTabChange = (tab) => (activeTab.value = tab)
   .el-input__wrapper {
     @apply rounded-12 bg-[#EAEEF480];
   }
-}
-:deep(.el-table__header) {
-  @apply w-full!;
-}
-
-:deep(.el-table__body) {
-  @apply w-full!;
 }
 </style>
