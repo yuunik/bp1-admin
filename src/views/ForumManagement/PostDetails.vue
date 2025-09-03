@@ -1,10 +1,14 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { CircleCheckFilled } from '@element-plus/icons-vue'
-import { Picture as IconPicture } from '@element-plus/icons-vue'
+import {
+  CircleCheckFilled,
+  Picture as IconPicture,
+} from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
 import {
+  deleteCommentApi,
   getCommentListByForumApi,
   getForumInfoApi,
   getReportListApi,
@@ -86,6 +90,14 @@ const getCommentList = async (postId) => {
 
 // 加载头像的错误行为
 const errorHandler = () => true
+
+// 删除评论
+const handleDeleteComment = async (commentId) => {
+  await deleteCommentApi(commentId)
+  // 提示
+  ElMessage.success('Delete successfully')
+  getCommentList(postInfo.id)
+}
 
 // 组件挂载后, 获取贴文详情
 onMounted(async () => {
@@ -293,7 +305,9 @@ onMounted(async () => {
                     <i class="i-ep:more-filled h-16 w-16 cursor-pointer" />
                     <template #dropdown>
                       <el-dropdown-menu>
-                        <el-dropdown-item>
+                        <el-dropdown-item
+                          @click="handleDeleteComment(comment.id)"
+                        >
                           <i class="i-ep:delete mr-5 h-16 w-16" />
                           Delete
                         </el-dropdown-item>
