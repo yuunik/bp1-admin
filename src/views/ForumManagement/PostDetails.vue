@@ -60,6 +60,9 @@ const commentsRef = ref(null)
 // 是否有更多评论
 const isHasMoreComments = ref(true)
 
+// 是否正在加载中
+const isLoading = ref(false)
+
 watch(activeName, (val) => {
   if (val === 'Post') {
     forumRef.value.scrollIntoView({ behavior: 'smooth' })
@@ -118,6 +121,12 @@ const handleDeleteComment = async (commentId) => {
   getCommentList(postInfo.id)
 }
 
+// 处理滚动事件
+const handleScroll = (scrollData) => {
+  const { scrollLeft, scrollTop } = scrollData
+  console.log(scrollLeft, scrollTop, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+}
+
 // 组件挂载后, 获取贴文详情
 onMounted(async () => {
   const {
@@ -125,17 +134,22 @@ onMounted(async () => {
   } = route
   if (id) {
     currentPostId.value = id
-    await Promise.all([
-      getForumDetail(currentPostId.value),
-      getReportList(currentPostId.value),
-      getCommentList(currentPostId.value),
-    ])
+    isLoading.value = true
+    try {
+      await Promise.all([
+        getForumDetail(currentPostId.value),
+        getReportList(currentPostId.value),
+        getCommentList(currentPostId.value),
+      ])
+    } finally {
+      isLoading.value = false
+    }
   }
 })
 </script>
 
 <template>
-  <div class="flex flex-col overflow-auto">
+  <div class="flex flex-col overflow-auto" v-loading="isLoading">
     <div
       class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
     >
@@ -153,6 +167,7 @@ onMounted(async () => {
       class="box-border flex flex-1 flex-col gap-24 px-32 pb-24 pt-16"
       ref="detailsRef"
       @end-reached="getCommentList"
+      @scroll="handleScroll"
     >
       <!-- Post Header -->
       <section class="flex flex-col gap-8" ref="forumRef">
