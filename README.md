@@ -166,41 +166,4 @@ Create corresponding environment files in the project root directory:
 3. Commit changes (`git commit`) -m 'Add some AmazingFeature')
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-## 本周更新
-
-### Inventory 模块
-
-- 完成 Inventory 页面的ui, 未找到数据接口, 等待后续确认
-- 完成 Create Inbound Order 和 Create Outbound Order 页面的ui, 未找到数据接口, 等待后续确认
-- 完成 Inbound Details 和 Outbound Details 页面的ui, 未找到数据接口, 等待后续确认
-
-### Internal 模块
-
-- 完成 Internal 页面的ui, 未找到数据接口, 等待后续确认
-- 完成 Internal Details 页面的ui, 未找到数据接口, 等待后续确认
-- 完成 Internal Details 编辑页面的ui, 未找到数据接口, 等待后续确认
-- 完成 Create Internal User 页面的ui, 未找到数据接口, 等待后续确认
-
-### External 模块
-
-- 完成 External 页面的ui, 及接口接入工作
-- 完成 Create Workshp 页面所有功能
-- 完成 External Details 页面的ui, 未找到数据接口, 等待后续确认
-
-### Forum Management 模块
-
-- 完成 Forum Management 页面的所有功能
-- 完成 Post Details 页面的ui, 未找到数据接口, 等待后续确认
-
-### Settings 模块
-
-- 完成 Settings 页面的所有功能
-
-### User Center 模块
-- 完成 User Center 页面的所有功能, 只剩修该管理员邮箱的功能未做
-
-### Notification 模块
-
-- 完成 Notification 页面的ui, 未找到数据接口, 等待后续确认
 ```

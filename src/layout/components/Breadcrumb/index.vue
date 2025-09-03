@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
         <span
           class="heading-body-body-12px-medium"
           :class="
-            $route.path === route.path
+            $route.name === route.name
               ? 'neutrals-off-black cursor-not-allowed'
               : 'neutrals-grey-3 cursor-pointer'
           "
