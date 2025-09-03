@@ -352,7 +352,7 @@ onMounted(async () => {
                     </div>
                   </div>
                   <el-dropdown trigger="click">
-                    <i class="i-ep:more-filled h-16 w-16 cursor-pointer" />
+                    <i class="i-ep:more h-16 w-16 cursor-pointer" />
                     <template #dropdown>
                       <el-dropdown-menu>
                         <el-dropdown-item
