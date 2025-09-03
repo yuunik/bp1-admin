@@ -21,27 +21,30 @@ const tabMap = Object.freeze({
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
-    <!-- AI Chat Management Header -->
-    <div class="px-32">
-      <!-- 标题 -->
-      <h3 class="heading-h2-20px-medium">AI Chat Management</h3>
-      <!-- tabs 栏 -->
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="my-16">
-        <el-tab-pane
-          :label="AIChatManagementTab.PRESET_QUESTIONS"
-          :name="AIChatManagementTab.PRESET_QUESTIONS"
-        />
-        <el-tab-pane
-          :label="AIChatManagementTab.USAGE_LIMIT"
-          :name="AIChatManagementTab.USAGE_LIMIT"
-        />
-        <el-tab-pane
-          :label="AIChatManagementTab.USER_QUESTION_RECORDS"
-          :name="AIChatManagementTab.USER_QUESTION_RECORDS"
-        />
-      </el-tabs>
-    </div>
+  <section class="flex h-full flex-col gap-16">
+    <!-- 标题 -->
+    <h3 class="heading-h2-20px-medium text-neutrals-off-black mx-32 px-32">
+      AI Chat Management
+    </h3>
+    <!-- tabs 栏 -->
+    <el-tabs
+      v-model="activeTab"
+      @tab-change="handleTabChange"
+      class="tabs-container"
+    >
+      <el-tab-pane
+        :label="AIChatManagementTab.PRESET_QUESTIONS"
+        :name="AIChatManagementTab.PRESET_QUESTIONS"
+      />
+      <!--<el-tab-pane-->
+      <!--  :label="AIChatManagementTab.USAGE_LIMIT"-->
+      <!--  :name="AIChatManagementTab.USAGE_LIMIT"-->
+      <!--/>-->
+      <el-tab-pane
+        :label="AIChatManagementTab.USER_QUESTION_RECORDS"
+        :name="AIChatManagementTab.USER_QUESTION_RECORDS"
+      />
+    </el-tabs>
     <!-- 分割线 -->
     <el-divider class="diver" />
     <!-- tab 内容区 -->
@@ -52,6 +55,11 @@ const tabMap = Object.freeze({
 </template>
 
 <style scoped lang="scss">
+// 取消 tabs 的下划线
+.tabs-container :deep(.el-tabs__header) {
+  border-bottom: none;
+}
+
 // 修改图标颜色
 .icon-typesadd {
   &::before {
