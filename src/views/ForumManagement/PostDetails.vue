@@ -52,10 +52,16 @@ const commentPaginationParams = reactive({
 const detailsRef = ref(null)
 
 // 贴文dom
-const forumRef = ref(null)
+const postRef = ref(null)
 
 // 评论dom
 const commentsRef = ref(null)
+
+// 发帖人信息dom
+const posterInfoRef = ref(null)
+
+// 举报信息dom
+const reportsRef = ref(null)
 
 // 是否有更多评论
 const isHasMoreComments = ref(true)
@@ -63,15 +69,15 @@ const isHasMoreComments = ref(true)
 // 是否正在加载中
 const isLoading = ref(false)
 
-watch(activeName, (val) => {
+const handleTabChange = (val) => {
   if (val === 'Post') {
-    forumRef.value.scrollIntoView({ behavior: 'smooth' })
+    detailsRef.value.setScrollTop(postRef.value.offsetTop)
   } else if (val === 'Comments') {
     commentsRef.value.scrollIntoView({ behavior: 'smooth' })
   } else if (val === 'Details') {
-    forumRef.value.scrollIntoView({ behavior: 'smooth' })
+    detailsRef.value.setScrollTop(0)
   }
-})
+}
 
 // 获取论坛详情
 const getForumDetail = async () => {
@@ -123,8 +129,12 @@ const handleDeleteComment = async (commentId) => {
 
 // 处理滚动事件
 const handleScroll = (scrollData) => {
-  const { scrollLeft, scrollTop } = scrollData
-  console.log(scrollLeft, scrollTop, '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+  const { scrollTop } = scrollData
+  if (scrollTop >= reportsRef.value.offsetTop) {
+    activeName.value = 'Post'
+  } else {
+    activeName.value = 'Details'
+  }
 }
 
 // 组件挂载后, 获取贴文详情
@@ -157,7 +167,7 @@ onMounted(async () => {
       <el-button>Delete</el-button>
     </div>
     <el-divider />
-    <el-tabs v-model="activeName">
+    <el-tabs v-model="activeName" @tab-change="handleTabChange">
       <el-tab-pane label="Details" name="Details" />
       <el-tab-pane label="Post" name="Post" />
       <el-tab-pane label="Comments" name="Comments" />
@@ -170,7 +180,7 @@ onMounted(async () => {
       @scroll="handleScroll"
     >
       <!-- Post Header -->
-      <section class="flex flex-col gap-8" ref="forumRef">
+      <section class="flex flex-col gap-8" ref="posterInfoRef">
         <!-- 发帖人信息 -->
         <div class="h-76 row-center gap-16">
           <el-avatar
@@ -202,7 +212,11 @@ onMounted(async () => {
         </dl>
       </section>
       <!-- 被举报的信息 -->
-      <section class="mt-24 flex flex-col gap-8" v-if="reporterCount">
+      <section
+        class="mt-24 flex flex-col gap-8"
+        v-if="reporterCount"
+        ref="reportsRef"
+      >
         <div class="heading-body-large-body-14px-medium row-center h-24 gap-2">
           <h4 class="text-neutrals-off-black">Reports</h4>
           <span class="text-neutrals-grey-3">{{ reporterCount }}</span>
@@ -233,7 +247,7 @@ onMounted(async () => {
         </div>
       </section>
       <!-- 贴文信息 -->
-      <section class="mt-24 flex flex-col gap-8">
+      <section class="mt-24 flex flex-col gap-8" ref="postRef">
         <!-- 标题 -->
         <h4
           class="row-center heading-body-large-body-14px-medium text-neutrals-off-black h-24"
