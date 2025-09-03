@@ -188,7 +188,11 @@ watch(
         label="Content"
         column-key="content"
         min-width="15%"
-      />
+      >
+        <template #default="{ row }">
+          <span class="h-41 text-truncate">{{ row.content || '-' }}</span>
+        </template>
+      </el-table-column>
       <!-- 被举报次数 -->
       <el-table-column
         prop="tipOffCount"
