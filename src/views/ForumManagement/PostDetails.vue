@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import {
   CircleCheckFilled,
   Picture as IconPicture,
@@ -9,6 +9,7 @@ import { ElMessage } from 'element-plus'
 
 import {
   deleteCommentApi,
+  deleteForumApi,
   getCommentListByForumApi,
   getForumInfoApi,
   getReportListApi,
@@ -20,11 +21,16 @@ import {
 } from '@/utils/dateUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
+const emit = defineEmits(['changeTabName'])
+
 // 当前选项卡
 const activeName = ref('Details')
 
 // 路由
 const route = useRoute()
+
+// 路由器
+const router = useRouter()
 
 // 贴文详情
 const postInfo = reactive({})
@@ -137,6 +143,15 @@ const handleScroll = (scrollData) => {
   }
 }
 
+// 删除贴文
+const handleDeleteForum = async () => {
+  await deleteForumApi(currentPostId.value)
+  router.push({ name: RouteName.FORUM_MANAGEMENT })
+  emit('changeTabName')
+  // 提示
+  ElMessage.success('Delete successfully')
+}
+
 // 组件挂载后, 获取贴文详情
 onMounted(async () => {
   const {
@@ -146,11 +161,7 @@ onMounted(async () => {
     currentPostId.value = id
     isLoading.value = true
     try {
-      await Promise.all([
-        getForumDetail(currentPostId.value),
-        getReportList(currentPostId.value),
-        getCommentList(currentPostId.value),
-      ])
+      await Promise.all([getForumDetail(), getReportList(), getCommentList()])
     } finally {
       isLoading.value = false
     }
@@ -164,7 +175,7 @@ onMounted(async () => {
       class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
     >
       <h3 class="heading-h2-20px-medium">{{ RouteName.POST_DETAILS }}</h3>
-      <el-button>Delete</el-button>
+      <el-button @click="handleDeleteForum">Delete</el-button>
     </div>
     <el-divider />
     <el-tabs v-model="activeName" @tab-change="handleTabChange">
