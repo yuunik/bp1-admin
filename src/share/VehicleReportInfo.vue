@@ -28,7 +28,7 @@ import OthersIcon from '@/assets/icons/others-icon.svg'
 import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
 
 // 显示导出按钮
-const showExportButton = ref(true)
+const showExportButton = ref(false)
 
 const isLoading = ref(false)
 
@@ -39,7 +39,7 @@ const route = useRoute()
 
 // 导出PDF
 const exportPDF = () => {
-  showExportButton.value = false
+  // showExportButton.value = false
 
   nextTick(async () => {
     // 获取导出的容器
@@ -122,7 +122,7 @@ const exportPDF = () => {
     }
 
     pdf.save('vehicle-report.pdf')
-    showExportButton.value = true
+    // showExportButton.value = true
   })
 }
 
