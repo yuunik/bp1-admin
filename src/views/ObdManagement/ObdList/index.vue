@@ -6,7 +6,10 @@ import { ElMessage } from 'element-plus'
 
 import BasePagination from '@/components/BasePagination.vue'
 import { closeOBDApi, getOBDListApi, unbindOBDApi } from '@/apis/obdApi.js'
-import { getLastUsedDate, getWarrantyEndDate } from '@/utils/dateUtil.js'
+import {
+  getLastUsedDate,
+  getOneYearLaterDateWithDDMMMYYYYY,
+} from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 
 const router = useRouter()
@@ -282,7 +285,7 @@ getObdList()
           sortable="custom"
         >
           <template #default="{ row }">
-            {{ getWarrantyEndDate(row.warrantyTime) }}
+            {{ getOneYearLaterDateWithDDMMMYYYYY(row.warrantyTime) }}
           </template>
         </el-table-column>
         <!-- 绑定时间 -->

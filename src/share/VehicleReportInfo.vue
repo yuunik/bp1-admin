@@ -4,7 +4,10 @@ import jsPDF from 'jspdf'
 import { useRoute } from 'vue-router'
 
 import { getImgUrlToBase64, getVehicleReportInfoApi } from '@/apis/shareApi.js'
-import { getFullDate, getVehicleReportGeneratedTime } from '@/utils/dateUtil.js'
+import {
+  getDateWithDDMMMYYYY,
+  getGeneratedDateWithDDMMMYYYYhhmma,
+} from '@/utils/dateUtil.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
@@ -312,7 +315,7 @@ const categoryIconMap = Object.freeze({
         Vehicle Report
       </h1>
       <h2 class="poppins-12px-medium text-neutrals-grey-4">
-        {{ getVehicleReportGeneratedTime(vehicleReportInfo.createTime) }}
+        {{ getGeneratedDateWithDDMMMYYYYhhmma(vehicleReportInfo.createTime) }}
       </h2>
     </header>
     <main class="relative">
@@ -567,7 +570,9 @@ const categoryIconMap = Object.freeze({
                 <label>Original Reg. Date</label>
                 <el-text>
                   {{
-                    getFullDate(vehicleReportInfo.vehicleDto?.createTime) || '-'
+                    getDateWithDDMMMYYYY(
+                      vehicleReportInfo.vehicleDto?.createTime,
+                    ) || '-'
                   }}
                 </el-text>
               </li>

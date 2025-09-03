@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 
 import { getAppVersionListApi } from '@/apis/appApi.js'
 import BasePagination from '@/components/BasePagination.vue'
-import { getCommentTime } from '@/utils/dateUtil.js'
+import { getFormattedPublishTime } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 
 const searchText = ref('')
@@ -149,7 +149,7 @@ getAppVersionList()
         <el-table-column prop="content" label="Content" />
         <el-table-column label="Create Date">
           <template #default="{ row }">
-            {{ getCommentTime(row.createTime) }}
+            {{ getFormattedPublishTime(row.createTime) }}
           </template>
         </el-table-column>
         <el-table-column>

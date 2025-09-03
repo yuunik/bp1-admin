@@ -29,7 +29,7 @@ export const getLastUsedDate = (timestamp) => {
  * @param {number} timestamp 毫秒时间戳
  * @returns {string} 格式化后的日期
  */
-export const getWarrantyEndDate = (timestamp) => {
+export const getOneYearLaterDateWithDDMMMYYYYY = (timestamp) => {
   if (timestamp === 0) {
     return '-'
   }
@@ -38,10 +38,10 @@ export const getWarrantyEndDate = (timestamp) => {
 }
 
 /**
- * 格式化贴文发布的时间, 格式为 "22 Aug 2024 10:30am"
+ * 格式化贴文发布的时间
  * @param timestamp 贴文发布的时间戳
  */
-export const getCommentTime = (timestamp) => {
+export const getFormattedPublishTime = (timestamp) => {
   if (timestamp === undefined) {
     // 若时间戳为空，则返回空字符串
     return ''
@@ -78,7 +78,7 @@ export const getCommentTime = (timestamp) => {
  * @param timestamp 时间戳
  * @returns {string}
  */
-export const getVehicleReportGeneratedTime = (timestamp) => {
+export const getGeneratedDateWithDDMMMYYYYhhmma = (timestamp) => {
   // 时间戳为空则返回 '-'
   if (!timestamp) {
     return '-'
@@ -95,7 +95,7 @@ export const getVehicleReportGeneratedTime = (timestamp) => {
  * @param timestamp
  * @returns {string}
  */
-export const getFullDate = (timestamp) => {
+export const getDateWithDDMMMYYYY = (timestamp) => {
   if (!timestamp) {
     return '-'
   }

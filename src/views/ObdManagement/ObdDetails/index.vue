@@ -17,10 +17,10 @@ import {
   unbindOBDApi,
 } from '@/apis/obdApi.js'
 import {
-  getCommentTime,
-  getFullDate,
+  getFormattedPublishTime,
+  getDateWithDDMMMYYYY,
   getLastUsedDate,
-  getWarrantyEndDate,
+  getOneYearLaterDateWithDDMMMYYYYY,
   isDateExpired,
 } from '@/utils/dateUtil.js'
 import { Line } from 'vue-chartjs'
@@ -362,7 +362,7 @@ watch(
           >
             <template v-if="obdInfo.warrantyTime">
               <span class="heading-body-body-12px-regular items-center">
-                {{ getWarrantyEndDate(obdInfo.warrantyTime) }}
+                {{ getOneYearLaterDateWithDDMMMYYYYY(obdInfo.warrantyTime) }}
               </span>
               <el-tag
                 :type="
@@ -417,7 +417,9 @@ watch(
               :sortable="true"
             >
               <template #default="{ row }">
-                {{ row.userId ? getCommentTime(row.bindingTime) : '-' }}
+                {{
+                  row.userId ? getFormattedPublishTime(row.bindingTime) : '-'
+                }}
               </template>
             </el-table-column>
             <el-table-column prop="status" label="Status">
@@ -459,7 +461,7 @@ watch(
             <el-table-column prop="vin" label="VIN" />
             <el-table-column label="Bind Date">
               <template #default="{ row }">
-                {{ getFullDate(row.createTime) }}
+                {{ getDateWithDDMMMYYYY(row.createTime) }}
               </template>
             </el-table-column>
             <el-table-column>
@@ -534,7 +536,7 @@ watch(
             <el-table :data="operationRecordList">
               <el-table-column label="Date">
                 <template #default="{ row }">
-                  {{ getFullDate(row.createTime) }}
+                  {{ getDateWithDDMMMYYYY(row.createTime) }}
                 </template>
               </el-table-column>
               <el-table-column label="Operator">

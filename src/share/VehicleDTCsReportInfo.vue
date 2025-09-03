@@ -8,7 +8,10 @@ import {
   getVehicleDtcReportInfoApi,
   getVehicleReportInfoApi,
 } from '@/apis/shareApi.js'
-import { getFullDate, getVehicleReportGeneratedTime } from '@/utils/dateUtil.js'
+import {
+  getDateWithDDMMMYYYY,
+  getGeneratedDateWithDDMMMYYYYhhmma,
+} from '@/utils/dateUtil.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
@@ -315,7 +318,9 @@ const categoryIconMap = Object.freeze({
         Vehicle DTCs Report
       </h1>
       <h2 class="poppins-12px-medium text-neutrals-grey-4">
-        {{ getVehicleReportGeneratedTime(vehicleDTCsReportInfo.createTime) }}
+        {{
+          getGeneratedDateWithDDMMMYYYYhhmma(vehicleDTCsReportInfo.createTime)
+        }}
       </h2>
     </header>
     <main class="relative">
@@ -417,8 +422,9 @@ const categoryIconMap = Object.freeze({
                 <label>Original Reg. Date</label>
                 <el-text>
                   {{
-                    getFullDate(vehicleDTCsReportInfo.vehicleDto?.createTime) ||
-                    '-'
+                    getDateWithDDMMMYYYY(
+                      vehicleDTCsReportInfo.vehicleDto?.createTime,
+                    ) || '-'
                   }}
                 </el-text>
               </li>

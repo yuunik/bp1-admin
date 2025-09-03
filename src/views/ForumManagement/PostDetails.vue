@@ -14,7 +14,10 @@ import {
   getReportListApi,
 } from '@/apis/forumApi.js'
 import { RouteName } from '@/utils/constantsUtil.js'
-import { getCommentTime, getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import {
+  getFormattedPublishTime,
+  getDateWithDDMMMYYYYhhmma,
+} from '@/utils/dateUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 // 当前选项卡
@@ -354,7 +357,7 @@ onMounted(async () => {
                 <span
                   class="text-neutrals-grey-3 heading-body-body-12px-regular"
                 >
-                  {{ getCommentTime(comment.createTime) }}
+                  {{ getFormattedPublishTime(comment.createTime) }}
                 </span>
               </div>
             </div>
@@ -447,7 +450,7 @@ onMounted(async () => {
                     <span
                       class="text-neutrals-grey-3 heading-body-body-12px-regular"
                     >
-                      {{ getCommentTime(reply.createTime) }}
+                      {{ getFormattedPublishTime(reply.createTime) }}
                     </span>
                   </div>
                 </div>

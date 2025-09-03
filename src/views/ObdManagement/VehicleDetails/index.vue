@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 
 import { EmitterEvent, VehicleDetailTabs } from '@/utils/constantsUtil.js'
 import { getVehicleInfoApi } from '@/apis/obdApi.js'
-import { getFullDate } from '@/utils/dateUtil.js'
+import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import { getFaultCodeListApi } from '@/apis/appApi.js'
 import emitter from '@/utils/emitterUtil.js'
 
@@ -167,7 +167,7 @@ onMounted(async () => {
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Bound Date</dt>
               <dd class="flex-1">
-                {{ getFullDate(vehicleDetails.createTime) }}
+                {{ getDateWithDDMMMYYYY(vehicleDetails.createTime) }}
               </dd>
             </dl>
             <dl class="flex items-center gap-8">

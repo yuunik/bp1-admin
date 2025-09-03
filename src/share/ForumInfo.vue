@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router'
 import AppScaffold from '@/components/AppScaffold.vue'
 import { getForumInfoApi } from '@/apis/shareApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import { getCommentTime } from '@/utils/dateUtil.js'
+import { getFormattedPublishTime } from '@/utils/dateUtil.js'
 
 // 图片加载错误的图片
 import ErrorImage from '@/assets/images/error-img.png'
@@ -69,7 +69,7 @@ const handleErrorImage = () => true
         </el-text>
         <!-- 评论时间 -->
         <el-text>
-          {{ getCommentTime(forumInfo?.createTime) }}
+          {{ getFormattedPublishTime(forumInfo?.createTime) }}
         </el-text>
       </div>
     </div>
