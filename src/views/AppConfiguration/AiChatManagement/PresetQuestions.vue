@@ -9,6 +9,7 @@ import {
   modifyAiQuestionApi,
 } from '@/apis/appApi.js'
 import { AIChatManagementTab } from '@/utils/constantsUtil.js'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
 // 当前的tab
 const activeTab = ref(AIChatManagementTab.PRESET_QUESTIONS)
@@ -145,6 +146,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
+  <!-- 分割线 -->
+  <el-divider class="diver" />
   <div class="pb-38 flex h-full flex-col px-32 pt-16">
     <!-- ai 问题表格 -->
     <el-table

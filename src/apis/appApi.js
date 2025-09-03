@@ -57,6 +57,8 @@ const AppApi = Object.freeze({
   DELETE_BRAND_MODEL: '/manager/model/delete',
   // 开启 OBD
   OPEN_OBD_LINK: '/manager/obd/open',
+  // 获取ai提问记录
+  GET_AI_QUESTION_RECORD: '/manager/aichat/records',
 })
 
 // 获取 token
@@ -508,6 +510,20 @@ export const openOBDApi = (obdIds) => {
 
   return request({
     url: AppApi.OPEN_OBD_LINK,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getAiChatRecordList = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+  data.append('searchKey', params.searchKey)
+
+  return request({
+    url: AppApi.GET_AI_QUESTION_RECORD,
     method: 'POST',
     data,
   })
