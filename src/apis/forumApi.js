@@ -124,7 +124,7 @@ export const getReportListApi = (params) => {
 export const getCommentListByForumApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('postId', params.postId)
+  data.append('parentId', params.postId)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
 

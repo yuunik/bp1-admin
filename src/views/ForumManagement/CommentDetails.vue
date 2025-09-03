@@ -85,7 +85,9 @@ if (id) {
       <el-tab-pane label="Comments" name="Comments" />
     </el-tabs>
     <!-- 贴文详情 -->
-    <el-scrollbar class="box-border flex-1 px-32 pb-24 pt-16">
+    <el-scrollbar
+      class="box-border flex flex-1 flex-col gap-24 px-32 pb-24 pt-16"
+    >
       <!-- Post Header -->
       <section class="flex flex-col gap-8" ref="forumRef">
         <!-- 发帖人信息 -->
@@ -109,7 +111,7 @@ if (id) {
         </dl>
       </section>
       <!-- 被举报的信息 -->
-      <section class="flex flex-col gap-8">
+      <section class="mt-24 flex flex-col gap-8">
         <div class="heading-body-large-body-14px-medium row-center h-24 gap-2">
           <h4 class="text-neutrals-off-black">Reports</h4>
           <span class="text-neutrals-grey-3">3</span>
