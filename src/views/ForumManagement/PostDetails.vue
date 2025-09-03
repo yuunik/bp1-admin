@@ -1,15 +1,24 @@
 <script setup>
+import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { CircleCheckFilled } from '@element-plus/icons-vue'
 
-import { getCommentInfoApi, getForumInfoApi } from '@/apis/forumApi.js'
+import {
+  getCommentListByForumApi,
+  getForumInfoApi,
+  getReportListApi,
+} from '@/apis/forumApi.js'
 import { RouteName } from '@/utils/constantsUtil.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 // 当前选项卡
 const activeName = ref('Details')
 
 // 路由
 const route = useRoute()
+
+// 贴文详情
+const postInfo = reactive({})
 
 // 举报列表
 const reporterList = ref([
@@ -29,6 +38,16 @@ const reporterList = ref([
   },
 ])
 
+// 贴文的评论列表
+const commentList = ref([])
+
+// 贴文的评论列表的分页查询参数
+const commentPaginationParams = reactive({
+  currentPage: 0,
+  total: 0,
+  pageSize: 15,
+})
+
 const urls = ref([
   'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
   'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
@@ -40,7 +59,7 @@ const urls = ref([
 ])
 
 // 详情dom
-const articleRef = ref(null)
+const detailsRef = ref(null)
 
 // 贴文dom
 const forumRef = ref(null)
@@ -59,21 +78,49 @@ watch(activeName, (val) => {
 })
 
 // 获取论坛详情
-const getForumDetail = async (forumId) => {
-  const { data } = await getForumInfoApi(forumId)
-  Object.assign(forumInfo, data)
+const getForumDetail = async (postId) => {
+  const { data } = await getForumInfoApi(postId)
+  Object.assign(postInfo, data)
 }
 
-const {
-  params: { id },
-  query: { type },
-} = route
-if (id) {
+// 获取举报列表信息
+const getReportList = async (postId) => {
+  const { data } = await getReportListApi({
+    parentIds: postId,
+    types: 'Forum',
+    page: 0,
+    pageSize: 9999,
+  })
+  reporterList.value = data
 }
+
+// 获取评论列表信息
+const getCommentList = async (postId) => {
+  const { data } = await getCommentListByForumApi({
+    postId: postId,
+    page: commentPaginationParams.currentPage,
+    pageSize: commentPaginationParams.pageSize,
+  })
+  commentList.value = data
+}
+
+// 组件挂载后, 获取贴文详情
+onMounted(async () => {
+  const {
+    params: { id },
+  } = route
+  if (id) {
+    await Promise.all([
+      getForumDetail(id),
+      getReportList(id),
+      getCommentList(id),
+    ])
+  }
+})
 </script>
 
 <template>
-  <div ref="articleRef" class="flex flex-col overflow-auto">
+  <div class="flex flex-col overflow-auto">
     <div
       class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
     >
@@ -87,7 +134,7 @@ if (id) {
       <el-tab-pane label="Comments" name="Comments" />
     </el-tabs>
     <!-- 贴文详情 -->
-    <el-scrollbar class="box-border flex-1 px-32 pb-24 pt-16">
+    <el-scrollbar class="box-border flex-1 px-32 pb-24 pt-16" ref="detailsRef">
       <!-- Post Header -->
       <section class="flex flex-col gap-8" ref="forumRef">
         <!-- 发帖人信息 -->
@@ -103,7 +150,9 @@ if (id) {
         <!-- 发帖时间 -->
         <dl class="mt-12 grid h-32 grid-cols-[112px_1fr_112px_1fr] gap-4">
           <dt class="row-center h-32">Date</dt>
-          <dd class="row-center h-32">2022-01-01</dd>
+          <dd class="row-center h-32">
+            {{ getDateWithDDMMMYYYYhhmma(postInfo.createTime) }}
+          </dd>
           <dt class="row-center h-32">Status</dt>
           <dd class="row-center h-32">
             <el-tag type="danger">Reported</el-tag>

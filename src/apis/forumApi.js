@@ -33,7 +33,7 @@ export const getForumListApi = (params) => {
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
   data.append('searchKey', params.searchKey)
-  data.append('type', params.type)
+  params.type && data.append('type', params.type)
 
   return request({
     url: ForumApi.GET_FORUM_LIST,
@@ -48,7 +48,7 @@ export const getCommentListApi = (params) => {
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
   data.append('searchKey', params.searchKey)
-  data.append('type', params.type)
+  params.type && data.append('type', params.type)
 
   return request({
     url: ForumApi.GET_COMMENT_LIST,

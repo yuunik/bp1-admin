@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
 import BasePagination from '@/components/BasePagination.vue'
-import { getCommentListApi } from '@/apis/forumApi.js'
+import { deleteCommentApi, getCommentListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useDebounceFn } from '@vueuse/core'
@@ -110,7 +110,7 @@ const handleOpenDeleteCommentDialog = (id) => {
 // 删除评论
 const handleDeleteComment = async () => {
   try {
-    await getCommentListApi(selectedCommentId.value)
+    await deleteCommentApi(selectedCommentId.value)
     // 提示
     ElMessage.success('Delete successfully')
     // 刷新列表
