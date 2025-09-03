@@ -29,6 +29,9 @@ const route = useRoute()
 // 贴文详情
 const postInfo = reactive({})
 
+// 当前贴文的id
+const currentPostId = ref('')
+
 // 举报列表
 const reporterList = ref([])
 
@@ -54,6 +57,9 @@ const forumRef = ref(null)
 // 评论dom
 const commentsRef = ref(null)
 
+// 是否有更多评论
+const isHasMoreComments = ref(true)
+
 watch(activeName, (val) => {
   if (val === 'Post') {
     forumRef.value.scrollIntoView({ behavior: 'smooth' })
@@ -65,15 +71,15 @@ watch(activeName, (val) => {
 })
 
 // 获取论坛详情
-const getForumDetail = async (postId) => {
-  const { data } = await getForumInfoApi(postId)
+const getForumDetail = async () => {
+  const { data } = await getForumInfoApi(currentPostId.value)
   Object.assign(postInfo, data)
 }
 
 // 获取举报列表信息
-const getReportList = async (postId) => {
+const getReportList = async () => {
   const { data } = await getReportListApi({
-    parentIds: postId,
+    parentIds: currentPostId.value,
     types: 'Forum',
     page: 0,
     pageSize: 9999,
@@ -82,13 +88,23 @@ const getReportList = async (postId) => {
 }
 
 // 获取评论列表信息
-const getCommentList = async (postId) => {
-  const { data } = await getCommentListByForumApi({
-    postId: postId,
-    page: commentPaginationParams.currentPage,
+const getCommentList = async () => {
+  if (!isHasMoreComments.value) {
+    return
+  }
+  const { data, count } = await getCommentListByForumApi({
+    postId: currentPostId.value,
+    page: commentPaginationParams.currentPage++,
     pageSize: commentPaginationParams.pageSize,
   })
-  commentList.value = data.map((item) => ({ ...item, isShowMoreReply: false }))
+  if (data.length) {
+    !commentPaginationParams.total && (commentPaginationParams.total = count)
+    commentList.value.push(
+      ...data.map((item) => ({ ...item, isShowMoreReply: false })),
+    )
+  } else {
+    isHasMoreComments.value = false
+  }
 }
 
 // 加载头像的错误行为
@@ -108,10 +124,11 @@ onMounted(async () => {
     params: { id },
   } = route
   if (id) {
+    currentPostId.value = id
     await Promise.all([
-      getForumDetail(id),
-      getReportList(id),
-      getCommentList(id),
+      getForumDetail(currentPostId.value),
+      getReportList(currentPostId.value),
+      getCommentList(currentPostId.value),
     ])
   }
 })
@@ -135,6 +152,7 @@ onMounted(async () => {
     <el-scrollbar
       class="box-border flex flex-1 flex-col gap-24 px-32 pb-24 pt-16"
       ref="detailsRef"
+      @end-reached="getCommentList"
     >
       <!-- Post Header -->
       <section class="flex flex-col gap-8" ref="forumRef">
