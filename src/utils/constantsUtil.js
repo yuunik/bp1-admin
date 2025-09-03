@@ -54,6 +54,8 @@ export const RouteName = Object.freeze({
   FORUM_INFO: 'Forum Info',
   ANY: 'Any',
   INTERVAL_WARNING: 'Interval & Warning',
+  POST_DETAILS: 'Post Details',
+  COMMENT_DETAILS: 'Comment Details',
 })
 
 // 分享模块跳转路径

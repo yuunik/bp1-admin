@@ -7,7 +7,7 @@ import { getCommentListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useDebounceFn } from '@vueuse/core'
-import { TimingPreset } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
@@ -91,9 +91,8 @@ const handleViewCommentDetails = (row, column) => {
     return
   }
   router.push({
-    name: 'Post Details',
+    name: RouteName.COMMENT_DETAILS,
     params: { id: row.id },
-    query: { type: 'coment' },
   })
 }
 

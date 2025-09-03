@@ -254,12 +254,25 @@ const constantRoutes = [
         name: 'Forum Management List',
         component: () => import('@/views/ForumManagement/index.vue'),
         children: [
+          // 贴文详情页
           {
             path: '/forum-management/post-details/:id',
-            name: 'Post Details',
+            name: RouteName.POST_DETAILS,
             component: () => import('@/views/ForumManagement/PostDetails.vue'),
             meta: {
-              title: 'Post Details',
+              title: RouteName.POST_DETAILS,
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
+          // 评论详情页
+          {
+            path: '/forum-management/comment-details/:id',
+            name: RouteName.COMMENT_DETAILS,
+            component: () =>
+              import('@/views/ForumManagement/CommentDetails.vue'),
+            meta: {
+              title: RouteName.COMMENT_DETAILS,
               showInMenu: false,
               showInBreadcrumb: true,
             },

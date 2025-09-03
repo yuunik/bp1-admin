@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import { CircleCheckFilled } from '@element-plus/icons-vue'
 
-import { getCommentInfoApi, getForumInfoApi } from '@/apis/forumApi.js'
+import { getCommentInfoApi } from '@/apis/forumApi.js'
 import { RouteName } from '@/utils/constantsUtil.js'
 
 // 当前选项卡
@@ -58,10 +58,10 @@ watch(activeName, (val) => {
   }
 })
 
-// 获取论坛详情
-const getForumDetail = async (forumId) => {
-  const { data } = await getForumInfoApi(forumId)
-  Object.assign(forumInfo, data)
+// 获取评论详情
+const getCommentDetail = async (commentId) => {
+  const { data } = await getCommentInfoApi(commentId)
+  Object.assign(commentInfo, data)
 }
 
 const {
@@ -74,10 +74,8 @@ if (id) {
 
 <template>
   <div ref="articleRef" class="flex flex-col overflow-auto">
-    <div
-      class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
-    >
-      <h3 class="heading-h2-20px-medium">{{ RouteName.POST_DETAILS }}</h3>
+    <div class="text-neutrals-off-black flex-between mx-32 mb-16 h-32">
+      <h3 class="heading-h2-20px-medium">{{ RouteName.COMMENT_DETAILS }}</h3>
       <el-button>Delete</el-button>
     </div>
     <el-divider />

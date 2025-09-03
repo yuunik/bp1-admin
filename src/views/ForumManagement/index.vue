@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { ForumManagementTab } from '@/utils/constantsUtil.js'
+import { ForumManagementTab, RouteName } from '@/utils/constantsUtil.js'
 
 import Posts from './PostList.vue'
 import Comments from './CommentsList.vue'
@@ -19,7 +19,8 @@ const tabMap = Object.freeze({
 </script>
 
 <template>
-  <router-view v-if="$route.name === 'Post Details'" />
+  <router-view v-if="$route.name === RouteName.POST_DETAILS" />
+  <router-view v-if="$route.name === RouteName.COMMENT_DETAILS" />
   <section class="flex h-full flex-col gap-16" v-else>
     <!-- Forum Management Header -->
     <div class="px-32">
