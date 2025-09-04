@@ -78,6 +78,7 @@ export default defineConfig({
       'flex-col-between': 'flex flex-col justify-between',
       // 垂直居中
       'row-items-center': 'flex items-center',
+      /* 背景颜色样式 */
       'bg-neutrals-white': 'bg-[#FFFFFF]',
       'bg-neutrals-off-white': 'bg-[#EFF4F9]',
       'bg-branding-primary': 'bg-[#202834]',
@@ -90,12 +91,16 @@ export default defineConfig({
       'bg-status-colours-light-green': 'bg-[#E6F7F5]',
       'bg-status-colours-light-orange': 'bg-[#FFF0E8]',
       'bg-status-colours-light-purple': 'bg-[#F5EAFB]',
-      'bg-status-colours-light-blue': 'bg-[#E8F0F8]',
+      'bg-status-colours-light-blue': 'bg-[#FDECEA]',
+      'bg-status-colours-light-red': 'bg-[#E8F0F8]',
+      'bg-status-colours-light-yellow': 'bg-[#FFEEC0]',
+      /* 文字颜色样式 */
       'text-status-colours-green': 'text-[#05AD9D]',
       'text-status-colours-orange': 'text-[#FF6D1A]',
       'text-status-colours-purple': 'text-[#6B07EC]',
       'text-status-colours-blue': 'text-[#3288F8]',
       'text-status-colours-red': 'text-[#EF3C30]',
+      'text-status-colours-yellow': 'text-[#F6B51E]',
       'text-neutrals-blue': 'text-[#006BF7]',
       'text-neutrals-off-white': 'text-[#EFF4F9]',
       'text-neutrals-white': 'text-[#FFFFFF]',
@@ -106,6 +111,7 @@ export default defineConfig({
       'text-branding-light-blue': 'text-[#E5F0FE]',
       'text-sub-600': 'text-[#525866]',
       'text-strong-950': 'text-[#0E121B]',
+      /* 文字风格样式 */
       'poppins-28px-semibold': 'text-28/32 font-semibold',
       'poppins-16px-semibold': 'text-16 font-semibold',
       'poppins-12px-semibold': 'text-12 font-semibold',

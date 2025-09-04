@@ -10,6 +10,7 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import BaseDialog from '@/components/BaseDialog.vue'
+import BaseTag from '@/components/BaseTag.vue'
 
 const router = useRouter()
 
@@ -247,9 +248,13 @@ watch(
         <el-table-column label="Status" prop="state">
           <template #default="{ row }">
             <!-- state 为 0, 为 Disabled, state 为 1 , 则 Active -->
-            <el-tag :type="row.state === 1 ? 'success' : 'danger'">
-              {{ row.state === 1 ? 'Active' : 'Disabled' }}
-            </el-tag>
+            <!--<el-tag :type="row.state === 1 ? 'success' : 'danger'">-->
+            <!--  {{ row.state === 1 ? 'Active' : 'Disabled' }}-->
+            <!--</el-tag>-->
+            <base-tag
+              :color="row.state === 1 ? 'green' : 'gray'"
+              :text="row.state === 1 ? 'Active' : 'Disabled'"
+            />
           </template>
         </el-table-column>
         <el-table-column label="Email" prop="email" sortable="custom" />
