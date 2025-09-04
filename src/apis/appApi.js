@@ -59,6 +59,8 @@ const AppApi = Object.freeze({
   OPEN_OBD_LINK: '/manager/obd/open',
   // 获取ai提问记录
   GET_AI_QUESTION_RECORD: '/manager/aichat/records',
+  // 删除版本控制信息
+  DELETE_VERSION_CONTROL_INFO: '/manager/version/deleteappversion',
 })
 
 // 获取 token
@@ -536,6 +538,18 @@ export const getAiChatRecordList = (params) => {
 
   return request({
     url: AppApi.GET_AI_QUESTION_RECORD,
+    method: 'POST',
+    data,
+  })
+}
+
+export const deleteAppVersionApi = (appVersionId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', appVersionId)
+
+  return request({
+    url: AppApi.DELETE_VERSION_CONTROL_INFO,
     method: 'POST',
     data,
   })

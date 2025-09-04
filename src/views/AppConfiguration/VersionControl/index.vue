@@ -1,11 +1,14 @@
 <script setup>
 import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
+import { Delete } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
-import { getAppVersionListApi } from '@/apis/appApi.js'
+import { deleteAppVersionApi, getAppVersionListApi } from '@/apis/appApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import { getFormattedPublishTime } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
+import BaseDialog from '@/components/BaseDialog.vue'
 
 const searchText = ref('')
 
@@ -26,6 +29,15 @@ const searchType = ref('')
 
 const router = useRouter()
 
+// 删除弹窗
+const dialogConfirmDeleteVisible = ref(false)
+
+// 删除提示信息
+const deleteContent = ref('')
+
+// 所选中的版本信息
+const selectedRow = ref({})
+
 // 获取版本列表
 const getAppVersionList = useDebounceFn(async () => {
   const { data, count } = await getAppVersionListApi({
@@ -33,10 +45,18 @@ const getAppVersionList = useDebounceFn(async () => {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
-  appVersionList.value = data
+  appVersionList.value = data.map((item) => ({ ...item, isHover: false }))
   // 更新分页数据
   pagination.total = count
 }, TimingPreset.DEBOUNCE)
+
+// 刷新页面
+const refresh = () => {
+  if (pagination.currentPage === 0) {
+    return getAppVersionList()
+  }
+  pagination.currentPage = 0
+}
 
 // 搜索平台切换
 const handlePlatformChange = (command) => {
@@ -49,17 +69,42 @@ const handlePlatformChange = (command) => {
 }
 
 // 查看版本详情
-const viewVersionDetail = (row) =>
+const viewVersionDetail = (row, column) => {
+  const { no } = column
+  if (no === 0 || no === 6) {
+    return
+  }
   router.push({ name: RouteName.MANAGE_VERSION, params: { id: row.id } })
+}
 
 // 移除搜索平台
 const removeSearchPlatform = () => {
   searchType.value = ''
-  // 修改当前页
-  if (pagination.currentPage === 0) {
-    return getAppVersionList()
-  }
-  pagination.currentPage = 0
+  // 刷新页面
+  refresh()
+}
+
+// 当单元格 hover 进入时会触发该事件
+const handleCellMouseEnter = (row) => (row.isHover = true)
+
+// 当单元格 hover 离开时会触发该事件
+const handleCellMouseLeave = (row) => (row.isHover = false)
+
+// 打开删除确认弹窗
+const openConfirmDeleteDialog = (row) => {
+  selectedRow.value = row
+  // 记录删除信息
+  deleteContent.value = `Are you sure you want to delete the ${selectedRow.value.type} ${selectedRow.value.version} version? Once deleted, it cannot be recovered.`
+  dialogConfirmDeleteVisible.value = true
+}
+
+// 删除版本信息
+const handleDeleteVersionControl = async () => {
+  await deleteAppVersionApi(selectedRow.value.id)
+  // 提示
+  ElMessage.success('Delete successfully')
+  dialogConfirmDeleteVisible.value = false
+  refresh()
 }
 
 // 监听 pagination.currentPage, 自动发起查询
@@ -134,11 +179,13 @@ getAppVersionList()
         class="flex-1"
         row-class-name="clickable-row"
         @row-click="viewVersionDetail"
+        @cell-mouse-enter="handleCellMouseEnter"
+        @cell-mouse-leave="handleCellMouseLeave"
       >
-        <el-table-column type="selection" />
-        <el-table-column prop="type" label="Platform" />
-        <el-table-column prop="version" label="Version" />
-        <el-table-column label="Status">
+        <el-table-column type="selection" min-width="6%" />
+        <el-table-column prop="type" label="Platform" min-width="15%" />
+        <el-table-column prop="version" label="Version" min-width="15%" />
+        <el-table-column label="Status" min-width="15%">
           <template #default="{ row }">
             <el-text v-if="row.state === 0">No prompt</el-text>
             <el-text v-else-if="row.state === 1">Prompt to update</el-text>
@@ -146,15 +193,21 @@ getAppVersionList()
             <el-text v-else-if="row.state === 3">Under review</el-text>
           </template>
         </el-table-column>
-        <el-table-column prop="content" label="Content" />
-        <el-table-column label="Create Date">
+        <el-table-column prop="content" label="Content" min-width="30%" />
+        <el-table-column label="Create Date" min-width="15%">
           <template #default="{ row }">
             {{ getFormattedPublishTime(row.createTime) }}
           </template>
         </el-table-column>
-        <el-table-column>
+        <el-table-column min-width="4%">
           <template #default="{ row }">
-            <i class="icon-more-2-line text-neutrals-grey-3 h-16 w-16" />
+            <el-icon
+              v-show="row.isHover"
+              class="default-transition h-16 w-16"
+              @click="openConfirmDeleteDialog(row)"
+            >
+              <delete />
+            </el-icon>
           </template>
         </el-table-column>
       </el-table>
@@ -162,6 +215,20 @@ getAppVersionList()
       <base-pagination v-model="pagination" />
     </div>
   </section>
+  <!-- 删除确认弹窗 -->
+  <base-dialog
+    v-model="dialogConfirmDeleteVisible"
+    title="Delete version ?"
+    button-type="danger"
+    @cancel="dialogConfirmDeleteVisible = false"
+    @confirm="handleDeleteVersionControl"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-medium text-neutrals-grey-3">
+        {{ deleteContent }}
+      </p>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">

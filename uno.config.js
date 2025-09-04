@@ -123,7 +123,7 @@ export default defineConfig({
       'divider-neutral-grey-4-1px': 'border-t-[#EAEEF4] border-t border-t-1',
       'divider-neutral-grey-4-4px': 'border-t-[#EAEEF4] border-t border-t-4',
       // 默认过渡效果
-      'default-transition': 'transition-all duration-250 ease-linear',
+      'default-transition': 'transition-all duration-250 linear',
     },
   ],
   theme: {
