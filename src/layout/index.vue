@@ -116,6 +116,8 @@ const handleModifyAdminPassword = async () => {
   router.push({ name: RouteName.LOGIN })
 }
 
+const color = ref('#FFFF00')
+
 provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 </script>
 
@@ -157,10 +159,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
           <i
-            class="icon-typesnotification-dot heading-caption-caption-10px-medium3 neutrals-grey-3"
-            :class="{
-              'text-neutrals-off-white': $route.name === 'Notifications',
-            }"
+            class="icon-typesnotification-dot heading-caption-caption-10px-medium flex-center bg-status-colours-green h-16 w-16 rounded-full text-[#FCFCFC]"
           >
             1
           </i>
@@ -416,12 +415,6 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
     }
   }
 
-  // 消息通知图标
-  .icon-typesnotification-dot {
-    @apply rounded-100 flex-center h-16 w-16;
-    background-color: $status-colours-green;
-  }
-
   // 展开按钮
   .expand-btn {
     @apply rounded-200 flex-center absolute h-72 w-16 cursor-pointer;
@@ -433,8 +426,8 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply rounded-8 relative flex h-full flex-col;
-    width: calc(100% - 218px);
+    @apply rounded-8 wc218 relative flex h-full flex-col;
+    // width: calc(100% - 218px);
     background-color: $neutrals-off-white;
   }
 }
