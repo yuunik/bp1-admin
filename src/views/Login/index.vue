@@ -2,14 +2,11 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { useDebounceFn, useThrottleFn } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
+import { Picture } from '@element-plus/icons-vue'
 
 import { useUserStore } from '@/store'
-
-// 静态资源
-import Logo from '@/assets/icons/company-logo.svg'
-import GreetingIcon from '@/assets/icons/waving-hand.svg'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
@@ -17,6 +14,10 @@ import {
   resetAdminPasswordApi,
 } from '@/apis/userCenterApi.js'
 import { md5Encrypt } from '@/utils/md5Util.js'
+
+// 静态资源
+import Logo from '@/assets/images/company-logo-full.png'
+import GreetingIcon from '@/assets/images/Waving Hand.png'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -142,9 +143,17 @@ watch(dialogForgetPasswordVisible, (val) => {
 <template>
   <div class="bg-container">
     <!-- description -->
-    <div class="box-border flex h-full flex-1 flex-col gap-32 p-32">
+    <div
+      class="text-neutrals-grey-3 box-border flex h-full flex-1 flex-col gap-32 p-32"
+    >
       <!-- Company Logo -->
-      <el-image :src="Logo" alt="Logo" class="w-83 h-24" />
+      <el-image :src="Logo" alt="Company Logo" class="w-83 h-24">
+        <template #error>
+          <div class="image-error">
+            <el-icon><picture /></el-icon>
+          </div>
+        </template>
+      </el-image>
       <article
         class="heading-body-large-body-14px-regular ml-auto mr-auto flex flex-1 flex-col justify-center gap-32 px-24"
       >
@@ -154,31 +163,29 @@ watch(dialogForgetPasswordVisible, (val) => {
         <h2 class="heading-h2-20px-medium neutrals-off-white">
           Businesses Bit by Bit
         </h2>
-        <section class="neutrals-grey-3 flex items-center gap-16">
+        <section class="flex items-center gap-16">
           <i class="icon-typesline text-24" />
           <span>Boost Sales & Saves Time!</span>
         </section>
-        <section class="neutrals-grey-3 flex items-center gap-16">
+        <section class="flex items-center gap-16">
           <i class="icon-typeslist text-24" />
           Easy project creation and assignment
         </section>
-        <section class="neutrals-grey-3 flex items-center gap-16">
+        <section class="flex items-center gap-16">
           <i class="icon-typestime text-24" />
           Real-time progress monitoring to ensure timely delivery
         </section>
-        <section class="neutrals-grey-3 flex items-center gap-16">
+        <section class="flex items-center gap-16">
           <i class="icon-typesnote text-24" />
           Report generation for clear decision making
         </section>
-        <section class="neutrals-grey-3 flex items-center gap-16">
+        <section class="flex items-center gap-16">
           <i class="icon-typesdot-line text-24" />
           Define, track and optimise your business processes with comprehensive
           data insights,
         </section>
       </article>
-      <footer
-        class="text-align-center heading-body-body-12px-regular neutrals-grey-3"
-      >
+      <footer class="text-align-center heading-body-body-12px-regular">
         discover, develop, deliver © Proteus 2024
       </footer>
     </div>
@@ -187,15 +194,21 @@ watch(dialogForgetPasswordVisible, (val) => {
       class="min-w-592 max-w-800 bg-neutrals-off-white rounded-8 flex h-full w-full items-center justify-center"
     >
       <div class="text-align-left flex flex-col gap-48">
-        <hgroup class="flex flex-col gap-24">
-          <h1 class="flex items-center gap-8">
-            <strong class="heading-h1-26px-medium">Welcome Back!</strong>
-            <el-image :src="GreetingIcon" alt="Waving Hand" class="h-24 w-24" />
-          </h1>
-          <p class="heading-body-body-12px-regular">
+        <div class="flex flex-col gap-24">
+          <div class="flex items-center gap-8">
+            <h1 class="heading-h1-26px-medium h-24">Welcome Back!</h1>
+            <el-image :src="GreetingIcon" alt="Greeting Icon" class="h-24 w-24">
+              <template #error>
+                <div class="image-error">
+                  <el-icon><picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
+          </div>
+          <p class="heading-body-body-12px-regular text-neutrals-grey-4">
             Welcome to OMS. Please enter your credentials to login.
           </p>
-        </hgroup>
+        </div>
         <div class="text-align-right">
           <el-form label-width="112" label-position="left">
             <el-form-item label="Email" class="bottom-border-only">
@@ -319,21 +332,8 @@ watch(dialogForgetPasswordVisible, (val) => {
   @apply justify-between;
 }
 
+// 重置输入框样式
 :deep(.el-input__wrapper) {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-:deep(.el-input__wrapper::after) {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background-color: var(--el-input-border-color, var(--el-border-color));
-  pointer-events: none;
+  @extend %el-input-underline-style;
 }
 </style>

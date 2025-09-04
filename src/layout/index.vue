@@ -9,7 +9,7 @@ import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
 
-import CompanyLogo from '@/assets/icons/company-logo.svg'
+import CompanyLogo from '@/assets/images/company-logo-full.png'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
 import { modifyAdminPasswordApi } from '@/apis/userCenterApi.js'
@@ -115,8 +115,6 @@ const handleModifyAdminPassword = async () => {
   // 跳转登录页面
   router.push({ name: RouteName.LOGIN })
 }
-
-const color = ref('#FFFF00')
 
 provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 </script>

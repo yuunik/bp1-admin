@@ -1,12 +1,12 @@
 <script setup>
-import { computed, onBeforeUnmount } from 'vue'
+import { onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArrowRight } from '@element-plus/icons-vue'
 
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent } from '@/utils/constantsUtil.js'
 
-import CompanyLogo from '@/assets/icons/logo.svg'
+import CompanyLogo from '@/assets/images/company-logo.png'
 
 // 路由
 const route = useRoute()

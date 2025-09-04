@@ -1,17 +1,8 @@
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-
-import { useUserStore } from '@/store'
-
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
 // 静态资源
-import Logo from '@/assets/icons/company-logo.svg'
-import GreetingIcon from '@/assets/icons/waving-hand.svg'
+import GreetingIcon from '@/assets/images/Waving Hand.png'
 </script>
 
 <template>

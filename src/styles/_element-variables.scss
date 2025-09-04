@@ -95,3 +95,13 @@
   // 隐藏小角
   display: none;
 }
+
+
+
+// 重置表单标签样式
+.el-form-item__label {
+  @apply text-neutrals-grey-3! row-center!;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+}

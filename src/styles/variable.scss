@@ -36,3 +36,23 @@ $status-colours-light-purple: #F5EAFB;
   @apply w-full h-full box-border flex p-8  gap-8;
   background-image: linear-gradient(to bottom, $branding-colours-gradient-b, $branding-colours-gradient-e);
 }
+
+// 只有下划线的 el-input 的样式
+%el-input-underline-style {
+  // 清除原有样式
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--el-input-border-color, var(--el-border-color));
+    pointer-events: none;
+  }
+}

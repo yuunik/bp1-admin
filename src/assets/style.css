@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?y30peh');
-  src:  url('fonts/icomoon.eot?y30peh#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?y30peh') format('truetype'),
-    url('fonts/icomoon.woff?y30peh') format('woff'),
-    url('fonts/icomoon.svg?y30peh#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?usv2jt');
+  src:  url('fonts/icomoon.eot?usv2jt#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?usv2jt') format('truetype'),
+    url('fonts/icomoon.woff?usv2jt') format('woff'),
+    url('fonts/icomoon.svg?usv2jt#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,126 +25,141 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-upload-2-line:before {
-  content: "\e921";
-}
-.icon-delete-bin-line:before {
-  content: "\e91f";
-}
-.icon-edit-line:before {
-  content: "\e920";
-}
-.icon-more-2-line:before {
-  content: "\e91e";
-}
-.icon-Ai-Vehicle-Spark-1--Streamline-Core:before {
-  content: "\e922";
-}
-.icon-services:before {
-  content: "\e923";
-}
-.icon-Fuel-Level:before {
-  content: "\e924";
-}
-.icon-fi_file-minus:before {
-  content: "\e925";
-}
-.icon-fi_tool:before {
-  content: "\e926";
-}
-.icon-prediction:before {
-  content: "\e927";
-}
-.icon-Car-Crash--Streamline-Tabler:before {
-  content: "\e928";
-}
 .icon-eye-off-line:before {
-  content: "\e91d";
+  content: "\e900";
 }
-.icon-dashboard:before {
-  content: "\e917";
-}
-.icon-app-configuration:before {
-  content: "\e918";
-}
-.icon-database:before {
-  content: "\e919";
-}
-.icon-user-management:before {
-  content: "\e91a";
-}
-.icon-obd-management:before {
-  content: "\e91b";
-}
-.icon-order-management:before {
-  content: "\e91c";
-}
-.icon-typescollapsable:before {
+.icon-typeForum:before {
   content: "\e901";
 }
-.icon-typeslink:before {
+.icon-selectedtrue:before {
+  content: "\e901";
+}
+.icon-typePhone:before {
   content: "\e902";
 }
-.icon-typesclose:before {
+.icon-selectedtrue1:before {
+  content: "\e902";
+}
+.icon-typedatabase-2-fill:before {
   content: "\e903";
 }
-.icon-typesadd:before {
+.icon-selectedtrue2:before {
+  content: "\e903";
+}
+.icon-typeOBD:before {
   content: "\e904";
 }
-.icon-typesattachment:before {
+.icon-selectedtrue3:before {
+  content: "\e904";
+}
+.icon-typedashboard:before {
   content: "\e905";
 }
-.icon-typesdropdown:before {
+.icon-selectedtrue4:before {
+  content: "\e905";
+}
+.icon-typelist:before {
   content: "\e906";
 }
-.icon-typescalendar:before {
+.icon-selectedtrue5:before {
+  content: "\e906";
+}
+.icon-typeuser-settings-line:before {
   content: "\e907";
 }
-.icon-typesdot-line:before {
+.icon-selectedtrue6:before {
+  content: "\e907";
+}
+.icon-typeuser-3-fill:before {
   content: "\e908";
 }
-.icon-typesnote:before {
+.icon-selectedtrue7:before {
+  content: "\e908";
+}
+.icon-mail-send-line-1:before {
   content: "\e909";
 }
-.icon-typestime:before {
+.icon-Component-5-6:before {
   content: "\e90a";
 }
-.icon-typeslist:before {
+.icon-Component-5-4:before {
   content: "\e90b";
 }
-.icon-typesline:before {
+.icon-Component-5-3:before {
   content: "\e90c";
 }
-.icon-typesarrow-right:before {
+.icon-Component-5-2:before {
   content: "\e90d";
 }
-.icon-typesarrow-up:before {
+.icon-typesOrderManagement:before {
   content: "\e90e";
 }
-.icon-typeslocaiton:before {
+.icon-Component-5:before {
   content: "\e90f";
 }
-.icon-typesdelivery:before {
+.icon-mail-send-line:before {
   content: "\e910";
 }
-.icon-typessetting:before {
+.icon-typescollapsable:before {
   content: "\e911";
 }
-.icon-typesnotification:before {
+.icon-typeslink:before {
   content: "\e912";
 }
-.icon-typessearch:before {
+.icon-typesclose:before {
   content: "\e913";
 }
-.icon-typespassword:before {
+.icon-typesadd:before {
   content: "\e914";
 }
-.icon-typesVacheckiant9:before {
+.icon-typesdropdown:before {
   content: "\e915";
 }
-.icon-typesDefault:before {
+.icon-typescalendar:before {
   content: "\e916";
 }
-.icon-typescollapsable1:before {
-  content: "\e900";
+.icon-typesdot-line:before {
+  content: "\e917";
+}
+.icon-typesnote:before {
+  content: "\e918";
+}
+.icon-typestime:before {
+  content: "\e919";
+}
+.icon-typeslist:before {
+  content: "\e91a";
+}
+.icon-typesline:before {
+  content: "\e91b";
+}
+.icon-typesarrow-right:before {
+  content: "\e91c";
+}
+.icon-typesarrow-up:before {
+  content: "\e91d";
+}
+.icon-typeslocaiton:before {
+  content: "\e91e";
+}
+.icon-typesdelivery:before {
+  content: "\e91f";
+}
+.icon-typessetting:before {
+  content: "\e920";
+}
+.icon-typesnotification:before {
+  content: "\e921";
+}
+.icon-typessearch:before {
+  content: "\e922";
+}
+.icon-typesVacheckiant9:before {
+  content: "\e923";
+}
+.icon-typespassword:before {
+  content: "\e924";
+}
+.icon-typesDefault:before {
+  content: "\e925";
 }
