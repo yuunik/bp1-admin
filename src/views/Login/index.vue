@@ -66,7 +66,7 @@ const countDownTime = ref(60)
 // 登录表单
 const loginFormRef = ref(null)
 
-// 表单校验规则
+// 登录表单校验规则
 const loginFormRules = ref({
   email: [
     {
@@ -77,7 +77,7 @@ const loginFormRules = ref({
     {
       type: 'email',
       message: 'Please enter a valid email',
-      trigger: ['blur', 'change'],
+      trigger: 'change',
     },
   ],
   password: [
@@ -86,9 +86,55 @@ const loginFormRules = ref({
       message: 'Please enter your password',
       trigger: 'blur',
     },
+  ],
+})
+
+// 重设密码弹窗
+const forgetPasswordFormRef = ref(null)
+
+// 重设密码表单
+const forgetPasswordFormRules = ref({
+  email: [
     {
-      min: 6,
-      message: 'Password must be at least 6 characters',
+      required: true,
+      message: 'Please enter your email',
+      trigger: 'blur',
+    },
+    {
+      type: 'email',
+      message: 'Please enter a valid email',
+      trigger: 'change',
+    },
+  ],
+  code: [
+    {
+      required: true,
+      message: 'Please enter the verification code',
+      trigger: 'blur',
+    },
+  ],
+  newPassword: [
+    {
+      required: true,
+      message: 'Please enter your new password',
+      trigger: 'blur',
+    },
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      message: 'Please enter your new password',
+      trigger: 'blur',
+    },
+    {
+      validator: (rule, value, callback) => {
+        if (value !== forgetPasswordForm.newPassword) {
+          callback(new Error('Passwords do not match'))
+        } else {
+          callback()
+        }
+      },
+      trigger: ['blur', 'change'],
     },
   ],
 })
@@ -143,6 +189,8 @@ const handleLogin = useDebounceFn(async () => {
 
 // 忘记密码, 重新设置密码
 const handleResetPassword = useDebounceFn(async () => {
+  // 表单校验
+  await forgetPasswordFormRef.value.validate()
   if (!forgetPasswordForm.newPassword || !forgetPasswordForm.confirmPassword) {
     ElMessage.warning('Password is required.')
     return
@@ -298,13 +346,14 @@ watch(dialogForgetPasswordVisible, (val) => {
   >
     <template #content>
       <el-form
-        ref="changePasswordForm"
+        ref="forgetPasswordFormRef"
         :model="forgetPasswordForm"
+        :rules="forgetPasswordFormRules"
         label-width="140px"
         label-position="left"
         class="change-password-form"
       >
-        <el-form-item label="Email">
+        <el-form-item label="Email" prop="email">
           <el-input
             placeholder="Enter your email"
             v-model="forgetPasswordForm.email"
@@ -312,7 +361,7 @@ watch(dialogForgetPasswordVisible, (val) => {
             @keyup.enter="forgetPasswordSendCode"
           />
         </el-form-item>
-        <el-form-item label="Code">
+        <el-form-item label="Code" prop="code">
           <el-input
             placeholder="Enter your code"
             v-model="forgetPasswordForm.code"
@@ -330,7 +379,7 @@ watch(dialogForgetPasswordVisible, (val) => {
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="New Password">
+        <el-form-item label="New Password" prop="newPassword">
           <el-input
             placeholder="Enter your password"
             v-model="forgetPasswordForm.newPassword"
@@ -344,7 +393,7 @@ watch(dialogForgetPasswordVisible, (val) => {
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="Confirm Password">
+        <el-form-item label="Confirm Password" prop="confirmPassword">
           <el-input
             placeholder="Enter your confirm password"
             v-model="forgetPasswordForm.confirmPassword"
