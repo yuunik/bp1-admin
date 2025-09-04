@@ -57,9 +57,7 @@ const props = defineProps({
 }
 
 .item_avatar-name {
-  font-family: Inter;
   font-weight: 500;
-  font-style: medium;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0;
@@ -91,7 +89,6 @@ const props = defineProps({
   height: 9px;
   font-family: Inter;
   font-weight: 500;
-  font-style: medium;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0;
@@ -100,9 +97,7 @@ const props = defineProps({
 
 .item_content-description {
   width: 100%;
-  font-family: Inter;
   font-weight: 400;
-  font-style: regular;
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0;
@@ -116,9 +111,7 @@ const props = defineProps({
 
 .item_content-time {
   width: 100%;
-  font-family: Inter;
   font-weight: 400;
-  font-style: regular;
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0;

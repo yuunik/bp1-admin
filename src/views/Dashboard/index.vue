@@ -1,8 +1,79 @@
 <script setup>
+import { Line } from 'vue-chartjs'
+
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
 // 静态资源
 import GreetingIcon from '@/assets/images/Waving Hand.png'
+
+const chartData = ref({
+  labels: [
+    '2025-07-18',
+    '2025-07-19',
+    '2025-07-20',
+    '2025-07-21',
+    '2025-07-22',
+  ],
+  datasets: [
+    {
+      label: 'My Data',
+      data: [3, 4, 5, 2, 6],
+      borderColor: '#3b82f6',
+      backgroundColor: '#3b82f6',
+      pointBackgroundColor: '#3b82f6',
+      pointRadius: 4,
+      tension: 0.3,
+      fill: false,
+    },
+  ],
+})
+
+const chartOptions = ref({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    tooltip: {
+      backgroundColor: '#1f2937',
+      titleColor: '#fff',
+      bodyColor: '#fff',
+      callbacks: {
+        title: ([ctx]) => {
+          const date = new Date(ctx.label)
+          return date.toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+          }) // e.g. "20 July"
+        },
+        label: (ctx) => `${ctx.dataset.data[ctx.dataIndex]}`,
+      },
+    },
+    legend: {
+      display: false,
+    },
+  },
+  scales: {
+    x: {
+      time: {
+        unit: 'day',
+        tooltipFormat: 'dd MMMM',
+      },
+      ticks: {
+        display: false, // 隐藏x轴标签
+      },
+      grid: {
+        display: false, // 隐藏x轴网格线
+      },
+    },
+    y: {
+      ticks: {
+        display: false, // 隐藏y轴标签
+      },
+      grid: {
+        display: false, // 隐藏y轴网格线
+      },
+    },
+  },
+})
 </script>
 
 <template>
@@ -119,7 +190,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
             </div>
             <div class="card2-left_3">Compared to last month</div>
           </div>
-          <div class="container-card2-right">图表</div>
+          <div class="container-card2-right">
+            <Line :data="chartData" :options="chartOptions" />
+          </div>
         </div>
         <div class="container-card3">
           <div class="container-card3-left"></div>
@@ -151,18 +224,8 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
         </div>
         <div class="notification-content">
           <ContentItem
-            avatarName="JW"
-            title="Title"
-            description="Description"
-            time="1 mins ago"
-          ></ContentItem>
-          <ContentItem
-            avatarName="JW"
-            title="Title"
-            description="Description"
-            time="1 mins ago"
-          ></ContentItem>
-          <ContentItem
+            v-for="item in 100"
+            :key="item"
             avatarName="JW"
             title="Title"
             description="Description"
@@ -232,12 +295,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .greeting-left_welcome {
   width: 100%;
   max-width: none;
-  font-family: Inter;
   font-weight: 400;
-  font-style: regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #6f7788;
 }
 
@@ -253,12 +314,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 150px;
   height: 15px;
   content: 'Jonathan Wong';
-  font-family: Inter;
   font-weight: 500;
-  font-style: medium;
   font-size: 20px;
   line-height: 30px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #1b1a1e;
 }
 
@@ -314,10 +373,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 100%;
   max-width: none;
   font-weight: 500;
-  font-style: Medium;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #1b1a1e;
 }
 
@@ -344,10 +402,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 66px;
   height: 10px;
   font-weight: 400;
-  font-style: Regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6f7788;
 }
@@ -356,10 +413,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 220px;
   height: 19px;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #1b1a1e;
 }
@@ -368,10 +424,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 28px;
   height: 10px;
   font-weight: 400;
-  font-style: Regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6f7788;
 }
@@ -380,10 +435,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 220px;
   height: 19px;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #1b1a1e;
 }
@@ -405,10 +459,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 54px;
   height: 10px;
   font-weight: 400;
-  font-style: Regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6f7788;
 }
@@ -417,10 +470,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 130.67px;
   height: 19px;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #f6b51e;
 }
@@ -428,12 +480,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .order_3_shipped {
   width: 55px;
   height: 10px;
-  font-family: Inter;
   font-weight: 400;
-  font-style: Regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6f7788;
 }
@@ -441,12 +491,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .order_3_shipped-data {
   width: 130.67px;
   height: 19px;
-  font-family: Inter;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #ff6d1a;
 }
@@ -454,12 +502,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .order_3_refund {
   width: 48px;
   height: 10px;
-  font-family: Inter;
   font-weight: 400;
-  font-style: Regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6f7788;
 }
@@ -467,12 +513,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .order_3_refund-data {
   width: 130.67px;
   height: 19px;
-  font-family: Inter;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6b07ec;
 }
@@ -547,12 +591,10 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .type-1 {
   width: 86px;
   height: 10px;
-  font-family: Inter;
   font-weight: 400;
-  font-style: Regular;
   font-size: 14px;
   line-height: 20px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #6f7788;
 }
@@ -560,12 +602,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .obd_box-data1 {
   width: 216px;
   height: 19px;
-  font-family: Inter;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
   vertical-align: middle;
   color: #05ad9d;
 }
@@ -573,12 +612,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .obd_box-data2 {
   width: 216px;
   height: 19px;
-  font-family: Inter;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
   vertical-align: middle;
   color: #3288f8;
 }
@@ -617,10 +653,9 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
   width: 130.67px;
   height: 19px;
   font-weight: 500;
-  font-style: Medium;
   font-size: 26px;
   line-height: 34px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   vertical-align: middle;
   color: #1b1a1e;
 }
@@ -670,7 +705,6 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 
 .container-card1 {
   display: flex;
-  flex-direction: row;
   flex: 1;
   box-sizing: border-box;
   width: 100%;
@@ -738,9 +772,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .card2-left_1 {
   width: 101px;
   height: 9px;
-  font-family: Inter;
   font-weight: 400;
-  font-style: regular;
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0;
@@ -758,9 +790,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .card2-left_2-1 {
   width: 17px;
   height: 19px;
-  font-family: Inter;
   font-weight: 500;
-  font-style: medium;
   font-size: 26px;
   line-height: 34px;
   color: #fcfcfc;
@@ -769,9 +799,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .card2-left_2-2-1 {
   width: 23px;
   height: 9px;
-  font-family: Inter;
   font-weight: 500;
-  font-style: medium;
   font-size: 12px;
   line-height: 16px;
   color: #ef3c30;
@@ -791,9 +819,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 .card2-left_3 {
   width: 157px;
   height: 7px;
-  font-family: Inter;
   font-weight: 400;
-  font-style: regular;
   font-size: 10px;
   line-height: 15px;
   letter-spacing: 0;
@@ -819,12 +845,11 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 }
 
 .card3-right_1 {
-  font-family: Inter;
   font-weight: 400;
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #6f7788;
 }
 
@@ -853,22 +878,19 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 }
 
 .card3-right_2-text {
-  font-family: Inter;
   font-weight: 400;
-  font-style: Regular;
   font-size: 10px;
   line-height: 15px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #6f7788;
 }
 
 .card3-right_2-num {
-  font-family: Inter;
   font-weight: 500;
   font-style: normal;
   font-size: 12px;
   line-height: 16px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #1b1a1e;
 }
 
@@ -897,22 +919,19 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 }
 
 .card3-right_3-text {
-  font-family: Inter;
   font-weight: 400;
   font-style: normal;
   font-size: 10px;
   line-height: 15px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #6f7788;
 }
 
 .card3-right_3-num {
-  font-family: Inter;
   font-weight: 500;
-  font-style: Medium;
   font-size: 12px;
   line-height: 16px;
-  letter-spacing: 0%;
+  letter-spacing: 0;
   color: #1b1a1e;
 }
 
@@ -933,7 +952,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 
 .notification-title {
   display: flex;
-  flex-direction: horizontal;
+  flex-direction: row;
   width: 100%;
   height: 32px;
   justify-content: space-between;
@@ -942,9 +961,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 }
 
 .notification-title-left {
-  font-family: Inter;
   font-weight: 500;
-  font-style: Medium;
   font-size: 14px;
   line-height: 20px;
   color: #1b1a1e;
