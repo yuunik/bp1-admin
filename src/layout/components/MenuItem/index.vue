@@ -17,6 +17,8 @@ defineProps({
 })
 
 const router = useRouter()
+
+const hoveredIndex = ref(null)
 // 路由跳转
 const handleNavigation = (path) => router.push(path)
 </script>
@@ -48,9 +50,24 @@ const handleNavigation = (path) => router.push(path)
           route.children?.[0]?.meta?.showInMenu
         "
         @click="handleNavigation(route.path)"
+        @mouseenter="hoveredIndex = route.path"
+        @mouseleave="hoveredIndex = null"
       >
         <!-- 菜单图标 -->
-        <i :class="route.children?.[0]?.meta?.icon" />
+        <i
+          class="text-16"
+          :class="route.children?.[0]?.meta?.selectedIcon"
+          v-if="$route.path === route.redirect"
+        />
+        <i
+          :class="[
+            'text-16',
+            hoveredIndex === route.path
+              ? route.children?.[0]?.meta?.selectedIcon
+              : route.children?.[0]?.meta?.icon,
+          ]"
+          v-else
+        />
         <!-- 菜单标题 -->
         <template #title>
           <span>{{ route.children?.[0]?.meta?.title }}</span>
@@ -64,11 +81,20 @@ const handleNavigation = (path) => router.push(path)
           route.children &&
           route.children?.length > 1
         "
+        @mouseenter="hoveredIndex = route.path"
+        @mouseleave="hoveredIndex = null"
       >
         <!-- 标题插槽 -->
         <template #title>
           <!-- 菜单图标 -->
-          <i :class="route.meta?.icon" />
+          <i
+            :class="[
+              'text-16',
+              hoveredIndex === route.path
+                ? route.meta?.selectedIcon
+                : route.meta?.icon,
+            ]"
+          />
           <!-- 菜单标题 -->
           <span>{{ route.meta?.title }}</span>
         </template>
@@ -83,10 +109,10 @@ const handleNavigation = (path) => router.push(path)
         v-if="route.meta?.showInMenu"
         @click="handleNavigation(route.path)"
       >
-        <!-- 菜单图标 -->
-        <i :class="route.meta?.icon" />
         <!-- 菜单标题 -->
         <template #title>
+          <!-- 菜单图标 -->
+          <i :class="route.meta?.icon" />
           <span>{{ route.meta?.title }}</span>
         </template>
       </el-menu-item>
