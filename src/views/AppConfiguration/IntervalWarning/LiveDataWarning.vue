@@ -101,7 +101,6 @@ getLiveWarningDataList()
       :row-class-name="getRowClass"
       :span-method="handleTableSpan"
       class="flex-1"
-      :fit="false"
     >
       <!-- 序号 -->
       <el-table-column type="index" label="No." min-width="7%">
