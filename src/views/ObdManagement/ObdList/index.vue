@@ -11,6 +11,7 @@ import {
   getOneYearLaterDateWithDDMMMYYYYY,
 } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
+import { openOBDApi } from '@/apis/appApi.js'
 
 const router = useRouter()
 
@@ -86,6 +87,15 @@ const handleCloseOBD = async () => {
   ElMessage.success('Close success')
   // 刷新
   getObdList()
+}
+
+// 开启OBD
+const openOBD = async (obdId) => {
+  await openOBDApi(obdId)
+  // 提示
+  ElMessage.success('Open success')
+  // 刷新
+  getOBDInfo(obdId)
 }
 
 // 操作栏关闭 OBD
@@ -269,11 +279,21 @@ getObdList()
         row-class-name="clickable-row"
       >
         <!-- 勾选框 -->
-        <el-table-column type="selection" />
+        <el-table-column type="selection" min-width="6%" />
         <!-- 设备 SN 码 -->
-        <el-table-column prop="sn" label="SN" sortable="custom" />
+        <el-table-column
+          prop="sn"
+          label="SN"
+          sortable="custom"
+          min-width="14%"
+        />
         <!-- 上次使用时间 -->
-        <el-table-column prop="useTime" label="Last Used" sortable="custom">
+        <el-table-column
+          prop="useTime"
+          label="Last Used"
+          sortable="custom"
+          min-width="20%"
+        >
           <template #default="{ row }">
             {{ getLastUsedDate(row.useTime) }}
           </template>
@@ -283,13 +303,19 @@ getObdList()
           prop="warrantyTime"
           label="Warranty End"
           sortable="custom"
+          min-width="20%"
         >
           <template #default="{ row }">
             {{ getOneYearLaterDateWithDDMMMYYYYY(row.warrantyTime) }}
           </template>
         </el-table-column>
         <!-- 绑定时间 -->
-        <el-table-column prop="bindingTime" label="Bind Time" sortable="custom">
+        <el-table-column
+          prop="bindingTime"
+          label="Bind Time"
+          sortable="custom"
+          min-width="20%"
+        >
           <template #default="{ row }">
             {{ getLastUsedDate(row.bindingTime) }}
           </template>
@@ -299,24 +325,41 @@ getObdList()
           prop="simpleUserDto?.name"
           label="User"
           sortable="custom"
+          min-width="14%"
         >
           <template #default="{ row }">
-            {{ row.userDto?.name === '' ? '-' : row.userDto?.name }}
+            {{ row.userDto?.id === '' ? '-' : row.userDto?.name }}
           </template>
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column align="center" prop="actions" width="50">
+        <el-table-column
+          align="center"
+          prop="actions"
+          class="table-action-container"
+          min-width="6%"
+        >
           <template #default="{ row }">
             <!-- 状态搜索 -->
-            <el-dropdown popper-class="custom-dropdown">
-              <i class="icon-more-2-line" />
+            <el-dropdown trigger="click" class="test">
+              <i class="icon-more-2-line text-16" />
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item @click="onUnbindUser(row.id)">
+                  <el-dropdown-item
+                    @click="onUnbindUser(row.id)"
+                    v-if="row.userDto?.id !== ''"
+                  >
                     Unbind User
                   </el-dropdown-item>
-                  <el-dropdown-item @click="onCloseOBD(row.id)">
+                  <!-- status 为 10 时, 为 关闭状态 -->
+                  <el-dropdown-item
+                    @click="onCloseOBD(row.id)"
+                    v-if="row.state !== 10"
+                  >
                     Off OBD
+                  </el-dropdown-item>
+                  <!-- status 为 10 时, 为 关闭状态 -->
+                  <el-dropdown-item @click="openOBD(row.id)" v-else>
+                    On OBD
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>

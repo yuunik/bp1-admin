@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?yudl3i');
-  src:  url('fonts/icomoon.eot?yudl3i#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?yudl3i') format('truetype'),
-    url('fonts/icomoon.woff?yudl3i') format('woff'),
-    url('fonts/icomoon.svg?yudl3i#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?5sgj57');
+  src:  url('fonts/icomoon.eot?5sgj57#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?5sgj57') format('truetype'),
+    url('fonts/icomoon.woff?5sgj57') format('woff'),
+    url('fonts/icomoon.svg?5sgj57#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-more-2-line:before {
+  content: "\e90c";
+}
 .icon-typeuser-3-fill1:before {
   content: "\e926";
 }
@@ -91,9 +94,6 @@
 .icon-Component-5-4:before {
   content: "\e90b";
 }
-.icon-Component-5-3:before {
-  content: "\e90c";
-}
 .icon-Component-5-2:before {
   content: "\e90d";
 }
@@ -156,9 +156,6 @@
 }
 .icon-typesnotification:before {
   content: "\e921";
-}
-.icon-typessearch:before {
-  content: "\e922";
 }
 .icon-typesVacheckiant9:before {
   content: "\e923";
