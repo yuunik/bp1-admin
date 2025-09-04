@@ -100,7 +100,9 @@ const tabTabObj = Object.freeze({
       <el-tab-pane label="Data Analysis " name="Data Analysis " />
     </el-tabs>
     <!-- content -->
-    <div class="mx-32 flex flex-1 flex-col gap-16 overflow-auto pb-32">
+    <div
+      class="box-border flex flex-1 flex-col gap-16 overflow-auto px-32 pb-32"
+    >
       <keep-alive>
         <component :is="tabTabObj[activeTabName]" />
       </keep-alive>
