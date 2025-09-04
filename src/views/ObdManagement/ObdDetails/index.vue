@@ -1,6 +1,9 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { Line } from 'vue-chartjs'
+import { onMounted } from 'vue'
+import dayjs from 'dayjs'
 
 import {
   BehaviorStatisticsDate,
@@ -23,9 +26,6 @@ import {
   getOneYearLaterDateWithDDMMMYYYYY,
   isDateExpired,
 } from '@/utils/dateUtil.js'
-import { Line } from 'vue-chartjs'
-import { onMounted } from 'vue'
-import dayjs from 'dayjs'
 import { getOBDConnectedCountListApi, openOBDApi } from '@/apis/appApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import emitter from '@/utils/emitterUtil.js'
@@ -115,6 +115,11 @@ const chartOptions = ref({
         display: false, // 设置 y 轴是否显示
         dash: [10, 10], // 虚线样式 (10像素 10 空白)
       },
+      // 关键配置：只显示整数刻度
+      ticks: {
+        stepSize: 1, // 每个刻度间隔 1
+        precision: 0, // 精度为 0，强制整数
+      },
     },
   },
 })
@@ -183,6 +188,8 @@ const getOBDConnectedCountList = async (id) => {
   const labels = data.map((item) => item.Day)
   // 模拟数据（Y轴）
   const dataPoints = data.map((item) => item.Count)
+  // 获取最大使用值
+  const maxCount = Math.max(...data.map((item) => item.Count))
   chartData.value = {
     labels,
     datasets: [
@@ -198,6 +205,8 @@ const getOBDConnectedCountList = async (id) => {
       },
     ],
   }
+  // 设置 图标 y 轴最大值
+  chartOptions.value.scales.y.max = maxCount
 }
 
 const behaviorStatisticsRef = ref(null)
