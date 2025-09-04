@@ -233,12 +233,26 @@ const constantRoutes = [
     },
   },
   {
-    path: '/database',
-    name: RouteName.DATABASE,
+    path: '/database-module',
+    redirect: '/database',
+    name: 'Database Module',
     component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/database',
+        name: RouteName.DATABASE,
+        component: () => import('@/views/Database/index.vue'),
+        meta: {
+          title: RouteName.DATABASE,
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-database',
+        },
+      },
+    ],
     meta: {
-      title: RouteName.DATABASE,
-      showInMenu: true,
+      title: 'Database Module',
+      showInMenu: false,
       showInBreadcrumb: true,
       icon: 'icon-database',
     },
