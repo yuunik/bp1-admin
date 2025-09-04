@@ -63,6 +63,36 @@ const timer = ref(null)
 // 倒计时时间
 const countDownTime = ref(60)
 
+// 登录表单
+const loginFormRef = ref(null)
+
+// 表单校验规则
+const loginFormRules = ref({
+  email: [
+    {
+      required: true,
+      message: 'Please enter your email',
+      trigger: 'blur',
+    },
+    {
+      type: 'email',
+      message: 'Please enter a valid email',
+      trigger: ['blur', 'change'],
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: 'Please enter your password',
+      trigger: 'blur',
+    },
+    {
+      min: 6,
+      message: 'Password must be at least 6 characters',
+    },
+  ],
+})
+
 // 倒计时 60 秒
 const countDown = () => {
   isSendCode.value = true
@@ -103,15 +133,12 @@ const forgetPasswordSendCode = useDebounceFn(async () => {
 
 // 用户登录
 const handleLogin = useDebounceFn(async () => {
-  try {
-    await login(loginForm)
-    // 路由跳转
-    router.push({ name: RouteName.DASHBOARD })
-  } catch (error) {
-    const { message } = error
-    // 登录失败, 实现错误提示
-    ElMessage.error(message)
-  }
+  // 表单校验
+  await loginFormRef.value.validate()
+  // 登录
+  await login(loginForm)
+  // 路由跳转
+  router.push({ name: RouteName.DASHBOARD })
 }, TimingPreset.DEBOUNCE)
 
 // 忘记密码, 重新设置密码
@@ -210,14 +237,24 @@ watch(dialogForgetPasswordVisible, (val) => {
           </p>
         </div>
         <div class="text-align-right">
-          <el-form label-width="112" label-position="left">
-            <el-form-item label="Email" class="bottom-border-only">
+          <el-form
+            :model="loginForm"
+            :rules="loginFormRules"
+            ref="loginFormRef"
+            label-width="112"
+            label-position="left"
+          >
+            <el-form-item label="Email" class="bottom-border-only" prop="email">
               <el-input
                 placeholder="Enter your email"
                 v-model="loginForm.email"
               />
             </el-form-item>
-            <el-form-item label="Password" class="bottom-border-only">
+            <el-form-item
+              label="Password"
+              class="bottom-border-only"
+              prop="password"
+            >
               <el-input
                 placeholder="Enter your password"
                 v-model="loginForm.password"
