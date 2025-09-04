@@ -61,6 +61,9 @@ const changeEmailForm = ref({
 // 展开当前的密码
 const isShowCurrentPassword = ref(false)
 
+// 菜单栏是否折叠
+const isCollapse = ref(false)
+
 // 打开修改密码弹窗
 const handleOpenChangePasswordDialog = () => {
   // 打开弹窗
@@ -217,8 +220,11 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         </li>
       </ul>
       <!-- expand button -->
-      <div class="expand-btn">
-        <i class="icon-typescollapsable1" />
+      <div class="expand-btn z-9999" @click="isCollapse = !isCollapse">
+        <!-- 折叠图标 -->
+        <i class="text-16 icon-typescollapsable" v-show="!isCollapse" />
+        <!-- 展开图标 -->
+        <i class="text-16 icon-mail-send-line" v-show="isCollapse" />
       </div>
     </nav>
     <!-- content -->
