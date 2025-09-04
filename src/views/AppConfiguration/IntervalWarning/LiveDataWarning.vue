@@ -17,7 +17,7 @@ const getLiveWarningDataList = async () => {
 
   for (const item of data) {
     // 添加主行信息
-    processedData.push(item)
+    processedData.push({ ...item, editing: false })
 
     // 添加 obdKey 描述信息
     processedData.push({
@@ -79,7 +79,8 @@ const handleEditLiveDataWarningData = async (index) => {
   await modifyLivingDataWarningDataApi({
     id: liveWarningDataList[index].id,
     name: liveWarningDataList[index].name,
-    value: liveWarningDataList[index].value,
+    minValue: liveWarningDataList[index].minValue,
+    maxValue: liveWarningDataList[index].maxValue,
     groupKey: liveWarningDataList[index].groupKey,
     obdKey: liveWarningDataList[index + 1].obdKey,
     unit: liveWarningDataList[index].unit,
@@ -95,7 +96,7 @@ getLiveWarningDataList()
 
 <template>
   <!-- 实时预警数据列表 -->
-  <div class="box-border flex flex-col px-32">
+  <div class="box-border flex flex-col overflow-auto px-32">
     <el-table
       :data="liveWarningDataList"
       :row-class-name="getRowClass"
@@ -150,18 +151,26 @@ getLiveWarningDataList()
           </template>
         </template>
       </el-table-column>
-      <el-table-column prop="value" label="Warning" min-width="17%">
+      <el-table-column label="Warning" min-width="17%">
         <template #default="{ row }">
           <template v-if="row.editing">
-            <el-input
-              placeholder="Warning"
-              class="w-full"
-              v-model="row.value"
-            />
+            <div class="warning-container">
+              <el-input
+                placeholder="Minimum value"
+                v-model="row.minValue"
+                class="flex-1"
+              />
+              -
+              <el-input
+                placeholder="Maximum value"
+                v-model="row.maxValue"
+                class="flex-1"
+              />
+            </div>
           </template>
           <template v-else>
             <!-- 值 -->
-            <div>{{ row.value }}</div>
+            <div>{{ row.minValue }} ~ {{ row.maxValue }}</div>
           </template>
         </template>
       </el-table-column>
@@ -257,5 +266,19 @@ getLiveWarningDataList()
 
 :deep(.el-table__row.logical-row-end:hover + .el-table__row.logical-row-start) {
   background-color: transparent !important;
+}
+
+// 警告容器样式重置
+.warning-container {
+  @apply rounded-12 row-center h-32 bg-[#EAEEF480];
+  box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color))
+    inset;
+}
+.warning-container :deep(.el-input) {
+  @apply h-32;
+
+  .el-input__wrapper {
+    @apply bg-transparent shadow-none;
+  }
 }
 </style>

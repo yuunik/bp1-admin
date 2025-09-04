@@ -21,7 +21,7 @@ const handleTabChange = (tab) => (activeTab.value = tab)
 </script>
 
 <template>
-  <section class="flex h-full flex-col gap-16">
+  <section class="flex h-full flex-1 flex-col gap-16 overflow-auto">
     <!-- 标题 -->
     <h3 class="leading-32 h-32 px-32">
       {{ RouteName.INTERVAL_WARNING }}
@@ -42,15 +42,13 @@ const handleTabChange = (tab) => (activeTab.value = tab)
     <!-- 分割线 -->
     <el-divider />
     <!-- 内容 -->
-    <div class="flex min-h-0 flex-1 flex-col">
-      <!-- tab 内容 -->
-      <keep-alive>
-        <component
-          :is="tabArray.find((tab) => tab.key === activeTab).component"
-          class="min-h-0 flex-1"
-        />
-      </keep-alive>
-    </div>
+    <!-- tab 内容 -->
+    <keep-alive>
+      <component
+        :is="tabArray.find((tab) => tab.key === activeTab).component"
+        class="min-h-0 flex-1"
+      />
+    </keep-alive>
   </section>
 </template>
 
