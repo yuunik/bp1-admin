@@ -183,6 +183,8 @@ const getOBDConnectedCountList = async (id) => {
   const labels = data.map((item) => item.Day)
   // 模拟数据（Y轴）
   const dataPoints = data.map((item) => item.Count)
+  // 获取最大使用值
+  const maxCount = Math.max(...data.map((item) => item.Count))
   chartData.value = {
     labels,
     datasets: [
@@ -198,6 +200,8 @@ const getOBDConnectedCountList = async (id) => {
       },
     ],
   }
+  // 设置 图标 y 轴最大值
+  chartOptions.value.scales.y.max = maxCount + 5
 }
 
 const behaviorStatisticsRef = ref(null)
