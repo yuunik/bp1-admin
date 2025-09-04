@@ -60,8 +60,8 @@ const constantRoutes = [
     ],
     meta: {
       title: 'OrderManagement',
-      showInMenu: true,
-      showInBreadcrumb: true,
+      showInMenu: false,
+      showInBreadcrumb: false,
     },
   },
   {
@@ -257,7 +257,7 @@ const constantRoutes = [
     meta: {
       title: 'Database Module',
       showInMenu: false,
-      showInBreadcrumb: true,
+      showInBreadcrumb: false,
       icon: 'icon-Component-5-4',
       selectedIcon: 'icon-typedatabase-2-fill',
     },
@@ -373,7 +373,7 @@ const constantRoutes = [
               import('@/views/AppConfiguration/BrandModel/BrandModelTable.vue'),
             meta: {
               showInMenu: false,
-              showInBreadcrumb: true,
+              showInBreadcrumb: false,
             },
           },
           // 车辆管理页面

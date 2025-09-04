@@ -34,6 +34,12 @@ const route = useRoute()
 
 const breadcrumbList = ref([])
 
+const realBreadcrumbList = computed(() =>
+  breadcrumbList.value.filter(
+    (breadcrumb) => breadcrumb.meta?.showInBreadcrumb,
+  ),
+)
+
 watch(
   () => route.matched,
   (val) => {
@@ -86,27 +92,30 @@ onBeforeUnmount(() => {
     class="heading-body-body-12px-medium box-border px-32 pb-16 pt-24"
   >
     <el-breadcrumb-item>
-      <el-image :src="CompanyLogo" alt="CompanyLogo" />
+      <el-image
+        :src="CompanyLogo"
+        class="h-16 w-16"
+        fit="cover"
+        alt="CompanyLogo"
+      />
     </el-breadcrumb-item>
     <!-- 默认显示面包屑, 若不需要显示面包屑, 则需要 meta 加 hideBreadcrumb -->
-    <template v-if="route?.meta?.showInBreadcrumb">
-      <el-breadcrumb-item
-        v-for="route in breadcrumbList"
-        :key="route.path"
-        @click="$router.push(route.path)"
+    <el-breadcrumb-item
+      v-for="route in realBreadcrumbList"
+      :key="route.path"
+      @click="$router.push(route.path)"
+    >
+      <!-- 面包屑标题 -->
+      <span
+        class="heading-body-body-12px-medium"
+        :class="
+          $route.name === route.name
+            ? 'neutrals-off-black cursor-not-allowed'
+            : 'neutrals-grey-3 cursor-pointer'
+        "
       >
-        <!-- 面包屑标题 -->
-        <span
-          class="heading-body-body-12px-medium"
-          :class="
-            $route.name === route.name
-              ? 'neutrals-off-black cursor-not-allowed'
-              : 'neutrals-grey-3 cursor-pointer'
-          "
-        >
-          {{ route.meta.title }}
-        </span>
-      </el-breadcrumb-item>
-    </template>
+        {{ route.meta.title }}
+      </span>
+    </el-breadcrumb-item>
   </el-breadcrumb>
 </template>
