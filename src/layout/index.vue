@@ -370,13 +370,6 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 </template>
 
 <style scoped lang="scss">
-// 重置表单标签文字
-:deep(.el-form-item__label) {
-  font-size: 12px;
-  font-weight: 500;
-  color: #99a0ae;
-}
-
 .change-password-form :deep(.el-input__wrapper) {
   background-color: transparent !important;
   box-shadow: none !important;
