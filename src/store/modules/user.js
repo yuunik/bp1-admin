@@ -8,7 +8,7 @@ import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 const useUserStore = defineStore('user', () => {
   // state
-  const userInfo = ref({}) // 用户信息
+  const userInfo = useLocalStorage('userInfo', {}) // 用户信息
   const token = useLocalStorage('token', '') // 用户令牌
   const isLoading = ref(false) // 登录状态
 
