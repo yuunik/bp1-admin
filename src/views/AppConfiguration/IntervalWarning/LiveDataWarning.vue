@@ -8,7 +8,7 @@ import {
 } from '@/apis/appApi.js'
 
 // 实时预警数据列表
-const liveWarningDataList = reactive([])
+const liveWarningDataList = ref([])
 
 // 获取实时预警数据列表
 const getLiveWarningDataList = async () => {
@@ -28,7 +28,7 @@ const getLiveWarningDataList = async () => {
   }
 
   // 更新实时预警数据
-  liveWarningDataList.push(...processedData)
+  liveWarningDataList.value = processedData
 }
 
 // 合并行
@@ -49,7 +49,7 @@ const handleTableSpan = ({ row, columnIndex }) => {
 
 // 新增待添加事项
 const addPendingItem = () => {
-  liveWarningDataList.push(
+  liveWarningDataList.value.push(
     {
       editing: true,
       name: '',
@@ -68,13 +68,13 @@ const addPendingItem = () => {
 
 // 修改实时预警数据的状态为编辑状态
 const handleEditLiveDataWarningDataStatusChange = (row, index) => {
-  liveWarningDataList[index].editing = true
-  liveWarningDataList[++index].editing = true
+  liveWarningDataList.value[index].editing = true
+  liveWarningDataList.value[++index].editing = true
 }
 
 // 编辑或新增实时预警数据
 const handleLiveDateWarningManage = async (index) => {
-  if (liveWarningDataList[index].id) {
+  if (liveWarningDataList.value[index].id) {
     handleEditLiveDataWarningData(index)
   } else {
     handleAddLiveDataWarningData(index)
@@ -84,35 +84,45 @@ const handleLiveDateWarningManage = async (index) => {
 // 修改实时预警数据
 const handleEditLiveDataWarningData = async (index) => {
   await modifyLivingDataWarningDataApi({
-    id: liveWarningDataList[index].id,
-    name: liveWarningDataList[index].name,
-    minValue: liveWarningDataList[index].minValue,
-    maxValue: liveWarningDataList[index].maxValue,
-    groupKey: liveWarningDataList[index].groupKey,
-    obdKey: liveWarningDataList[index + 1].obdKey,
-    unit: liveWarningDataList[index].unit,
+    id: liveWarningDataList.value[index].id,
+    name: liveWarningDataList.value[index].name,
+    minValue: liveWarningDataList.value[index].minValue,
+    maxValue: liveWarningDataList.value[index].maxValue,
+    groupKey: liveWarningDataList.value[index].groupKey,
+    obdKey: liveWarningDataList.value[index + 1].obdKey,
+    unit: liveWarningDataList.value[index].unit,
   })
   // 关闭编辑状态
-  liveWarningDataList[index].editing = false
-  liveWarningDataList[index + 1].editing = false
+  liveWarningDataList.value[index].editing = false
+  liveWarningDataList.value[index + 1].editing = false
 }
 
 // 新增实时预警数据
 const handleAddLiveDataWarningData = async (index) => {
   await addLivingDataWarningDataApi({
-    id: liveWarningDataList[index].id,
-    name: liveWarningDataList[index].name,
-    minValue: liveWarningDataList[index].minValue,
-    maxValue: liveWarningDataList[index].maxValue,
-    groupKey: liveWarningDataList[index].groupKey,
-    obdKey: liveWarningDataList[index + 1].obdKey,
-    unit: liveWarningDataList[index].unit,
+    id: liveWarningDataList.value[index].id,
+    name: liveWarningDataList.value[index].name,
+    minValue: liveWarningDataList.value[index].minValue,
+    maxValue: liveWarningDataList.value[index].maxValue,
+    groupKey: liveWarningDataList.value[index].groupKey,
+    obdKey: liveWarningDataList.value[index + 1].obdKey,
+    unit: liveWarningDataList.value[index].unit,
   })
   //// 关闭编辑状态
-  liveWarningDataList[index].editing = false
-  liveWarningDataList[index + 1].editing = false
+  liveWarningDataList.value[index].editing = false
+  liveWarningDataList.value[index + 1].editing = false
   // 刷新列表
   getLiveWarningDataList()
+}
+
+// 关闭新增或编辑模式
+const handleCancel = (index) => {
+  if (liveWarningDataList.value[index].id) {
+    liveWarningDataList.value[index].editing = false
+    liveWarningDataList.value[index + 1].editing = false
+  } else {
+    liveWarningDataList.value.splice(index, 2)
+  }
 }
 
 // 网络请求
@@ -121,12 +131,12 @@ getLiveWarningDataList()
 
 <template>
   <!-- 实时预警数据列表 -->
-  <div class="pb-38 box-border flex flex-col overflow-auto px-32">
+  <el-scrollbar class="pb-38 box-border overflow-auto px-32">
     <el-table
       :data="liveWarningDataList"
       :row-class-name="getRowClass"
       :span-method="handleTableSpan"
-      class="flex-1"
+      width="100%"
     >
       <!-- 序号 -->
       <el-table-column type="index" label="No." min-width="7%">
@@ -222,26 +232,36 @@ getLiveWarningDataList()
       <el-table-column min-width="11%">
         <template #default="{ row, $index }">
           <template v-if="row.editing">
-            <el-button
-              type="primary"
-              class="w-100 h-32"
-              @click="handleLiveDateWarningManage($index)"
-              v-if="row.name !== 'obdKey'"
-            >
-              {{ row.id ? 'Save' : 'Add' }}
-            </el-button>
+            <div class="flex gap-3 pr-4">
+              <el-button
+                class="rounded-8!"
+                @click="handleCancel($index)"
+                v-show="row.name !== 'obdKey'"
+              >
+                Cancel
+              </el-button>
+              <el-button
+                type="primary"
+                class="rounded-8!"
+                @click="handleLiveDateWarningManage($index)"
+                v-show="row.name !== 'obdKey'"
+              >
+                {{ row.id ? 'Save' : 'Add' }}
+              </el-button>
+            </div>
           </template>
           <template v-else>
             <!-- 编辑 -->
             <i
-              class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
+              class="icon-edit-line text-24 inline-flex h-48 w-48 cursor-pointer items-center justify-center"
               v-show="row.name !== 'obdKey'"
               @click="handleEditLiveDataWarningDataStatusChange(row, $index)"
             />
             <!-- 删除 -->
             <i
-              class="icon-delete-bin-line h-16 w-16 cursor-pointer"
+              class="icon-delete-bin-line text-24 inline-flex h-48 w-48 cursor-pointer items-center justify-center"
               v-show="row.name !== 'obdKey'"
+              @click="handleDelete(row, $index)"
             />
           </template>
         </template>
@@ -258,7 +278,7 @@ getLiveWarningDataList()
       </template>
       <template #default>New Item</template>
     </el-button>
-  </div>
+  </el-scrollbar>
 </template>
 
 <style scoped lang="scss">
