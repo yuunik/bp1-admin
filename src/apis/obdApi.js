@@ -24,6 +24,8 @@ const ObdApi = Object.freeze({
   GET_OBD_BIND_VEHICLE_DETAIL: '/manager/vehicle/info',
   // 获取obd操作记录
   GET_OBD_OPERATION_RECORDS: '/manager/obd/logs',
+  // 获取车辆 dtc 历史列表
+  GET_VEHICLE_SCAN_RECORDS: '/manager/dtc/dtcs',
 })
 
 // 获取 token
@@ -169,6 +171,32 @@ export const getOBDOperationRecordsApi = (params) => {
 
   return request({
     url: ObdApi.GET_OBD_OPERATION_RECORDS,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆 dtc 历史列表
+ * @param params
+ * @param params.vehicleId 车辆 id
+ * @param params.sortKey 排序字段
+ * @param params.sort 排序方式
+ * @param params.page 页码
+ * @param params.pageSize 每页数量
+ * @returns {*}
+ */
+export const getVehicleScanRecordsApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('vehicleId', params.vehicleId)
+  data.append('sortKey', params.sortKey)
+  data.append('sort', params.sort)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
+  return request({
+    url: ObdApi.GET_VEHICLE_SCAN_RECORDS,
     method: 'POST',
     data,
   })

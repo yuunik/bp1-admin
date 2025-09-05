@@ -23,7 +23,6 @@ export const useSort = (sortParams, fn) => {
 
   // 排序功能
   return (data) => {
-    console.log('排序参数', data)
     const { prop, order } = data
     if (order) {
       sortParams.sortBy = prop

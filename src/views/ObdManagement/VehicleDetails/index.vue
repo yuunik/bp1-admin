@@ -3,10 +3,14 @@ import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { EmitterEvent, VehicleDetailTabs } from '@/utils/constantsUtil.js'
-import { getVehicleInfoApi } from '@/apis/obdApi.js'
-import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
+import { getVehicleInfoApi, getVehicleScanRecordsApi } from '@/apis/obdApi.js'
+import {
+  getDateWithDDMMMYYYY,
+  getDateWithDDMMMYYYYhhmma,
+} from '@/utils/dateUtil.js'
 import { getFaultCodeListApi } from '@/apis/appApi.js'
 import emitter from '@/utils/emitterUtil.js'
+import { useSort } from '@/composables/useSort.js'
 
 const activeTabName = ref(VehicleDetailTabs.VEHICLE_DETAILS)
 
@@ -17,13 +21,15 @@ const vehicleDetails = reactive({})
 
 const vehicleDetailRef = ref(null)
 
-const faultCodesRef = ref(null)
+const faultCodesRef = ref([])
 
-const scannedHistoryRef = ref(null)
+const scannedHistoryRef = ref([])
+
+const currentVehicleId = ref('')
 
 // 获取车辆详情
-const getVehicleDetails = async (id) => {
-  const { data } = await getVehicleInfoApi(id)
+const getVehicleDetails = async () => {
+  const { data } = await getVehicleInfoApi(currentVehicleId.value)
   Object.assign(vehicleDetails, data)
   // 更新面包屑
   emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, data.OBDDto)
@@ -38,30 +44,17 @@ const pagination = reactive({
 // 车辆故障码列表
 const faultCodeList = ref([])
 
-const scannedHistoryList = reactive([
-  {
-    id: 1,
-    scannedDate: '22 Aug 2024 10:03:36',
-    type: 'Full Scan',
-    faultCodes: 6,
-  },
-  {
-    id: 2,
-    scannedDate: '22 Aug 2024 10:03:36',
-    type: 'Quick Scan',
-    faultCodes: 6,
-  },
-  {
-    id: 3,
-    scannedDate: '22 Aug 2024 10:03:36',
-    type: 'Custom Scan',
-    faultCodes: 6,
-  },
-])
+const scannedHistoryList = ref([])
+
+// 车辆dtc列表排序参数
+const scannedHistoryPaginationParams = reactive({
+  sortBy: '',
+  sort: '',
+})
 
 // 获取车辆故障码列表
-const getFaultCodeList = async (id) => {
-  const { data } = await getFaultCodeListApi(id)
+const getFaultCodeList = async () => {
+  const { data } = await getFaultCodeListApi(currentVehicleId.value)
   faultCodeList.value = data.dtcItemDtos
 }
 
@@ -86,13 +79,37 @@ const handleScroll = (scrollData) => {
   console.log(scrollData, '##############')
 }
 
+// 获取车辆dtc历史列表
+const getScannedHistoryList = async () => {
+  const { data } = await getVehicleScanRecordsApi({
+    vehicleId: currentVehicleId.value,
+    sortKey: scannedHistoryPaginationParams.sortBy,
+    sort: scannedHistoryPaginationParams.sort,
+    page: 0,
+    pageSize: 9999,
+  })
+  scannedHistoryList.value = data
+}
+
+const sortByScannedHistoryParams = useSort(
+  scannedHistoryPaginationParams,
+  () => {
+    getScannedHistoryList()
+  },
+)
+
 onMounted(async () => {
   // 获取页面路径id, 发起请求
   const {
     params: { id },
   } = route
   if (id) {
-    await Promise.all([getVehicleDetails(id), getFaultCodeList(id)])
+    currentVehicleId.value = id
+    await Promise.all([
+      getVehicleDetails(),
+      getFaultCodeList(),
+      getScannedHistoryList(),
+    ])
   }
 })
 </script>
@@ -225,10 +242,39 @@ onMounted(async () => {
         <el-divider />
         <!-- table -->
         <div class="mx-32 pb-32">
-          <el-table :data="scannedHistoryList">
-            <el-table-column prop="scannedDate" label="Scanned Date" sortable />
-            <el-table-column prop="type" label="Type" sortable />
-            <el-table-column prop="faultCodes" label="Fault Codes" sortable />
+          <el-table
+            :data="scannedHistoryList"
+            @sort-change="sortByScannedHistoryParams"
+          >
+            <el-table-column
+              prop="createTime"
+              label="Scanned Date"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="type" label="Type">
+              <template #default="{ row }">
+                <span>Quick Scan</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="dtcCount"
+              label="Fault Codes"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                <span>
+                  {{
+                    row.dtcItemDtos.length
+                      ? `${row.dtcItemDtos.length} DTC${row.dtcItemDtos.length > 1 ? 's' : ''}`
+                      : '-'
+                  }}
+                </span>
+              </template>
+            </el-table-column>
             <el-table-column>
               <template #default="{ row }">
                 <el-button class="rounded-full!">View Details</el-button>
