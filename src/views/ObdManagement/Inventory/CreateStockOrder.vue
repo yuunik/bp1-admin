@@ -320,7 +320,7 @@ const snList = ref([
                       <el-input placeholder="Search...">
                         <template #prefix>
                           <!-- 前置搜索图标 -->
-                          <i class="icon-typessearch h-16 w-16" />
+                          <i class="icon-mail-send-line-1 text-16" />
                         </template>
                       </el-input>
                     </div>
@@ -405,7 +405,7 @@ const snList = ref([
                       <el-input placeholder="Search...">
                         <template #prefix>
                           <!-- 前置搜索图标 -->
-                          <i class="icon-typessearch h-16 w-16" />
+                          <i class="icon-mail-send-line-1 text-16" />
                         </template>
                       </el-input>
                     </div>

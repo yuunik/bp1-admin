@@ -234,7 +234,7 @@ const pageQueryParams = ref({
       <el-input placeholder="Search..." class="internal-list-search w-200!">
         <template #prefix>
           <!-- 前置搜索图标 -->
-          <i class="icon-typessearch h-16 w-16" />
+          <i class="icon-mail-send-line-1 text-16" />
         </template>
       </el-input>
     </div>

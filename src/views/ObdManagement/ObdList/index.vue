@@ -249,7 +249,7 @@ getObdList()
         >
           <template #prefix>
             <!-- 前置搜索图标 -->
-            <i class="icon-typessearch h-16 w-16" />
+            <i class="icon-mail-send-line-1 text-24" />
           </template>
         </el-input>
       </div>
@@ -272,7 +272,6 @@ getObdList()
       <el-table
         :data="tableData"
         class="obd-table flex-1"
-        :fit="false"
         @selection-change="handleSelectionChange"
         @row-click="viewOBDDetail"
         @sort-change="handleSortByCondition"
@@ -380,18 +379,6 @@ getObdList()
     box-shadow: none;
     background-color: transparent;
   }
-}
-
-:deep(.el-table__header) {
-  @apply w-full!;
-}
-
-:deep(.el-table__body) {
-  @apply w-full!;
-}
-
-.obd-details {
-  @apply cursor-pointer!;
 }
 
 :deep(.el-tooltip__trigger:focus),

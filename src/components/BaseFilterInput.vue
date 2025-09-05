@@ -26,7 +26,7 @@ watch(isShowInputContent, (val) => {
     @click="isShowInputContent = true"
     v-if="!isShowInputContent"
   >
-    <i class="icon-typessearch h-16 w-16" />
+    <i class="icon-mail-send-line-1 text-16" />
     <span class="heading-body-body-12px-regular text-neutrals-grey-3 flex-1">
       Search...
     </span>
