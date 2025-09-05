@@ -187,7 +187,7 @@ const userConditionText = computed(() => {
     return `Users: ${conditions.join(', ')}`
   }
 
-  return 'Users'
+  return 'User'
 })
 
 // 网络请求

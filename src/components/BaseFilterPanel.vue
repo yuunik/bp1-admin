@@ -53,7 +53,7 @@ const conditionTotalText = computed(() => {
 // 提交查找
 watch(searchKeys, () => {
   emit('search', searchKeys.value)
-  conditionRef.value.handleClose()
+  // conditionRef.value.handleClose()
 })
 </script>
 
@@ -61,7 +61,7 @@ watch(searchKeys, () => {
   <!-- 状态搜索 -->
   <div class="row-center base-filter-panel h-24 gap-8">
     <!-- 触发框 -->
-    <el-dropdown trigger="click" ref="conditionRef">
+    <el-dropdown trigger="click" ref="conditionRef" placement="bottom-start">
       <div
         class="border-1 neutrals-grey-3 default-transition row-center box-border h-24 w-fit cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
         :class="
