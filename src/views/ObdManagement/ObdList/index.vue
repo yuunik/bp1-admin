@@ -1,4 +1,9 @@
 <script setup>
+/**
+ * obd status === 10, 处于关闭状态
+ * obd status === 0, 处于开启状态
+ */
+
 import { ref, reactive, computed, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
@@ -12,6 +17,8 @@ import {
 } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import { openOBDApi } from '@/apis/appApi.js'
+import BaseTag from '@/components/BaseTag.vue'
+import { useSort } from '@/composables/useSort.js'
 
 const router = useRouter()
 
@@ -33,7 +40,7 @@ const pagination = reactive({
 
 // 排序参数
 const sortParams = reactive({
-  sortKey: '',
+  sortBy: '',
   sort: '',
 })
 
@@ -46,7 +53,8 @@ const getObdList = useDebounceFn(async () => {
   const { data, count } = await getOBDListApi({
     searchKey: searchText.value,
     userKey: userKeys.value.join(','),
-    sortKey: sortParams.sortKey,
+    statusKey: '',
+    sortKey: sortParams.sortBy,
     sort: sortParams.sort,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
@@ -128,17 +136,9 @@ const handleSearch = useDebounceFn(async () => {
 }, 500)
 
 // 排序
-const handleSortByCondition = useDebounceFn((data) => {
-  const { prop, order } = data
-  if (order) {
-    sortParams.sortKey = prop === 'simpleUserDto?.name' ? 'user' : prop
-    sortParams.sort = order === 'ascending' ? 'asc' : 'desc'
-  } else {
-    sortParams.sortKey = ''
-    sortParams.sort = ''
-  }
+const handleSortByCondition = useSort(sortParams, () => {
   getObdList()
-}, TimingPreset.DEBOUNCE)
+})
 
 const isInputBlur = ref(false)
 
@@ -286,6 +286,20 @@ getObdList()
           sortable="custom"
           min-width="14%"
         />
+        <!-- 设备状态 -->
+        <el-table-column
+          prop="status"
+          label="Status"
+          sortable="custom"
+          min-width="14%"
+        >
+          <template #default="{ row }">
+            <base-tag
+              :color="row.status === 0 ? 'green' : 'gray'"
+              :text="row.status === 0 ? 'On' : 'Off'"
+            />
+          </template>
+        </el-table-column>
         <!-- 上次使用时间 -->
         <el-table-column
           prop="useTime"
@@ -345,19 +359,22 @@ getObdList()
                 <el-dropdown-menu>
                   <el-dropdown-item
                     @click="onUnbindUser(row.id)"
-                    v-if="row.userDto?.id !== ''"
+                    v-if="row.userDto?.id"
                   >
                     Unbind User
                   </el-dropdown-item>
                   <!-- status 为 10 时, 为 关闭状态 -->
                   <el-dropdown-item
                     @click="onCloseOBD(row.id)"
-                    v-if="row.state !== 10"
+                    v-if="row.status === 0"
                   >
                     Off OBD
                   </el-dropdown-item>
                   <!-- status 为 10 时, 为 关闭状态 -->
-                  <el-dropdown-item @click="openOBD(row.id)" v-else>
+                  <el-dropdown-item
+                    @click="openOBD(row.id)"
+                    v-if="row.status === 10"
+                  >
                     On OBD
                   </el-dropdown-item>
                 </el-dropdown-menu>

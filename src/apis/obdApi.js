@@ -41,6 +41,7 @@ export const getOBDListApi = (params) => {
   data.append('token', getToken())
   data.append('searchKey', params.searchKey)
   data.append('userKey', params.userKey)
+  data.append('statusKey', params.statusKey)
   data.append('sortKey', params.sortKey)
   data.append('sort', params.sort)
   data.append('page', params.page)
