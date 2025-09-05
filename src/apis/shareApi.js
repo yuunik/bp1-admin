@@ -14,6 +14,8 @@ const ShareApi = Object.freeze({
   GET_VEHICLE_REPORT_INFO: '/report/getreportinfo',
   // 获取车辆 DTCs 报告详情
   GET_VEHICLE_DTC_REPORT_INFO: '/dtc/getdtcreportinfo',
+  // 生成pdf
+  GET_PDF: '/dtc/getpdfreport',
 })
 
 /**
@@ -92,4 +94,21 @@ export const getImgUrlToBase64 = async (url) => {
   reader.onloadend = () => reader.result
   reader.onerror = () => ''
   reader.readAsDataURL(blob)
+}
+
+/**
+ * 生成pdf
+ * @param params
+ * @returns {Promise<ApiResponse<string>>}
+ */
+export const getPdfApi = (params) => {
+  const data = new FormData()
+  data.append('url', params.url)
+  data.append('id', params.id)
+
+  return request({
+    url: ShareApi.GET_PDF,
+    method: 'POST',
+    data,
+  })
 }

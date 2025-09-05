@@ -8,7 +8,7 @@ import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 const useUserStore = defineStore('user', () => {
   // state
-  const userInfo = useLocalStorage('userInfo', {}) // 用户信息
+  const userInfo = ref({}) // 用户信息
   const token = useLocalStorage('token', '') // 用户令牌
   const isLoading = ref(false) // 登录状态
 
@@ -16,7 +16,7 @@ const useUserStore = defineStore('user', () => {
   // 获取用户信息
   const fetchGetUserInfo = async () => {
     const { code, data, msg } = await adminInfoApi({
-      userId: '',
+      userId: userId.value,
     })
     if (code === 0) {
       // 重新获取用户信息

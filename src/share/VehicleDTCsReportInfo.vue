@@ -1,12 +1,10 @@
 <script setup>
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
 import { useRoute } from 'vue-router'
 
 import {
   getImgUrlToBase64,
+  getPdfApi,
   getVehicleDtcReportInfoApi,
-  getVehicleReportInfoApi,
 } from '@/apis/shareApi.js'
 import {
   getDateWithDDMMMYYYY,
@@ -16,12 +14,6 @@ import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
 import DefaultCardImg from '@/assets/icons/default-car-img.svg'
-import FaultCodesIcon from '@/assets/icons/fault-code-icon.svg'
-import PredictionIcon from '@/assets/icons/prediction-icon.svg'
-import RepairIcon from '@/assets/icons/fi_tool.svg'
-import MaintenanceIcon from '@/assets/icons/fi_file-minus.svg'
-import FuelIcon from '@/assets/icons/fuel-level.svg'
-import ModificationIcon from '@/assets/icons/modification.svg'
 import EngineIcon from '@/assets/icons/engine-load.svg'
 import TransmissionIcon from '@/assets/icons/tranmission.svg'
 import BrakesIcon from '@/assets/icons/brakes.svg'
@@ -30,106 +22,19 @@ import ChassisIcon from '@/assets/icons/chassis.svg'
 import BodyAndTrimIcon from '@/assets/icons/services-icon.svg'
 import OthersIcon from '@/assets/icons/others-icon.svg'
 
-// 显示导出按钮
-const showExportButton = ref(false)
-
+// 页面加载状态
 const isLoading = ref(false)
+
+// pdf 生成状态
+const isGeneratingPdf = ref(false)
 
 // 车辆报告详情
 const vehicleDTCsReportInfo = reactive({})
 
 const route = useRoute()
 
-// 导出PDF
-const exportPDF = () => {
-  // showExportButton.value = false
-
-  nextTick(async () => {
-    // 获取导出的容器
-    const element = document.querySelector('.report-container')
-
-    // 设置导出选项
-    const canvas = await html2canvas(element, {
-      scale: 2, // 提高清晰度
-      useCORS: true,
-      allowTaint: true,
-      background: '#fff', // 设置导出的背景颜色
-      width: element.scrollWidth,
-      height: element.scrollHeight,
-      scrollX: 0,
-      scrollY: 0,
-      windowWidth: element.scrollWidth,
-      windowHeight: element.scrollHeight,
-    })
-
-    // 3. A4尺寸计算
-    const imgWidth = 210 // A4宽度 mm
-    const pageHeight = 297 // A4高度 mm
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    let heightLeft = imgHeight
-
-    // 4. 创建PDF并自动分页
-    const pdf = new jsPDF('p', 'mm', 'a4')
-    let position = 0
-    let pageNum = 1
-    const totalPages = Math.ceil(imgHeight / pageHeight)
-
-    // 封装添加页眉页脚的方法
-    const addHeaderFooter = (pdf, pageNum, totalPages) => {
-      // 页眉
-      pdf.setFontSize(10)
-      pdf.text('车辆检测报告', 10, 10) // 左上角标题
-
-      // 页脚
-      pdf.setFontSize(10)
-      pdf.text(`第 ${pageNum} 页 / 共 ${totalPages} 页`, 105, 290, {
-        align: 'center',
-      })
-    }
-
-    // 添加第一页
-    pdf.addImage(
-      canvas.toDataURL('image/png'),
-      'PNG',
-      0,
-      position,
-      imgWidth,
-      imgHeight,
-    )
-    addHeaderFooter(pdf, pageNum, totalPages)
-
-    // 添加第一页
-    pdf.addImage(
-      canvas.toDataURL('image/png'),
-      'PNG',
-      0,
-      position,
-      imgWidth,
-      imgHeight,
-    )
-    heightLeft -= pageHeight
-
-    // 自动分页处理
-    while (heightLeft >= 0) {
-      position = heightLeft - imgHeight
-      pdf.addPage()
-      pdf.addImage(
-        canvas.toDataURL('image/png'),
-        'PNG',
-        0,
-        position,
-        imgWidth,
-        imgHeight,
-      )
-      heightLeft -= pageHeight
-    }
-
-    pdf.save('vehicle-report.pdf')
-    // showExportButton.value = true
-  })
-}
-
 const vehicleImg = ref('')
+
 // 获取车辆 DTCs 报告详情
 const getVehicleDTCsReportInfo = async (id) => {
   isLoading.value = true
@@ -155,11 +60,6 @@ if (id) {
   // 获取到id
   getVehicleDTCsReportInfo(id)
 }
-
-// 系统分类列表
-const systemCategoryList = computed(() => [
-  ...new Set(vehicleDTCsReportInfo.reportDtcItemDtos.map((item) => item.type)),
-])
 
 // 是否有 fault code 列表
 const hasFaultCodeList = computed(
@@ -301,14 +201,25 @@ const otherSystemDtcCount = computed(() =>
     : 0,
 )
 
-// 分类的图标映射
-const categoryIconMap = Object.freeze({
-  Repair: RepairIcon,
-  Maintenance: MaintenanceIcon,
-  Fuel: FuelIcon,
-  Services: BodyAndTrimIcon,
-  Modification: ModificationIcon,
-})
+// 生成 pdf
+const generatePdf = async () => {
+  try {
+    isGeneratingPdf.value = false
+    const { data } = await getPdfApi({
+      id: vehicleDTCsReportInfo.id,
+      url: import.meta.env.VITE_SERVER_URL_FILE + route.fullPath,
+    })
+    const link = document.createElement('a')
+    link.href = getFullFilePath(data)
+    link.download = 'report.pdf'
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } finally {
+    isGeneratingPdf.value = false
+  }
+}
 </script>
 
 <template>
@@ -1200,13 +1111,14 @@ const categoryIconMap = Object.freeze({
         </div>
       </article>
       <!-- 导出 PDF 按钮 -->
-      <button
+      <el-button
+        type="primary"
         class="bg-branding-colours-primary shadow-default text-neutrals-off-white bottom-68 fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer rounded-full border-none px-20 py-10"
-        v-show="showExportButton"
-        @click="exportPDF"
+        @click="generatePdf"
+        :loading="isGeneratingPdf"
       >
         Export as PDF
-      </button>
+      </el-button>
     </main>
   </div>
 </template>
