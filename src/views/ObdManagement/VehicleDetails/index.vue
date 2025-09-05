@@ -212,11 +212,11 @@ onMounted(async () => {
                   <el-table-column prop="name" label="DTC Name" />
                   <el-table-column prop="code" label="Code" />
                   <!--<el-table-column prop="severity" label="Severity" />-->
-                  <el-table-column>
-                    <template #default="{ row }">
-                      <el-button class="rounded-full!">View Details</el-button>
-                    </template>
-                  </el-table-column>
+                  <!--<el-table-column>-->
+                  <!--  <template #default="{ row }">-->
+                  <!--    <el-button class="rounded-full!">View Details</el-button>-->
+                  <!--  </template>-->
+                  <!--</el-table-column>-->
                 </el-table>
               </template>
             </el-table-column>
@@ -268,16 +268,11 @@ onMounted(async () => {
               <template #default="{ row }">
                 <span>
                   {{
-                    row.dtcItemDtos.length
-                      ? `${row.dtcItemDtos.length} DTC${row.dtcItemDtos.length > 1 ? 's' : ''}`
+                    row.dtcCount
+                      ? `${row.dtcCount} DTC${row.dtcCount > 1 ? 's' : ''}`
                       : '-'
                   }}
                 </span>
-              </template>
-            </el-table-column>
-            <el-table-column>
-              <template #default="{ row }">
-                <el-button class="rounded-full!">View Details</el-button>
               </template>
             </el-table-column>
           </el-table>
