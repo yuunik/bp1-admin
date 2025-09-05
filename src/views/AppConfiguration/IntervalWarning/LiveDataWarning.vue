@@ -2,6 +2,7 @@
 import { reactive } from 'vue'
 
 import {
+  addLivingDataWarningDataApi,
   getLiveWarningDataListApi,
   modifyLivingDataWarningDataApi,
 } from '@/apis/appApi.js'
@@ -21,7 +22,7 @@ const getLiveWarningDataList = async () => {
 
     // 添加 obdKey 描述信息
     processedData.push({
-      name: 'objKey',
+      name: 'obdKey',
       obdKey: item.obdKey,
     })
   }
@@ -36,7 +37,7 @@ const getRowClass = ({ rowIndex }) =>
 
 // obdKey 行的跨行处理
 const handleTableSpan = ({ row, columnIndex }) => {
-  if (row.name === 'objKey') {
+  if (row.name === 'obdKey') {
     if (columnIndex === 1) return [1, 4]
 
     if (columnIndex >= 2 && columnIndex <= 4) {
@@ -51,19 +52,16 @@ const addPendingItem = () => {
   liveWarningDataList.push(
     {
       editing: true,
-      name: 'pendingItem',
-      value: '',
+      name: '',
+      minValue: '',
+      maxValue: '',
       groupKey: '',
-      warning: '',
       unit: '',
     },
     {
       editing: true,
       name: 'obdKey',
-      value: '',
-      groupKey: '',
-      warning: '',
-      unit: '',
+      obdKey: '',
     },
   )
 }
@@ -72,6 +70,15 @@ const addPendingItem = () => {
 const handleEditLiveDataWarningDataStatusChange = (row, index) => {
   liveWarningDataList[index].editing = true
   liveWarningDataList[++index].editing = true
+}
+
+// 编辑或新增实时预警数据
+const handleLiveDateWarningManage = async (index) => {
+  if (liveWarningDataList[index].id) {
+    handleEditLiveDataWarningData(index)
+  } else {
+    handleAddLiveDataWarningData(index)
+  }
 }
 
 // 修改实时预警数据
@@ -90,13 +97,31 @@ const handleEditLiveDataWarningData = async (index) => {
   liveWarningDataList[index + 1].editing = false
 }
 
+// 新增实时预警数据
+const handleAddLiveDataWarningData = async (index) => {
+  await addLivingDataWarningDataApi({
+    id: liveWarningDataList[index].id,
+    name: liveWarningDataList[index].name,
+    minValue: liveWarningDataList[index].minValue,
+    maxValue: liveWarningDataList[index].maxValue,
+    groupKey: liveWarningDataList[index].groupKey,
+    obdKey: liveWarningDataList[index + 1].obdKey,
+    unit: liveWarningDataList[index].unit,
+  })
+  //// 关闭编辑状态
+  liveWarningDataList[index].editing = false
+  liveWarningDataList[index + 1].editing = false
+  // 刷新列表
+  getLiveWarningDataList()
+}
+
 // 网络请求
 getLiveWarningDataList()
 </script>
 
 <template>
   <!-- 实时预警数据列表 -->
-  <div class="box-border flex flex-col overflow-auto px-32">
+  <div class="pb-38 box-border flex flex-col overflow-auto px-32">
     <el-table
       :data="liveWarningDataList"
       :row-class-name="getRowClass"
@@ -107,7 +132,7 @@ getLiveWarningDataList()
       <el-table-column type="index" label="No." min-width="7%">
         <template #default="{ row, $index }">
           <!-- 描述 -->
-          <el-text v-show="row.name !== 'objKey'">
+          <el-text v-show="row.name !== 'obdKey'">
             {{ Math.floor($index / 2) + 1 }}
           </el-text>
         </template>
@@ -115,16 +140,25 @@ getLiveWarningDataList()
       <el-table-column prop="name" label="Item" min-width="31%">
         <template #default="{ row }">
           <template v-if="row.editing">
-            <el-input
-              placeholder="Item Name"
-              class="w-full"
-              v-model="row[row.name === 'objKey' ? 'obdKey' : 'name']"
-            />
+            <template v-if="row.name !== 'obdKey'">
+              <el-input
+                placeholder="Item Name"
+                class="w-full"
+                v-model="row.name"
+              />
+            </template>
+            <template v-if="row.name === 'obdKey'">
+              <el-input
+                placeholder="ObdKey Name"
+                class="w-full"
+                v-model="row.obdKey"
+              />
+            </template>
           </template>
           <template v-else>
             <!-- 描述 -->
             <div
-              v-if="row.name === 'objKey'"
+              v-if="row.name === 'obdKey'"
               class="rounded-8 bg-neutrals-grey-1 p-8"
             >
               <el-text class="text-neutrals-grey-3">
@@ -191,41 +225,39 @@ getLiveWarningDataList()
             <el-button
               type="primary"
               class="w-100 h-32"
-              @click="handleEditLiveDataWarningData($index)"
-              v-if="row.name !== 'objKey'"
+              @click="handleLiveDateWarningManage($index)"
+              v-if="row.name !== 'obdKey'"
             >
-              <template #default>Save</template>
+              {{ row.id ? 'Save' : 'Add' }}
             </el-button>
           </template>
           <template v-else>
             <!-- 编辑 -->
             <i
               class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
-              v-show="row.name !== 'objKey'"
+              v-show="row.name !== 'obdKey'"
               @click="handleEditLiveDataWarningDataStatusChange(row, $index)"
             />
             <!-- 删除 -->
             <i
               class="icon-delete-bin-line h-16 w-16 cursor-pointer"
-              v-show="row.name !== 'objKey'"
+              v-show="row.name !== 'obdKey'"
             />
           </template>
         </template>
       </el-table-column>
     </el-table>
-
-    <!-- 新增按钮 -->
-    <!--<el-button-->
-    <!--  type="primary"-->
-    <!--  text-->
-    <!--  class="w-100 mt-8 h-32"-->
-    <!--  @click="addPendingItem"-->
-    <!--&gt;-->
-    <!--  <template #icon>-->
-    <!--    <i class="icon-typesadd branding-colours-primary" />-->
-    <!--  </template>-->
-    <!--  <template #default>New Item</template>-->
-    <!--</el-button>-->
+    <el-button
+      type="primary"
+      text
+      class="w-100 mt-8 h-32"
+      @click="addPendingItem"
+    >
+      <template #icon>
+        <i class="icon-typesadd text-16 text-neutrals-blue" />
+      </template>
+      <template #default>New Item</template>
+    </el-button>
   </div>
 </template>
 

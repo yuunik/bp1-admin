@@ -39,6 +39,8 @@ const AppApi = Object.freeze({
   MODIFY_PREDICT_DATA: '/manager/editprediction',
   // 编辑实时预警数据
   MODIFY_LIVE_DATA_WARNING_DATA: '/manager/vehiclewarn/edit',
+  // 新增实时预警数据
+  ADD_LIVE_DATA_WARNING_DATA: '/manager/vehiclewarn/add',
   // 编辑车辆品牌信息你
   MODIFY_BRAND_MODEL_INFO: '/manager/brandmodel/edit',
   // 新增版本数据
@@ -319,6 +321,36 @@ export const modifyLivingDataWarningDataApi = (params) => {
   data.append('unit', params.unit)
   return request({
     url: AppApi.MODIFY_LIVE_DATA_WARNING_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 新增实时数据预警
+ * @param params
+ * @param params.id 预警ID
+ * @param params.minValue 最小预警值
+ * @param params.maxValue 最大预警值
+ * @param params.name 预警名称
+ * @param params.groupKey 预警分组
+ * @param params.obdKey 预警OBD参数
+ * @param params.unit 预警单位
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const addLivingDataWarningDataApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('vehicleWarnId', params.id)
+  data.append('minValue', params.minValue)
+  data.append('maxValue', params.maxValue)
+  data.append('name', params.name)
+  data.append('groupKey', params.groupKey)
+  data.append('obdKey', params.obdKey)
+  data.append('unit', params.unit)
+
+  return request({
+    url: AppApi.ADD_LIVE_DATA_WARNING_DATA,
     method: 'POST',
     data,
   })
