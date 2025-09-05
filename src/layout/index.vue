@@ -139,11 +139,12 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       </el-menu>
       <!-- user center -->
       <ul
-        class="neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
+        class="text-neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
       >
         <li
           :class="[
             'item-style',
+            'group',
             {
               'bg-[#ffffff1a]': $route.name === 'Notifications',
               'text-neutrals-off-white': $route.name === 'Notifications',
@@ -152,7 +153,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           @click="$router.push({ name: 'Notifications' })"
         >
           <i
-            class="icon-typesnotification text-16"
+            class="icon-typesnotification text-16 group-hover:text-neutrals-off-white"
             :class="{
               'text-neutrals-off-white': $route.name === 'Notifications',
             }"
@@ -168,6 +169,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         <li
           :class="[
             'item-style',
+            'group',
             {
               'bg-[#ffffff1a]': $route.name === 'Settings',
               'text-neutrals-off-white': $route.name === 'Settings',
@@ -176,7 +178,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           @click="$router.push({ name: 'Settings' })"
         >
           <i
-            class="icon-typessetting item-style"
+            class="icon-typessetting item-style group-hover:text-neutrals-off-white"
             :class="{
               'text-neutrals-off-white': $route.name === 'Settings',
             }"
@@ -187,7 +189,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         <!-- 底部用户信息相关设置 -->
         <li
           v-click-outside="() => (isShowSettingsDialog = false)"
-          class="item-style"
+          class="item-style group"
           :class="{
             'bg-[#ffffff1a]': isShowSettingsDialog,
             'text-neutrals-off-white': isShowSettingsDialog,
@@ -198,7 +200,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           <i class="user-avatar">
             <!-- 用户名字缩写 -->
             <span
-              class="heading-body-body-12px-medium"
+              class="heading-body-body-12px-medium group-hover:text-neutrals-off-white"
               :class="{
                 'text-neutrals-off-white': isShowSettingsDialog,
               }"
@@ -430,8 +432,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply rounded-8 wc218 relative flex h-full flex-col;
-    // width: calc(100% - 218px);
+    @apply rounded-8 wc-218 relative flex h-full flex-col;
     background-color: $neutrals-off-white;
   }
 }
