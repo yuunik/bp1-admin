@@ -146,6 +146,9 @@ const obdDetailRef = ref(null)
 // OBD 是否开启
 const isObdOn = ref(false)
 
+// 当前 OBD id
+const nowObdId = ref('')
+
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
   const { data } = await getOBDBindHistoryApi(id)
@@ -267,8 +270,12 @@ watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)
 })
 
-const nowObdId = ref('')
 onMounted(async () => {
+  // 如果当前是查看车辆详情的子路由，则跳过初始化请求
+  if (route.name === RouteName.VIEW_VEHICLE) {
+    return
+  }
+
   // 获取路径中 id
   const {
     params: { id },
