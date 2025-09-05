@@ -224,7 +224,9 @@ watch(
         <!-- 操作 -->
         <el-table-column min-width="6%" align="center">
           <template #default>
-            <i class="icon-more-2-line cursor-pointer" />
+            <div class="w-48 cursor-pointer">
+              <i class="icon-more-2-line text-24" />
+            </div>
           </template>
         </el-table-column>
       </el-table>
