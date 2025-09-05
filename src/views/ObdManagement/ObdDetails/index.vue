@@ -270,28 +270,11 @@ watch(beginTime, () => {
   getOBDConnectedCountList(currentObdId.value)
 })
 
-onMounted(async () => {
-  // 如果当前是查看车辆详情的子路由，则跳过初始化请求
-  if (route.name === RouteName.VIEW_VEHICLE) {
-    return
+onMounted(() => {
+  // 初始加载（如果不是子路由）
+  if (route.name !== RouteName.VIEW_VEHICLE) {
+    loadOBDData(route.params.id)
   }
-
-  // 获取路径中 id
-  const {
-    params: { id },
-  } = route
-  if (id) {
-    nowObdId.value = id
-    await Promise.all([
-      getOBDInfo(id),
-      getOBDBindHistoryList(id),
-      getOBDBindVehicleList(id),
-      getOBDOperationRecord(id),
-      getOBDConnectedCountList(id),
-    ])
-  }
-  // obdInfo.status 为 10 时, 为 关闭状态
-  isObdOn.value = obdInfo.value.status !== 10
 })
 
 // 监听currentPage, 刷新列表
@@ -299,6 +282,45 @@ watch(
   () => operationRecordParams.currentPage,
   () => getOBDOperationRecord(currentObdId.value),
 )
+
+// 监听路由变化
+watch(
+  () => [route.name, route.params.id],
+  ([toName, toId], [fromName, fromId]) => {
+    // 从子路由返回到主详情页，且 ID 存在
+    if (
+      fromName === RouteName.VIEW_VEHICLE &&
+      toName !== RouteName.VIEW_VEHICLE &&
+      toId
+    ) {
+      loadOBDData(toId)
+    }
+    // 或者 ID 变了（比如切换不同 OBD）
+    if (toId && toId !== fromId && toName !== RouteName.VIEW_VEHICLE) {
+      loadOBDData(toId)
+    }
+  },
+  { immediate: false },
+)
+
+// 封装数据加载逻辑
+const loadOBDData = async (id) => {
+  if (!id) return
+
+  nowObdId.value = id
+  try {
+    await Promise.all([
+      getOBDInfo(id),
+      getOBDBindHistoryList(id),
+      getOBDBindVehicleList(id),
+      getOBDOperationRecord(id),
+      getOBDConnectedCountList(id),
+    ])
+    isObdOn.value = obdInfo.value.status !== 10
+  } catch (error) {
+    console.error('Failed to load OBD data:', error)
+  }
+}
 </script>
 
 <template>
