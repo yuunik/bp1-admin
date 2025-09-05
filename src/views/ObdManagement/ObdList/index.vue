@@ -15,10 +15,11 @@ import {
   getLastUsedDate,
   getOneYearLaterDateWithDDMMMYYYYY,
 } from '@/utils/dateUtil.js'
-import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
+import { RouteName } from '@/utils/constantsUtil.js'
 import { openOBDApi } from '@/apis/appApi.js'
 import BaseTag from '@/components/BaseTag.vue'
 import { useSort } from '@/composables/useSort.js'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 
 const router = useRouter()
 
@@ -52,8 +53,8 @@ const getObdList = useDebounceFn(async () => {
   loading.value = true
   const { data, count } = await getOBDListApi({
     searchKey: searchText.value,
-    userKey: userKeys.value.join(','),
-    statusKey: '',
+    userKey: conditionSearchParams.user,
+    statusKey: conditionSearchParams.status,
     sortKey: sortParams.sortBy,
     sort: sortParams.sort,
     page: pagination.currentPage,
@@ -142,6 +143,39 @@ const handleSortByCondition = useSort(sortParams, () => {
 
 const isInputBlur = ref(false)
 
+const conditionSearchParams = reactive({
+  user: '',
+  status: '',
+})
+
+const filterByUser = reactive({
+  conditionText: 'User',
+  sectionList: [
+    {
+      label: 'With User',
+      value: '2',
+    },
+    {
+      label: 'Without User',
+      value: '1',
+    },
+  ],
+})
+
+const filterByStatus = reactive({
+  conditionText: 'Status',
+  sectionList: [
+    {
+      label: 'On',
+      value: '0',
+    },
+    {
+      label: 'Off',
+      value: '10',
+    },
+  ],
+})
+
 // 监听currentPage, 刷新列表
 watch(
   () => pagination.currentPage,
@@ -167,6 +201,23 @@ const handleInputBlur = () => {
 const handleInputFocus = () => {
   console.log('handleInputFocus')
   isInputBlur.value = false
+}
+
+const handleSearchByUser = (val) => {
+  conditionSearchParams.user = val
+  refresh()
+}
+
+const handleSearchByStatus = (val) => {
+  conditionSearchParams.status = val
+  refresh()
+}
+
+const refresh = () => {
+  if (pagination.currentPage === 0) {
+    return getObdList()
+  }
+  pagination.currentPage = 0
 }
 
 // 计算显示的用户条件文本
@@ -201,43 +252,19 @@ getObdList()
       <!-- 标题 -->
       <h3 class="heading-h2-20px-medium">OBD List</h3>
       <div class="flex-between condition-search-container h-24">
-        <!-- 状态搜索 -->
-        <el-dropdown>
-          <span
-            class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
-            :class="{
-              'text-[#006BF7]': userConditionText !== 'Users',
-              'border-[#006BF7]': userConditionText !== 'Users',
-              'border-[#CACFD8]': userConditionText === 'Users',
-            }"
-          >
-            {{ userConditionText }}
-            <i
-              class="icon-typesdropdown"
-              :class="{
-                'text-[#006BF7]': userConditionText !== 'Users',
-              }"
-            />
-          </span>
-          <template #dropdown>
-            <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
-              <div class="flex-between">
-                <span>User</span>
-                <el-button
-                  text
-                  :disabled="!userKeys.length"
-                  @click="userKeys = []"
-                >
-                  Clear
-                </el-button>
-              </div>
-              <el-checkbox-group v-model="userKeys">
-                <el-checkbox value="2">With User</el-checkbox>
-                <el-checkbox value="1">Without User</el-checkbox>
-              </el-checkbox-group>
-            </div>
-          </template>
-        </el-dropdown>
+        <div class="flex h-24 gap-8">
+          <!-- 状态搜索 -->
+          <base-filter-panel
+            :section-list="filterByUser.sectionList"
+            :condition-text="filterByUser.conditionText"
+            @search="handleSearchByUser"
+          />
+          <base-filter-panel
+            :section-list="filterByStatus.sectionList"
+            :condition-text="filterByStatus.conditionText"
+            @search="handleSearchByStatus"
+          />
+        </div>
         <!-- 搜索栏 -->
         <el-input
           placeholder="Search..."
