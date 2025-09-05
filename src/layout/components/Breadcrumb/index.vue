@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
     <el-breadcrumb-item
       v-for="route in realBreadcrumbList"
       :key="route.path"
-      @click="!$route.meta?.isTopLevelRoute && $router.push(route.path)"
+      @click="!route.meta?.isTopLevelRoute && $router.push(route.path)"
     >
       <!-- 面包屑标题 -->
       <span
