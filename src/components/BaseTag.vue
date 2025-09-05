@@ -46,12 +46,13 @@ const colorStyleMap = Object.freeze({
       'rounded-4',
       'w-fit',
       'block',
-      'p-8',
+      'px-8',
+      'py-4',
       'box-border',
       colorStyleMap[color]?.bg,
     ]"
   >
-    <span :class="['text-10', 'font-400', colorStyleMap[color]?.text]">
+    <span :class="['text-14', 'font-400', colorStyleMap[color]?.text]">
       {{ text }}
     </span>
   </i>
