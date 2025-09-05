@@ -43,33 +43,34 @@ const constantRoutes = [
       isTopLevelRoute: true,
     },
   },
-  {
-    path: '/orderManagement',
-    redirect: '/order-management',
-    name: 'OrderManagement',
-    component: () => import('@/layout/index.vue'),
-    children: [
-      {
-        path: '/order-management',
-        name: RouteName.ORDER_MANAGEMENT,
-        component: () => import('@/views/OrderManagement/index.vue'),
-        meta: {
-          title: RouteName.ORDER_MANAGEMENT,
-          showInMenu: true,
-          showInBreadcrumb: true,
-          icon: 'icon-typesOrderManagement',
-          selectedIcon: 'icon-typelist',
-        },
-      },
-    ],
-    meta: {
-      title: 'OrderManagement',
-      showInMenu: false,
-      showInBreadcrumb: false,
-      // 是否为一级路由
-      isTopLevelRoute: true,
-    },
-  },
+  // 订单模块
+  // {
+  //   path: '/orderManagement',
+  //   redirect: '/order-management',
+  //   name: 'OrderManagement',
+  //   component: () => import('@/layout/index.vue'),
+  //   children: [
+  //     {
+  //       path: '/order-management',
+  //       name: RouteName.ORDER_MANAGEMENT,
+  //       component: () => import('@/views/OrderManagement/index.vue'),
+  //       meta: {
+  //         title: RouteName.ORDER_MANAGEMENT,
+  //         showInMenu: true,
+  //         showInBreadcrumb: true,
+  //         icon: 'icon-typesOrderManagement',
+  //         selectedIcon: 'icon-typelist',
+  //       },
+  //     },
+  //   ],
+  //   meta: {
+  //     title: 'OrderManagement',
+  //     showInMenu: false,
+  //     showInBreadcrumb: false,
+  //     // 是否为一级路由
+  //     isTopLevelRoute: true,
+  //   },
+  // },
   {
     path: '/obd-management',
     redirect: '/obd-management/obd-list',
@@ -112,42 +113,42 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
-      {
-        path: '/obd-management/inventory',
-        name: RouteName.INVENTORY,
-        component: () => import('@/views/ObdManagement/Inventory/index.vue'),
-        children: [
-          // create stock order
-          {
-            path: '/obd-management/inventory/create-stock-order',
-            name: 'Inventory Create Stocker Order',
-            component: () =>
-              import('@/views/ObdManagement/Inventory/CreateStockOrder.vue'),
-            meta: {
-              title: 'Create Stock Order',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-          // detail
-          {
-            path: '/obd-management/inventory/:id',
-            name: 'Inventory Details',
-            component: () =>
-              import('@/views/ObdManagement/Inventory/InventoryDetails.vue'),
-            meta: {
-              title: 'Inventory Details',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-        ],
-        meta: {
-          title: RouteName.INVENTORY,
-          showInMenu: true,
-          showInBreadcrumb: true,
-        },
-      },
+      // {
+      //   path: '/obd-management/inventory',
+      //   name: RouteName.INVENTORY,
+      //   component: () => import('@/views/ObdManagement/Inventory/index.vue'),
+      //   children: [
+      //     // create stock order
+      //     {
+      //       path: '/obd-management/inventory/create-stock-order',
+      //       name: 'Inventory Create Stocker Order',
+      //       component: () =>
+      //         import('@/views/ObdManagement/Inventory/CreateStockOrder.vue'),
+      //       meta: {
+      //         title: 'Create Stock Order',
+      //         showInMenu: false,
+      //         showInBreadcrumb: true,
+      //       },
+      //     },
+      //     // detail
+      //     {
+      //       path: '/obd-management/inventory/:id',
+      //       name: 'Inventory Details',
+      //       component: () =>
+      //         import('@/views/ObdManagement/Inventory/InventoryDetails.vue'),
+      //       meta: {
+      //         title: 'Inventory Details',
+      //         showInMenu: false,
+      //         showInBreadcrumb: true,
+      //       },
+      //     },
+      //   ],
+      //   meta: {
+      //     title: RouteName.INVENTORY,
+      //     showInMenu: true,
+      //     showInBreadcrumb: true,
+      //   },
+      // },
     ],
     meta: {
       title: RouteName.OBD_MANAGEMENT,
@@ -245,35 +246,36 @@ const constantRoutes = [
       isTopLevelRoute: true,
     },
   },
-  {
-    path: '/database-module',
-    redirect: '/database',
-    name: 'Database Module',
-    component: () => import('@/layout/index.vue'),
-    children: [
-      {
-        path: '/database',
-        name: RouteName.DATABASE,
-        component: () => import('@/views/Database/index.vue'),
-        meta: {
-          title: RouteName.DATABASE,
-          showInMenu: true,
-          showInBreadcrumb: true,
-          icon: 'icon-Component-5-4',
-          selectedIcon: 'icon-typedatabase-2-fill',
-        },
-      },
-    ],
-    meta: {
-      title: 'Database Module',
-      showInMenu: false,
-      showInBreadcrumb: false,
-      icon: 'icon-Component-5-4',
-      selectedIcon: 'icon-typedatabase-2-fill',
-      // 是否为一级路由
-      isTopLevelRoute: true,
-    },
-  },
+  // 数据库模块
+  // {
+  //   path: '/database-module',
+  //   redirect: '/database',
+  //   name: 'Database Module',
+  //   component: () => import('@/layout/index.vue'),
+  //   children: [
+  //     {
+  //       path: '/database',
+  //       name: RouteName.DATABASE,
+  //       component: () => import('@/views/Database/index.vue'),
+  //       meta: {
+  //         title: RouteName.DATABASE,
+  //         showInMenu: true,
+  //         showInBreadcrumb: true,
+  //         icon: 'icon-Component-5-4',
+  //         selectedIcon: 'icon-typedatabase-2-fill',
+  //       },
+  //     },
+  //   ],
+  //   meta: {
+  //     title: 'Database Module',
+  //     showInMenu: false,
+  //     showInBreadcrumb: false,
+  //     icon: 'icon-Component-5-4',
+  //     selectedIcon: 'icon-typedatabase-2-fill',
+  //     // 是否为一级路由
+  //     isTopLevelRoute: true,
+  //   },
+  // },
   {
     path: '/forum-management',
     redirect: '/forum-management/list',
