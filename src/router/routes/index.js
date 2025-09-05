@@ -12,6 +12,8 @@ const constantRoutes = [
       showInMenu: false,
       // 控制是否显示在面包屑中
       showInBreadcrumb: false,
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -37,6 +39,8 @@ const constantRoutes = [
       title: RouteName.LAYOUT,
       showInMenu: false,
       showInBreadcrumb: false,
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -62,6 +66,8 @@ const constantRoutes = [
       title: 'OrderManagement',
       showInMenu: false,
       showInBreadcrumb: false,
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -149,6 +155,8 @@ const constantRoutes = [
       showInBreadcrumb: true,
       icon: 'icon-Component-5-2',
       selectedIcon: 'icon-typeOBD',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -233,6 +241,8 @@ const constantRoutes = [
       showInBreadcrumb: true,
       icon: 'icon-typeuser-3-fill1',
       selectedIcon: 'icon-typeuser-3-fill',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -260,6 +270,8 @@ const constantRoutes = [
       showInBreadcrumb: false,
       icon: 'icon-Component-5-4',
       selectedIcon: 'icon-typedatabase-2-fill',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -312,6 +324,8 @@ const constantRoutes = [
       showInBreadcrumb: false,
       icon: 'icon-typeForum',
       selectedIcon: 'icon-typeForum',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   {
@@ -440,6 +454,8 @@ const constantRoutes = [
       showInBreadcrumb: true,
       icon: 'icon-typesOrderManagement',
       selectedIcon: 'icon-typelist',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   // 系统设置
@@ -466,6 +482,8 @@ const constantRoutes = [
       showInMenu: false,
       showInBreadcrumb: false,
       icon: 'icon-settings',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   // 通知设置
@@ -492,6 +510,8 @@ const constantRoutes = [
       showInMenu: false,
       showInBreadcrumb: false,
       icon: 'icon-settings',
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   // 分享模块路由
@@ -549,6 +569,8 @@ const constantRoutes = [
       title: RouteName.SHARE,
       showInMenu: false,
       showInBreadcrumb: false,
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
   // 任意路由
@@ -560,6 +582,8 @@ const constantRoutes = [
       title: RouteName.ANY,
       showInMenu: false,
       showInBreadcrumb: false,
+      // 是否为一级路由
+      isTopLevelRoute: true,
     },
   },
 ]

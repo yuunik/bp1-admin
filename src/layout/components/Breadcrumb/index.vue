@@ -103,16 +103,17 @@ onBeforeUnmount(() => {
     <el-breadcrumb-item
       v-for="route in realBreadcrumbList"
       :key="route.path"
-      @click="$router.push(route.path)"
+      @click="!$route.meta?.isTopLevelRoute && $router.push(route.path)"
     >
       <!-- 面包屑标题 -->
       <span
         class="heading-body-body-12px-medium"
-        :class="
+        :class="[
           $route.name === route.name
-            ? 'neutrals-off-black cursor-not-allowed'
-            : 'neutrals-grey-3 cursor-pointer'
-        "
+            ? 'text-neutrals-off-black cursor-default!'
+            : 'text-neutrals-grey-3 cursor-pointer',
+          route.meta.isTopLevelRoute ? 'cursor-default!' : '',
+        ]"
       >
         {{ route.meta.title }}
       </span>
