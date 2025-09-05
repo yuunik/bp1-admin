@@ -76,12 +76,12 @@ getPredictionList()
 </script>
 
 <template>
-  <div class="box-border flex flex-col px-32">
-    <el-table :data="predictionList" class="flex-1" @sort-change="sort">
+  <el-scrollbar class="pb-38 box-border flex flex-col px-32">
+    <el-table :data="predictionList" @sort-change="sort">
       <!-- 序号 -->
-      <el-table-column type="index" label="No." />
+      <el-table-column type="index" label="No." min-width="7%" />
       <!-- 图标 -->
-      <el-table-column label="Icon">
+      <el-table-column label="Icon" min-width="16%">
         <template #default="{ row }">
           <div class="flex items-center">
             <el-avatar
@@ -101,9 +101,7 @@ getPredictionList()
             >
               <el-button text v-if="row.editing">
                 <template #icon>
-                  <i
-                    class="icon-upload-2-line branding-colours-primary h-16 w-16"
-                  />
+                  <i class="icon-typesadd branding-colours-primary text-16" />
                 </template>
                 <span class="branding-colours-primary">Upload</span>
               </el-button>
@@ -112,7 +110,12 @@ getPredictionList()
         </template>
       </el-table-column>
       <!-- 故障名称 -->
-      <el-table-column prop="name" label="Fault Name" sortable="custom">
+      <el-table-column
+        prop="name"
+        label="Fault Name"
+        sortable="custom"
+        min-width="30%"
+      >
         <template #default="{ row }">
           <template v-if="row.editing">
             <el-input
@@ -127,7 +130,12 @@ getPredictionList()
         </template>
       </el-table-column>
       <!-- 预测天数 -->
-      <el-table-column prop="date" label="Predicted (days)" sortable="custom">
+      <el-table-column
+        prop="date"
+        label="Predicted (days)"
+        sortable="custom"
+        min-width="30%"
+      >
         <template #default="{ row }">
           <template v-if="row.editing">
             <el-input v-model="row.date" placeholder="Type Here" class="w-full">
@@ -142,19 +150,27 @@ getPredictionList()
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column>
+      <el-table-column min-width="17%">
         <template #default="{ row }">
           <template v-if="row.editing">
-            <el-button type="primary" @click="handleEditPredictionData(row)">
+            <el-button
+              class="rounded-8!"
+              type="primary"
+              @click="handleEditPredictionData(row)"
+            >
               Save
             </el-button>
           </template>
           <template v-else>
+            <!-- 编辑 -->
             <i
-              class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
+              class="icon-edit-line text-24 inline-flex h-48 w-48 cursor-pointer items-center justify-center"
               @click="row.editing = true"
             />
-            <i class="icon-delete-bin-line h-16 w-16 cursor-pointer" />
+            <!-- 删除 -->
+            <i
+              class="icon-delete-bin-line text-24 inline-flex h-48 w-48 cursor-pointer items-center justify-center"
+            />
           </template>
         </template>
       </el-table-column>
@@ -171,7 +187,7 @@ getPredictionList()
       </template>
       <template #default>New Prediction</template>
     </el-button>
-  </div>
+  </el-scrollbar>
 </template>
 
 <style scoped lang="scss"></style>
