@@ -6,9 +6,11 @@ import { onMounted, reactive, ref } from 'vue'
 
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
+  adminUserStatusApi,
   getUserInfoApi,
   getUserOBDListApi,
   getUserVehicleListApi,
+  resetUserPasswordApi,
 } from '@/apis/userApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import {
@@ -72,7 +74,14 @@ const dialogEnableUserVisible = ref(false)
 
 const dialogUnbanUserVisible = ref(false)
 
+// 重置密码确认框
+const dialogResetPasswordConfirmVisible = ref(false)
+
+// 重置密码提示框
 const dialogResetPasswordVisible = ref(false)
+
+// 重置的密码
+const resetPassword = ref('')
 
 // 复制 handleCopyTransactionID
 const handleCopyTransactionID = async () => {
@@ -117,6 +126,31 @@ const handleUserStatus = async () => {
 // 刷新页面
 const initDate = async () => {
   await Promise.all([getUserInfo(), getUserOBDList(), getUserVehicleList()])
+}
+
+// 重置用户密码
+const handleResetPassword = async (row) => {
+  const { data } = await resetUserPasswordApi(row.id)
+  ElMessage.success('Reset password successfully')
+  // 记录重置的用户密码
+  resetPassword.value = data
+  // 打开重置密码提示弹窗
+  dialogResetPasswordVisible.value = true
+}
+
+// 复制重置密码等信息
+const handleCopyResetPassword = async () => {
+  try {
+    // 复制
+    await navigator.clipboard.writeText(
+      `Person name: ${userInfo.name}\n Email: ${userInfo.email} \n Password: ${resetPassword.value}`,
+    )
+  } catch (err) {
+    ElMessage.error('Failed to copy, try again.')
+  } finally {
+    // 关闭对话框
+    dialogResetPasswordVisible.value = false
+  }
 }
 
 // 组件创建后, 发起请求
@@ -482,17 +516,37 @@ onMounted(async () => {
   </base-dialog>
   <!-- Reset Password -->
   <base-dialog
-    v-model="dialogResetPasswordVisible"
+    v-model="dialogResetPasswordConfirmVisible"
     title="Reset Password?"
     button-type="danger"
     confirm-text="Reset Password"
-    @cancel="dialogResetPasswordVisible = false"
-    @confirm="dialogResetPasswordVisible = true"
+    @cancel="dialogResetPasswordConfirmVisible = false"
+    @confirm="handleResetPassword"
   >
     <template #content>
       <p class="heading-body-body-12px-medium text-neutrals-grey-3">
-        Are you sure you want to reset the user's password? O
+        Are you sure you want to reset the user's password?
       </p>
+    </template>
+  </base-dialog>
+  <!-- 重置密码提示弹窗 -->
+  <base-dialog
+    v-model="dialogResetPasswordVisible"
+    title="Reset Password"
+    @cancel="dialogResetPasswordVisible = false"
+    @confirm="handleCopyResetPassword"
+  >
+    <template #content>
+      <dl
+        class="[&>dt]:leading-80 grid grid-cols-[100px_1fr] items-center gap-x-8 [&>dt]:h-80"
+      >
+        <dt>Person name</dt>
+        <dd>{{ userInfo.name }}</dd>
+        <dt>Email</dt>
+        <dd>{{ userInfo.email }}</dd>
+        <dt>Password</dt>
+        <dd>{{ resetPassword }}</dd>
+      </dl>
     </template>
   </base-dialog>
 </template>

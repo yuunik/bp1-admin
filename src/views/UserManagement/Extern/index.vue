@@ -199,7 +199,7 @@ const handleMerchantRowClick = (row, column) => {
 const handleCopyPassword = async () => {
   try {
     await navigator.clipboard.writeText(
-      `Person name: ${resetPasswordUser.value.name}\n Email: ${resetPasswordUser.value.email} \n Password: 32523213`,
+      `Person name: ${resetPasswordUser.value.name}\n Email: ${resetPasswordUser.value.email} \n Password: ${resetPasswordUser.value.resetPassword}`,
     )
     // 提示
     ElMessage.success(
