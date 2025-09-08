@@ -1317,7 +1317,7 @@ const avatarErrorHandler = () => true
                 v-for="predictionDto in vehicleReportInfo.reportPredictionDtos"
                 :key="predictionDto.id"
               >
-                <el-row class="flex items-center">
+                <el-row class="flex items-center" :gutter="16">
                   <el-col :span="2">
                     <el-image
                       :src="
@@ -1410,7 +1410,7 @@ const avatarErrorHandler = () => true
                 v-for="categoryDto in vehicleReportInfo.reportCategoryDtos"
                 :key="categoryDto.category"
               >
-                <el-row class="flex-center flex">
+                <el-row class="flex-center flex" :gutter="16">
                   <el-col :span="3">
                     <el-image
                       :src="categoryIconMap[categoryDto.category]"
@@ -1495,7 +1495,10 @@ const avatarErrorHandler = () => true
                   v-for="expenseItemDto in expenseDto.reportExpenseItemDtos"
                   :key="expenseItemDto.id"
                 >
-                  <el-row class="poppins-10px-regular flex items-center">
+                  <el-row
+                    class="poppins-10px-regular flex items-center"
+                    :gutter="16"
+                  >
                     <el-col :span="10" class="flex flex-col">
                       <span>
                         {{ expenseItemDto.name }}
