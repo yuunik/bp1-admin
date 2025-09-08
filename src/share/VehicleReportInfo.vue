@@ -482,7 +482,7 @@ const avatarErrorHandler = () => true
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_label]:w-100 grid grid-cols-2 gap-8 [&>li]:flex [&>li]:gap-8"
+              class="[&_label]:w-100 [&>li]:h-15 grid grid-cols-2 gap-8 [&>li]:flex [&>li]:gap-8"
             >
               <li>
                 <label>Vehicle Type</label>
@@ -564,7 +564,10 @@ const avatarErrorHandler = () => true
               <!-- tbody -->
               <!-- Engine -->
               <template v-if="engineItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image :src="EngineIcon" class="h-16 w-16" fit="cover" />
                   </el-col>
@@ -577,7 +580,7 @@ const avatarErrorHandler = () => true
                       :class="[
                         'text-truncate',
                         'block',
-                        'w-full',
+                        'w-fit',
                         engineSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -592,7 +595,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in engineItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -616,6 +622,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -639,6 +646,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -668,7 +676,10 @@ const avatarErrorHandler = () => true
               </template>
               <!-- Transmission -->
               <template v-if="transmissionItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="TransmissionIcon"
@@ -683,6 +694,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-fit',
                         transmissionSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -697,7 +711,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in transmissionItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -721,6 +738,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -744,6 +762,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -773,7 +792,10 @@ const avatarErrorHandler = () => true
               </template>
               <!-- Brakes -->
               <template v-if="brakesItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image :src="BrakesIcon" class="h-16 w-16" fit="cover" />
                   </el-col>
@@ -784,6 +806,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-fit',
                         brakesSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -798,7 +823,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in brakesItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -822,6 +850,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -845,6 +874,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -874,7 +904,10 @@ const avatarErrorHandler = () => true
               </template>
               <!-- Electrical -->
               <template v-if="electricalItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="ElectricalIcon"
@@ -889,6 +922,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-fit',
                         electricalSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -903,7 +939,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in electricalItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -927,6 +966,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -950,6 +990,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -979,7 +1020,10 @@ const avatarErrorHandler = () => true
               </template>
               <!-- Chassis -->
               <template v-if="chassisItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="ChassisIcon"
@@ -994,6 +1038,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-fit',
                         chassisSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -1008,7 +1055,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in chassisItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -1032,6 +1082,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1055,6 +1106,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1084,7 +1136,10 @@ const avatarErrorHandler = () => true
               </template>
               <!-- Body and Trim -->
               <template v-if="bodyAndTrimItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="BodyAndTrimIcon"
@@ -1099,6 +1154,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-fit',
                         bodyAndTrimSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -1113,7 +1171,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in bodyAndTrimItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -1137,6 +1198,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1160,6 +1222,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1189,7 +1252,10 @@ const avatarErrorHandler = () => true
               </template>
               <!-- Others -->
               <template v-if="otherItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image :src="OthersIcon" class="h-16 w-16" fit="cover" />
                   </el-col>
@@ -1200,6 +1266,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-fit',
                         otherSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -1214,7 +1283,10 @@ const avatarErrorHandler = () => true
                   </el-col>
                 </el-row>
                 <div v-for="item in otherItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -1238,6 +1310,7 @@ const avatarErrorHandler = () => true
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1261,6 +1334,7 @@ const avatarErrorHandler = () => true
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
