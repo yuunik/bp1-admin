@@ -177,9 +177,8 @@ const handleUserRowClick = (row, column) => {
   }
   // 跳转到用户详情页
   router.push({
-    name: 'External Manage',
+    name: 'Person Manage',
     params: { id: row.id },
-    query: { type: 'user' },
   })
 }
 
@@ -253,7 +252,7 @@ watch(
 </script>
 
 <template>
-  <router-view v-if="$route.name === 'External Manage'" />
+  <router-view v-if="$route.name === 'Person Manage'" />
   <router-view v-else-if="$route.name === 'Create Workshop'" />
   <section class="flex h-full flex-col" v-else>
     <!-- Extern Header -->

@@ -15,7 +15,7 @@ import {
   getDateWithDDMMMYYYY,
   getDateWithDDMMMYYYYhhmma,
   getLastUsedDate,
-} from '../../../utils/dateUtil.js'
+} from '@/utils/dateUtil.js'
 import BaseTag from '@/components/BaseTag.vue'
 
 const logAndNoteDataList = ref([
@@ -105,6 +105,20 @@ const getUserVehicleList = async () => {
 // avatar加载的错误行为
 const avatarErrorHandler = () => true
 
+// 管理员禁用、解禁用户
+const handleUserStatus = async () => {
+  await adminUserStatusApi(userId.value)
+  // 提示
+  ElMessage.success('Success')
+  // 刷新列表
+  initDate()
+}
+
+// 刷新页面
+const initDate = async () => {
+  await Promise.all([getUserInfo(), getUserOBDList(), getUserVehicleList()])
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -112,7 +126,7 @@ const {
 
 onMounted(async () => {
   userId.value = id
-  await Promise.all([getUserInfo(), getUserOBDList(), getUserVehicleList()])
+  initDate()
 })
 </script>
 
@@ -123,10 +137,22 @@ onMounted(async () => {
         Bessie Cooper
       </h3>
       <div class="flex gap-8">
-        <el-button>Ban</el-button>
-        <el-button>Reset Password</el-button>
-        <el-button>Bind OBD</el-button>
-        <el-button>View Orders</el-button>
+        <!-- state 为 1, 则用户账号状态正常 -->
+        <el-button
+          v-if="userInfo.state === 1"
+          @click="dialogBanUserVisible = true"
+        >
+          Ban
+        </el-button>
+        <!-- state 不为 1, 则用户账号状态异常 -->
+        <el-button v-else @click="dialogUnbanUserVisible = true">
+          Unban
+        </el-button>
+        <el-button @click="dialogResetPasswordVisible = true">
+          Reset Password
+        </el-button>
+        <!--<el-button>Bind OBD</el-button>-->
+        <!--<el-button>View Orders</el-button>-->
       </div>
     </div>
     <el-divider />
@@ -396,11 +422,11 @@ onMounted(async () => {
   <!-- Ban -->
   <base-dialog
     v-model="dialogBanUserVisible"
-    title="Ban tim.jennings@example.com ?"
+    :title="`Ban ${userInfo.email} ?`"
     button-type="danger"
     confirm-text="Ban"
     @cancel="dialogBanUserVisible = false"
-    @confirm="dialogBanUserVisible = true"
+    @confirm="handleUserStatus"
   >
     <template #content>
       <p class="heading-body-body-12px-medium text-neutrals-off-black">
@@ -426,10 +452,10 @@ onMounted(async () => {
   <!-- Unban -->
   <base-dialog
     v-model="dialogUnbanUserVisible"
-    title="Unban tim.jennings@example.com ?"
+    :title="`Unban ${userInfo.email}?`"
     confirm-text="Unban"
     @cancel="dialogUnbanUserVisible = false"
-    @confirm="dialogUnbanUserVisible = true"
+    @confirm="handleUserStatus"
   >
     <template #content>
       <p class="heading-body-body-12px-medium text-neutrals-grey-3">

@@ -207,11 +207,11 @@ const constantRoutes = [
         children: [
           {
             path: '/user-management/extern/person/:id',
-            name: 'External Manage',
+            name: 'Person Manage',
             component: () =>
               import('@/views/UserManagement/Extern/PersonManagement.vue'),
             meta: {
-              title: 'External Manage',
+              title: 'Person Manage',
               showInMenu: false,
               showInBreadcrumb: true,
             },
