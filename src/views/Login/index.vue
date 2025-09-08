@@ -74,11 +74,6 @@ const loginFormRules = ref({
       message: 'Please enter your email',
       trigger: 'blur',
     },
-    {
-      type: 'email',
-      message: 'Please enter a valid email',
-      trigger: 'change',
-    },
   ],
   password: [
     {
