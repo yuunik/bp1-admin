@@ -1,7 +1,11 @@
 <script setup>
 import { useRoute } from 'vue-router'
 
-import { getImgUrlToBase64, getVehicleReportInfoApi } from '@/apis/shareApi.js'
+import {
+  getImgUrlToBase64,
+  getVehicleReportInfoApi,
+  getPdfApi,
+} from '@/apis/shareApi.js'
 import {
   getDateWithDDMMMYYYY,
   getGeneratedDateWithDDMMMYYYYhhmma,
