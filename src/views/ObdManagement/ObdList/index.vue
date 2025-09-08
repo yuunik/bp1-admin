@@ -60,6 +60,47 @@ const statusKeys = computed(() =>
     : '',
 )
 
+const conditionSearchParams = reactive({
+  userList: [],
+  statusList: [],
+})
+
+const filterByUser = reactive({
+  conditionText: 'User',
+  sectionList: [
+    {
+      label: 'With User',
+      value: '2',
+    },
+    {
+      label: 'Without User',
+      value: '1',
+    },
+  ],
+})
+
+const filterByStatus = reactive({
+  conditionText: 'Status',
+  sectionList: [
+    {
+      label: 'On',
+      value: '0',
+    },
+    {
+      label: 'Off',
+      value: '10',
+    },
+  ],
+})
+
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return (
+    conditionSearchParams.userList.length > 0 ||
+    conditionSearchParams.statusList.length > 0
+  )
+})
+
 // 获取OBD 列表数据
 const getObdList = useDebounceFn(async () => {
   loading.value = true
@@ -145,47 +186,6 @@ const handleSortByCondition = useSort(sortParams, () => {
   getObdList()
 })
 
-const conditionSearchParams = reactive({
-  userList: [],
-  statusList: [],
-})
-
-const filterByUser = reactive({
-  conditionText: 'User',
-  sectionList: [
-    {
-      label: 'With User',
-      value: '2',
-    },
-    {
-      label: 'Without User',
-      value: '1',
-    },
-  ],
-})
-
-const filterByStatus = reactive({
-  conditionText: 'Status',
-  sectionList: [
-    {
-      label: 'On',
-      value: '0',
-    },
-    {
-      label: 'Off',
-      value: '10',
-    },
-  ],
-})
-
-// 是否有筛选条件
-const hasCondition = computed(() => {
-  return (
-    conditionSearchParams.userList.length > 0 ||
-    conditionSearchParams.statusList.length > 0
-  )
-})
-
 // 刷新
 const refresh = () => {
   if (pagination.currentPage === 0) {
@@ -198,7 +198,7 @@ const refresh = () => {
 const handleResetAllCondition = () => {
   conditionSearchParams.userList = []
   conditionSearchParams.statusList = []
-  // 刷新·
+  // 刷新
   refresh()
 }
 
@@ -239,6 +239,7 @@ getObdList()
           <el-button
             text
             type="primary"
+            class="h-24!"
             @click="handleResetAllCondition"
             v-show="hasCondition"
           >
@@ -400,10 +401,5 @@ getObdList()
 
 :deep(.el-input) {
   margin: 0;
-}
-
-// 重置按钮的样式
-.condition-search-container :deep(.el-button) {
-  @apply h-24 p-0;
 }
 </style>

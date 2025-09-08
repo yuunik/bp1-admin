@@ -64,9 +64,9 @@ const pageQueryParams = reactive({
 // 条件查询参数
 const conditionSearchParams = reactive({
   searchKey: '',
-  status: '',
-  role: '',
   sort: '',
+  statusList: [],
+  roleList: [],
 })
 
 // 排序查询
@@ -81,12 +81,34 @@ const dialogResetPasswordVisible = ref(false)
 // 重置密码的管理员信息
 const resetPasswordUAdmin = ref(null)
 
+// 筛选参数
+const statusKeys = computed(() =>
+  conditionSearchParams.statusList &&
+  conditionSearchParams.statusList.length > 0
+    ? conditionSearchParams.statusList.join(',')
+    : '',
+)
+
+const roleKeys = computed(() =>
+  conditionSearchParams.roleList && conditionSearchParams.roleList.length > 0
+    ? conditionSearchParams.roleList.join(',')
+    : '',
+)
+
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return (
+    conditionSearchParams.statusList.length > 0 ||
+    conditionSearchParams.roleList.length > 0
+  )
+})
+
 // 获取管理员列表
 const getAdminList = async () => {
   const { data } = await getAdminListApi({
     searchKey: conditionSearchParams.searchKey,
-    status: conditionSearchParams.status,
-    role: conditionSearchParams.role,
+    status: statusKeys.value,
+    role: roleKeys.value,
     page: pageQueryParams.currentPage,
     pageSize: pageQueryParams.pageSize,
     sort: sortParams.sort,
@@ -98,21 +120,6 @@ const getAdminList = async () => {
 // 排序功能函数
 const sort = useSort(sortParams, () => getAdminList())
 
-// 账号状态筛选
-const handleSearchByStatus = (val) => {
-  conditionSearchParams.status = val
-  refresh()
-}
-
-// 账号角色筛选
-const handleSearchByRole = (val) => {
-  conditionSearchParams.role = val
-  refresh()
-}
-
-// 网络请求
-getAdminList()
-
 // 刷新页面
 const refresh = () => {
   if (!pageQueryParams.currentPage) {
@@ -122,19 +129,10 @@ const refresh = () => {
 }
 
 // 条件搜索
-const handleSearchByInput = useDebounceFn(async () => {
-  pageQueryParams.currentPage = 0
-  const { data } = await getAdminListApi({
-    searchKey: conditionSearchParams.searchKey,
-    status: conditionSearchParams.status,
-    role: conditionSearchParams.role,
-    page: pageQueryParams.currentPage,
-    pageSize: pageQueryParams.pageSize,
-    sort: sortParams.sort,
-    sortBy: sortParams.sortBy,
-  })
-  internalDataList.value = data
-}, TimingPreset.DEBOUNCE)
+const handleSearchByInput = useDebounceFn(
+  async () => refresh(),
+  TimingPreset.DEBOUNCE,
+)
 
 // 跳转至编辑管理员页
 const goToEditPage = (id) => {
@@ -181,8 +179,16 @@ const handleUserStateChange = async (id) => {
   await adminStatusApi(id)
   // 提示
   ElMessage.success('Modify successfully')
-  // 重新获取管理员列表
-  getAdminList()
+  // 刷新
+  refresh()
+}
+
+// 重置条件搜索
+const handleResetAllCondition = () => {
+  conditionSearchParams.roleList = []
+  conditionSearchParams.statusList = []
+  // 刷新
+  refresh()
 }
 
 // 监听当前页的变化
@@ -190,6 +196,9 @@ watch(
   () => pageQueryParams.currentPage,
   () => getAdminList(),
 )
+
+// 网络请求
+getAdminList()
 </script>
 
 <template>
@@ -212,19 +221,33 @@ watch(
     <!-- Search -->
     <div class="flex-between mx-32 flex h-24 gap-20">
       <!-- 筛选查询 -->
-      <div class="flex gap-8">
-        <!-- 账号状态筛选 -->
-        <base-filter-panel
-          :section-list="statusFilterParams"
-          condition-text="Status"
-          @search="handleSearchByStatus"
-        />
-        <!-- 账号角色筛选 -->
-        <base-filter-panel
-          :section-list="roleFilterParams"
-          condition-text="Role"
-          @search="handleSearchByRole"
-        />
+      <div class="flex h-24 gap-8">
+        <div class="flex h-24 gap-8">
+          <!-- 账号状态筛选 -->
+          <base-filter-panel
+            v-model="conditionSearchParams.statusList"
+            :section-list="statusFilterParams"
+            condition-text="Status"
+            @search="refresh"
+          />
+          <!-- 账号角色筛选 -->
+          <base-filter-panel
+            v-model="conditionSearchParams.roleList"
+            :section-list="roleFilterParams"
+            condition-text="Role"
+            @search="refresh"
+          />
+        </div>
+        <!-- 重置条件搜索 -->
+        <el-button
+          text
+          type="primary"
+          class="h-24!"
+          @click="handleResetAllCondition"
+          v-show="hasCondition"
+        >
+          Clear
+        </el-button>
       </div>
       <!-- 条件搜索 -->
       <base-filter-input
