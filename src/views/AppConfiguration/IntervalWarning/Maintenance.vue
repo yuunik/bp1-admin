@@ -10,7 +10,7 @@ import useFileUpload from '@/composables/useFileUpload.js'
 import { useSort } from '@/composables/useSort.js'
 
 // 保养数据默认图标
-import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
+import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
 
 // 保养数据
 const maintenanceList = ref([])

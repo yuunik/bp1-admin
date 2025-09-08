@@ -13,8 +13,7 @@ import {
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
-import DefaultCardImg from '@/assets/icons/default-car-img.svg'
-import FaultCodesIcon from '@/assets/icons/fault-code-icon.svg'
+import DefaultCardImg from '@/assets/specialIcons/default-car-img.svg'
 import RepairIcon from '@/assets/icons/fi_tool.svg'
 import MaintenanceIcon from '@/assets/icons/fi_file-minus.svg'
 import FuelIcon from '@/assets/icons/fuel-level.svg'
@@ -27,6 +26,7 @@ import ChassisIcon from '@/assets/icons/chassis.svg'
 import BodyAndTrimIcon from '@/assets/icons/services-icon.svg'
 import OthersIcon from '@/assets/icons/others-icon.svg'
 import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
+import RepairShopIcon from '@/assets/icons/Repair Shop.svg'
 
 // 页面加载状态
 const isLoading = ref(false)
@@ -220,8 +220,8 @@ const generatePdf = async () => {
   try {
     isGeneratingPdf.value = true
     const { data } = await getPdfApi({
-      id: vehicleDTCsReportInfo.id,
-      url: import.meta.env.VITE_SERVER_URL_FILE + route.fullPath,
+      id: vehicleReportInfo.id,
+      url: 'https://pd1-dev.proteus-dt.com' + route.fullPath,
     })
     const link = document.createElement('a')
     link.href = getFullFilePath(data)
@@ -234,6 +234,9 @@ const generatePdf = async () => {
     isGeneratingPdf.value = false
   }
 }
+
+// avatar 加载的错误行为
+const avatarErrorHandler = () => true
 </script>
 
 <template>
@@ -268,15 +271,19 @@ const generatePdf = async () => {
             </template>
           </el-image>
           <div class="flex flex-1 flex-col gap-8">
-            <h2 class="items-centers flex">
-              <em class="poppins-20px-semibold text-neutrals-blue not-italic">
+            <h2>
+              <em
+                class="poppins-20px-semibold text-neutrals-blue h-30 row-center not-italic"
+              >
                 {{
                   `${vehicleReportInfo.brand} ${vehicleReportInfo.model} ${vehicleReportInfo.year}` ||
                   '-'
                 }}
               </em>
             </h2>
-            <ul class="flex flex-col gap-4 [&>li]:flex [&>li]:gap-8">
+            <ul
+              class="[&>li]:h-15 flex flex-col gap-4 [&>li]:flex [&>li]:gap-8"
+            >
               <li class="flex items-center">
                 <label class="poppins-10px-regular flex-[1_1_92px]">VIN</label>
                 <el-text
@@ -315,7 +322,7 @@ const generatePdf = async () => {
           >
             <!-- 评分 -->
             <h2 class="flex flex-col gap-4">
-              <em class="hanno-20px-regular not-italic">
+              <em class="hanno-20px-regular h-24 not-italic">
                 {{ vehicleReportInfo.modificationCount }}
               </em>
               <span class="text-10px-regular">out of 10</span>
@@ -324,7 +331,7 @@ const generatePdf = async () => {
             <el-divider direction="vertical" class="bg-neutrals-grey-4!" />
             <!-- 车辆评分等级 -->
             <div class="flex flex-1 flex-col gap-8">
-              <span class="roboto-12px-semibold">Evaluation Level</span>
+              <span class="roboto-12px-semibold h-14">Evaluation Level</span>
               <p class="text-neutrals-grey-2 text-10px-regular">
                 {{ vehicleReportInfo.explain || '-' }}
               </p>
@@ -333,22 +340,26 @@ const generatePdf = async () => {
           <!-- 总览 -->
           <section class="section-container">
             <h3 class="section-header">
-              <em class="title">Overview</em>
+              <em class="title h-18">Overview</em>
             </h3>
             <!-- Issues -->
             <div class="flex flex-col gap-8">
               <h4 class="ml-8">
-                <span class="poppins-10px-medium">Issues</span>
+                <span class="poppins-10px-medium h-14">Issues</span>
               </h4>
               <div class="flex gap-8">
                 <div
                   class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
                 >
-                  <el-image
-                    :src="FaultCodesIcon"
-                    class="h-24 w-24"
-                    fit="cover"
-                  />
+                  <base-svg-icon
+                    name="prediction-icon"
+                    size="24px"
+                    :color="
+                      vehicleReportInfo.faultCodeCount > 0
+                        ? '#EF3C30'
+                        : '##6F7788'
+                    "
+                  ></base-svg-icon>
                   <p
                     :class="[
                       'poppins-10px-semibold',
@@ -358,9 +369,7 @@ const generatePdf = async () => {
                     ]"
                   >
                     {{
-                      vehicleReportInfo.faultCodeCount
-                        ? `${vehicleReportInfo.faultCodeCount} Fault Codes`
-                        : '0 Fault Code'
+                      `${vehicleReportInfo.reportPredictionDtos?.length} Prediction`
                     }}
                   </p>
                 </div>
@@ -373,7 +382,7 @@ const generatePdf = async () => {
                     :color="
                       vehicleReportInfo.reportPredictionDtos?.length > 0
                         ? '#EF3C30'
-                        : '#6F7788'
+                        : '##6F7788'
                     "
                   ></base-svg-icon>
                   <p
@@ -397,64 +406,69 @@ const generatePdf = async () => {
                 <span class="poppins-10px-medium">Expense Records</span>
               </h4>
               <div class="flex gap-8">
+                <!-- Repair -->
                 <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
+                  class="bg-neutrals-off-white rounded-8 text-truncate box-border flex flex-1 flex-col items-center gap-8 p-12"
                 >
                   <base-svg-icon
                     name="fi_tool"
                     size="24px"
                     color="#6F7788"
                   ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
+                  <p class="poppins-10px-semibold h-15 text-truncate w-full">
                     {{ vehicleReportInfo.repairCount ?? '-' }} Repair
                   </p>
                 </div>
+                <!-- Maintenance -->
                 <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
+                  class="bg-neutrals-off-white rounded-8 text-truncate box-border flex flex-1 flex-col items-center gap-8 p-12"
                 >
                   <base-svg-icon
                     name="fi_file-minus"
                     size="24px"
                     color="#6F7788"
                   ></base-svg-icon>
-                  <p class="poppins-10px-semibold text-truncate">
+                  <p class="poppins-10px-semibold h-15 text-truncate w-full">
                     {{ vehicleReportInfo.maintenanceCount ?? '-' }}
                     Maintenance
                   </p>
                 </div>
+                <!-- Fuel -->
                 <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
+                  class="bg-neutrals-off-white rounded-8 text-truncate box-border flex flex-1 flex-col items-center gap-8 p-12"
                 >
                   <base-svg-icon
                     name="fuel-level"
                     size="24px"
                     color="#6F7788"
                   ></base-svg-icon>
-                  <p class="poppins-10px-semibold text-truncate">
+                  <p class="poppins-10px-semibold text-truncate h-15 w-full">
                     {{ vehicleReportInfo.fuelCount ?? '-' }} Fuel
                   </p>
                 </div>
+                <!-- Services -->
                 <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
+                  class="bg-neutrals-off-white text-truncate rounded-8 box-border flex flex-1 flex-col items-center gap-8 whitespace-nowrap p-12"
                 >
                   <base-svg-icon
                     name="services-icon"
                     size="24px"
                     color="#6F7788"
                   ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
+                  <p class="poppins-10px-semibold h-15 text-truncate w-full">
                     {{ vehicleReportInfo.seiviceCount ?? '-' }} Services
                   </p>
                 </div>
+                <!-- Modification -->
                 <div
-                  class="bg-neutrals-off-white rounded-8 text-truncate flex flex-1 flex-col items-center gap-8 p-12"
+                  class="bg-neutrals-off-white text-truncate rounded-8 box-border flex flex-1 flex-col items-center gap-8 whitespace-nowrap p-12"
                 >
                   <base-svg-icon
                     name="modification"
                     size="24px"
                     color="#6F7788"
                   ></base-svg-icon>
-                  <p class="poppins-10px-semibold">
+                  <p class="poppins-10px-semibold h-15 text-truncate w-full">
                     {{ vehicleReportInfo.modificationCount ?? '-' }}
                     Modification
                   </p>
@@ -1442,12 +1456,22 @@ const generatePdf = async () => {
                 <div class="poppins-10px-regular flex items-center gap-12 py-8">
                   <p>05 Feb 2025</p>
                   <div class="flex items-center gap-8">
+                    <!-- 修理厂logo -->
                     <el-avatar
+                      v-if="expenseDto.logo"
                       :src="getFullFilePath(expenseDto.logo)"
                       fit="cover"
                       :size="16"
+                      @error="avatarErrorHandler"
                     />
-                    <span>ORCA Automotive</span>
+                    <el-image
+                      v-else
+                      :src="RepairShopIcon"
+                      class="h-24 w-24"
+                      fit="cover"
+                      alt="repair shop logo"
+                    />
+                    <span>{{ expenseDto.name || '-' }}</span>
                   </div>
                 </div>
                 <!-- thead -->

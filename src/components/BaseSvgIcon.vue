@@ -28,10 +28,10 @@ const svgClass = computed(() =>
 <template>
   <svg
     :class="svgClass"
-    :style="{ width: size, height: size }"
+    :style="{ width: size, height: size, color: color }"
     aria-hidden="true"
   >
-    <use :href="iconName" :fill="color" />
+    <use :href="iconName" />
   </svg>
 </template>
 

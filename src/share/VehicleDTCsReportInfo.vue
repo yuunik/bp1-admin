@@ -13,7 +13,7 @@ import {
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
-import DefaultCardImg from '@/assets/icons/default-car-img.svg'
+import DefaultCardImg from '@/assets/specialIcons/default-car-img.svg'
 import EngineIcon from '@/assets/icons/engine-load.svg'
 import TransmissionIcon from '@/assets/icons/tranmission.svg'
 import BrakesIcon from '@/assets/icons/brakes.svg'

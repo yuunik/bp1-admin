@@ -8,8 +8,8 @@ import AppScaffold from '@/components/AppScaffold.vue'
 import { getAiQuestionInfoApi } from '@/apis/shareApi.js'
 
 // ai logo
-import AiLogo from '@/assets/icons/ai-logo.svg'
-import SendIcon from '@/assets/icons/fi_arrow-right-circle-disabled.svg'
+import AiLogo from '@/assets/specialIcons/ai-logo.svg'
+import SendIcon from '@/assets/specialIcons/fi_arrow-right-circle-disabled.svg'
 const aiQuestionInfo = reactive({})
 
 const route = useRoute()

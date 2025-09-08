@@ -1,14 +1,14 @@
 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_12861_71415)">
-<circle cx="8.0026" cy="7.9987" r="0.666667" fill="#1B1A1E" stroke="#1B1A1E"/>
-<path d="M11.9697 2.54199L9.03969 5.47202C8.37807 5.18847 7.62193 5.18847 6.96031 5.47202L4.03028 2.54199C6.39321 0.746161 9.60679 0.746161 11.9697 2.54199Z" stroke="#1B1A1E" stroke-miterlimit="10" stroke-linejoin="round"/>
-<path d="M13.4609 11.9687L10.4956 9.00341C10.8247 8.38734 10.8201 7.62664 10.5309 6.95933L13.4609 4.0293C15.234 6.36945 15.2533 9.6024 13.4609 11.9687Z" stroke="#1B1A1E" stroke-miterlimit="10" stroke-linejoin="round"/>
-<path d="M11.9697 13.458C9.65405 15.2066 6.39321 15.1593 4.03028 13.458L6.96031 10.528C7.62193 10.8115 8.37807 10.8115 9.03969 10.528L11.9697 13.458Z" stroke="#1B1A1E" stroke-miterlimit="10" stroke-linejoin="round"/>
-<path d="M5.4691 9.03871L2.53906 11.9687C0.790494 9.65307 0.837753 6.39223 2.53906 4.0293L5.4691 6.95933C5.18554 7.62095 5.18554 8.37709 5.4691 9.03871Z" stroke="#1B1A1E" stroke-miterlimit="10" stroke-linejoin="round"/>
+<circle cx="8.0026" cy="7.9987" r="0.666667" fill="currentColor" stroke="currentColor"/>
+<path d="M11.9697 2.54199L9.03969 5.47202C8.37807 5.18847 7.62193 5.18847 6.96031 5.47202L4.03028 2.54199C6.39321 0.746161 9.60679 0.746161 11.9697 2.54199Z" stroke="currentColor" stroke-miterlimit="10" stroke-linejoin="round"/>
+<path d="M13.4609 11.9687L10.4956 9.00341C10.8247 8.38734 10.8201 7.62664 10.5309 6.95933L13.4609 4.0293C15.234 6.36945 15.2533 9.6024 13.4609 11.9687Z" stroke="currentColor" stroke-miterlimit="10" stroke-linejoin="round"/>
+<path d="M11.9697 13.458C9.65405 15.2066 6.39321 15.1593 4.03028 13.458L6.96031 10.528C7.62193 10.8115 8.37807 10.8115 9.03969 10.528L11.9697 13.458Z" stroke="currentColor" stroke-miterlimit="10" stroke-linejoin="round"/>
+<path d="M5.4691 9.03871L2.53906 11.9687C0.790494 9.65307 0.837753 6.39223 2.53906 4.0293L5.4691 6.95933C5.18554 7.62095 5.18554 8.37709 5.4691 9.03871Z" stroke="currentColor" stroke-miterlimit="10" stroke-linejoin="round"/>
 </g>
 <defs>
 <clipPath id="clip0_12861_71415">
-<rect width="16" height="16" fill="white"/>
+<rect width="16" height="16" fill="currentColor"/>
 </clipPath>
 </defs>
 </svg>

@@ -4,7 +4,7 @@ import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import useFileUpload from '@/composables/useFileUpload.js'
 import { useSort } from '@/composables/useSort.js'
 
-import DefaultLogo from '@/assets/icons/maintenance-logo.svg'
+import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
 
 // 预测数据列表
 const predictionList = ref([])
