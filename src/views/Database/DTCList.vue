@@ -3,6 +3,7 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import { Edit, EditPen } from '@element-plus/icons-vue'
 import BasePagination from '@/components/BasePagination.vue'
+import { reactive } from 'vue'
 
 // 条件搜索
 const conditionParams = reactive({
@@ -45,6 +46,20 @@ const pagination = reactive({
   currentPage: 0,
   total: 0,
   pageSize: 15,
+})
+
+// 筛选参数
+const conditionSearchParams = reactive({
+  systemList: [],
+  severityList: [],
+})
+
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return (
+    conditionSearchParams.systemList.length > 0 ||
+    conditionSearchParams.severityList.length > 0
+  )
 })
 
 // dtc 数据
@@ -92,23 +107,25 @@ const handleSearchBySeverity = () => {}
 
 <template>
   <!-- 条件搜索 -->
-  <div class="flex-between h-24">
-    <base-filter-input
-      v-model="conditionParams.searchKey"
-      @input-change="handleSearchByInput"
-    />
+  <div class="flex h-24 gap-8">
     <div class="flex h-24 gap-8">
       <base-filter-panel
+        v-model="conditionSearchParams.systemList"
         :section-list="filterBySystem.sectionList"
         :condition-text="filterBySystem.conditionText"
         @search="handleSearchBySystem"
       />
       <base-filter-panel
+        v-model="conditionSearchParams.severityList"
         :section-list="filterBySeverity.sectionList"
         :condition-text="filterBySeverity.conditionText"
         @search="handleSearchBySeverity"
       />
     </div>
+    <!-- 重置条件搜索 -->
+    <el-button text type="primary" class="h-24!" v-show="hasCondition">
+      Clear
+    </el-button>
   </div>
   <div class="flex flex-1 flex-col justify-between">
     <el-table :data="dtcList" class="flex-1">
