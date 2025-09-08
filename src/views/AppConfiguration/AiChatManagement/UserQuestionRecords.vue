@@ -138,26 +138,27 @@ getQuestionList()
     <template v-if="aiChatRecordList.length">
       <template v-for="record in aiChatRecordList" :key="record.id">
         <el-row
-          class="row-center h-32"
-          :class="{ 'bg-status-colours-light-blue': record.isExpand }"
+          class="row-center default-transition hover:bg-neutrals-grey-1 cursor-pointer py-8"
+          :class="{ 'bg-[#E3EAF3]': record.isExpand }"
+          @click.stop="record.isExpand = !record.isExpand"
         >
           <el-col :span="2" class="text-align-center h-16">
             <el-icon
               class="h-16 w-16 cursor-pointer"
               v-if="!record.isExpand"
-              @click="record.isExpand = true"
+              @click.stop="record.isExpand = true"
             >
               <CirclePlus />
             </el-icon>
             <el-icon
               class="w-16! h-16 cursor-pointer"
               v-else
-              @click="record.isExpand = false"
+              @click.stop="record.isExpand = false"
             >
               <RemoveFilled />
             </el-icon>
           </el-col>
-          <el-col :span="4" class="row-center h-16 gap-4">
+          <el-col :span="4" class="row-center gap-4">
             <span
               class="heading-body-body-12px-medium"
               :class="
@@ -169,7 +170,7 @@ getQuestionList()
               {{ getDateWithDDMMMYYYYhhmma(record.createTime) }}
             </span>
           </el-col>
-          <el-col :span="18" class="row-center h-16 gap-4">
+          <el-col :span="18" class="row-center gap-4">
             <p
               class="heading-body-body-12px-medium text-neutrals-grey-3"
               :class="
