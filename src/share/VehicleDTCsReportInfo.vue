@@ -311,31 +311,31 @@ const generatePdf = async () => {
             >
               <li>
                 <label>Vehicle Type</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleDTCsReportInfo.vehicleDto?.vehicleType || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Primary Colour</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleDTCsReportInfo.vehicleDto?.primaryColour || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Manufacturing Year</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleDTCsReportInfo.vehicleDto?.year || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Chassis No.</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleDTCsReportInfo.vehicleDto?.vin || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Original Reg. Date</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{
                     getDateWithDDMMMYYYY(
                       vehicleDTCsReportInfo.vehicleDto?.createTime,
@@ -357,7 +357,7 @@ const generatePdf = async () => {
               </li>
               <li>
                 <label>Engine Capacity</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleDTCsReportInfo.vehicleDto?.engineCapacity || '-' }}
                 </el-text>
               </li>
@@ -518,7 +518,7 @@ const generatePdf = async () => {
                       :class="[
                         'text-truncate',
                         'block',
-                        'w-full',
+                        'w-fit',
                         transmissionSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -630,7 +630,7 @@ const generatePdf = async () => {
                       :class="[
                         'text-truncate',
                         'block',
-                        'w-full',
+                        'w-fit',
                         brakesSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -746,7 +746,7 @@ const generatePdf = async () => {
                       :class="[
                         'text-truncate',
                         'block',
-                        'w-full',
+                        'w-fit',
                         electricalSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -862,7 +862,7 @@ const generatePdf = async () => {
                       :class="[
                         'text-truncate',
                         'block',
-                        'w-full',
+                        'w-fit',
                         chassisSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -978,7 +978,7 @@ const generatePdf = async () => {
                       :class="[
                         'text-truncate',
                         'block',
-                        'w-full',
+                        'w-fit',
                         bodyAndTrimSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
