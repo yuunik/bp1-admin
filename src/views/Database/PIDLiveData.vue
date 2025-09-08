@@ -81,6 +81,14 @@ const pidLiveDataList = reactive([
   },
 ])
 
+// 筛选搜索
+const systemList = ref([])
+
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return systemList.value.length > 0
+})
+
 // 输入搜索
 const handleSearchByInput = () => {}
 
@@ -91,14 +99,27 @@ const handleSearchBySystem = () => {}
 <template>
   <!-- 条件搜索 -->
   <div class="flex-between h-24">
+    <div class="flex h-24 gap-8">
+      <base-filter-panel
+        v-model="systemList"
+        :section-list="filterBySystem.sectionList"
+        :condition-text="filterBySystem.conditionText"
+        @search="handleSearchBySystem"
+      />
+      <!-- 重置条件搜索 -->
+      <el-button
+        text
+        type="primary"
+        class="h-24!"
+        @click="systemList = []"
+        v-show="hasCondition"
+      >
+        Clear
+      </el-button>
+    </div>
     <base-filter-input
       v-model="conditionParams.searchKey"
       @input-change="handleSearchByInput"
-    />
-    <base-filter-panel
-      :section-list="filterBySystem.sectionList"
-      :condition-text="filterBySystem.conditionText"
-      @search="handleSearchBySystem"
     />
   </div>
   <div class="flex flex-1 flex-col justify-between">
