@@ -20,11 +20,6 @@ import {
   getDateWithDDMMMYYYYhhmma,
 } from '@/utils/dateUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
-import PDFIcon from '@/assets/specialIcons/pdf.svg'
-import ExcelIcon from '@/assets/specialIcons/Excel.svg'
-import TextIcon from '@/assets/specialIcons/txt.svg'
-import useDownFile from '@/composables/useDownFile.js'
 import BaseFileDisplay from '@/components/BaseFileDisplay.vue'
 
 const emit = defineEmits(['changeTabName'])
@@ -157,30 +152,6 @@ const handleDeleteForum = async () => {
   // 提示
   ElMessage.success('Delete successfully')
 }
-
-// 下载文件
-// const handleDownFile = (path) => {
-//   const aElement = document.createElement('a')
-//   aElement.href = getFullFilePath(path)
-//   // aElement.download = ''
-//   aElement.style.display = 'none'
-//   document.body.appendChild(aElement)
-//   aElement.click()
-//   aElement.remove()
-//   document.body.removeChild(aElement)
-// }
-// const handleDownFile = async (path) => {
-//   const res = await fetch(getFullFilePath(path))
-//   const blob = await res.blob()
-//   const url = URL.createObjectURL(blob)
-//
-//   const aElement = document.createElement('a')
-//   aElement.href = url
-//   aElement.download = path.split('/').pop() // 可自定义
-//   aElement.click()
-//   URL.revokeObjectURL(url)
-// }
-const downFile = useDownFile()
 
 // 组件挂载后, 获取贴文详情
 onMounted(async () => {

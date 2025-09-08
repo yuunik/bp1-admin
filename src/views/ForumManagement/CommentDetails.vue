@@ -20,6 +20,7 @@ import {
   getDateWithDDMMMYYYYhhmma,
 } from '@/utils/dateUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseFileDisplay from '@/components/BaseFileDisplay.vue'
 
 const emit = defineEmits(['changeTabName'])
 
@@ -311,23 +312,10 @@ onMounted(async () => {
               v-for="attachment in postInfo.attachmentDtos"
               :key="attachment.id"
             >
-              <el-image
-                :src="getFullFilePath(attachment.path)"
-                fit="cover"
-                class="h-168 rounded-8 w-full"
-                lazy
-                :preview-src-list="
-                  getFullFilePath(attachment.path)
-                    ? [getFullFilePath(attachment.path)]
-                    : []
-                "
-              >
-                <template #error>
-                  <div class="image-slot">
-                    <el-icon><icon-picture /></el-icon>
-                  </div>
-                </template>
-              </el-image>
+              <base-file-display
+                :file-path="attachment.path"
+                :file-type="attachment.type"
+              />
             </li>
           </ul>
         </div>
