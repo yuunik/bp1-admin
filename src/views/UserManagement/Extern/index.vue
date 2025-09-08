@@ -189,11 +189,11 @@ const handleMerchantRowClick = (row, column) => {
     return
   }
   // 跳转到修理厂详情页
-  router.push({
-    name: 'External Manage',
-    params: { id: row.id },
-    query: { type: 'merchant' },
-  })
+  // router.push({
+  //   name: 'External Manage',
+  //   params: { id: row.id },
+  //   query: { type: 'merchant' },
+  // })
 }
 
 // 复制重置信息

@@ -44,33 +44,33 @@ const constantRoutes = [
     },
   },
   // 订单模块
-  // {
-  //   path: '/orderManagement',
-  //   redirect: '/order-management',
-  //   name: 'OrderManagement',
-  //   component: () => import('@/layout/index.vue'),
-  //   children: [
-  //     {
-  //       path: '/order-management',
-  //       name: RouteName.ORDER_MANAGEMENT,
-  //       component: () => import('@/views/OrderManagement/index.vue'),
-  //       meta: {
-  //         title: RouteName.ORDER_MANAGEMENT,
-  //         showInMenu: true,
-  //         showInBreadcrumb: true,
-  //         icon: 'icon-typesOrderManagement',
-  //         selectedIcon: 'icon-typelist',
-  //       },
-  //     },
-  //   ],
-  //   meta: {
-  //     title: 'OrderManagement',
-  //     showInMenu: false,
-  //     showInBreadcrumb: false,
-  //     // 是否为一级路由
-  //     isTopLevelRoute: true,
-  //   },
-  // },
+  {
+    path: '/orderManagement',
+    redirect: '/order-management',
+    name: 'OrderManagement',
+    component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/order-management',
+        name: RouteName.ORDER_MANAGEMENT,
+        component: () => import('@/views/OrderManagement/index.vue'),
+        meta: {
+          title: RouteName.ORDER_MANAGEMENT,
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-typesOrderManagement',
+          selectedIcon: 'icon-typelist',
+        },
+      },
+    ],
+    meta: {
+      title: 'OrderManagement',
+      showInMenu: false,
+      showInBreadcrumb: false,
+      // 是否为一级路由
+      isTopLevelRoute: true,
+    },
+  },
   {
     path: '/obd-management',
     redirect: '/obd-management/obd-list',
@@ -206,10 +206,10 @@ const constantRoutes = [
         component: () => import('@/views/UserManagement/Extern/index.vue'),
         children: [
           {
-            path: '/user-management/extern/manage/:id',
+            path: '/user-management/extern/person/:id',
             name: 'External Manage',
             component: () =>
-              import('@/views/UserManagement/Extern/ExternManagement.vue'),
+              import('@/views/UserManagement/Extern/PersonManagement.vue'),
             meta: {
               title: 'External Manage',
               showInMenu: false,

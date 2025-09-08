@@ -18,6 +18,12 @@ const UserApi = Object.freeze({
   RESET_USER_PASSWORD: '/manager/user/resetpassword',
   // 新增修理厂
   ADD_MERCHANT: '/manager/merchant/add',
+  // 获取用户详情
+  GET_USER_INFO: '/user/infobyuserid',
+  // 获取用户已绑定的OBD列表
+  GET_USER_OBD_LIST: '/manager/obd/obdsbyuserid',
+  // 获取用户已绑定的车辆列表
+  GET_USER_VEHICLE_LIST: '/manager/vehicle/vehicles',
 })
 
 // 获取 token
@@ -120,6 +126,54 @@ export const addMerchantApi = (params) => {
 
   return request({
     url: UserApi.ADD_MERCHANT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取用户详情
+ * @param userId { id: number } 用户id
+ * @returns {Promise<ApiResponse<UserInfoItem>>} Promise
+ */
+export const getUserInfoApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+  return request({
+    url: UserApi.GET_USER_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取用户已绑定的OBD列表
+ * @param userId { id: number } 用户id
+ * @returns {Promise<ApiResponse<OBDInfoItem[]>>} Promise
+ */
+export const getUserOBDListApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+  return request({
+    url: UserApi.GET_USER_OBD_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取用户已绑定的车辆列表
+ * @param userId { id: number } 用户id
+ * @returns {Promise<ApiResponse<VehicleInfoItem[]>>} Promise
+ */
+export const getUserVehicleListApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+  return request({
+    url: UserApi.GET_USER_VEHICLE_LIST,
     method: 'POST',
     data,
   })
