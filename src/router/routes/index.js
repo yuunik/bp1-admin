@@ -449,6 +449,17 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      {
+        path: '/app-configuration/expense-items',
+        name: 'Expense Items',
+        component: () =>
+          import('@/views/AppConfiguration/ExpenseItems/index.vue'),
+        meta: {
+          title: 'Expense Items',
+          showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
     ],
     meta: {
       title: RouteName.APP_MANAGEMENT,
