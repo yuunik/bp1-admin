@@ -486,31 +486,31 @@ const avatarErrorHandler = () => true
             >
               <li>
                 <label>Vehicle Type</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleReportInfo.vehicleDto?.vehicleType || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Primary Colour</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleReportInfo.vehicleDto?.primaryColour || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Manufacturing Year</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleReportInfo.vehicleDto?.year || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Chassis No.</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{ vehicleReportInfo.vehicleDto?.vin || '-' }}
                 </el-text>
               </li>
               <li>
                 <label>Original Reg. Date</label>
-                <el-text>
+                <el-text class="text-truncate">
                   {{
                     getDateWithDDMMMYYYY(
                       vehicleReportInfo.vehicleDto?.createTime,
