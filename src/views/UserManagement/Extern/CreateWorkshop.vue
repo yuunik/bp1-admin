@@ -21,6 +21,9 @@ const workShopForm = reactive({
   file: null,
 })
 
+// 是否显示密码
+const isShowPassword = ref(false)
+
 const router = useRouter()
 
 // 创建商家
@@ -68,6 +71,7 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
             placeholder="Enter"
             class="w-272!"
             v-model="workShopForm.email"
+            autocomplete="new-email"
           />
         </el-form-item>
         <el-form-item label="Name">
@@ -78,16 +82,24 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
             maxlength="20"
             type="text"
             v-model="workShopForm.name"
+            autocomplete="new-name"
           />
         </el-form-item>
         <el-form-item label="Password">
           <el-input
             placeholder="Enter"
-            class="w-272!"
-            show-password
-            type="password"
+            class="w-272! pwd-container"
+            :type="isShowPassword ? 'text' : 'password'"
             v-model="workShopForm.password"
-          />
+            autocomplete="new-password"
+          >
+            <template #suffix>
+              <i
+                :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                @click="isShowPassword = !isShowPassword"
+              />
+            </template>
+          </el-input>
         </el-form-item>
       </el-form>
     </div>
