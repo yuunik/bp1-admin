@@ -20,6 +20,7 @@ import { openOBDApi } from '@/apis/appApi.js'
 import BaseTag from '@/components/BaseTag.vue'
 import { useSort } from '@/composables/useSort.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
 const router = useRouter()
 
@@ -118,11 +119,8 @@ const onCloseOBD = async (id) => {
 
 // 查看 OBD 详情
 const viewOBDDetail = (row, column) => {
-  const { type, property } = column
-  if (type === 'selection') {
-    // 阻止默认选中行, 跳转查看详情
-    return
-  } else if (property === 'actions') {
+  const { type, no } = column
+  if (no === 0 || no === 7) {
     return
   }
   router.push({ name: RouteName.OBD_DETAILS, params: { id: row.id } })
@@ -130,10 +128,7 @@ const viewOBDDetail = (row, column) => {
 
 // 搜索
 const handleSearch = useDebounceFn(async () => {
-  if (pagination.currentPage === 0) {
-    return getObdList()
-  }
-  pagination.currentPage = 0
+  refresh()
 }, 500)
 
 // 排序
@@ -144,8 +139,8 @@ const handleSortByCondition = useSort(sortParams, () => {
 const isInputBlur = ref(false)
 
 const conditionSearchParams = reactive({
-  user: '',
-  status: '',
+  userList: [],
+  statusList: [],
 })
 
 const filterByUser = reactive({
@@ -176,6 +171,14 @@ const filterByStatus = reactive({
   ],
 })
 
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return (
+    conditionSearchParams.userList.length > 0 ||
+    conditionSearchParams.statusList.length > 0
+  )
+})
+
 // 监听currentPage, 刷新列表
 watch(
   () => pagination.currentPage,
@@ -192,16 +195,6 @@ watch(
     getObdList()
   },
 )
-
-const handleInputBlur = () => {
-  console.log('handleInputBlur')
-  isInputBlur.value = true
-}
-
-const handleInputFocus = () => {
-  console.log('handleInputFocus')
-  isInputBlur.value = false
-}
 
 const handleSearchByUser = (val) => {
   conditionSearchParams.user = val
@@ -220,26 +213,11 @@ const refresh = () => {
   pagination.currentPage = 0
 }
 
-// 计算显示的用户条件文本
-const userConditionText = computed(() => {
-  const conditions = []
-
-  // 检查是否选择了 With User
-  if (userKeys.value.includes('2')) {
-    conditions.push('With Users')
-  }
-
-  // 检查是否选择了 Without User
-  if (userKeys.value.includes('1')) {
-    conditions.push('Without User')
-  }
-
-  if (conditions.length > 0) {
-    return `Users: ${conditions.join(', ')}`
-  }
-
-  return 'User'
-})
+// 重置条件搜索
+const handleResetAllCondition = () => {
+  conditionSearchParams.userList = []
+  conditionSearchParams.statusList = []
+}
 
 // 网络请求
 getObdList()
@@ -253,32 +231,33 @@ getObdList()
       <h3 class="heading-h2-20px-medium">OBD List</h3>
       <div class="flex-between condition-search-container h-24">
         <div class="flex h-24 gap-8">
-          <!-- 状态搜索 -->
-          <base-filter-panel
-            :section-list="filterByUser.sectionList"
-            :condition-text="filterByUser.conditionText"
-            @search="handleSearchByUser"
-          />
-          <base-filter-panel
-            :section-list="filterByStatus.sectionList"
-            :condition-text="filterByStatus.conditionText"
-            @search="handleSearchByStatus"
-          />
+          <div class="flex h-24 gap-8">
+            <!-- 状态搜索 -->
+            <base-filter-panel
+              v-model="conditionSearchParams.userList"
+              :section-list="filterByUser.sectionList"
+              :condition-text="filterByUser.conditionText"
+              @search="handleSearchByUser"
+            />
+            <base-filter-panel
+              v-model="conditionSearchParams.statusList"
+              :section-list="filterByStatus.sectionList"
+              :condition-text="filterByStatus.conditionText"
+              @search="handleSearchByStatus"
+            />
+          </div>
+          <!-- 重置条件搜索 -->
+          <el-button
+            text
+            type="primary"
+            @click="handleResetAllCondition"
+            v-show="hasCondition"
+          >
+            Clear
+          </el-button>
         </div>
-        <!-- 搜索栏 -->
-        <el-input
-          placeholder="Search..."
-          class="obd-list-search w-200! mt-16"
-          v-model="searchText"
-          @input="handleSearch"
-          @blur="handleInputBlur"
-          @focus="handleInputFocus"
-        >
-          <template #prefix>
-            <!-- 前置搜索图标 -->
-            <i class="icon-mail-send-line-1 text-24" />
-          </template>
-        </el-input>
+        <!-- 输入搜索栏 -->
+        <base-filter-input v-model="searchText" @input-change="handleSearch" />
       </div>
     </div>
     <!-- 分割线 -->
@@ -434,21 +413,8 @@ getObdList()
   margin: 0;
 }
 
-.condition-search-container :deep(.search-input .el-input__wrapper) {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-.condition-search-container :deep(.search-input .el-input__wrapper::after) {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background-color: var(--el-input-border-color, var(--el-border-color));
-  pointer-events: none;
+// 重置按钮的样式
+.condition-search-container :deep(.el-button) {
+  @apply h-24 p-0;
 }
 </style>
