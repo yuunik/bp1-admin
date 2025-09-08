@@ -575,6 +575,9 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         engineSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
