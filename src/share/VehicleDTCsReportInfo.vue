@@ -257,14 +257,18 @@ const generatePdf = async () => {
           </el-image>
           <div class="flex flex-1 flex-col gap-8">
             <h2 class="items-centers flex">
-              <em class="poppins-20px-semibold text-neutrals-blue not-italic">
+              <em
+                class="poppins-20px-semibold text-neutrals-blue h-30 row-center not-italic"
+              >
                 {{
                   `${vehicleDTCsReportInfo.brand} ${vehicleDTCsReportInfo.model} ${vehicleDTCsReportInfo.year}` ||
                   '-'
                 }}
               </em>
             </h2>
-            <ul class="flex flex-col gap-4 [&>li]:flex [&>li]:gap-8">
+            <ul
+              class="[&>li]:h-15 flex flex-col gap-4 [&>li]:flex [&>li]:gap-8"
+            >
               <li class="flex items-center">
                 <label class="poppins-10px-regular flex-[1_1_92px]">VIN</label>
                 <el-text
@@ -303,7 +307,7 @@ const generatePdf = async () => {
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_label]:w-100 grid grid-cols-2 gap-8 [&>li]:flex [&>li]:gap-8"
+              class="[&_label]:w-100 [&>li]:h-15 grid grid-cols-2 gap-8 [&>li]:flex [&>li]:gap-8"
             >
               <li>
                 <label>Vehicle Type</label>
@@ -385,7 +389,10 @@ const generatePdf = async () => {
               <!-- tbody -->
               <!-- Engine -->
               <template v-if="engineItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image :src="EngineIcon" class="h-16 w-16" fit="cover" />
                   </el-col>
@@ -410,7 +417,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in engineItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -434,6 +444,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -457,6 +468,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -486,7 +498,10 @@ const generatePdf = async () => {
               </template>
               <!-- Transmission -->
               <template v-if="transmissionItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="TransmissionIcon"
@@ -501,6 +516,9 @@ const generatePdf = async () => {
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         transmissionSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -515,7 +533,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in transmissionItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -539,6 +560,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -562,6 +584,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -591,7 +614,10 @@ const generatePdf = async () => {
               </template>
               <!-- Brakes -->
               <template v-if="brakesItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image :src="BrakesIcon" class="h-16 w-16" fit="cover" />
                   </el-col>
@@ -602,6 +628,9 @@ const generatePdf = async () => {
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         brakesSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -616,7 +645,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in brakesItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -640,6 +672,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -663,6 +696,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -692,7 +726,10 @@ const generatePdf = async () => {
               </template>
               <!-- Electrical -->
               <template v-if="electricalItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="ElectricalIcon"
@@ -707,6 +744,9 @@ const generatePdf = async () => {
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         electricalSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -721,7 +761,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in electricalItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -745,6 +788,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -768,6 +812,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -797,7 +842,10 @@ const generatePdf = async () => {
               </template>
               <!-- Chassis -->
               <template v-if="chassisItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="ChassisIcon"
@@ -812,6 +860,9 @@ const generatePdf = async () => {
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         chassisSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -826,7 +877,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in chassisItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -850,6 +904,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -873,6 +928,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -902,7 +958,10 @@ const generatePdf = async () => {
               </template>
               <!-- Body and Trim -->
               <template v-if="bodyAndTrimItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image
                       :src="BodyAndTrimIcon"
@@ -917,6 +976,9 @@ const generatePdf = async () => {
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         bodyAndTrimSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -931,7 +993,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in bodyAndTrimItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -955,6 +1020,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -978,6 +1044,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1007,7 +1074,10 @@ const generatePdf = async () => {
               </template>
               <!-- Others -->
               <template v-if="otherItemList.length > 0">
-                <el-row class="poppins-10px-regular text-neutrals-off-black">
+                <el-row
+                  class="poppins-10px-regular text-neutrals-off-black"
+                  :gutter="16"
+                >
                   <el-col :span="2">
                     <el-image :src="OthersIcon" class="h-16 w-16" fit="cover" />
                   </el-col>
@@ -1018,6 +1088,9 @@ const generatePdf = async () => {
                   <el-col :span="4">
                     <i
                       :class="[
+                        'text-truncate',
+                        'block',
+                        'w-full',
                         otherSystemDtcCount
                           ? 'bg-status-colours-red'
                           : 'bg-status-colours-green',
@@ -1032,7 +1105,10 @@ const generatePdf = async () => {
                   </el-col>
                 </el-row>
                 <div v-for="item in otherItemList" :key="item.id">
-                  <el-row class="poppins-10px-regular text-neutrals-off-black">
+                  <el-row
+                    class="poppins-10px-regular text-neutrals-off-black"
+                    :gutter="16"
+                  >
                     <el-col :span="2"></el-col>
                     <el-col :span="6"></el-col>
                     <el-col :span="12" class="divider-neutral-grey-4-1px">
@@ -1056,6 +1132,7 @@ const generatePdf = async () => {
                   >
                     <el-row
                       class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
@@ -1079,6 +1156,7 @@ const generatePdf = async () => {
                           ? 'pt-1!'
                           : 'py-1!',
                       ]"
+                      :gutter="16"
                     >
                       <el-col :span="2"></el-col>
                       <el-col :span="6"></el-col>
