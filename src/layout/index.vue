@@ -161,7 +161,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
           <span class="flex-1">Notifications</span>
           <!-- notification dot -->
           <i
-            class="icon-typesnotification-dot heading-caption-caption-10px-medium flex-center bg-status-colours-green text-16 rounded-full text-[#FCFCFC]"
+            class="icon-typesnotification-dot heading-caption-caption-10px-medium flex-center bg-status-colours-green h-16 w-16 rounded-full text-[#FCFCFC]"
           >
             1
           </i>
