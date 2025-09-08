@@ -20,6 +20,12 @@ import {
   getDateWithDDMMMYYYYhhmma,
 } from '@/utils/dateUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
+import PDFIcon from '@/assets/specialIcons/pdf.svg'
+import ExcelIcon from '@/assets/specialIcons/Excel.svg'
+import TextIcon from '@/assets/specialIcons/txt.svg'
+import useDownFile from '@/composables/useDownFile.js'
+import BaseFileDisplay from '@/components/BaseFileDisplay.vue'
 
 const emit = defineEmits(['changeTabName'])
 
@@ -152,6 +158,30 @@ const handleDeleteForum = async () => {
   ElMessage.success('Delete successfully')
 }
 
+// 下载文件
+// const handleDownFile = (path) => {
+//   const aElement = document.createElement('a')
+//   aElement.href = getFullFilePath(path)
+//   // aElement.download = ''
+//   aElement.style.display = 'none'
+//   document.body.appendChild(aElement)
+//   aElement.click()
+//   aElement.remove()
+//   document.body.removeChild(aElement)
+// }
+// const handleDownFile = async (path) => {
+//   const res = await fetch(getFullFilePath(path))
+//   const blob = await res.blob()
+//   const url = URL.createObjectURL(blob)
+//
+//   const aElement = document.createElement('a')
+//   aElement.href = url
+//   aElement.download = path.split('/').pop() // 可自定义
+//   aElement.click()
+//   URL.revokeObjectURL(url)
+// }
+const downFile = useDownFile()
+
 // 组件挂载后, 获取贴文详情
 onMounted(async () => {
   const {
@@ -283,30 +313,17 @@ onMounted(async () => {
           </p>
           <!-- 图片 -->
           <ul
-            class="[&>li]:h-168 attachment-container grid grid-cols-3 gap-8"
+            class="[&>li]:h-168 grid grid-cols-3 gap-8"
             v-if="postInfo.attachmentDtos && postInfo.attachmentDtos.length"
           >
             <li
               v-for="attachment in postInfo.attachmentDtos"
               :key="attachment.id"
             >
-              <el-image
-                :src="getFullFilePath(attachment.path)"
-                fit="cover"
-                class="h-168 rounded-8 w-full"
-                lazy
-                :preview-src-list="
-                  getFullFilePath(attachment.path)
-                    ? [getFullFilePath(attachment.path)]
-                    : []
-                "
-              >
-                <template #error>
-                  <div class="image-slot">
-                    <el-icon><icon-picture /></el-icon>
-                  </div>
-                </template>
-              </el-image>
+              <base-file-display
+                :file-path="attachment.path"
+                :file-type="attachment.type"
+              />
             </li>
           </ul>
         </div>
@@ -383,16 +400,6 @@ onMounted(async () => {
                   {{ comment.content }}
                 </p>
                 <!-- 评论图片 -->
-                <!--<ul class="flex flex-wrap gap-8">-->
-                <!--  <li v-for="url in urls" :key="url">-->
-                <!--    <el-image-->
-                <!--      :src="url"-->
-                <!--      fit="cover"-->
-                <!--      class="w-120 h-120 rounded-8 w-full"-->
-                <!--      lazy-->
-                <!--    />-->
-                <!--  </li>-->
-                <!--</ul>-->
                 <el-image
                   v-if="comment.path"
                   :src="getFullFilePath(comment.path)"
@@ -411,6 +418,11 @@ onMounted(async () => {
                     </div>
                   </template>
                 </el-image>
+                <base-file-display
+                  :file-path="comment.path"
+                  :file-type="comment.type"
+                />
+
                 <!-- 发帖时间 -->
                 <span
                   class="text-neutrals-grey-3 heading-body-body-12px-regular"
@@ -544,7 +556,10 @@ onMounted(async () => {
 }
 
 // 图片加载错误的样式
-.attachment-container .image-slot {
+.attachment-container .image-slot,
+.pdf-slot,
+.excel-slot,
+.text-slot {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -554,6 +569,7 @@ onMounted(async () => {
   color: var(--el-text-color-secondary);
   font-size: 30px;
 }
+
 .attachment-container .image-slot .el-icon {
   font-size: 30px;
 }
