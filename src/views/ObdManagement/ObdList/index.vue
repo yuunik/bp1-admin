@@ -157,7 +157,7 @@ const openOBD = async (obdId) => {
   // 提示
   ElMessage.success('Open success')
   // 刷新
-  getOBDInfo(obdId)
+  getObdList()
 }
 
 // 操作栏关闭 OBD
