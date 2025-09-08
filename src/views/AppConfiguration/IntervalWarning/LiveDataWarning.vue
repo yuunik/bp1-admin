@@ -214,7 +214,13 @@ getLiveWarningDataList()
           </template>
           <template v-else>
             <!-- 值 -->
-            <div>{{ row.minValue }} ~ {{ row.maxValue }}</div>
+            <span v-if="row.minValue === '-100100100'">
+              < {{ row.maxValue }}
+            </span>
+            <span v-else-if="row.maxValue === '-100100100'">
+              {{ row.minValue }} <
+            </span>
+            <span v-else>{{ row.minValue }} - {{ row.maxValue }}</span>
           </template>
         </template>
       </el-table-column>
