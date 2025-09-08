@@ -80,6 +80,7 @@ export const getBrandModalListApi = (params) => {
   data.append('sort', params.sort)
   data.append('sortBy', params.sortBy)
   data.append('searchKey', params.searchKey)
+  data.append('status', params.status)
 
   return request({
     url: AppApi.GET_BRAND_MODEL_LIST,

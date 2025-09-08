@@ -8,6 +8,9 @@ import { getBrandModalListApi } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
+import { useSort } from '@/composables/useSort.js'
+import BaseTag from '@/components/BaseTag.vue'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 
 // 响应式数据
 const loading = ref(false)
@@ -34,6 +37,33 @@ const conditionSearchParams = reactive({
   status: '',
 })
 
+// 状态筛选项
+const filterParams = ref([
+  {
+    label: 'Active',
+    value: '0',
+  },
+  {
+    label: 'Disabled',
+    value: '1',
+  },
+])
+
+// 筛选状态列表
+const statusList = ref([])
+
+// 品牌状态值列表
+const statusKeys = computed(() =>
+  statusList.value.length > 0 ? statusList.value.join(',') : '',
+)
+
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return statusList.value.length > 0
+})
+
+const router = useRouter()
+
 // 获取Brand Model 列表数据
 const getBrandModelList = useDebounceFn(async () => {
   loading.value = true
@@ -41,7 +71,7 @@ const getBrandModelList = useDebounceFn(async () => {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     searchKey: conditionSearchParams.searchText,
-    status: conditionSearchParams.status,
+    status: statusKeys.value,
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
   })
@@ -52,7 +82,6 @@ const getBrandModelList = useDebounceFn(async () => {
   loading.value = false
 }, 500)
 
-const router = useRouter()
 // 查看详情
 const viewVehicleDetail = (row, column) => {
   const { no } = column
@@ -66,34 +95,21 @@ const viewVehicleDetail = (row, column) => {
 }
 
 // 排序查询
-const changeSortChange = (data) => {
-  const { prop, order } = data
-  if (order === 'ascending') {
-    sortParams.sort = 'asc'
-    sortParams.sortBy = prop
-  } else if (order === 'descending') {
-    sortParams.sort = 'desc'
-    sortParams.sortBy = prop
-  } else if (!order) {
-    sortParams.sort = ''
-    sortParams.sortBy = ''
-  }
-  getBrandModelList()
-}
+const changeSortChange = useSort(sortParams, () => getBrandModelList())
 
 // 搜索
-const handleSearchByInput = useDebounceFn(async () => {
+const handleSearchByInput = useDebounceFn(
+  async () => refresh(),
+  TimingPreset.DEBOUNCE,
+)
+
+// 刷新页面
+const refresh = () => {
+  if (!pagination.currentPage) {
+    return getBrandModelList()
+  }
   pagination.currentPage = 0
-  const { data } = await getBrandModalListApi({
-    page: pagination.currentPage,
-    pageSize: pagination.pageSize,
-    searchKey: conditionSearchParams.searchText,
-    status: conditionSearchParams.status,
-    sort: sortParams.sort,
-    sortBy: sortParams.sortBy,
-  })
-  tableData.value = data
-}, TimingPreset.DEBOUNCE)
+}
 
 // 网络请求
 getBrandModelList()
@@ -124,24 +140,25 @@ watch(
       <!-- 搜索栏 -->
       <div class="flex-between h-24">
         <!-- 状态搜索 -->
-        <el-dropdown :hide-on-click="false">
-          <span
-            class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
+        <div class="flex h-24 gap-8">
+          <!-- 状态搜索 -->
+          <base-filter-panel
+            v-model="statusList"
+            :section-list="filterParams"
+            condition-text="Status"
+            @search="refresh"
+          />
+          <!-- 重置条件搜索 -->
+          <el-button
+            text
+            type="primary"
+            class="h-24!"
+            @click="statusList = []"
+            v-show="hasCondition"
           >
-            Status
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item>Action 1</el-dropdown-item>
-              <el-dropdown-item>Action 2</el-dropdown-item>
-              <el-dropdown-item>Action 3</el-dropdown-item>
-              <el-dropdown-item disabled>Action 4</el-dropdown-item>
-              <el-dropdown-item divided>Action 5</el-dropdown-item>
-              <el-dropdown-item divided>Action 6</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
+            Clear
+          </el-button>
+        </div>
         <!-- 条件搜索 -->
         <base-filter-input
           v-model="conditionSearchParams.searchText"
@@ -161,7 +178,6 @@ watch(
         @row-click="viewVehicleDetail"
         @sort-change="changeSortChange"
         row-class-name="clickable-row"
-        :fit="false"
       >
         <!-- 勾选框 -->
         <el-table-column type="selection" min-width="6%" />
@@ -209,16 +225,16 @@ watch(
         </el-table-column>
         <!-- 状态: 月姐说了, 取 isDelete , 0 代表激活, 1 代表禁用 -->
         <el-table-column
-          prop="status"
+          prop="isdelete"
           label="Status"
           sortable="custom"
           min-width="18%"
-          align="center"
         >
           <template #default="{ row }">
-            <el-tag :type="row.isDelete === 0 ? 'success' : 'info'">
-              {{ row.isDelete === 0 ? 'Active' : 'Disabled' }}
-            </el-tag>
+            <base-tag
+              :color="row.isDelete === 0 ? 'green' : 'gray'"
+              :text="row.isDelete === 0 ? 'Active' : 'Disabled'"
+            />
           </template>
         </el-table-column>
         <!-- 操作 -->
@@ -255,13 +271,5 @@ watch(
 
 :deep(tr) {
   background-color: rgb(252, 252, 252);
-}
-
-:deep(.el-table__header) {
-  @apply w-full!;
-}
-
-:deep(.el-table__body) {
-  @apply w-full!;
 }
 </style>
