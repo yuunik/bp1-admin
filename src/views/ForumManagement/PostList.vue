@@ -46,6 +46,19 @@ const dialogConfirmDeletePostVisible = ref(false)
 
 const selectedPostId = ref('')
 
+// 贴文类型筛选列表
+const typeList = ref([])
+
+// 贴文值筛选列表
+const typeKeys = computed(() =>
+  typeList.value.length > 0 ? typeList.value.join(',') : '',
+)
+
+// 是否有筛选条件
+const hasCondition = computed(() => {
+  return typeList.value.length > 0
+})
+
 // 帖子详情
 const handleViewPostDetails = (row, column) => {
   const { no } = column
@@ -64,7 +77,7 @@ const getPostList = async () => {
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     searchKey: conditionSearchParams.searchText,
-    type: conditionSearchParams.type,
+    type: typeKeys.value,
   })
   postList.value = data
 }
@@ -73,16 +86,10 @@ const getPostList = async () => {
 const errorHandler = () => true
 
 // 搜索
-const handleSearchByInput = useDebounceFn(async () => {
-  pagination.currentPage = 0
-  const { data } = await getForumListApi({
-    page: pagination.currentPage,
-    pageSize: pagination.pageSize,
-    searchKey: conditionSearchParams.searchText,
-    type: conditionSearchParams.type,
-  })
-  postList.value = data
-}, TimingPreset.DEBOUNCE)
+const handleSearchByInput = useDebounceFn(
+  async () => refresh(),
+  TimingPreset.DEBOUNCE,
+)
 
 // 筛选
 const handleSearchByType = (val) => {
@@ -110,6 +117,7 @@ const handleDeleteForum = async () => {
   }
 }
 
+// 删除帖子对话框
 const openConfirmDeleteDialog = (id) => {
   selectedPostId.value = id
   dialogConfirmDeletePostVisible.value = true
@@ -129,13 +137,26 @@ watch(
 
 <template>
   <!-- 搜索栏 -->
-  <div class="flex-between mx-32 flex gap-8">
-    <!-- 状态搜索 -->
-    <base-filter-panel
-      :section-list="filterParams"
-      condition-text="Type"
-      @search="handleSearchByType"
-    />
+  <div class="flex-between mx-32 flex h-24 gap-8">
+    <div class="flex h-24 gap-8">
+      <!-- 状态搜索 -->
+      <base-filter-panel
+        v-model="typeList"
+        :section-list="filterParams"
+        condition-text="Type"
+        @search="refresh"
+      />
+      <!-- 重置条件搜索 -->
+      <el-button
+        text
+        type="primary"
+        class="h-24!"
+        @click="typeList = []"
+        v-show="hasCondition"
+      >
+        Clear
+      </el-button>
+    </div>
     <!-- 条件搜索 -->
     <base-filter-input
       v-model="conditionSearchParams.searchText"
