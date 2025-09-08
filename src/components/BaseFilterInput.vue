@@ -38,7 +38,6 @@ watch(isShowInputContent, (val) => {
     v-model="searchKeywords"
     @clear="isShowInputContent = false"
     @input="handleInput"
-    @blur="handleBlur"
     ref="inputRef"
     clearable
   />

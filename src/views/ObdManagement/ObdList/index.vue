@@ -47,15 +47,26 @@ const sortParams = reactive({
 })
 
 // 筛选参数
-const userKeys = ref([])
+const userKeys = computed(() =>
+  conditionSearchParams.userList && conditionSearchParams.userList.length > 0
+    ? conditionSearchParams.userList.join(',')
+    : '',
+)
+
+const statusKeys = computed(() =>
+  conditionSearchParams.statusList &&
+  conditionSearchParams.statusList.length > 0
+    ? conditionSearchParams.statusList.join(',')
+    : '',
+)
 
 // 获取OBD 列表数据
 const getObdList = useDebounceFn(async () => {
   loading.value = true
   const { data, count } = await getOBDListApi({
     searchKey: searchText.value,
-    userKey: conditionSearchParams.user,
-    statusKey: conditionSearchParams.status,
+    userKey: userKeys.value,
+    statusKey: statusKeys.value,
     sortKey: sortParams.sortBy,
     sort: sortParams.sort,
     page: pagination.currentPage,
@@ -119,7 +130,7 @@ const onCloseOBD = async (id) => {
 
 // 查看 OBD 详情
 const viewOBDDetail = (row, column) => {
-  const { type, no } = column
+  const { no } = column
   if (no === 0 || no === 7) {
     return
   }
@@ -127,16 +138,12 @@ const viewOBDDetail = (row, column) => {
 }
 
 // 搜索
-const handleSearch = useDebounceFn(async () => {
-  refresh()
-}, 500)
+const handleSearch = useDebounceFn(async () => refresh(), 500)
 
 // 排序
 const handleSortByCondition = useSort(sortParams, () => {
   getObdList()
 })
-
-const isInputBlur = ref(false)
 
 const conditionSearchParams = reactive({
   userList: [],
@@ -179,33 +186,7 @@ const hasCondition = computed(() => {
   )
 })
 
-// 监听currentPage, 刷新列表
-watch(
-  () => pagination.currentPage,
-  () => getObdList(),
-)
-
-// 监听 userKeys, 刷新列表
-watch(
-  () => userKeys.value,
-  () => {
-    if (pagination.currentPage === 0) {
-      return getObdList()
-    }
-    getObdList()
-  },
-)
-
-const handleSearchByUser = (val) => {
-  conditionSearchParams.user = val
-  refresh()
-}
-
-const handleSearchByStatus = (val) => {
-  conditionSearchParams.status = val
-  refresh()
-}
-
+// 刷新
 const refresh = () => {
   if (pagination.currentPage === 0) {
     return getObdList()
@@ -217,7 +198,15 @@ const refresh = () => {
 const handleResetAllCondition = () => {
   conditionSearchParams.userList = []
   conditionSearchParams.statusList = []
+  // 刷新·
+  refresh()
 }
+
+// 监听currentPage, 刷新列表
+watch(
+  () => pagination.currentPage,
+  () => getObdList(),
+)
 
 // 网络请求
 getObdList()
@@ -237,13 +226,13 @@ getObdList()
               v-model="conditionSearchParams.userList"
               :section-list="filterByUser.sectionList"
               :condition-text="filterByUser.conditionText"
-              @search="handleSearchByUser"
+              @search="refresh"
             />
             <base-filter-panel
               v-model="conditionSearchParams.statusList"
               :section-list="filterByStatus.sectionList"
               :condition-text="filterByStatus.conditionText"
-              @search="handleSearchByStatus"
+              @search="refresh"
             />
           </div>
           <!-- 重置条件搜索 -->
