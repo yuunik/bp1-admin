@@ -78,7 +78,7 @@ watch(searchKeys, () => {
       />
     </div>
     <template #dropdown>
-      <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
+      <div class="w-190 h-93 h-fit! flex flex-col gap-8 px-16 py-12">
         <div class="flex-between">
           <p class="heading-body-body-12px-medium text-neutrals-grey-3">
             {{ conditionText }}
