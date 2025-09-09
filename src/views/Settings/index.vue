@@ -49,6 +49,7 @@ const handleModifyAdminInfo = async () => {
   await Promise.all([
     form.file && uploadAdminLogoApi(form.file),
     editAdminInfoApi({ name: form.username, userId: '' }),
+    userStore.fetchGetUserInfo(),
   ])
   // 重新获取管理员信息
   await userStore.fetchGetUserInfo()

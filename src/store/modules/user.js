@@ -74,7 +74,7 @@ const useUserStore = defineStore('user', () => {
   const username = computed(() => userInfo.value?.name || '') // 用户名字
   const userRole = computed(() => userInfo.value?.role || '') // 用户角色户令牌
   const usernameAbbr = computed(() => userInfo.value?.name?.slice(0, 1) || '') // 用户名字缩写
-  const userAvatar = computed(() => getFullFilePath(userInfo.value?.avatar))
+  const userAvatar = computed(() => getFullFilePath(userInfo.value?.logo))
   const hasUserInfo = computed(() => Boolean(userInfo.value?.id)) // 是否有用户信息
 
   return {
