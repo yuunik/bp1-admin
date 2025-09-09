@@ -1,4 +1,6 @@
 <script setup>
+import { Search } from '@element-plus/icons-vue'
+
 const { sectionList, conditionText } = defineProps({
   // 搜索条件列表
   sectionList: {
@@ -19,6 +21,11 @@ const { sectionList, conditionText } = defineProps({
     type: String,
     default: 'Status',
   },
+  // 是否需要输入筛选
+  isNeedInput: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['search'])
@@ -28,6 +35,9 @@ const searchKeyList = defineModel({
   type: Array,
   required: true,
 })
+
+// 搜索条件值
+const keywords = defineModel('keywords')
 
 // 条件查询字符串
 const searchKeys = computed(() => searchKeyList.value.join(','))
@@ -52,7 +62,6 @@ const conditionTotalText = computed(() => {
 
 // 提交查找
 watch(searchKeys, () => {
-  console.log('??????????111111111')
   emit('search', searchKeys.value)
 })
 </script>
@@ -96,11 +105,21 @@ watch(searchKeys, () => {
             Clear
           </span>
         </div>
-        <el-checkbox-group v-model="searchKeyList" class="flex flex-col">
+        <!-- 输入筛选 -->
+        <el-input
+          v-if="isNeedInput"
+          placeholder="Enter..."
+          :prefix-icon="Search"
+          v-model="keywords"
+          clearable
+        />
+        <!-- 勾选框筛选 -->
+        <el-checkbox-group v-model="searchKeyList" class="flex flex-col gap-4">
           <el-checkbox
             v-for="section in sectionList"
             :key="section.label"
             :value="section.value"
+            v-show="!keywords || section.label.includes(keywords)"
           >
             <span class="heading-body-body-12px-regular text-neutrals-grey-3">
               {{ section.label }}
@@ -112,4 +131,9 @@ watch(searchKeys, () => {
   </el-dropdown>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 重置输入框样式
+:deep(.el-input__wrapper) {
+  @apply rounded-8 bg-input h-24 shadow-none;
+}
+</style>

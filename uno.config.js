@@ -94,6 +94,7 @@ export default defineConfig({
       'bg-status-colours-light-blue': 'bg-[#FDECEA]',
       'bg-status-colours-light-red': 'bg-[#E8F0F8]',
       'bg-status-colours-light-yellow': 'bg-[#FFEEC0]',
+      'bg-input': 'bg-[#EAEEF4]',
       /* 文字颜色样式 */
       'text-status-colours-green': 'text-[#05AD9D]',
       'text-status-colours-orange': 'text-[#FF6D1A]',

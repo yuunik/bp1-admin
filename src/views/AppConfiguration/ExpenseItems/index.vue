@@ -1,8 +1,10 @@
 <script setup>
+import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
+
 // 当前 tab 名称
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { useDebounceFn } from '@vueuse/core'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
 import {
@@ -15,7 +17,6 @@ import {
 } from '@/apis/appApi.js'
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
-import { ElMessage } from 'element-plus'
 import { useSort } from '@/composables/useSort.js'
 
 const activeName = ref('All')
@@ -133,6 +134,9 @@ const selectedExpenseIdList = ref([])
 
 // 批量删除弹窗
 const dialogBatchDeleteExpenseItemVisible = ref(false)
+
+// 用户搜索条件
+const creatorSearchText = ref('')
 
 // 刷新
 const refresh = useDebounceFn(() => {
@@ -372,8 +376,10 @@ onMounted(async () => {
         <!-- 创建者筛选 -->
         <base-filter-panel
           v-model="creatorList"
+          v-model:keywords="creatorSearchText"
           :section-list="creatorFilterParams"
           condition-text="Creator"
+          :is-need-input="true"
           @search="refresh"
         />
         <!-- 创建日期筛选 -->
