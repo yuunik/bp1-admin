@@ -69,8 +69,10 @@ const AppApi = Object.freeze({
   GET_EXPENSE_GROUP_LIST: '/expenditure/categories',
   // 新增 Expense Item
   ADD_EXPENSE_ITEM: '/expenditure/add',
-  // 删除Expense Item
+  // 删除 Expense Item
   DELETE_EXPENSE_ITEM: '/manager/expenditure/delete',
+  // 编辑 Expense Item
+  MODIFY_EXPENSE_ITEM: '/manager/expenditure/edit',
 })
 
 // 获取 token
@@ -653,6 +655,21 @@ export const deleteExpenseItemApi = (expenditureId) => {
 
   return request({
     url: AppApi.DELETE_EXPENSE_ITEM,
+    method: 'POST',
+    data,
+  })
+}
+
+export const modifyExpenseItemApi = (params) => {
+  data.append('token', getToken())
+  data.append('expenditureId', params.id)
+  data.append('group', params.group)
+  data.append('category', params.category)
+  data.append('module', params.module)
+  data.append('name', params.name)
+
+  return request({
+    url: AppApi.MODIFY_EXPENSE_ITEM,
     method: 'POST',
     data,
   })

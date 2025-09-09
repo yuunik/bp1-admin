@@ -9,6 +9,7 @@ import {
   addExpenseItemApi,
   getExpenseGroupListApi,
   getExpenseListApi,
+  modifyExpenseItemApi,
 } from '@/apis/appApi.js'
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
@@ -132,10 +133,10 @@ const searchKeywords = ref('')
 const expenseList = ref([])
 
 // 创建Expense的弹窗
-const dialogCreateExpenseItemVisible = ref(false)
+const dialogExpenseFormVisible = ref(false)
 
-// 创建表单
-const expenseItemForm = reactive({
+// expense item表单
+const expenseItemForm = ref({
   name: '',
   group: '',
   category: '',
@@ -206,16 +207,44 @@ const getGroupList = async () => {
 
 // 新增 expense item
 const handleCreateExpenseItem = async () => {
-  await addExpenseItemApi(expenseItemForm)
+  await addExpenseItemApi(expenseItemForm.value)
   // 关闭弹窗
-  dialogCreateExpenseItemVisible.value = false
+  dialogExpenseFormVisible.value = false
   // 提示
   ElMessage.success('Added successfully')
   // 重置表单
-  expenseItemForm.name = ''
-  expenseItemForm.group = ''
-  expenseItemForm.category = ''
+  expenseItemForm.value = {
+    name: '',
+    group: '',
+    category: '',
+  }
   initData()
+}
+
+// 打开表单弹窗
+const openEditExpenseItemDialog = (row) => {
+  expenseItemForm.value = row
+  dialogExpenseFormVisible.value = true
+}
+
+// 编辑 expense
+const handleEditExpenseItem = async () => {
+  await modifyExpenseItemApi(expenseItemForm.value)
+  initData()
+}
+
+// 管理expense item
+const handleManageExpenseItem = async () => {
+  if (!expenseItemForm.value.id) {
+    handleCreateExpenseItem()
+  } else {
+    handleEditExpenseItem()
+  }
+}
+
+// 删除 expense item
+const handleDeleteExpenseItem = async (id) => {
+  console.log(id, '@@@@@@@@@@@@@@@@@@@@')
 }
 
 // 监听分页数据变化
@@ -245,7 +274,7 @@ onMounted(async () => {
       >
         Expense Items
       </h3>
-      <el-button type="primary" @click="dialogCreateExpenseItemVisible = true">
+      <el-button type="primary" @click="dialogExpenseFormVisible = true">
         Create
       </el-button>
     </div>
@@ -333,9 +362,21 @@ onMounted(async () => {
             {{ getDateWithDDMMMYYYY(row.createTime) }}
           </template>
         </el-table-column>
-        <el-table-column min-width="6%">
+        <el-table-column min-width="6%" class="flex1111">
           <template #default="scope">
-            <i class="icon-more-2-line text-16" />
+            <el-dropdown trigger="click">
+              <i class="icon-more-2-line text-16 cursor-pointer" />
+              <template #dropdown="{ row }">
+                <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
+                  <el-dropdown-item @click="openEditExpenseItemDialog(row)">
+                    Edit
+                  </el-dropdown-item>
+                  <el-dropdown-item @click="handleDeleteExpenseItem(row.id)">
+                    Delete
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -343,13 +384,12 @@ onMounted(async () => {
     </div>
   </section>
   <!-- 创建 expense 弹窗 -->
-  <!-- Unbind -->
   <base-dialog
-    v-model="dialogCreateExpenseItemVisible"
+    v-model="dialogExpenseFormVisible"
     title="Create Item"
     confirm-text="Create"
-    @cancel="dialogCreateExpenseItemVisible = false"
-    @confirm="handleCreateExpenseItem"
+    @cancel="dialogExpenseFormVisible = false"
+    @confirm="handleManageExpenseItem"
   >
     <template #content>
       <div class="flex flex-col gap-8">

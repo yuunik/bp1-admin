@@ -349,7 +349,7 @@ getObdList()
         >
           <template #default="{ row }">
             <!-- 状态搜索 -->
-            <el-dropdown trigger="click" class="test">
+            <el-dropdown trigger="click" placement="bottom-end">
               <i class="icon-more-2-line text-16" />
               <template #dropdown>
                 <el-dropdown-menu>

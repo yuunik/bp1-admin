@@ -109,3 +109,10 @@
   font-weight: 500 !important;
   line-height: 18px !important;
 }
+
+.el-table {
+  .cell {
+    display: flex !important;
+    align-items: center !important;
+  }
+}
