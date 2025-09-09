@@ -59,7 +59,6 @@ const router = useRouter()
 
 // 获取用户列表
 const getUserList = useDebounceFn(async () => {
-  console.log('getUserList', userSortParams)
   const { data, count } = await getUserListApi({
     searchKey: searchKey.value,
     page: pagination.value.currentPage,

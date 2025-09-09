@@ -129,11 +129,13 @@ const initDate = async () => {
 }
 
 // 重置用户密码
-const handleResetPassword = async (row) => {
-  const { data } = await resetUserPasswordApi(row.id)
+const handleResetPassword = async () => {
+  const { data } = await resetUserPasswordApi(userId.value)
   ElMessage.success('Reset password successfully')
   // 记录重置的用户密码
   resetPassword.value = data
+  // 关闭重置密码弹窗
+  dialogResetPasswordConfirmVisible.value = false
   // 打开重置密码提示弹窗
   dialogResetPasswordVisible.value = true
 }
@@ -144,6 +146,10 @@ const handleCopyResetPassword = async () => {
     // 复制
     await navigator.clipboard.writeText(
       `Person name: ${userInfo.name}\n Email: ${userInfo.email} \n Password: ${resetPassword.value}`,
+    )
+    // 提示
+    ElMessage.success(
+      'The "Reset Password" information has been successfully copied. You can paste it now.',
     )
   } catch (err) {
     ElMessage.error('Failed to copy, try again.')
@@ -182,7 +188,7 @@ onMounted(async () => {
         <el-button v-else @click="dialogUnbanUserVisible = true">
           Unban
         </el-button>
-        <el-button @click="dialogResetPasswordVisible = true">
+        <el-button @click="dialogResetPasswordConfirmVisible = true">
           Reset Password
         </el-button>
         <!--<el-button>Bind OBD</el-button>-->
@@ -535,6 +541,7 @@ onMounted(async () => {
     title="Reset Password"
     @cancel="dialogResetPasswordVisible = false"
     @confirm="handleCopyResetPassword"
+    confirm-text="Copy"
   >
     <template #content>
       <dl
