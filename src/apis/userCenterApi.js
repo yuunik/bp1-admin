@@ -156,7 +156,7 @@ export const editAdminInfoApi = (params) => {
 export const adminInfoApi = (userId) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('userId', userId)
+  userId && data.append('userId', userId)
   return request({
     url: UserCenterApi.ADMIN_INFO,
     method: 'POST',

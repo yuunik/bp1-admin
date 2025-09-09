@@ -15,9 +15,7 @@ const useUserStore = defineStore('user', () => {
   // actions
   // 获取用户信息
   const fetchGetUserInfo = async () => {
-    const { code, data, msg } = await adminInfoApi({
-      userId: userId.value,
-    })
+    const { code, data, msg } = await adminInfoApi()
     if (code === 0) {
       // 重新获取用户信息
       userInfo.value = data

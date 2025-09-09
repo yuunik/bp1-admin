@@ -47,7 +47,7 @@ const handleModifyAdminInfo = async () => {
   }
   // 上传管理员头像及修改管理员信息
   await Promise.all([
-    uploadAdminLogoApi(form.file),
+    form.file && uploadAdminLogoApi(form.file),
     editAdminInfoApi({ name: form.username, userId: '' }),
   ])
   // 重新获取管理员信息
