@@ -606,6 +606,7 @@ export const getExpenseListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('groups', params.groups)
+  data.append('categorys', params.categorys)
   data.append('modules', params.modules)
   data.append('userIds', params.userIds)
   data.append('searchKey', params.searchKey)

@@ -94,14 +94,24 @@ const pagination = reactive({
 })
 
 // 是否有筛选条件
-const hasCondition = computed(
-  () =>
-    groupList.value.length > 0 ||
+const hasCondition = computed(() => {
+  if (isShowCreatedDateFilter.value) {
+    return (
+      groupList.value.length > 0 ||
+      categoryList.value.length > 0 ||
+      moduleList.value.length > 0 ||
+      creatorList.value.length > 0 ||
+      createdDateList.value.length > 0
+    )
+  }
+
+  return (
     categoryList.value.length > 0 ||
     moduleList.value.length > 0 ||
     creatorList.value.length > 0 ||
-    createdDateList.value.length > 0,
-)
+    createdDateList.value.length > 0
+  )
+})
 
 // 输入搜索关键字
 const searchKeywords = ref('')
@@ -149,7 +159,7 @@ const refresh = useDebounceFn(() => {
 
 // 清除筛选条件
 const handleClearCondition = () => {
-  groupList.value = []
+  isShowCreatedDateFilter.value && (groupList.value = [])
   categoryList.value = []
   moduleList.value = []
   creatorList.value = []
