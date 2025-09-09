@@ -395,7 +395,7 @@ onMounted(async () => {
         <!-- 清除按钮 -->
         <el-button
           text
-          class="h-24!"
+          class="h-24! text-status-colours-blue!"
           @click="handleClearCondition"
           v-show="hasCondition"
         >

@@ -54,7 +54,7 @@ const conditionTotalText = computed(() => {
   }
 
   if (conditions.length > 0) {
-    return `${conditionText}: ${conditions.join(',')}`
+    return `${conditionText}: ${conditions[0]} ${conditions.length > 1 ? ` +${conditions.length - 1}` : ''}`
   }
 
   return conditionText
@@ -121,7 +121,14 @@ watch(searchKeys, () => {
             :value="section.value"
             v-show="!keywords || section.label.includes(keywords)"
           >
-            <span class="heading-body-body-12px-regular text-neutrals-grey-3">
+            <span
+              :class="[
+                'heading-body-body-12px-regular',
+                searchKeyList.includes(section.label)
+                  ? 'text-neutrals-blue'
+                  : 'text-neutrals-grey-3',
+              ]"
+            >
               {{ section.label }}
             </span>
           </el-checkbox>
@@ -135,5 +142,10 @@ watch(searchKeys, () => {
 // 重置输入框样式
 :deep(.el-input__wrapper) {
   @apply rounded-8 bg-input h-24 shadow-none;
+}
+
+// 重置勾选框样式
+:deep(.el-checkbox__inner) {
+  @apply rounded-4;
 }
 </style>
