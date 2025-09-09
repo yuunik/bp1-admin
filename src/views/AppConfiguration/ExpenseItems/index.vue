@@ -124,6 +124,12 @@ const sortParams = reactive({
   sortBy: '',
 })
 
+// 勾选的expense item list
+const selectedExpenseIdList = ref([])
+
+// 批量删除弹窗
+const dialogBatchDeleteExpenseItemVisible = ref(false)
+
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -247,6 +253,18 @@ const handleSortChange = useSort(sortParams, () => refresh())
 const initData = async () =>
   await Promise.all([getExpenseList(), getGroupList(), getUserList()])
 
+// 勾选框勾选
+const handleSelectionChange = (val) =>
+  (selectedExpenseIdList.value = val.map((item) => item.id))
+
+// 批量删除
+const handleBatchDeleteExpenseItems = async () => {
+  await modifyExpenseItemApi(selectedExpenseIdList.join(','))
+  // 提示
+  ElMessage.success('Edit  successfully')
+  refresh()
+}
+
 // 监听分页数据变化
 watch(
   () => pagination.currentPage,
@@ -353,6 +371,14 @@ onMounted(async () => {
       <!-- 输入搜索 -->
       <base-filter-input v-model="searchKeywords" @inputChange="refresh" />
     </div>
+    <div class="flex-between h-42" v-show="selectedExpenseIdList.length">
+      <span class="text-neutrals-off-black heading-body-body-12px-regular">
+        {{ selectedExpenseIdList.length }} selected
+      </span>
+      <el-button @click="dialogBatchDeleteExpenseItemVisible.value = true">
+        Delete
+      </el-button>
+    </div>
     <!-- 表格内容 -->
     <div class="flex flex-1 flex-col justify-between">
       <el-table
@@ -360,6 +386,7 @@ onMounted(async () => {
         style="width: 100%"
         class="flex-1"
         @sort-change="handleSortChange"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" min-width="6%" sortable="custom" />
         <el-table-column
@@ -407,10 +434,10 @@ onMounted(async () => {
           </template>
         </el-table-column>
         <el-table-column min-width="6%" class="flex1111">
-          <template #default="scope">
+          <template #default="{ row }">
             <el-dropdown trigger="click">
               <i class="icon-more-2-line text-16 cursor-pointer" />
-              <template #dropdown="{ row }">
+              <template #dropdown>
                 <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
                   <el-dropdown-item @click="openEditExpenseItemDialog(row)">
                     Edit
@@ -493,6 +520,23 @@ onMounted(async () => {
         Are you sure you want to delete the "{{ expenseItemForm.name }}" under
         the "Group {{ expenseItemForm.group }}" section? Once deleted, it cannot
         be recovered.
+      </p>
+    </template>
+  </base-dialog>
+  <!-- 批量删除 expense item 提示框 -->
+  <base-dialog
+    v-model="dialogBatchDeleteExpenseItemVisible"
+    title="Delete Item ?"
+    button-type="danger"
+    confirm-text="Delete"
+    @cancel="dialogBatchDeleteExpenseItemVisible = false"
+    @confirm="handleBatchDeleteExpenseItems"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+        Are you sure you want to delete the
+        {{ selectedExpenseIdList.length }} selected Expense Items? Once deleted,
+        it cannot be recovered.
       </p>
     </template>
   </base-dialog>

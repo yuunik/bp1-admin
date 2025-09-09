@@ -255,7 +255,7 @@ getObdList()
     <!-- OBD 表格容器 -->
     <div class="pb-38 box-border flex min-h-0 flex-1 flex-col px-32 pt-8">
       <!-- 选择框操作区 -->
-      <div class="flex-between flex" v-show="selectedOBDIdList.length">
+      <div class="flex-between" v-show="selectedOBDIdList.length">
         <span class="text-neutrals-off-black heading-body-body-12px-regular">
           {{ selectedOBDIdList.length }} selected
         </span>

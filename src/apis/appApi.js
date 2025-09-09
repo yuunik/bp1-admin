@@ -647,10 +647,10 @@ export const addExpenseItemApi = (params) => {
   })
 }
 
-export const deleteExpenseItemApi = (expenditureId) => {
+export const deleteExpenseItemApi = (expenditureIds) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('expenditureId', expenditureId)
+  data.append('expenditureIds', expenditureIds)
 
   return request({
     url: AppApi.DELETE_EXPENSE_ITEM,
