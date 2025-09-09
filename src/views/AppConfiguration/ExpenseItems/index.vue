@@ -1,6 +1,6 @@
 <script setup>
 import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
+import { useCloned, useDebounceFn } from '@vueuse/core'
 
 // 当前 tab 名称
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
@@ -148,6 +148,9 @@ const dialogBatchDeleteExpenseItemVisible = ref(false)
 // 用户搜索条件
 const creatorSearchText = ref('')
 
+// 当前所选中的expense item
+const selectedExpenseItem = ref({})
+
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -222,7 +225,8 @@ const handleCreateExpenseItem = async () => {
 
 // 打开表单弹窗
 const openEditExpenseItemDialog = (row) => {
-  expenseItemForm.value = row
+  const { cloned } = useCloned(row)
+  expenseItemForm.value = cloned.value
   dialogExpenseFormVisible.value = true
 }
 
