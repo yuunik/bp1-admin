@@ -7,6 +7,7 @@ import { TimingPreset } from '@/utils/constantsUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
 import {
   addExpenseItemApi,
+  deleteExpenseItemApi,
   getExpenseGroupListApi,
   getExpenseListApi,
   modifyExpenseItemApi,
@@ -142,6 +143,9 @@ const expenseItemForm = ref({
   category: '',
 })
 
+// 确认删除弹窗
+const dialogDeleteExpenseItemVisible = ref(false)
+
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -242,9 +246,16 @@ const handleManageExpenseItem = async () => {
   }
 }
 
+// 打开确认删除弹窗
+const handleOpenDeleteExpenseItemDialog = (row) => {
+  expenseItemForm.value = row
+  dialogDeleteExpenseItemVisible.value = true
+}
+
 // 删除 expense item
-const handleDeleteExpenseItem = async (id) => {
-  console.log(id, '@@@@@@@@@@@@@@@@@@@@')
+const handleDeleteExpenseItem = async () => {
+  await deleteExpenseItemApi(expenseItemForm.value.id)
+  initData()
 }
 
 // 监听分页数据变化
@@ -260,6 +271,19 @@ const initData = async () =>
 // 网络请求
 onMounted(async () => {
   await initData()
+})
+
+// 监听
+watch(dialogDeleteExpenseItemVisible, (val) => {
+  if (!val) {
+    expenseItemForm.value = {}
+  }
+})
+
+watch(dialogExpenseFormVisible, (val) => {
+  if (!val) {
+    expenseItemForm.value = {}
+  }
 })
 </script>
 
@@ -371,7 +395,9 @@ onMounted(async () => {
                   <el-dropdown-item @click="openEditExpenseItemDialog(row)">
                     Edit
                   </el-dropdown-item>
-                  <el-dropdown-item @click="handleDeleteExpenseItem(row.id)">
+                  <el-dropdown-item
+                    @click="handleOpenDeleteExpenseItemDialog(row)"
+                  >
                     Delete
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -431,6 +457,23 @@ onMounted(async () => {
           />
         </div>
       </div>
+    </template>
+  </base-dialog>
+  <!-- 删除 expense item 提示框 -->
+  <base-dialog
+    v-model="dialogDeleteExpenseItemVisible"
+    title="Delete Item ?"
+    button-type="danger"
+    confirm-text="Delete"
+    @cancel="dialogDeleteExpenseItemVisible = false"
+    @confirm="handleDeleteExpenseItem"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+        Are you sure you want to delete the "{{ expenseItemForm.name }}" under
+        the "Group {{ expenseItemForm.group }}" section? Once deleted, it cannot
+        be recovered.
+      </p>
     </template>
   </base-dialog>
 </template>
