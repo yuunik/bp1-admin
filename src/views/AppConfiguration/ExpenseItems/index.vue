@@ -5,77 +5,49 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { useDebounceFn } from '@vueuse/core'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
+import {
+  addExpenseItemApi,
+  getExpenseGroupListApi,
+  getExpenseListApi,
+} from '@/apis/appApi.js'
+import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
+import BaseDialog from '@/components/BaseDialog.vue'
 
 const activeName = ref('All')
 
 // 筛选组参数
 const groupList = ref([])
 
-const groupKeys = computed(() => groupList.value.join(','))
+const groupKeys = computed(() =>
+  groupList.length ? groupList.value.join(',') : '',
+)
 
-const groupFilterParams = ref([
-  {
-    label: 'All',
-    value: 'All',
-  },
-  {
-    label: 'Vehicle Parts',
-    value: 'Vehicle Parts',
-  },
-  {
-    label: 'Maintenance',
-    value: 'Maintenance',
-  },
-  {
-    label: 'Fuel',
-    value: 'Fuel',
-  },
-  {
-    label: 'Services',
-    value: 'Services',
-  },
-  {
-    label: 'Others',
-    value: 'Others',
-  },
-])
+const groupFilterParams = ref([])
 
 // 分类参数
 const categoryList = ref([])
 
-const categoryKeys = computed(() => categoryList.value.join(','))
+const categoryKeys = computed(() =>
+  categoryList.length ? categoryList.value.join(',') : '',
+)
 
-const categoryFilterParams = ref([
-  {
-    label: 'Active',
-    value: '0',
-  },
-  {
-    label: 'Disabled',
-    value: '1',
-  },
-])
+const categoryFilterParams = ref([])
 
 // 模块参数
 const moduleList = ref([])
 
-const moduleKeys = computed(() => moduleList.value.join(','))
+const moduleKeys = computed(() =>
+  moduleList.length ? moduleList.value.join(',') : '',
+)
 
-const moduleFilterParams = ref([
-  {
-    label: 'Active',
-    value: '0',
-  },
-  {
-    label: 'Disabled',
-    value: '1',
-  },
-])
+const moduleFilterParams = ref([])
 
 // 创建者参数
 const creatorList = ref([])
 
-const creatorKeys = computed(() => creatorList.value.join(','))
+const creatorKeys = computed(() =>
+  creatorList.length ? creatorList.value.join(',') : '',
+)
 
 const creatorFilterParams = ref([
   {
@@ -107,7 +79,9 @@ const creatorFilterParams = ref([
 // 创建日期参数
 const createdDateList = ref([])
 
-const createdDateKeys = computed(() => createdDateList.value.join(','))
+const createdDateKeys = computed(() =>
+  createdDateList.length ? createdDateList.value.join(',') : '',
+)
 
 const createdDateFilterParams = ref([
   {
@@ -135,6 +109,12 @@ const pagination = reactive({
   total: 0,
 })
 
+// 排序参数
+const sortParams = ref({
+  sort: '',
+  sortBy: '',
+})
+
 // 是否有筛选条件
 const hasCondition = computed(
   () =>
@@ -148,80 +128,18 @@ const hasCondition = computed(
 // 输入搜索关键字
 const searchKeywords = ref('')
 
-const expenseList = reactive([
-  {
-    group: 'Vehicle Parts',
-    itemName: 'Air & Fuel Delivery',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Vehicle Parts',
-    itemName: 'Audio / Video',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Vehicle Parts',
-    itemName: 'Belts & Cooling',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Vehicle Parts',
-    itemName: 'Body',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Maintenance',
-    itemName: 'General Maintenance Check',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Maintenance',
-    itemName: 'Engine Oil Change',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Others',
-    itemName: 'Oil Filter Replacement',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Others',
-    itemName: 'Timing Belt Replacement',
-    category: 'Repair',
-    module: 'Engine',
-    creator: 'Admin',
-    creationDate: '03 Apr 2026',
-  },
-  {
-    group: 'Others',
-    itemName: 'Battery Replacement',
-    category: 'Repair',
-    module: 'Brakes',
-    creator: 'Katy',
-    creationDate: '03 Apr 2026',
-  },
-])
+// 列表数据
+const expenseList = ref([])
+
+// 创建Expense的弹窗
+const dialogCreateExpenseItemVisible = ref(false)
+
+// 创建表单
+const expenseItemForm = reactive({
+  name: '',
+  group: '',
+  category: '',
+})
 
 // 刷新
 const refresh = useDebounceFn(() => {
@@ -242,15 +160,84 @@ const handleClearCondition = () => {
   refresh()
 }
 
+// 获取expense列表
+const getExpenseList = async () => {
+  const { data } = await getExpenseListApi({
+    groups: groupKeys.value,
+    categorys: categoryKeys.value,
+    modules: moduleKeys.value,
+    userIds: creatorKeys.value,
+    // createTimes: createdDateKeys.value,
+
+    searchKey: searchKeywords.value,
+
+    groupSort: groupKeys.value || '',
+    categorySort: categoryKeys.value || '',
+    moduleSort: moduleKeys.value || '',
+    nameSort: searchKeywords.value || '',
+    createTimeSort: createdDateKeys.value || '',
+
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+  })
+
+  // 保存 expense
+  expenseList.value = data
+}
+
+// 获取分组信息
+const getGroupList = async () => {
+  const {
+    data: { categories, groups, modules },
+  } = await getExpenseGroupListApi()
+  groupFilterParams.value = groups.map((item) => ({
+    label: item,
+    value: item,
+  }))
+  categoryFilterParams.value = categories.map((item) => ({
+    label: item,
+    value: item,
+  }))
+  moduleFilterParams.value = modules.map((item) => ({
+    label: item,
+    value: item,
+  }))
+}
+
+// 新增 expense item
+const handleCreateExpenseItem = async () => {
+  await addExpenseItemApi(expenseItemForm)
+  // 关闭弹窗
+  dialogCreateExpenseItemVisible.value = false
+  // 提示
+  ElMessage.success('Added successfully')
+  // 重置表单
+  expenseItemForm.name = ''
+  expenseItemForm.group = ''
+  expenseItemForm.category = ''
+  initData()
+}
+
 // 监听分页数据变化
 watch(
   () => pagination.currentPage,
   () => {},
 )
+
+// 数据初始化
+const initData = async () =>
+  await Promise.all([getExpenseList(), getGroupList()])
+
+// 网络请求
+onMounted(async () => {
+  await initData()
+})
 </script>
 
 <template>
-  <section class="mx-32 box-border flex flex-col gap-16 overflow-auto pb-32">
+  <section
+    class="mx-32 box-border flex h-full flex-col gap-16 overflow-auto pb-32"
+  >
     <!-- 标题栏 -->
     <div class="flex-between h-32">
       <h3
@@ -258,7 +245,9 @@ watch(
       >
         Expense Items
       </h3>
-      <el-button type="primary">Create</el-button>
+      <el-button type="primary" @click="dialogCreateExpenseItemVisible = true">
+        Create
+      </el-button>
     </div>
     <!-- tab 栏 -->
     <el-tabs v-model="activeName">
@@ -284,28 +273,28 @@ watch(
           <base-filter-panel
             v-model="categoryList"
             :section-list="categoryFilterParams"
-            condition-text="Group"
+            condition-text="Category"
             @search="refresh"
           />
           <!-- 模块筛选 -->
           <base-filter-panel
             v-model="moduleList"
             :section-list="moduleFilterParams"
-            condition-text="Group"
+            condition-text="Module"
             @search="refresh"
           />
           <!-- 创建者筛选 -->
           <base-filter-panel
             v-model="creatorList"
             :section-list="creatorFilterParams"
-            condition-text="Group"
+            condition-text="Creator"
             @search="refresh"
           />
           <!-- 创建日期筛选 -->
           <base-filter-panel
             v-model="createdDateList"
             :section-list="createdDateFilterParams"
-            condition-text="Group"
+            condition-text="Creation Date"
             @search="refresh"
           />
         </div>
@@ -327,15 +316,23 @@ watch(
       <el-table :data="expenseList" style="width: 100%" class="flex-1">
         <el-table-column type="selection" min-width="6%" />
         <el-table-column prop="group" label="Group" min-width="17%" />
-        <el-table-column prop="itemName" label="Item Name" min-width="17%" />
+        <el-table-column prop="name" label="Item Name" min-width="17%" />
         <el-table-column prop="category" label="Category" min-width="17%" />
         <el-table-column prop="module" label="Module" min-width="17%" />
-        <el-table-column prop="creator" label="Creator" min-width="17%" />
+        <el-table-column prop="creator" label="Creator" min-width="17%">
+          <template #default="{ row }">
+            {{ row.creator?.name || '-' }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="creationDate"
           label="Creation Date"
           min-width="17%"
-        />
+        >
+          <template #default="{ row }">
+            {{ getDateWithDDMMMYYYY(row.createTime) }}
+          </template>
+        </el-table-column>
         <el-table-column min-width="6%">
           <template #default="scope">
             <i class="icon-more-2-line text-16" />
@@ -345,11 +342,76 @@ watch(
       <base-pagination v-model="pagination" />
     </div>
   </section>
+  <!-- 创建 expense 弹窗 -->
+  <!-- Unbind -->
+  <base-dialog
+    v-model="dialogCreateExpenseItemVisible"
+    title="Create Item"
+    confirm-text="Create"
+    @cancel="dialogCreateExpenseItemVisible = false"
+    @confirm="handleCreateExpenseItem"
+  >
+    <template #content>
+      <div class="flex flex-col gap-8">
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Group
+          </p>
+          <el-select v-model="expenseItemForm.group" placeholder="Select">
+            <el-option
+              v-for="item in groupFilterParams"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Category
+          </p>
+          <el-select v-model="expenseItemForm.category" placeholder="Select">
+            <el-option
+              v-for="item in categoryFilterParams"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Group
+          </p>
+          <el-input
+            type="textarea"
+            v-model="expenseItemForm.name"
+            rows="3"
+            placeholder="Enter"
+          />
+        </div>
+      </div>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
 // 重置 tab 栏样式
 :deep(.el-tabs__nav-wrap) {
   margin-left: 0 !important;
+}
+
+// 重置 el-input 的样式
+:deep(.el-textarea) {
+  .el-textarea__inner {
+    @apply rounded-12 bg-[#EAEEF480];
+  }
+}
+
+// 重置选择框的样式
+:deep(.el-select) {
+  .el-select__wrapper {
+    @apply rounded-12 h-32 bg-[#EAEEF480];
+  }
 }
 </style>

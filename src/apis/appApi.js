@@ -63,6 +63,14 @@ const AppApi = Object.freeze({
   GET_AI_QUESTION_RECORD: '/manager/aichat/records',
   // 删除版本控制信息
   DELETE_VERSION_CONTROL_INFO: '/manager/version/deleteappversion',
+  // 获取分组列表数据
+  GET_EXPENSE_LIST: '/expenditure/expenditures',
+  // 获取Expense的分组列表
+  GET_EXPENSE_GROUP_LIST: '/expenditure/categories',
+  // 新增 Expense Item
+  ADD_EXPENSE_ITEM: '/expenditure/add',
+  // 删除Expense Item
+  DELETE_EXPENSE_ITEM: '/manager/expenditure/delete',
 })
 
 // 获取 token
@@ -585,6 +593,66 @@ export const deleteAppVersionApi = (appVersionId) => {
 
   return request({
     url: AppApi.DELETE_VERSION_CONTROL_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getExpenseListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('groups', params.groups)
+  data.append('modules', params.modules)
+  data.append('userIds', params.userIds)
+  data.append('searchKey', params.searchKey)
+  data.append('groupSort', params.groupSort)
+  data.append('categorySort', params.categorySort)
+  data.append('moduleSort', params.moduleSort)
+  data.append('nameSort', params.nameSort)
+  data.append('createTimeSort', params.createTimeSort)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+  return request({
+    url: AppApi.GET_EXPENSE_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getExpenseGroupListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  return request({
+    url: AppApi.GET_EXPENSE_GROUP_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+export const addExpenseItemApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('group', params.group)
+  data.append('module', params.module)
+  data.append('name', params.name)
+  // userId为空, 是管理员创建
+  data.append('userId', params.userId || '')
+
+  return request({
+    url: AppApi.ADD_EXPENSE_ITEM,
+    method: 'POST',
+    data,
+  })
+}
+
+export const deleteExpenseItemApi = (expenditureId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('expenditureId', expenditureId)
+
+  return request({
+    url: AppApi.DELETE_EXPENSE_ITEM,
     method: 'POST',
     data,
   })
