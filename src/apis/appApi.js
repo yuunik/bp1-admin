@@ -635,6 +635,7 @@ export const addExpenseItemApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('group', params.group)
+  data.append('category', params.category)
   data.append('module', params.module)
   data.append('name', params.name)
   // userId为空, 是管理员创建

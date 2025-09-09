@@ -59,6 +59,9 @@ const creatorFilterParams = ref([])
 // 创建日期参数
 const createdDateList = ref([])
 
+// 是否显示group筛选
+const isShowCreatedDateFilter = computed(() => activeName.value === 'All')
+
 const createdDateKeys = computed(() =>
   createdDateList.value.length ? createdDateList.value.join(',') : '',
 )
@@ -113,6 +116,7 @@ const expenseItemForm = ref({
   name: '',
   group: '',
   category: '',
+  module: '',
 })
 
 // 确认删除弹窗
@@ -209,6 +213,8 @@ const openEditExpenseItemDialog = (row) => {
 // 编辑 expense
 const handleEditExpenseItem = async () => {
   await modifyExpenseItemApi(expenseItemForm.value)
+  // 关闭弹窗
+  dialogExpenseFormVisible.value = false
   // 提示
   ElMessage.success('Edit  successfully')
   refresh()
@@ -232,6 +238,7 @@ const handleOpenDeleteExpenseItemDialog = (row) => {
 // 删除 expense item
 const handleDeleteExpenseItem = async () => {
   await deleteExpenseItemApi(expenseItemForm.value.id)
+  dialogDeleteExpenseItemVisible.value = false
   // 提示
   ElMessage.success('Delete successfully')
   refresh()
@@ -260,6 +267,7 @@ const handleSelectionChange = (val) =>
 // 批量删除
 const handleBatchDeleteExpenseItems = async () => {
   await modifyExpenseItemApi(selectedExpenseIdList.join(','))
+  dialogBatchDeleteExpenseItemVisible.value = false
   // 提示
   ElMessage.success('Edit  successfully')
   refresh()
@@ -288,6 +296,23 @@ watch(
   () => pagination.currentPage,
   () => initData(),
 )
+
+watch(activeName, (val) => {
+  if (val === 'Vehicle Parts') {
+    groupList.value = ['Vehicle Parts']
+  } else if (val === 'Maintenance') {
+    groupList.value = ['Maintenance']
+  } else if (val === 'Fuel') {
+    groupList.value = ['Fuel']
+  } else if (val === 'Services') {
+    groupList.value = ['Services']
+  } else if (val === 'Others') {
+    groupList.value = ['Others']
+  } else {
+    groupList.value = []
+  }
+  refresh()
+})
 
 // 网络请求
 onMounted(async () => {
@@ -328,6 +353,7 @@ onMounted(async () => {
           :section-list="groupFilterParams"
           condition-text="Group"
           @search="refresh"
+          v-show="isShowCreatedDateFilter"
         />
         <!-- 分类筛选 -->
         <base-filter-panel
@@ -375,7 +401,7 @@ onMounted(async () => {
       <span class="text-neutrals-off-black heading-body-body-12px-regular">
         {{ selectedExpenseIdList.length }} selected
       </span>
-      <el-button @click="dialogBatchDeleteExpenseItemVisible.value = true">
+      <el-button @click="dialogBatchDeleteExpenseItemVisible = true">
         Delete
       </el-button>
     </div>
@@ -420,7 +446,7 @@ onMounted(async () => {
           sortable="custom"
         >
           <template #default="{ row }">
-            {{ row.userDto?.name || '-' }}
+            {{ row.userDto?.id || 'Admin' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -459,8 +485,8 @@ onMounted(async () => {
   <!-- 创建 expense 弹窗 -->
   <base-dialog
     v-model="dialogExpenseFormVisible"
-    title="Create Item"
-    confirm-text="Create"
+    :title="expenseItemForm.id ? 'Edit Item' : 'Create Item'"
+    :confirm-text="expenseItemForm.id ? 'Edit' : 'Create'"
     @cancel="dialogExpenseFormVisible = false"
     @confirm="handleManageExpenseItem"
   >
@@ -494,7 +520,20 @@ onMounted(async () => {
         </div>
         <div class="flex flex-col gap-8">
           <p class="heading-body-body-12px-medium text-neutrals-off-black">
-            Group
+            Module
+          </p>
+          <el-select v-model="expenseItemForm.module" placeholder="Select">
+            <el-option
+              v-for="item in moduleFilterParams"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Item Name
           </p>
           <el-input
             type="textarea"
