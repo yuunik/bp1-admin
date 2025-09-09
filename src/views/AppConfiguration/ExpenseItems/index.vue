@@ -266,7 +266,7 @@ const handleSelectionChange = (val) =>
 
 // 批量删除
 const handleBatchDeleteExpenseItems = async () => {
-  await modifyExpenseItemApi(selectedExpenseIdList.join(','))
+  await deleteExpenseItemApi(selectedExpenseIdList.value.join(','))
   dialogBatchDeleteExpenseItemVisible.value = false
   // 提示
   ElMessage.success('Edit  successfully')
