@@ -52,6 +52,7 @@ const conditionTotalText = computed(() => {
 
 // 提交查找
 watch(searchKeys, () => {
+  console.log('??????????111111111')
   emit('search', searchKeys.value)
 })
 </script>

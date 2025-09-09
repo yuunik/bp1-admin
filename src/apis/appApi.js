@@ -73,6 +73,8 @@ const AppApi = Object.freeze({
   DELETE_EXPENSE_ITEM: '/manager/expenditure/delete',
   // 编辑 Expense Item
   MODIFY_EXPENSE_ITEM: '/manager/expenditure/edit',
+  // 管理员获取用户信息，筛选使用
+  GET_USER_LIST: '/manager/expenditure/users',
 })
 
 // 获取 token
@@ -607,11 +609,8 @@ export const getExpenseListApi = (params) => {
   data.append('modules', params.modules)
   data.append('userIds', params.userIds)
   data.append('searchKey', params.searchKey)
-  data.append('groupSort', params.groupSort)
-  data.append('categorySort', params.categorySort)
-  data.append('moduleSort', params.moduleSort)
-  data.append('nameSort', params.nameSort)
-  data.append('createTimeSort', params.createTimeSort)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
   return request({
@@ -661,6 +660,7 @@ export const deleteExpenseItemApi = (expenditureId) => {
 }
 
 export const modifyExpenseItemApi = (params) => {
+  const data = new FormData()
   data.append('token', getToken())
   data.append('expenditureId', params.id)
   data.append('group', params.group)
@@ -670,6 +670,17 @@ export const modifyExpenseItemApi = (params) => {
 
   return request({
     url: AppApi.MODIFY_EXPENSE_ITEM,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getExpenditureUserListApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  return request({
+    url: AppApi.GET_USER_LIST,
     method: 'POST',
     data,
   })

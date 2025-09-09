@@ -8,12 +8,14 @@ import BasePagination from '@/components/BasePagination.vue'
 import {
   addExpenseItemApi,
   deleteExpenseItemApi,
+  getExpenditureUserListApi,
   getExpenseGroupListApi,
   getExpenseListApi,
   modifyExpenseItemApi,
 } from '@/apis/appApi.js'
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { ElMessage } from 'element-plus'
 
 const activeName = ref('All')
 
@@ -21,7 +23,7 @@ const activeName = ref('All')
 const groupList = ref([])
 
 const groupKeys = computed(() =>
-  groupList.length ? groupList.value.join(',') : '',
+  groupList.value.length ? groupList.value.join(',') : '',
 )
 
 const groupFilterParams = ref([])
@@ -30,7 +32,7 @@ const groupFilterParams = ref([])
 const categoryList = ref([])
 
 const categoryKeys = computed(() =>
-  categoryList.length ? categoryList.value.join(',') : '',
+  categoryList.value.length ? categoryList.value.join(',') : '',
 )
 
 const categoryFilterParams = ref([])
@@ -39,7 +41,7 @@ const categoryFilterParams = ref([])
 const moduleList = ref([])
 
 const moduleKeys = computed(() =>
-  moduleList.length ? moduleList.value.join(',') : '',
+  moduleList.value.length ? moduleList.value.join(',') : '',
 )
 
 const moduleFilterParams = ref([])
@@ -48,41 +50,16 @@ const moduleFilterParams = ref([])
 const creatorList = ref([])
 
 const creatorKeys = computed(() =>
-  creatorList.length ? creatorList.value.join(',') : '',
+  creatorList.value.length ? creatorList.value.join(',') : '',
 )
 
-const creatorFilterParams = ref([
-  {
-    label: 'All',
-    value: 'All',
-  },
-  {
-    label: 'Vehicle Parts',
-    value: 'Vehicle Parts',
-  },
-  {
-    label: 'Maintenance',
-    value: 'Maintenance',
-  },
-  {
-    label: 'Fuel',
-    value: 'Fuel',
-  },
-  {
-    label: 'Services',
-    value: 'Services',
-  },
-  {
-    label: 'Others',
-    value: 'Others',
-  },
-])
+const creatorFilterParams = ref([])
 
 // 创建日期参数
 const createdDateList = ref([])
 
 const createdDateKeys = computed(() =>
-  createdDateList.length ? createdDateList.value.join(',') : '',
+  createdDateList.value.length ? createdDateList.value.join(',') : '',
 )
 
 const createdDateFilterParams = ref([
@@ -109,12 +86,6 @@ const pagination = reactive({
   currentPage: 0,
   pageSize: 15,
   total: 0,
-})
-
-// 排序参数
-const sortParams = ref({
-  sort: '',
-  sortBy: '',
 })
 
 // 是否有筛选条件
@@ -146,10 +117,16 @@ const expenseItemForm = ref({
 // 确认删除弹窗
 const dialogDeleteExpenseItemVisible = ref(false)
 
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
-    return
+    return initData()
   }
   // 设置当前页为 1
   pagination.currentPage = 0
@@ -176,11 +153,8 @@ const getExpenseList = async () => {
 
     searchKey: searchKeywords.value,
 
-    groupSort: groupKeys.value || '',
-    categorySort: categoryKeys.value || '',
-    moduleSort: moduleKeys.value || '',
-    nameSort: searchKeywords.value || '',
-    createTimeSort: createdDateKeys.value || '',
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
 
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
@@ -256,20 +230,24 @@ const handleDeleteExpenseItem = async () => {
   refresh()
 }
 
+// 获取用户列表
+const getUserList = async () => {
+  const { data } = await getExpenditureUserListApi()
+  creatorFilterParams.value = data.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
+}
+
+// 数据初始化
+const initData = async () =>
+  await Promise.all([getExpenseList(), getGroupList(), getUserList()])
+
 // 监听分页数据变化
 watch(
   () => pagination.currentPage,
   () => {},
 )
-
-// 数据初始化
-const initData = async () =>
-  await Promise.all([getExpenseList(), getGroupList()])
-
-// 网络请求
-onMounted(async () => {
-  await initData()
-})
 
 // 监听
 watch(dialogDeleteExpenseItemVisible, (val) => {
@@ -288,6 +266,11 @@ watch(
   () => pagination.currentPage,
   () => initData(),
 )
+
+// 网络请求
+onMounted(async () => {
+  await initData()
+})
 </script>
 
 <template>
@@ -315,48 +298,47 @@ watch(
       <el-tab-pane label="Others" name="Others" />
     </el-tabs>
     <!-- 搜索栏 -->
-    <div class="flex-between h-24">
-      <div class="row-center h-24 gap-8">
-        <div class="row-center h-24 gap-8">
-          <!-- 组筛选 -->
-          <base-filter-panel
-            v-model="groupList"
-            :section-list="groupFilterParams"
-            condition-text="Group"
-            @search="refresh"
-          />
-          <!-- 分类筛选 -->
-          <base-filter-panel
-            v-model="categoryList"
-            :section-list="categoryFilterParams"
-            condition-text="Category"
-            @search="refresh"
-          />
-          <!-- 模块筛选 -->
-          <base-filter-panel
-            v-model="moduleList"
-            :section-list="moduleFilterParams"
-            condition-text="Module"
-            @search="refresh"
-          />
-          <!-- 创建者筛选 -->
-          <base-filter-panel
-            v-model="creatorList"
-            :section-list="creatorFilterParams"
-            condition-text="Creator"
-            @search="refresh"
-          />
-          <!-- 创建日期筛选 -->
-          <base-filter-panel
-            v-model="createdDateList"
-            :section-list="createdDateFilterParams"
-            condition-text="Creation Date"
-            @search="refresh"
-          />
-        </div>
+    <div class="flex-between">
+      <div class="row-center flex-wrap gap-8">
+        <!-- 组筛选 -->
+        <base-filter-panel
+          v-model="groupList"
+          :section-list="groupFilterParams"
+          condition-text="Group"
+          @search="refresh"
+        />
+        <!-- 分类筛选 -->
+        <base-filter-panel
+          v-model="categoryList"
+          :section-list="categoryFilterParams"
+          condition-text="Category"
+          @search="refresh"
+        />
+        <!-- 模块筛选 -->
+        <base-filter-panel
+          v-model="moduleList"
+          :section-list="moduleFilterParams"
+          condition-text="Module"
+          @search="refresh"
+        />
+        <!-- 创建者筛选 -->
+        <base-filter-panel
+          v-model="creatorList"
+          :section-list="creatorFilterParams"
+          condition-text="Creator"
+          @search="refresh"
+        />
+        <!-- 创建日期筛选 -->
+        <!--<base-filter-panel-->
+        <!--  v-model="createdDateList"-->
+        <!--  :section-list="createdDateFilterParams"-->
+        <!--  condition-text="Creation Date"-->
+        <!--  @search="refresh"-->
+        <!--/>-->
+
         <!-- 清除按钮 -->
         <el-button
-          type="text"
+          text
           class="h-24!"
           @click="handleClearCondition"
           v-show="hasCondition"
@@ -377,7 +359,7 @@ watch(
         <el-table-column prop="module" label="Module" min-width="17%" />
         <el-table-column prop="creator" label="Creator" min-width="17%">
           <template #default="{ row }">
-            {{ row.creator?.name || '-' }}
+            {{ row.userDto?.name || '-' }}
           </template>
         </el-table-column>
         <el-table-column
