@@ -36,7 +36,13 @@ const confirm = () => emit('confirm')
 </script>
 
 <template>
-  <el-dialog v-model="dialogVisible" :title="title" width="520" align-center>
+  <el-dialog
+    v-model="dialogVisible"
+    :title="title"
+    width="520"
+    align-center
+    :showClose="false"
+  >
     <slot name="content" />
     <template #footer>
       <el-button @click="cancel">{{ cancelText }}</el-button>
@@ -47,10 +53,4 @@ const confirm = () => emit('confirm')
   </el-dialog>
 </template>
 
-<style scoped lang="scss">
-:deep(.el-dialog__title) {
-  --el-dialog-title-font-size: 20px;
-  --el-dialog-font-line-height: 30px;
-  --el-text-color-primary: #1b1a1e;
-}
-</style>
+<style scoped lang="scss"></style>

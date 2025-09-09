@@ -116,3 +116,36 @@
     align-items: center !important;
   }
 }
+
+// 重置对话框样式
+.el-dialog {
+  padding: 0 !important;
+
+  // 对话框头部
+  .el-dialog__header {
+    --el-dialog-title-font-size: 20px;
+    --el-dialog-font-line-height: 30px;
+    --el-text-color-primary: #1b1a1e;
+    @apply pl-16 pt-24;
+
+    // 对话框标题
+    .el-dialog__title {
+      @apply  font-medium;
+    }
+  }
+
+  // 对话框内容
+  .el-dialog__body {
+    @apply px-16 pb-24;
+  }
+
+  // 对话框底部
+  .el-dialog__footer {
+    @apply p-16 flex gap-8;
+    border-top: 1px solid #EAEEF4;
+
+    .el-button {
+      @apply flex-1;
+    }
+  }
+}
