@@ -428,7 +428,7 @@ onMounted(async () => {
       </el-button>
     </div>
     <!-- 表格内容 -->
-    <div class="flex flex-1 flex-col justify-between">
+    <div class="flex flex-1 flex-col justify-between overflow-hidden">
       <el-table
         :data="expenseList"
         style="width: 100%"

@@ -129,14 +129,16 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
       <!-- Company Logo -->
       <img :src="CompanyLogo" alt="Company Logo" class="w-83 ml-8 mt-8 h-24" />
       <!-- menu -->
-      <el-menu
-        class="nav-menu"
-        background-color="transparent"
-        text-color="#99A0AE"
-        :default-active="$route.path"
-      >
-        <menu-item :user-menu-routes="routes" />
-      </el-menu>
+      <el-scrollbar class="flex-1">
+        <el-menu
+          class="nav-menu"
+          background-color="transparent"
+          text-color="#99A0AE"
+          :default-active="$route.path"
+        >
+          <menu-item :user-menu-routes="routes" />
+        </el-menu>
+      </el-scrollbar>
       <!-- user center -->
       <ul
         class="text-neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
