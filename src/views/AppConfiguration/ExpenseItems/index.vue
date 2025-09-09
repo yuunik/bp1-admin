@@ -159,7 +159,7 @@ const handleClearCondition = () => {
 
 // 获取expense列表
 const getExpenseList = async () => {
-  const { data } = await getExpenseListApi({
+  const { data, count } = await getExpenseListApi({
     groups: groupKeys.value,
     categorys: categoryKeys.value,
     modules: moduleKeys.value,
@@ -177,6 +177,8 @@ const getExpenseList = async () => {
 
   // 保存 expense
   expenseList.value = data
+  // 记录总条数
+  pagination.total = count
 }
 
 // 获取分组信息
