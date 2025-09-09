@@ -16,6 +16,7 @@ import {
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { ElMessage } from 'element-plus'
+import { useSort } from '@/composables/useSort.js'
 
 const activeName = ref('All')
 
@@ -239,6 +240,9 @@ const getUserList = async () => {
   }))
 }
 
+// 排序函数
+const handleSortChange = useSort(sortParams, () => refresh())
+
 // 数据初始化
 const initData = async () =>
   await Promise.all([getExpenseList(), getGroupList(), getUserList()])
@@ -351,21 +355,52 @@ onMounted(async () => {
     </div>
     <!-- 表格内容 -->
     <div class="flex flex-1 flex-col justify-between">
-      <el-table :data="expenseList" style="width: 100%" class="flex-1">
-        <el-table-column type="selection" min-width="6%" />
-        <el-table-column prop="group" label="Group" min-width="17%" />
-        <el-table-column prop="name" label="Item Name" min-width="17%" />
-        <el-table-column prop="category" label="Category" min-width="17%" />
-        <el-table-column prop="module" label="Module" min-width="17%" />
-        <el-table-column prop="creator" label="Creator" min-width="17%">
+      <el-table
+        :data="expenseList"
+        style="width: 100%"
+        class="flex-1"
+        @sort-change="handleSortChange"
+      >
+        <el-table-column type="selection" min-width="6%" sortable="custom" />
+        <el-table-column
+          prop="group"
+          label="Group"
+          min-width="17%"
+          sortable="custom"
+        />
+        <el-table-column
+          prop="name"
+          label="Item Name"
+          min-width="17%"
+          sortable="custom"
+        />
+        <el-table-column
+          prop="category"
+          label="Category"
+          min-width="17%"
+          sortable="custom"
+        />
+        <el-table-column
+          prop="module"
+          label="Module"
+          min-width="17%"
+          sortable="custom"
+        />
+        <el-table-column
+          prop="user"
+          label="Creator"
+          min-width="17%"
+          sortable="custom"
+        >
           <template #default="{ row }">
             {{ row.userDto?.name || '-' }}
           </template>
         </el-table-column>
         <el-table-column
-          prop="creationDate"
+          prop="createTime"
           label="Creation Date"
           min-width="17%"
+          sortable="custom"
         >
           <template #default="{ row }">
             {{ getDateWithDDMMMYYYY(row.createTime) }}
