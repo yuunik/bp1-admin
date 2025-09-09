@@ -216,13 +216,7 @@ const handleCreateExpenseItem = async () => {
   dialogExpenseFormVisible.value = false
   // 提示
   ElMessage.success('Added successfully')
-  // 重置表单
-  expenseItemForm.value = {
-    name: '',
-    group: '',
-    category: '',
-  }
-  initData()
+  refresh()
 }
 
 // 打开表单弹窗
@@ -234,7 +228,9 @@ const openEditExpenseItemDialog = (row) => {
 // 编辑 expense
 const handleEditExpenseItem = async () => {
   await modifyExpenseItemApi(expenseItemForm.value)
-  initData()
+  // 提示
+  ElMessage.success('Edit  successfully')
+  refresh()
 }
 
 // 管理expense item
@@ -255,7 +251,9 @@ const handleOpenDeleteExpenseItemDialog = (row) => {
 // 删除 expense item
 const handleDeleteExpenseItem = async () => {
   await deleteExpenseItemApi(expenseItemForm.value.id)
-  initData()
+  // 提示
+  ElMessage.success('Delete successfully')
+  refresh()
 }
 
 // 监听分页数据变化
@@ -285,6 +283,11 @@ watch(dialogExpenseFormVisible, (val) => {
     expenseItemForm.value = {}
   }
 })
+
+watch(
+  () => pagination.currentPage,
+  () => initData(),
+)
 </script>
 
 <template>
