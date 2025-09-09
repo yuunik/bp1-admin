@@ -94,7 +94,7 @@ watch(searchKeys, () => {
             {{ conditionText }}
           </p>
           <span
-            @click="searchKeyList = []"
+            @click="searchKeyList.length && (searchKeyList = [])"
             class="heading-body-body-12px-medium"
             :class="
               searchKeyList.length
