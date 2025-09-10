@@ -138,7 +138,13 @@ if (faultCodeId) {
               },
             ]"
           >
-            Low
+            {{
+              faultInfo.level === 0
+                ? 'LOW'
+                : faultInfo.level === 1
+                  ? 'Medium'
+                  : 'High'
+            }}
           </span>
         </div>
         <p class="heading-body-large-body-14px-regular text-neutrals-grey-4">
