@@ -10,6 +10,7 @@ import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
 
 import CompanyLogo from '@/assets/images/company-logo-full.png'
+import Logo from '@/assets/images/company-logo.png'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
 import { modifyAdminPasswordApi } from '@/apis/userCenterApi.js'
@@ -62,7 +63,7 @@ const changeEmailForm = ref({
 const isShowCurrentPassword = ref(false)
 
 // 菜单栏是否折叠
-const isCollapse = ref(false)
+const isMenuCollapsed = ref(false)
 
 // 打开修改密码弹窗
 const handleOpenChangePasswordDialog = () => {
@@ -120,28 +121,48 @@ const handleModifyAdminPassword = async () => {
 }
 
 provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
+provide('isMenuCollapsed', isMenuCollapsed)
 </script>
 
 <template>
   <div class="bg-container">
     <!-- menu bar -->
-    <nav class="heading-body-body-12px-regular relative flex flex-col gap-16">
+    <nav
+      class="heading-body-body-12px-regular default-transition relative flex flex-col gap-16"
+      :class="{ 'wf-menu-width!': isMenuCollapsed }"
+    >
       <!-- Company Logo -->
-      <img :src="CompanyLogo" alt="Company Logo" class="w-83 ml-8 mt-8 h-24" />
+      <el-image
+        :src="CompanyLogo"
+        fit="contain"
+        alt="Company Logo"
+        class="w-83 default-transition ml-8 mt-8 h-24"
+        v-show="!isMenuCollapsed"
+      />
+      <el-image
+        :src="Logo"
+        fit="cover"
+        alt="Company Logo"
+        class="default-transition mx-auto h-24 w-24"
+        v-show="isMenuCollapsed"
+      />
       <!-- menu -->
-      <el-scrollbar class="flex-1">
+      <el-scrollbar class="default-transition flex-1">
         <el-menu
           class="nav-menu"
+          :class="{ 'wf-menu-width!': isMenuCollapsed }"
           background-color="transparent"
           text-color="#99A0AE"
           :default-active="$route.path"
+          :collapse="isMenuCollapsed"
         >
           <menu-item :user-menu-routes="routes" />
         </el-menu>
       </el-scrollbar>
       <!-- user center -->
       <ul
-        class="text-neutrals-grey-3 [&>li]:rounded-8 flex flex-col gap-16 p-8 [&>li]:p-8"
+        class="text-neutrals-grey-3 [&>li]:rounded-8 default-transition box-border flex flex-col gap-16 p-8 [&>li]:p-8"
+        :class="{ 'wf-menu-width!': isMenuCollapsed }"
       >
         <li
           :class="[
@@ -160,10 +181,11 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
               'text-neutrals-off-white': $route.name === 'Notifications',
             }"
           />
-          <span class="flex-1">Notifications</span>
+          <span class="flex-1" v-if="!isMenuCollapsed">Notifications</span>
           <!-- notification dot -->
           <i
             class="icon-typesnotification-dot heading-caption-caption-10px-medium flex-center bg-status-colours-green h-16 w-16 rounded-full text-[#FCFCFC]"
+            v-if="!isMenuCollapsed"
           >
             1
           </i>
@@ -185,9 +207,11 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
               'text-neutrals-off-white': $route.name === 'Settings',
             }"
           />
-          <span>Settings</span>
+          <span v-if="!isMenuCollapsed">Settings</span>
         </li>
-        <el-divider class="divider" />
+        <el-divider
+          class="divider border-t-1 border-t-[#FFFFFF1A]! border-t-solid"
+        />
         <!-- 底部用户信息相关设置 -->
         <li
           v-click-outside="() => (isShowSettingsDialog = false)"
@@ -211,7 +235,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
             </span>
           </i>
           <!-- user info -->
-          <div class="flex flex-col gap-8">
+          <div class="flex flex-col gap-8" v-if="!isMenuCollapsed">
             <!-- user name -->
             <span class="heading-caption-caption-10px-medium">
               {{ username }}
@@ -224,15 +248,21 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
         </li>
       </ul>
       <!-- expand button -->
-      <div class="expand-btn z-9999" @click="isCollapse = !isCollapse">
+      <div
+        class="expand-btn z-9999"
+        @click="isMenuCollapsed = !isMenuCollapsed"
+      >
         <!-- 折叠图标 -->
-        <i class="text-16 icon-typescollapsable" v-show="!isCollapse" />
+        <i class="text-16 icon-typescollapsable" v-show="!isMenuCollapsed" />
         <!-- 展开图标 -->
-        <i class="text-16 icon-mail-send-line" v-show="isCollapse" />
+        <i class="text-16 icon-mail-send-line" v-show="isMenuCollapsed" />
       </div>
     </nav>
     <!-- content -->
-    <main class="content-container">
+    <main
+      class="content-container"
+      :class="{ 'cf-content-width!': isMenuCollapsed }"
+    >
       <!-- breadcrumb -->
       <breadcrumb class="shrink-0" />
       <!-- router view -->
@@ -396,7 +426,7 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 菜单栏
   .nav-menu {
-    @apply w-210 flex-1 overflow-hidden border-none;
+    @apply wb-menu-width default-transition flex-1 border-none;
 
     :deep(.el-menu-item) {
       &:not(:last-child) {
@@ -427,8 +457,20 @@ provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
 
   // 内容区域
   .content-container {
-    @apply rounded-8 wc-218 relative flex h-full flex-col;
+    @apply rounded-8 cb-content-width default-transition relative flex h-full flex-col;
     background-color: $neutrals-off-white;
   }
+}
+
+:deep(.el-scrollbar) {
+  @apply w-fit!;
+}
+
+:deep(.el-scrollbar__wrap) {
+  @apply w-fit!;
+}
+
+:deep(.el-scrollbar__view) {
+  @apply w-fit!;
 }
 </style>

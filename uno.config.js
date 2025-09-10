@@ -33,10 +33,6 @@ export default defineConfig({
     // calc 函数写法
     [/^hc([\.\d]+)$/, ([_, num]) => ({ height: `calc(100% - ${num}px)` })],
     [/^wc-([\.\d]+)$/, ([_, num]) => ({ width: `calc(100% - ${num}px)` })],
-    // 菜单栏未折叠宽度
-    ['wb-menu-width', { width: '218px' }],
-    // 菜单栏未折叠宽度
-    ['wf-menu-width', { width: '64px' }],
     // 默认盒子阴影
     ['shadow-default', { 'box-shadow': '0 0 12px rgba(0, 0, 0, 0.12)' }],
     [
@@ -130,7 +126,15 @@ export default defineConfig({
       'divider-neutral-grey-4-1px': 'border-t-[#EAEEF4] border-t border-t-1',
       'divider-neutral-grey-4-4px': 'border-t-[#EAEEF4] border-t border-t-4',
       // 默认过渡效果
-      'default-transition': 'transition-all duration-250 linear',
+      'default-transition': 'transition-all duration-250 ease-linear',
+      // 菜单栏未折叠宽度
+      'wb-menu-width': 'w-210',
+      // 菜单栏折叠宽度
+      'wf-menu-width': 'w-60',
+      // 内容区未展开宽度
+      'cb-content-width': 'wc-218',
+      // 内容区折叠宽度
+      'cf-content-width': 'wc-68',
     },
   ],
   theme: {

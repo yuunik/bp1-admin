@@ -149,3 +149,16 @@
     }
   }
 }
+
+
+// 重置菜单栏折叠后的弹窗的样式
+.el-popper.is-pure.is-light {
+  @apply z-99999!;
+
+  .el-menu--popup-container {
+
+    .el-menu-item {
+      @apply hover:bg-[#ecf5ff]! hover:text-neutrals-off-black! rounded-8!;
+    }
+  }
+}

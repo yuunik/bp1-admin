@@ -21,6 +21,8 @@ const router = useRouter()
 const hoveredIndex = ref(null)
 // 路由跳转
 const handleNavigation = (path) => router.push(path)
+
+const isMenuCollapsed = inject('isMenuCollapsed')
 </script>
 
 <template>
@@ -83,6 +85,7 @@ const handleNavigation = (path) => router.push(path)
         "
         @mouseenter="hoveredIndex = route.path"
         @mouseleave="hoveredIndex = null"
+        :class="{ '[&>div]:px-20!': isMenuCollapsed }"
       >
         <!-- 标题插槽 -->
         <template #title>
