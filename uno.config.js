@@ -91,6 +91,7 @@ export default defineConfig({
       'bg-status-colours-light-red': 'bg-[#E8F0F8]',
       'bg-status-colours-light-yellow': 'bg-[#FFEEC0]',
       'bg-input': 'bg-[#EAEEF4]',
+      'bg-neutrals-card-filling': 'bg-[#FBFCFD]',
       /* 文字颜色样式 */
       'text-status-colours-green': 'text-[#05AD9D]',
       'text-status-colours-orange': 'text-[#FF6D1A]',
@@ -108,6 +109,7 @@ export default defineConfig({
       'text-branding-light-blue': 'text-[#E5F0FE]',
       'text-sub-600': 'text-[#525866]',
       'text-strong-950': 'text-[#0E121B]',
+      'text-branding-primary': 'text-[#202834]',
       /* 文字风格样式 */
       'poppins-28px-semibold': 'text-28/32 font-semibold',
       'poppins-16px-semibold': 'text-16 font-semibold',

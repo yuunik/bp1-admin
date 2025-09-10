@@ -47,7 +47,6 @@ const handleErrorImage = () => true
     footer-gap="gap-16"
     footer-display="flex items-center"
     content-py="py-8"
-    app-bar-title="title"
     :is-actions-visible="true"
     :is-leading-visible="true"
   >

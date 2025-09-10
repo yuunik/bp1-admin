@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onMounted, useSlots, ref } from 'vue'
+
 // @ts-ignore
 import useAppLauncher from '@/composables/useAppLauncher.js'
 
@@ -6,7 +8,6 @@ import useAppLauncher from '@/composables/useAppLauncher.js'
 import LeadingIcon from '@/assets/icons/h5-leading.svg'
 // @ts-ignore
 import TrailingIcon from '@/assets/icons/h5-trailing.svg'
-import { onMounted, useSlots } from 'vue'
 
 // 获取 app 启动函数
 const { aRef, appleRef, launchApp } = useAppLauncher()

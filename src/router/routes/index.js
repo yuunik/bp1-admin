@@ -577,6 +577,17 @@ const constantRoutes = [
           showInBreadcrumb: false,
         },
       },
+      // 车辆错误码详情页
+      {
+        path: '/share/fault-details/:id',
+        name: 'Fault Details',
+        component: () => import('@/share/VehicleFaultDetails.vue'),
+        meta: {
+          title: 'Fault Details',
+          showInMenu: false,
+          showInBreadcrumb: false,
+        },
+      },
     ],
     meta: {
       title: RouteName.SHARE,

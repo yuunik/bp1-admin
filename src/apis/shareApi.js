@@ -16,6 +16,8 @@ const ShareApi = Object.freeze({
   GET_VEHICLE_DTC_REPORT_INFO: '/dtc/getdtcreportinfo',
   // 生成pdf
   GET_PDF: '/dtc/getpdfreport',
+  // 获取车辆的错误码详情信息
+  GET_VEHICLE_ERROR_CODE_INFO: '/dtc/getfaultinfobycode',
 })
 
 /**
@@ -108,6 +110,21 @@ export const getPdfApi = (params) => {
 
   return request({
     url: ShareApi.GET_PDF,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆错误码详情信息
+ * @param faultCodeId
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getVehicleErrorCodeInfoApi = (faultCodeId) => {
+  const data = new FormData()
+  data.append('faultCodeId', faultCodeId)
+  return request({
+    url: ShareApi.GET_VEHICLE_ERROR_CODE_INFO,
     method: 'POST',
     data,
   })
