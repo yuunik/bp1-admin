@@ -126,7 +126,14 @@ const onButtonClick = () => {
       />
     </header>
     <!-- body -->
-    <main :class="['flex flex-1 flex-col', contentPx, contentPy, contentGap]">
+    <main
+      :class="[
+        'box-border flex flex-1 flex-col',
+        contentPx,
+        contentPy,
+        contentGap,
+      ]"
+    >
       <el-scrollbar :class="['flex-[1_1_200px]']">
         <!-- 内容显示区 -->
         <slot />

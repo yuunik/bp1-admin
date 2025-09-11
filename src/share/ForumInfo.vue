@@ -49,9 +49,10 @@ const handleErrorImage = () => true
     content-py="py-8"
     :is-actions-visible="true"
     :is-leading-visible="true"
+    :is-app-bar-visible="false"
   >
     <!-- 用户信息容器 -->
-    <div class="flex gap-12">
+    <div class="mt-8 flex gap-12">
       <!-- 用户头像 -->
       <el-avatar
         :size="40"
