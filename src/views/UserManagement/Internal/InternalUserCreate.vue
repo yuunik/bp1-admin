@@ -1,4 +1,11 @@
 <script setup>
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+import { addManagerApi } from '@/apis/userApi.js'
+import { RouteName } from '@/utils/constantsUtil.js'
+import { md5Encrypt } from '@/utils/md5Util.js'
+
 const internalUserForm = ref({
   email: '',
   name: '',
@@ -6,6 +13,76 @@ const internalUserForm = ref({
   role: 'Admin',
   confirmPassword: '',
 })
+
+const internalUserFormRules = reactive({
+  email: [
+    {
+      required: true,
+      message: 'Please input email',
+      trigger: 'blur',
+    },
+    {
+      type: 'email',
+      message: 'Please input valid email',
+      trigger: 'blur',
+    },
+  ],
+  name: [
+    {
+      required: true,
+      message: 'Please input name',
+      trigger: 'blur',
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: 'Please input password',
+      trigger: 'blur',
+    },
+  ],
+  role: [
+    {
+      required: true,
+      message: 'Please select role',
+      trigger: 'change',
+    },
+  ],
+  confirmPassword: [
+    {
+      required: true,
+      message: 'Please input confirm password',
+      trigger: 'blur',
+    },
+    {
+      validator: (_, value, callback) => {
+        if (value !== internalUserForm.value.password) {
+          callback(new Error('Password does not match'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+})
+
+const internalUserRef = ref(null)
+
+const router = useRouter()
+
+const isShowPassword = ref(false)
+
+const isShowConfirmPassword = ref(false)
+
+// 新增管理员
+const createInternalUser = async () => {
+  await internalUserRef.value.validate()
+  internalUserForm.value.password = md5Encrypt(internalUserForm.value.password)
+  await addManagerApi(internalUserForm.value)
+  ElMessage.success('Create internal user successfully')
+  router.push({ name: RouteName.INTERNAL })
+}
 </script>
 
 <template>
@@ -15,8 +92,10 @@ const internalUserForm = ref({
         Create Internal User
       </h3>
       <div class="flex h-32 gap-8">
-        <el-button>Cancel</el-button>
-        <el-button type="primary">Create</el-button>
+        <el-button @click="$router.push({ name: RouteName.INTERNAL })">
+          Cancel
+        </el-button>
+        <el-button type="primary" @click="createInternalUser">Create</el-button>
       </div>
     </div>
     <el-divider />
@@ -25,41 +104,70 @@ const internalUserForm = ref({
       label-width="140px"
       label-position="left"
       class="form-container mx-32"
+      :rules="internalUserFormRules"
+      ref="internalUserRef"
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="Email">
+          <el-form-item label="Email" prop="email">
             <el-input
               v-model="internalUserForm.email"
+              placeholder="Enter email"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Name" prop="name">
+            <el-input
+              v-model="internalUserForm.name"
               placeholder="Enter name"
             />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Name">
-            <el-input v-model="internalUserForm.name" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Password">
-            <el-input v-model="internalUserForm.password" style="width: 100%" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="Role">
-            <el-select
-              v-model="internalUserForm.role"
-              placeholder="Select role"
+          <el-form-item label="Password" prop="password">
+            <el-input
+              v-model="internalUserForm.password"
               style="width: 100%"
+              placeholder="Enter password"
+              :type="isShowPassword ? 'text' : 'password'"
             >
-              <el-option label="Admin" value="Admin" />
-              <el-option label="User" value="User" />
-            </el-select>
+              <template #suffix>
+                <i
+                  :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                  @click="isShowPassword = !isShowPassword"
+                />
+              </template>
+            </el-input>
           </el-form-item>
         </el-col>
+        <!--<el-col :span="12">-->
+        <!--  <el-form-item label="Role" prop="role">-->
+        <!--    <el-select-->
+        <!--      v-model="internalUserForm.role"-->
+        <!--      placeholder="Select role"-->
+        <!--      style="width: 100%"-->
+        <!--      read-only-->
+        <!--    >-->
+        <!--      <el-option label="Admin" value="Admin" />-->
+        <!--      <el-option label="User" value="User" />-->
+        <!--    </el-select>-->
+        <!--  </el-form-item>-->
+        <!--</el-col>-->
         <el-col :span="12">
-          <el-form-item label="Confirm Password">
-            <el-input v-model="internalUserForm.confirmPassword" />
+          <el-form-item label="Confirm Password" prop="confirmPassword">
+            <el-input
+              v-model="internalUserForm.confirmPassword"
+              placeholder="Enter confirm password"
+              :type="isShowConfirmPassword ? 'text' : 'password'"
+            >
+              <template #suffix>
+                <i
+                  :class="`text-24 cursor-pointer ${isShowConfirmPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
+                  @click="isShowConfirmPassword = !isShowConfirmPassword"
+                />
+              </template>
+            </el-input>
           </el-form-item>
         </el-col>
       </el-row>

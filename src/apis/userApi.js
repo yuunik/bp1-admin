@@ -24,6 +24,8 @@ const UserApi = Object.freeze({
   GET_USER_OBD_LIST: '/manager/obd/obdsbyuserid',
   // 获取用户已绑定的车辆列表
   GET_USER_VEHICLE_LIST: '/manager/vehicle/vehicles',
+  // 新增管理员
+  ADD_MANAGER: '/manager/add',
 })
 
 // 获取 token
@@ -174,6 +176,25 @@ export const getUserVehicleListApi = (userId) => {
   data.append('userId', userId)
   return request({
     url: UserApi.GET_USER_VEHICLE_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 新增管理员
+ * @param params
+ * @returns {*}
+ */
+export const addManagerApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('email', params.email)
+  data.append('name', params.name)
+  data.append('password', params.password)
+
+  return request({
+    url: UserApi.ADD_MANAGER,
     method: 'POST',
     data,
   })
