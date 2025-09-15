@@ -3,7 +3,7 @@ import { reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
-import { addBrandModelApi } from '@/apis/appApi.js'
+import { addBrandApi, addBrandModelApi } from '@/apis/appApi.js'
 import useFileUpload from '@/composables/useFileUpload.js'
 
 const router = useRouter()
@@ -40,7 +40,7 @@ const handleDeletePendingBrandModelItem = (index) =>
 const errorAvatarHandler = () => true
 
 // 新增车辆品牌及型号
-const handleAddBrandModel = async () => {
+const handleAddBrand = async () => {
   // 品牌名非空校验
   if (pendingBrand.name.trim() === '') {
     // 提示
@@ -54,7 +54,7 @@ const handleAddBrandModel = async () => {
   }
 
   // 添加车辆品牌及型号
-  await addBrandModelApi({
+  await addBrandApi({
     name: pendingBrand.name,
     models: pendingBrandModelList
       .filter((item) => item.brandModelName.trim() !== '')
@@ -103,9 +103,7 @@ const handleBrandInputBlur = () => {
       <h3 class="heading-h2-20px-medium neutrals-off-black">Create Brand</h3>
       <div class="flex gap-8">
         <el-button @click="$router.go(-1)">Cancel</el-button>
-        <el-button type="primary" @click="handleAddBrandModel">
-          Create
-        </el-button>
+        <el-button type="primary" @click="handleAddBrand">Create</el-button>
       </div>
     </div>
     <!-- divider -->

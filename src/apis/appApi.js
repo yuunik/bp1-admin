@@ -24,7 +24,7 @@ const AppApi = Object.freeze({
   // 新增车辆品牌
   ADD_BRAND: '/manager/brand/add',
   // 新增车辆品牌型号
-  ADD_BRAND_MODEL: '/manager/brand/add',
+  ADD_BRAND_MODEL: '/manager/model/add',
   // 修改车辆品牌型号
   MODIFY_BRAND_MODEL: '/manager/model/edit',
   // 获取实时数据预警列表
@@ -538,12 +538,25 @@ export const getFaultCodeListApi = (vehicleId) => {
   })
 }
 
-export const addBrandModelApi = (params) => {
+export const addBrandApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('models', params.models)
   data.append('name', params.name)
   data.append('file', params.logo)
+
+  return request({
+    url: AppApi.ADD_BRAND,
+    method: 'POST',
+    data,
+  })
+}
+
+export const addBrandModelApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', params.brandId)
+  data.append('name', params.name)
 
   return request({
     url: AppApi.ADD_BRAND_MODEL,
