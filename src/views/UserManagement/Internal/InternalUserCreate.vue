@@ -77,11 +77,18 @@ const isShowConfirmPassword = ref(false)
 
 // 新增管理员
 const createInternalUser = async () => {
-  await internalUserRef.value.validate()
-  internalUserForm.value.password = md5Encrypt(internalUserForm.value.password)
-  await addManagerApi(internalUserForm.value)
-  ElMessage.success('Create internal user successfully')
-  router.push({ name: RouteName.INTERNAL })
+  try {
+    await internalUserRef.value.validate()
+    internalUserForm.value.password = md5Encrypt(
+      internalUserForm.value.password,
+    )
+    await addManagerApi(internalUserForm.value)
+    ElMessage.success('Create internal user successfully')
+    router.push({ name: RouteName.INTERNAL })
+  } finally {
+    internalUserForm.value.password = ''
+    internalUserForm.value.confirmPassword = ''
+  }
 }
 </script>
 
