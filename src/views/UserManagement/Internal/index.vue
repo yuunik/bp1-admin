@@ -1,5 +1,5 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 
@@ -7,11 +7,13 @@ import { adminStatusApi, getAdminListApi } from '@/apis/userCenterApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { TimingPreset } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import BaseTag from '@/components/BaseTag.vue'
 import { resetUserPasswordApi } from '@/apis/userApi.js'
+
+const route = useRoute()
 
 const router = useRouter()
 
@@ -199,6 +201,15 @@ watch(
 
 // 网络请求
 getAdminList()
+
+watch(
+  () => route.name,
+  (newName, oldName) => {
+    if (newName === RouteName.INTERNAL) {
+      getAdminList()
+    }
+  },
+)
 </script>
 
 <template>
