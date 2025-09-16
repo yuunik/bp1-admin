@@ -652,8 +652,10 @@ export const addExpenseItemApi = (params) => {
   data.append('category', params.category)
   data.append('module', params.module)
   data.append('name', params.name)
+  data.append('maintenanceName', params.maintenanceName)
+
   // userId为空, 是管理员创建
-  data.append('userId', params.userId || '')
+  params?.userId && data.append('userId', params.userId || '')
 
   return request({
     url: AppApi.ADD_EXPENSE_ITEM,
@@ -682,6 +684,7 @@ export const modifyExpenseItemApi = (params) => {
   data.append('category', params.category)
   data.append('module', params.module)
   data.append('name', params.name)
+  data.append('maintenanceName', params.maintenanceName)
 
   return request({
     url: AppApi.MODIFY_EXPENSE_ITEM,

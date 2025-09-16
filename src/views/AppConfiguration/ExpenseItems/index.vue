@@ -128,6 +128,7 @@ const expenseItemForm = ref({
   group: '',
   category: '',
   module: '',
+  maintenanceName: '',
 })
 
 // 确认删除弹窗
@@ -462,6 +463,16 @@ onMounted(async () => {
           sortable="custom"
         />
         <el-table-column
+          prop="maintenanceName"
+          label="Maintenance"
+          min-width="17%"
+          sortable="custom"
+        >
+          <template #default="{ row }">
+            {{ row.maintenanceName || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="user"
           label="Creator"
           min-width="17%"
@@ -560,6 +571,17 @@ onMounted(async () => {
           <el-input
             type="textarea"
             v-model="expenseItemForm.name"
+            rows="3"
+            placeholder="Enter"
+          />
+        </div>
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Maintenance Name
+          </p>
+          <el-input
+            type="textarea"
+            v-model="expenseItemForm.maintenanceName"
             rows="3"
             placeholder="Enter"
           />
