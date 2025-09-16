@@ -128,7 +128,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
   <div class="bg-container">
     <!-- menu bar -->
     <nav
-      class="heading-body-body-12px-regular default-transition relative flex flex-col gap-16"
+      class="heading-body-body-12px-regular default-transition menu-container relative flex flex-col gap-16"
       :class="{ 'wf-menu-width!': isMenuCollapsed }"
     >
       <!-- Company Logo -->
@@ -462,15 +462,16 @@ provide('isMenuCollapsed', isMenuCollapsed)
   }
 }
 
-:deep(.el-scrollbar) {
+// 重置滚动条样式
+.menu-container :deep(.el-scrollbar) {
   @apply w-fit!;
 }
 
-:deep(.el-scrollbar__wrap) {
+.menu-container :deep(.el-scrollbar__wrap) {
   @apply w-fit!;
 }
 
-:deep(.el-scrollbar__view) {
+.menu-container :deep(.el-scrollbar__view) {
   @apply w-fit!;
 }
 </style>

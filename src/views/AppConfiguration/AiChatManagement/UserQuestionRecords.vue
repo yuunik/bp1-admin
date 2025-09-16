@@ -1,15 +1,15 @@
 <script setup>
-import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { getAiChatRecordList } from '@/apis/appApi.js'
-import { useDebounceFn } from '@vueuse/core'
+import VueMarkdown from 'vue-markdown-render'
 import {
   CirclePlus,
   RemoveFilled,
   SortDown,
   SortUp,
 } from '@element-plus/icons-vue'
-import VueMarkdown from 'vue-markdown-render'
+import { useDebounceFn } from '@vueuse/core'
 
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import { getAiChatRecordList } from '@/apis/appApi.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 // 搜索参数
@@ -38,9 +38,10 @@ const getQuestionListByScroll = async () => {
     page: paginationParams.currentPage++,
     pageSize: paginationParams.pageSize,
   })
-  aiChatRecordList.value.push(
-    ...data.map((item) => ({ ...item, isExpand: false })),
-  )
+  // aiChatRecordList.value.push(
+  //   ...data.map((item) => ({ ...item, isExpand: false })),
+  // )
+  aiChatRecordList.value = data.map((item) => ({ ...item, isExpand: false }))
   isHasMore.value = data.length === 0
 }
 
@@ -83,8 +84,9 @@ getQuestionList()
   <!-- 分割线 -->
   <el-divider class="diver" />
   <el-scrollbar
-    class="box-border px-32 pb-32"
+    class="px-32 pb-32"
     @end-reached="getQuestionListByScroll"
+    v-show="aiChatRecordList.length"
   >
     <!-- header -->
     <el-row class="row-center h-32">
@@ -135,77 +137,80 @@ getQuestionList()
     <!-- divider -->
     <el-divider />
     <!-- content -->
-    <template v-if="aiChatRecordList.length">
-      <template v-for="record in aiChatRecordList" :key="record.id">
-        <el-row
-          class="row-center default-transition hover:bg-neutrals-grey-1 cursor-pointer py-8"
-          :class="{ 'bg-[#E3EAF3]': record.isExpand }"
-          @click.stop="record.isExpand = !record.isExpand"
-        >
-          <el-col :span="2" class="text-align-center h-16">
-            <el-icon
-              class="h-16 w-16 cursor-pointer"
-              v-if="!record.isExpand"
-              @click.stop="record.isExpand = true"
-            >
-              <CirclePlus />
-            </el-icon>
-            <el-icon
-              class="w-16! h-16 cursor-pointer"
-              v-else
-              @click.stop="record.isExpand = false"
-            >
-              <RemoveFilled />
-            </el-icon>
-          </el-col>
-          <el-col :span="4" class="row-center gap-4">
-            <span
-              class="heading-body-body-12px-medium"
-              :class="
-                record.isExpand
-                  ? 'text-neutrals-off-black'
-                  : 'text-neutrals-grey-3'
-              "
-            >
-              {{ getDateWithDDMMMYYYYhhmma(record.createTime) }}
-            </span>
-          </el-col>
-          <el-col :span="18" class="row-center gap-4">
-            <p
-              class="heading-body-body-12px-medium text-neutrals-grey-3"
-              :class="
-                record.isExpand
-                  ? 'text-neutrals-off-black'
-                  : 'text-neutrals-grey-3'
-              "
-            >
-              {{ record.question }}
-            </p>
-          </el-col>
-        </el-row>
-        <!-- expand -->
-        <el-row
-          class="px-8 py-16"
-          :class="{ 'bg-[#eff4f9]': record.isExpand }"
-          v-show="record.isExpand"
-        >
-          <el-col :span="2" />
-          <el-col :span="22" class="flex flex-col gap-8">
-            <p class="heading-body-body-12px-medium text-neutrals-grey-4">
-              Answer
-            </p>
-            <!-- markdown 文本-->
-            <vue-markdown
-              :source="record?.answer || ''"
-              class="heading-body-body-12px-medium text-neutrals-off-black"
-            />
-          </el-col>
-        </el-row>
-        <!-- divider -->
-        <el-divider />
-      </template>
+    <template v-for="record in aiChatRecordList" :key="record.id">
+      <el-row
+        class="row-center default-transition hover:bg-neutrals-grey-1 w-full! box-border cursor-pointer py-8"
+        :class="{ 'bg-[#E3EAF3]': record.isExpand }"
+        @click.stop="record.isExpand = !record.isExpand"
+      >
+        <el-col :span="2" class="text-align-center h-16">
+          <el-icon
+            class="h-16 w-16 cursor-pointer"
+            v-if="!record.isExpand"
+            @click.stop="record.isExpand = true"
+          >
+            <CirclePlus />
+          </el-icon>
+          <el-icon
+            class="w-16! h-16 cursor-pointer"
+            v-else
+            @click.stop="record.isExpand = false"
+          >
+            <RemoveFilled />
+          </el-icon>
+        </el-col>
+        <el-col :span="4" class="row-center gap-4">
+          <span
+            class="heading-body-body-12px-medium"
+            :class="
+              record.isExpand
+                ? 'text-neutrals-off-black'
+                : 'text-neutrals-grey-3'
+            "
+          >
+            {{ getDateWithDDMMMYYYYhhmma(record.createTime) }}
+          </span>
+        </el-col>
+        <el-col :span="18" class="row-center gap-4">
+          <p
+            class="heading-body-body-12px-medium text-neutrals-grey-3"
+            :class="
+              record.isExpand
+                ? 'text-neutrals-off-black'
+                : 'text-neutrals-grey-3'
+            "
+          >
+            {{ record.question }}
+          </p>
+        </el-col>
+      </el-row>
+      <!-- expand -->
+      <el-row
+        class="px-8 py-16"
+        :class="{ 'bg-[#eff4f9]': record.isExpand }"
+        v-show="record.isExpand"
+      >
+        <el-col :span="2" />
+        <el-col :span="22" class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-grey-4">
+            Answer
+          </p>
+          <!-- markdown 文本-->
+          <vue-markdown
+            :source="record?.answer || ''"
+            class="heading-body-body-12px-medium text-neutrals-off-black"
+          />
+        </el-col>
+      </el-row>
+      <!-- divider -->
+      <el-divider />
     </template>
   </el-scrollbar>
+  <el-empty
+    description="No data"
+    v-show="!aiChatRecordList.length"
+    class="m-auto!"
+  />
 </template>
 
 <style scoped lang="scss"></style>
