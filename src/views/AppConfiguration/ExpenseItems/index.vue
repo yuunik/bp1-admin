@@ -13,6 +13,7 @@ import {
   getExpenditureUserListApi,
   getExpenseGroupListApi,
   getExpenseListApi,
+  getMaintenanceListApi,
   modifyExpenseItemApi,
 } from '@/apis/appApi.js'
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
@@ -279,7 +280,12 @@ const handleSortChange = useSort(sortParams, () => refresh())
 
 // 数据初始化
 const initData = async () =>
-  await Promise.all([getExpenseList(), getGroupList(), getUserList()])
+  await Promise.all([
+    getExpenseList(),
+    getGroupList(),
+    getUserList(),
+    getMaintenanceList(),
+  ])
 
 // 勾选框勾选
 const handleSelectionChange = (val) =>
@@ -292,6 +298,20 @@ const handleBatchDeleteExpenseItems = async () => {
   // 提示
   ElMessage.success('Edit  successfully')
   refresh()
+}
+
+const maintenanceFilterParams = ref([])
+
+// 获取保养列表
+const getMaintenanceList = async () => {
+  const { data } = await getMaintenanceListApi({
+    page: 0,
+    pageSize: 999,
+  })
+  maintenanceFilterParams.value = data.map((item) => ({
+    label: item.name,
+    value: item.name,
+  }))
 }
 
 // 监听分页数据变化
@@ -566,22 +586,27 @@ onMounted(async () => {
         </div>
         <div class="flex flex-col gap-8">
           <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Maintenance Name
+          </p>
+          <el-select
+            v-model="expenseItemForm.maintenanceName"
+            placeholder="Select"
+          >
+            <el-option
+              v-for="item in maintenanceFilterParams"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
             Item Name
           </p>
           <el-input
             type="textarea"
             v-model="expenseItemForm.name"
-            rows="3"
-            placeholder="Enter"
-          />
-        </div>
-        <div class="flex flex-col gap-8">
-          <p class="heading-body-body-12px-medium text-neutrals-off-black">
-            Maintenance Name
-          </p>
-          <el-input
-            type="textarea"
-            v-model="expenseItemForm.maintenanceName"
             rows="3"
             placeholder="Enter"
           />

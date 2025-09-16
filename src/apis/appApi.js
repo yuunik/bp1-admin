@@ -231,9 +231,9 @@ export const modifyBrandModelNameApi = (params) => {
 export const getMaintenanceListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('searchKey', params.searchKey)
-  data.append('sortKey', params.sortBy)
-  data.append('sort', params.sort)
+  data.append('searchKey', params.searchKey || '')
+  data.append('sortKey', params.sortBy || '')
+  data.append('sort', params.sort || '')
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
 
