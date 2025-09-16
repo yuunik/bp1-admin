@@ -588,6 +588,16 @@ const constantRoutes = [
           showInBreadcrumb: false,
         },
       },
+      {
+        path: '/share/codes',
+        name: 'Code Details',
+        component: () => import('@/share/CodeInfo.vue'),
+        meta: {
+          title: 'Code Details',
+          showInMenu: false,
+          showInBreadcrumb: false,
+        },
+      },
     ],
     meta: {
       title: RouteName.SHARE,

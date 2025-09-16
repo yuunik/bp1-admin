@@ -18,6 +18,8 @@ const ShareApi = Object.freeze({
   GET_PDF: '/dtc/getpdfreport',
   // 获取车辆的错误码详情信息
   GET_VEHICLE_ERROR_CODE_INFO: '/dtc/getfaultinfobycode',
+  // 获取验证码
+  GET_VERIFY_CODE: '/code/codes',
 })
 
 /**
@@ -125,6 +127,17 @@ export const getVehicleErrorCodeInfoApi = (faultCodeId) => {
   data.append('faultCodeId', faultCodeId)
   return request({
     url: ShareApi.GET_VEHICLE_ERROR_CODE_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getVerifyCodeApi = () => {
+  const data = new FormData()
+  data.append('sign', 'admin07sign27pd1')
+
+  return request({
+    url: ShareApi.GET_VERIFY_CODE,
     method: 'POST',
     data,
   })
