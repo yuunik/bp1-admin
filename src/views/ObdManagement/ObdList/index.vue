@@ -331,7 +331,7 @@ getObdList()
         </el-table-column>
         <!-- 使用者 -->
         <el-table-column
-          prop="simpleUserDto?.name"
+          prop="user"
           label="User"
           sortable="custom"
           min-width="14%"
