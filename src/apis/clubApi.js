@@ -1,0 +1,75 @@
+import request from '@/utils/request.js'
+import { useAuthToken } from '@/composables/useAuthToken.js'
+
+const ClubApi = Object.freeze({
+  // 获取俱乐部接口
+  GET_CLUB_LIST: '/club/list',
+  // 新增俱乐部接口
+  ADD_CLUB: '/manager/club/add',
+  // 编辑俱乐部接口
+  EDIT_CLUB: '/manager/club/edit',
+  // 删除俱乐部接口
+  DELETE_CLUB: '/manager/club/delete',
+})
+
+// 获取 token
+const { getToken } = useAuthToken()
+
+export const getClubListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+  data.append('searchKey', params.searchKey)
+  data.append('sortBy', params.sortBy)
+  data.append('sort', params.sort)
+
+  return request({
+    url: ClubApi.GET_CLUB_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+export const addClubApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('name', params.name)
+  data.append('description', params.description)
+  data.append('sort', params.sort)
+  data.append('file', params.logo)
+
+  return request({
+    url: ClubApi.ADD_CLUB,
+    method: 'POST',
+    data,
+  })
+}
+
+export const editClubApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('clubId', params.id)
+  data.append('name', params.name)
+  data.append('description', params.description)
+  data.append('sort', params.sort)
+  typeof params.logo !== 'string' && data.append('file', params.logo)
+
+  return request({
+    url: ClubApi.EDIT_CLUB,
+    method: 'POST',
+    data,
+  })
+}
+
+export const deleteClubApi = (clubId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('clubId', clubId)
+
+  return request({
+    url: ClubApi.DELETE_CLUB,
+    method: 'POST',
+    data,
+  })
+}

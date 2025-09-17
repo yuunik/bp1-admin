@@ -471,6 +471,35 @@ const constantRoutes = [
       isTopLevelRoute: true,
     },
   },
+  {
+    path: '/club-management',
+    redirect: '/club-management/list',
+    name: 'Forum Management',
+    component: () => import('@/layout/index.vue'),
+    children: [
+      {
+        path: '/club-management/list',
+        name: 'Club Management List',
+        component: () => import('@/views/ClubManagement/index.vue'),
+        meta: {
+          title: 'Club Management',
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-typeForum',
+          selectedIcon: 'icon-typeForum',
+        },
+      },
+    ],
+    meta: {
+      title: 'Club Management',
+      showInMenu: true,
+      showInBreadcrumb: false,
+      icon: 'icon-typeForum',
+      selectedIcon: 'icon-typeForum',
+      // 是否为一级路由
+      isTopLevelRoute: true,
+    },
+  },
   // 系统设置
   {
     path: '/setting',

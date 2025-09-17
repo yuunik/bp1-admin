@@ -51,6 +51,7 @@ const handleValidateImageUpload = (file) => {
 
 // 组件挂载
 onMounted(() => {
+  console.log(imgPath, '@@@@@@@@@@@@@@@@')
   // 获取图片路径
   localFilePath.value = imgPath || ''
 })
