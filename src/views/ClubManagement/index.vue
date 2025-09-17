@@ -20,7 +20,12 @@ import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { useSort } from '@/composables/useSort.js'
 import BaseUpload from '@/components/BaseUpload.vue'
-import { addClubApi, editClubApi, getClubListApi } from '@/apis/clubApi.js'
+import {
+  addClubApi,
+  deleteClubApi,
+  editClubApi,
+  getClubListApi,
+} from '@/apis/clubApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 const activeName = ref('All')
@@ -146,7 +151,7 @@ const clubForm = ref({
 })
 
 // 确认删除弹窗
-const dialogDeleteExpenseItemVisible = ref(false)
+const dialogDeleteClubItemVisible = ref(false)
 
 // 排序参数
 const sortParams = reactive({
@@ -246,14 +251,13 @@ const openEditExpenseItemDialog = (row) => {
   dialogClubFormVisible.value = true
 }
 
-// 编辑 expense
+// 编辑 club
 const handleEditClubItem = async () => {
-  console.log(typeof clubForm.value.logo)
   await editClubApi(clubForm.value)
   // 关闭弹窗
   dialogClubFormVisible.value = false
   // 提示
-  ElMessage.success('Edit  successfully')
+  ElMessage.success('Edit successfully')
   refresh()
 }
 
@@ -267,15 +271,15 @@ const handleManageExpenseItem = async () => {
 }
 
 // 打开确认删除弹窗
-const handleOpenDeleteExpenseItemDialog = (row) => {
-  expenseItemForm.value = row
-  dialogDeleteExpenseItemVisible.value = true
+const handleOpenDeleteClubItemDialog = (row) => {
+  clubForm.value = row
+  dialogDeleteClubItemVisible.value = true
 }
 
 // 删除 expense item
 const handleDeleteExpenseItem = async () => {
-  await deleteExpenseItemApi(expenseItemForm.value.id)
-  dialogDeleteExpenseItemVisible.value = false
+  await deleteClubApi(clubForm.value.id)
+  dialogDeleteClubItemVisible.value = false
   // 提示
   ElMessage.success('Delete successfully')
   refresh()
@@ -347,7 +351,7 @@ const handleGetLocalFile = (file) => (clubForm.value.logo = file)
 const errorHandler = (error) => true
 
 // 监听
-watch(dialogDeleteExpenseItemVisible, (val) => {
+watch(dialogDeleteClubItemVisible, (val) => {
   if (!val) {
     clubForm.value = {}
   }
@@ -419,14 +423,6 @@ onMounted(async () => {
           :is-need-input="true"
           @search="refresh"
         />
-        <!-- 创建日期筛选 -->
-        <!--<base-filter-panel-->
-        <!--  v-model="createdDateList"-->
-        <!--  :section-list="createdDateFilterParams"-->
-        <!--  condition-text="Creation Date"-->
-        <!--  @search="refresh"-->
-        <!--/>-->
-
         <!-- 清除按钮 -->
         <el-button
           text
@@ -522,7 +518,7 @@ onMounted(async () => {
                     Edit
                   </el-dropdown-item>
                   <el-dropdown-item
-                    @click="handleOpenDeleteExpenseItemDialog(row)"
+                    @click="handleOpenDeleteClubItemDialog(row)"
                   >
                     Delete
                   </el-dropdown-item>
@@ -580,17 +576,18 @@ onMounted(async () => {
   </base-dialog>
   <!-- 删除 expense item 提示框 -->
   <base-dialog
-    v-model="dialogDeleteExpenseItemVisible"
+    v-model="dialogDeleteClubItemVisible"
     title="Delete Item ?"
     button-type="danger"
     confirm-text="Delete"
-    @cancel="dialogDeleteExpenseItemVisible = false"
+    @cancel="dialogDeleteClubItemVisible = false"
     @confirm="handleDeleteExpenseItem"
   >
     <template #content>
       <p class="heading-body-body-12px-regular text-neutrals-grey-3">
-        Are you sure you want to delete the this club? Once deleted, it cannot
-        be recovered.
+        Are you sure you want to delete the {{ clubForm.name }} Club? All data
+        associated with this club will be permanently deleted, and this action
+        cannot be undone.
       </p>
     </template>
   </base-dialog>
