@@ -36,7 +36,6 @@ export const addClubApi = (params) => {
   data.append('token', getToken())
   data.append('name', params.name)
   data.append('description', params.description)
-  data.append('sort', params.sort)
   data.append('file', params.logo)
 
   return request({
@@ -52,7 +51,6 @@ export const editClubApi = (params) => {
   data.append('clubId', params.id)
   data.append('name', params.name)
   data.append('description', params.description)
-  data.append('sort', params.sort)
   typeof params.logo !== 'string' && data.append('file', params.logo)
 
   return request({
