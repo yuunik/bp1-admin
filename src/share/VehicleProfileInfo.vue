@@ -32,6 +32,14 @@ const getPicInfo = async (id) => {
   vehicleProfileInfo.value = data
 }
 
+// 相册图片张数
+const picCount = computed(() =>
+  vehicleProfileInfo.value.attachmentDtos &&
+  vehicleProfileInfo.value.attachmentDtos.length
+    ? vehicleProfileInfo.value.attachmentDtos.length
+    : 0,
+)
+
 const {
   params: { id },
 } = route
@@ -56,7 +64,9 @@ if (id) {
           {{ vehicleProfileInfo.vehicleDto?.brand }}
           {{ vehicleProfileInfo.vehicleDto?.model }}
         </h2>
-        <span class="heading-body-large-body-14px-regular">26 photos</span>
+        <span class="heading-body-large-body-14px-regular">
+          {{ picCount }} photo{{ picCount !== 1 ? 's' : '' }}
+        </span>
       </div>
       <el-image
         :src="vehicleProfileInfo.vehicleDto?.cover"
