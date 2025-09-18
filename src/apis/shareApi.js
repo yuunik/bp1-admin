@@ -20,6 +20,8 @@ const ShareApi = Object.freeze({
   GET_VEHICLE_ERROR_CODE_INFO: '/dtc/getfaultinfobycode',
   // 获取验证码
   GET_VERIFY_CODE: '/code/codes',
+  // 获取相册详情
+  GET_PHOTO_INFO: '/album/info',
 })
 
 /**
@@ -138,6 +140,17 @@ export const getVerifyCodeApi = () => {
 
   return request({
     url: ShareApi.GET_VERIFY_CODE,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getPhotoInfoApi = (id) => {
+  const data = new FormData()
+  data.append('albumId', id)
+
+  return request({
+    url: ShareApi.GET_PHOTO_INFO,
     method: 'POST',
     data,
   })

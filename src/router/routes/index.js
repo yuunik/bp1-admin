@@ -617,12 +617,24 @@ const constantRoutes = [
           showInBreadcrumb: false,
         },
       },
+      // 邮箱验证码页
       {
         path: '/share/codes',
         name: 'Code Details',
         component: () => import('@/share/CodeInfo.vue'),
         meta: {
           title: 'Code Details',
+          showInMenu: false,
+          showInBreadcrumb: false,
+        },
+      },
+      // 车辆Profile页
+      {
+        path: '/share/vehicle-profile/:id',
+        name: 'Vehicle Profile',
+        component: () => import('@/share/VehicleProfileInfo.vue'),
+        meta: {
+          title: 'Vehicle Profile',
           showInMenu: false,
           showInBreadcrumb: false,
         },

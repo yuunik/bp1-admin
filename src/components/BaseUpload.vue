@@ -51,14 +51,13 @@ const handleValidateImageUpload = (file) => {
 
 // 组件挂载
 onMounted(() => {
-  console.log(imgPath, '@@@@@@@@@@@@@@@@')
   // 获取图片路径
   localFilePath.value = imgPath || ''
 })
 </script>
 
 <template>
-  <div class="w-400 flex h-80 flex-1 gap-24">
+  <div class="flex h-80 flex-1 gap-24">
     <!-- logo -->
     <el-avatar
       :size="64"
@@ -74,8 +73,10 @@ onMounted(() => {
       </i>
     </el-avatar>
     <!-- desc -->
-    <div class="flex flex-col">
-      <p class="heading-body-large-body-14px-medium text-strong-950 mb-12">
+    <div class="flex flex-1 flex-col">
+      <p
+        class="heading-body-large-body-14px-medium text-strong-950 mb-12 w-full whitespace-normal break-words"
+      >
         {{ uploadFileName ? uploadFileName : 'Upload logo' }}
       </p>
       <span class="heading-body-body-12px-regular text-neutrals-grey-3 mb-16">
