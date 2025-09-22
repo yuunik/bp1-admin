@@ -17,6 +17,7 @@ import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getLastUsedDate } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { useSort } from '@/composables/useSort.js'
+import StarIcon from '@/assets/specialIcons/fi_star.svg'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -515,7 +516,7 @@ watch(
             <template #default="{ row }">
               <div class="row-center gap-8">
                 <!-- 星星图标 -->
-                <el-icon class="h-14 w-14"><Star /></el-icon>
+                <el-image :src="StarIcon" size="14" class="row-center!" />
                 <!-- 评分 -->
                 <el-text>{{ row?.rating ?? '-' }}</el-text>
               </div>
