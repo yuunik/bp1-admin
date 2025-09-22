@@ -21,6 +21,52 @@ const workShopForm = reactive({
   file: null,
 })
 
+// 商家表单信息校验
+const workShopFormRules = reactive({
+  name: [
+    {
+      required: true,
+      message: 'Please enter your name',
+      trigger: 'blur',
+    },
+  ],
+  postalCode: [
+    // 只能输入数字
+    {
+      validator(rule, value, callback) {
+        if (value && !/^\d+$/.test(value)) {
+          callback(new Error('Please enter a valid postal code'))
+        } else {
+          callback()
+        }
+      },
+    },
+  ],
+  phoneNumber: [
+    // 只能输入数字
+    {
+      validator(rule, value, callback) {
+        if (value && !/^\d+$/.test(value)) {
+          callback(new Error('Please enter a valid phone number'))
+        } else {
+          callback()
+        }
+      },
+    },
+  ],
+  une: [
+    {
+      required: true,
+      message: 'Please enter your UNE',
+      trigger: 'blur',
+    },
+  ],
+})
+
+// 商家表单
+const workShopFormRef = ref(null)
+const workShopFormRef2 = ref(null)
+
 // 是否显示密码
 const isShowPassword = ref(false)
 
@@ -28,13 +74,29 @@ const router = useRouter()
 
 // 创建商家
 const addWorkshop = async () => {
-  if (!workShopForm.name || !workShopForm.email || !workShopForm.password) {
+  // 表单信息校验
+  await Promise.all([
+    workShopFormRef.value.validate(),
+    workShopFormRef2.value.validate(),
+  ])
+  if (!workShopForm.name) {
     // 必须填写,  姓名, 邮箱, 密码
-    ElMessage.warning('Name, email, and password are required.')
+    ElMessage.warning('Name are required.')
+    return
+  }
+  if (workShopForm.email && !workShopForm.password) {
+    // 必须填写,  姓名, 邮箱, 密码
+    ElMessage.warning('Email and password are required.')
+    return
+  }
+  if (!workShopForm.email && workShopForm.password) {
+    // 必须填写,  姓名, 邮箱, 密码
+    ElMessage.warning('Email and password are required.')
     return
   }
   // 密码加密
-  workShopForm.password = md5Encrypt(workShopForm.password)
+  workShopForm.password &&
+    (workShopForm.password = md5Encrypt(workShopForm.password))
   await addMerchantApi(workShopForm)
   // 提示
   ElMessage.success('Create successful')
@@ -65,7 +127,13 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
       <!-- 分割线 -->
       <el-divider />
       <!-- 商家信息 -->
-      <el-form label-width="112px" label-position="left" :model="workShopForm">
+      <el-form
+        label-width="112px"
+        label-position="left"
+        :model="workShopForm"
+        :rules="workShopFormRules"
+        ref="workShopFormRef"
+      >
         <el-form-item label="Email">
           <el-input
             placeholder="Enter"
@@ -74,7 +142,7 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
             autocomplete="new-email"
           />
         </el-form-item>
-        <el-form-item label="Name">
+        <el-form-item label="Name" prop="name">
           <el-input
             placeholder="Enter"
             class="w-272!"
@@ -117,7 +185,9 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
         :model="workShopForm"
         label-width="112px"
         label-position="left"
-        class="mx-32"
+        class="work-shop-form-container mx-32"
+        :rules="workShopFormRules"
+        ref="workShopFormRef2"
       >
         <el-row :gutter="20">
           <el-col :span="12">
@@ -129,15 +199,18 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Phone Country">
-              <el-input
-                v-model="workShopForm.phoneCountry"
-                placeholder="Enter"
-              />
+            <el-form-item label="Phone Country" prop="phoneCountry">
+              <el-select v-model="workShopForm.phoneCountry">
+                <el-option label="+65" value="+65" />
+                <el-option label="+60" value="+60" />
+                <el-option label="+62" value="+62" />
+                <el-option label="+66" value="+66" />
+                <el-option label="+86" value="+86" />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Phone Number">
+            <el-form-item label="Phone Number" prop="phoneNumber">
               <el-input
                 v-model="workShopForm.phoneNumber"
                 placeholder="Enter"
@@ -145,7 +218,7 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="Postal Code">
+            <el-form-item label="Postal Code" prop="postalCode">
               <el-input
                 v-model="workShopForm.postalCode"
                 style="width: 100%"
@@ -197,5 +270,26 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
   height: 1px;
   background-color: var(--el-input-border-color, var(--el-border-color));
   pointer-events: none;
+}
+
+.create-workshop-container {
+  // 重置下拉框样式
+  :deep(.el-select__wrapper) {
+    background-color: $neutrals-off-white;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  :deep(.el-select__wrapper::after) {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--el-input-border-color, var(--el-border-color));
+    pointer-events: none;
+  }
 }
 </style>
