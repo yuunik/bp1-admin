@@ -26,6 +26,8 @@ const UserApi = Object.freeze({
   GET_USER_VEHICLE_LIST: '/manager/vehicle/vehicles',
   // 新增管理员
   ADD_MANAGER: '/manager/add',
+  // 获取修理厂详情
+  GET_MERCHANT_INFO: '/merchant/getshopinfo',
 })
 
 // 获取 token
@@ -195,6 +197,23 @@ export const addManagerApi = (params) => {
 
   return request({
     url: UserApi.ADD_MANAGER,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取修理厂详情
+ * @param workShopId { id: number } 修理厂id
+ * @returns {Promise<ApiResponse<ShopInfoItem>>} Promise
+ */
+export const getMerchantInfoApi = (workShopId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', workShopId)
+
+  return request({
+    url: UserApi.GET_MERCHANT_INFO,
     method: 'POST',
     data,
   })

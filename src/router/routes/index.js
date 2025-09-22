@@ -228,6 +228,18 @@ const constantRoutes = [
               showInBreadcrumb: true,
             },
           },
+          // 商家详情
+          {
+            path: '/user-management/extern/workshop/:id',
+            name: 'Workshop Manage',
+            component: () =>
+              import('@/views/UserManagement/Extern/WorkshopManagement.vue'),
+            meta: {
+              title: 'Workshop Manage',
+              showInMenu: false,
+              showInBreadcrumb: true,
+            },
+          },
         ],
         meta: {
           title: RouteName.EXTERN,

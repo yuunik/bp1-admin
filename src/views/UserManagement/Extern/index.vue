@@ -181,17 +181,17 @@ const handleUserRowClick = (row, column) => {
   })
 }
 
+// 查看修理厂详情
 const handleMerchantRowClick = (row, column) => {
   const { no } = column
   if (no === 0 || no === 5) {
     return
   }
   // 跳转到修理厂详情页
-  // router.push({
-  //   name: 'External Manage',
-  //   params: { id: row.id },
-  //   query: { type: 'merchant' },
-  // })
+  router.push({
+    name: 'Workshop Manage',
+    params: { id: row.id },
+  })
 }
 
 // 复制重置信息
@@ -253,6 +253,7 @@ watch(
 <template>
   <router-view v-if="$route.name === 'Person Manage'" />
   <router-view v-else-if="$route.name === 'Create Workshop'" />
+  <router-view v-else-if="$route.name === 'Workshop Manage'" />
   <section class="flex h-full flex-col" v-else>
     <!-- Extern Header -->
     <div class="flex-between mx-32 mb-16 h-32">
