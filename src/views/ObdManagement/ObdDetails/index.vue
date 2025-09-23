@@ -152,7 +152,7 @@ const nowObdId = ref('')
 // 获取 OBD 绑定历史列表
 const getOBDBindHistoryList = async (id) => {
   const { data } = await getOBDBindHistoryApi(id)
-  bindHistoryList.value.push(data)
+  bindHistoryList.value = data
 }
 
 // 获取 OBD 绑定车辆列表
