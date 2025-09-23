@@ -49,10 +49,24 @@ const handleValidateImageUpload = (file) => {
   emit('getLocalFile', raw)
 }
 
-// 组件挂载
-onMounted(() => {
-  // 获取图片路径
-  localFilePath.value = imgPath || ''
+// 监听图片路径
+watch(
+  () => imgPath,
+  (val) => {
+    if (val) {
+      localFilePath.value = val
+    }
+  },
+  { immediate: true },
+)
+
+// 清空图片
+const clear = () => {
+  localFilePath.value = ''
+}
+
+defineExpose({
+  clear,
 })
 </script>
 

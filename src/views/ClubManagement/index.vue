@@ -51,6 +51,8 @@ const sortParams = reactive({
 // 勾选的expense item list
 const selectedClubIdList = ref([])
 
+const baseUploadRef = ref(null)
+
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -145,7 +147,12 @@ watch(dialogDeleteClubItemVisible, (val) => {
 
 watch(dialogClubFormVisible, (val) => {
   if (!val) {
-    clubForm.value = {}
+    clubForm.value = {
+      name: '',
+      description: '',
+      logo: '',
+    }
+    baseUploadRef.value.clear()
   }
 })
 
@@ -280,6 +287,7 @@ onMounted(async () => {
       <div class="flex flex-col gap-8">
         <!-- 上传 logo -->
         <base-upload
+          ref="baseUploadRef"
           default-avatar-text="A"
           :img-path="getFullFilePath(clubForm.logo)"
           @get-local-file="handleGetLocalFile"
