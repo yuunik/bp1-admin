@@ -76,7 +76,7 @@ watch(activeTabName, (val) => {
 })
 
 const handleScroll = (scrollData) => {
-  console.log(scrollData, '##############')
+  // console.log(scrollData, '##############')
 }
 
 // 获取车辆dtc历史列表

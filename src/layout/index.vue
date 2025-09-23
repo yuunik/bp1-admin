@@ -1,10 +1,9 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import { computed, provide } from 'vue'
+import { provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
-import routes from '@/router/routes/index.js'
 import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
@@ -15,6 +14,7 @@ import BaseDialog from '@/components/BaseDialog.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
 import { modifyAdminPasswordApi } from '@/apis/userCenterApi.js'
 import { md5Encrypt } from '@/utils/md5Util.js'
+import routes from '@/router/routes/index.js'
 
 const userStore = useUserStore()
 
@@ -24,10 +24,6 @@ const { userId, username, userRole, usernameAbbr } = storeToRefs(userStore)
 const route = useRoute()
 
 const router = useRouter()
-
-const dynamicBreadcrumbList = computed(() =>
-  route.matched.map((item) => ({ ...item })),
-)
 
 const isShowSettingsDialog = ref(false)
 
@@ -120,7 +116,7 @@ const handleModifyAdminPassword = async () => {
   router.push({ name: RouteName.LOGIN })
 }
 
-provide('dynamicBreadcrumbList', dynamicBreadcrumbList)
+// 菜单栏是否折叠
 provide('isMenuCollapsed', isMenuCollapsed)
 </script>
 

@@ -24,6 +24,7 @@ export const UserManagementTab = Object.freeze({
 export const EmitterEvent = Object.freeze({
   UPDATE_BREADCRUMB_LIST: 'updateBreadcrumbList',
   UPDATE_BREADCRUMB_TITLE: 'updateBreadcrumbTitle',
+  CLEAR_BREADCRUMB_LIST: 'clearBreadcrumbList',
 })
 
 // 路由模块名称的常量定义

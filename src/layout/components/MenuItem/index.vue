@@ -1,7 +1,9 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import emitter from '@/utils/emitterUtil.js'
 
 import MenuItem from '@/layout/components/MenuItem/index.vue'
+import { EmitterEvent } from '@/utils/constantsUtil.js'
 
 // 定义数据类型
 defineProps({
@@ -20,7 +22,10 @@ const router = useRouter()
 
 const hoveredIndex = ref(null)
 // 路由跳转
-const handleNavigation = (path) => router.push(path)
+const handleNavigation = (path) => {
+  router.push(path)
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+}
 
 const isMenuCollapsed = inject('isMenuCollapsed')
 </script>

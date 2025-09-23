@@ -11,6 +11,7 @@ const useUserStore = defineStore('user', () => {
   const userInfo = useLocalStorage('userInfo', {}) // 用户信息
   const token = useLocalStorage('token', '') // 用户令牌
   const isLoading = ref(false) // 登录状态
+  const breadcrumb = useLocalStorage('breadcrumb', [])
 
   // actions
   // 获取用户信息
@@ -82,6 +83,7 @@ const useUserStore = defineStore('user', () => {
     userInfo,
     token,
     isLoading,
+    breadcrumb,
     // actions
     login,
     logout,
