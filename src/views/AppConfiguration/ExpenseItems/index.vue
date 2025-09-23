@@ -271,7 +271,7 @@ const getUserList = async () => {
   const { data } = await getExpenditureUserListApi()
   creatorFilterParams.value = data.map((item) => ({
     label: item.name,
-    value: item.id,
+    value: item.name === 'Admin' ? 'admin' : item.id,
   }))
 }
 
@@ -499,7 +499,7 @@ onMounted(async () => {
           sortable="custom"
         >
           <template #default="{ row }">
-            {{ row.userDto?.id || 'Admin' }}
+            {{ row.userDto?.id ? row.userDto.name : 'Admin' }}
           </template>
         </el-table-column>
         <el-table-column
