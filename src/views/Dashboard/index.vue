@@ -179,7 +179,7 @@ const chartOptions = ref({
             <div class="type-2">40%</div>
           </div>
         </div>
-        <div class="container-card2">
+        <div class="container-card2 w-full">
           <div class="container-card2-left">
             <div class="card2-left_1">New Subscription</div>
             <div class="card2-left_2">
@@ -191,7 +191,7 @@ const chartOptions = ref({
             <div class="card2-left_3">Compared to last month</div>
           </div>
           <div class="container-card2-right">
-            <Line :data="chartData" :options="chartOptions" />
+            <!--<Line :data="chartData" :options="chartOptions" />-->
           </div>
         </div>
         <div class="container-card3">
