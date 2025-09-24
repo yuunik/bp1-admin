@@ -1603,7 +1603,7 @@ const avatarErrorHandler = () => true
         class="bg-branding-colours-primary shadow-default text-neutrals-off-white bottom-68 fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer rounded-full border-none px-20 py-10"
         @click="generatePdf"
         :loading="isGeneratingPdf"
-        v-show="showExportButton"
+        v-if="showExportButton"
       >
         Export as PDF
       </el-button>
