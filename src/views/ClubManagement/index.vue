@@ -287,6 +287,7 @@ onMounted(async () => {
       <div class="flex flex-col gap-8">
         <!-- 上传 logo -->
         <base-upload
+          v-if="dialogClubFormVisible"
           ref="baseUploadRef"
           default-avatar-text="A"
           :img-path="getFullFilePath(clubForm.logo)"
