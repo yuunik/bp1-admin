@@ -201,7 +201,7 @@ onMounted(async () => {
       <div class="row-center mx-32 h-72 gap-16">
         <el-avatar
           :size="40"
-          :src="getFullFilePath(workshop.userDto?.logo)"
+          :src="getFullFilePath(workshop.logo)"
           @error="avatarErrorHandler"
         >
           w
@@ -225,12 +225,12 @@ onMounted(async () => {
           </span>
         </dd>
         <dt>Last Login</dt>
-        <dd>{{ getLastUsedDate(workshop.updateTime) }}</dd>
+        <dd>{{ getLastUsedDate(workshop.userDto?.updateTime) || '-' }}</dd>
         <dt>Status</dt>
         <dd>
           <base-tag
-            :color="workshop.userDto?.state === 1 ? 'green' : 'gray'"
-            :text="workshop.userDto?.state === 1 ? 'Active' : 'Disabled'"
+            :color="workshop.userDto?.state === 0 ? 'green' : 'gray'"
+            :text="workshop.userDto?.state === 0 ? 'Active' : 'Disabled'"
           />
         </dd>
       </dl>
@@ -248,43 +248,16 @@ onMounted(async () => {
           class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[112px_1fr_112px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
         >
           <dt>Operating Hours</dt>
-          <dd>{{ workshop.userDto?.email || '-' }}</dd>
-          <dt>Operating Hours</dt>
-          <dd>{{ getDateWithDDMMMYYYYhhmma(workshop.createTime) }}</dd>
+          <dd>{{ workshop.businessHours || '-' }}</dd>
+          <dt>Phone Number</dt>
+          <dd>{{ workshop.phoneNumber || '-' }}</dd>
+          <dt>Phone Country</dt>
+          <dd>{{ workshop.phoneCountry || '-' }}</dd>
           <dt>Address</dt>
-          <dd>{{ workshop.userDto?.businessHours || '-' }}</dd>
+          <dd>{{ workshop.shopAddress || '-' }}</dd>
           <dt>UNE</dt>
-          <dd>{{ workshop.userDto?.UEN || '-' }}</dd>
+          <dd>{{ workshop.UEN || '-' }}</dd>
         </dl>
-      </div>
-      <!-- logs & note -->
-      <div class="flex flex-col gap-8" v-if="logAndNoteDataList.length">
-        <!-- header -->
-        <div class="flex-between mx-32 h-24">
-          <!-- header -->
-          <h4
-            class="row-center heading-body-large-body-14px-medium text-neutrals-off-black h-24"
-          >
-            Logs & Note
-          </h4>
-          <!-- 新增按钮 -->
-          <el-button type="primary" text class="my-8 w-fit">
-            <template #icon>
-              <i class="icon-typesadd branding-colours-primary" />
-            </template>
-            <template #default>New Note</template>
-          </el-button>
-        </div>
-        <el-divider />
-        <!-- table -->
-        <div class="mx-32">
-          <el-table :data="logAndNoteDataList">
-            <el-table-column prop="date" label="Date" />
-            <el-table-column prop="user" label="User" />
-            <el-table-column prop="action" label="Action" />
-            <el-table-column prop="detail" label="Detail" />
-          </el-table>
-        </div>
       </div>
     </el-scrollbar>
   </section>
