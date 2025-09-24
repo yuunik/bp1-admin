@@ -357,7 +357,7 @@ const avatarErrorHandler = () => true
                     :color="
                       vehicleReportInfo.faultCodeCount > 0
                         ? '#EF3C30'
-                        : '##6F7788'
+                        : '#6F7788'
                     "
                   ></base-svg-icon>
                   <p
@@ -382,7 +382,7 @@ const avatarErrorHandler = () => true
                     :color="
                       vehicleReportInfo.reportPredictionDtos?.length > 0
                         ? '#EF3C30'
-                        : '##6F7788'
+                        : '#6F7788'
                     "
                   ></base-svg-icon>
                   <p
