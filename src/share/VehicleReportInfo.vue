@@ -221,7 +221,7 @@ const generatePdf = async () => {
     isGeneratingPdf.value = true
     const { data } = await getPdfApi({
       id: vehicleReportInfo.id,
-      url: 'https://pd1-dev.proteus-dt.com' + route.fullPath,
+      url: window.location.href,
     })
     const link = document.createElement('a')
     link.href = getFullFilePath(data)

@@ -207,7 +207,7 @@ const generatePdf = async () => {
     isGeneratingPdf.value = false
     const { data } = await getPdfApi({
       id: vehicleDTCsReportInfo.id,
-      url: import.meta.env.VITE_SERVER_URL_FILE + route.fullPath,
+      url: window.location.href,
     })
     const link = document.createElement('a')
     link.href = getFullFilePath(data)
