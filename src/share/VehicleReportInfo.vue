@@ -37,6 +37,9 @@ const isGeneratingPdf = ref(false)
 // 车辆报告详情
 const vehicleReportInfo = reactive({})
 
+// 显示导出按钮
+const showExportButton = ref(true)
+
 const route = useRoute()
 
 const vehicleImg = ref('')
@@ -219,6 +222,7 @@ const categoryIconMap = Object.freeze({
 const generatePdf = async () => {
   try {
     isGeneratingPdf.value = true
+    showExportButton.value = false
     const { data } = await getPdfApi({
       id: vehicleReportInfo.id,
       url: window.location.href,
@@ -232,6 +236,7 @@ const generatePdf = async () => {
     document.body.removeChild(link)
   } finally {
     isGeneratingPdf.value = false
+    showExportButton.value = true
   }
 }
 
@@ -1598,6 +1603,7 @@ const avatarErrorHandler = () => true
         class="bg-branding-colours-primary shadow-default text-neutrals-off-white bottom-68 fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer rounded-full border-none px-20 py-10"
         @click="generatePdf"
         :loading="isGeneratingPdf"
+        v-show="showExportButton"
       >
         Export as PDF
       </el-button>
