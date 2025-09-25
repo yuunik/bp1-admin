@@ -5,7 +5,7 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 
 import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent } from '@/utils/constantsUtil.js'
+import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 
 import CompanyLogo from '@/assets/images/company-logo.png'
 import { useUserStore } from '@/store/index.js'
@@ -136,6 +136,12 @@ emitter.on(EmitterEvent.UPDATE_BREADCRUMB_LIST, (val) => {
     breadcrumbList.value.find((item) => {
       if (item.path.includes('/obd-management/obd-details/')) {
         item.meta.title = val
+      }
+    })
+  } else if (route.path.includes('/forum-management/list')) {
+    breadcrumbList.value.find((item) => {
+      if (item.path.includes('/forum-management/list')) {
+        item.meta.title = 'Forum List'
       }
     })
   }

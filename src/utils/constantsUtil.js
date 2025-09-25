@@ -45,6 +45,7 @@ export const RouteName = Object.freeze({
   EXTERN: 'Extern',
   DATABASE: 'Database',
   FORUM_MANAGEMENT: 'Forum Management',
+  FORUM_MANAGEMENT_LIST: 'Forum Management List',
   APP_MANAGEMENT: 'App Management',
   AI_CHAT_MANAGEMENT: 'AI Chat Management',
   VERSION_CONTROL: 'Version Control',

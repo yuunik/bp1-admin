@@ -294,13 +294,13 @@ const constantRoutes = [
   },
   {
     path: '/forum-management',
-    redirect: '/forum-management/list1',
-    name: 'Forum Management',
+    redirect: '/forum-management/list',
+    name: RouteName.FORUM_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: '/forum-management/list1',
-        name: 'Forum Management List',
+        path: '/forum-management/list',
+        name: RouteName.FORUM_MANAGEMENT_LIST,
         component: () => import('@/views/ForumManagement/index.vue'),
         children: [
           // 贴文详情页
@@ -328,7 +328,7 @@ const constantRoutes = [
           },
         ],
         meta: {
-          title: 'Forum Management',
+          title: RouteName.FORUM_MANAGEMENT,
           showInMenu: true,
           showInBreadcrumb: true,
           icon: 'icon-typeForum',
@@ -337,9 +337,9 @@ const constantRoutes = [
       },
     ],
     meta: {
-      title: 'Forum Management',
+      title: RouteName.FORUM_MANAGEMENT,
       showInMenu: true,
-      showInBreadcrumb: false,
+      showInBreadcrumb: true,
       icon: 'icon-typeForum',
       selectedIcon: 'icon-typeForum',
       // 是否为一级路由

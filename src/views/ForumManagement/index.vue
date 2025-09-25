@@ -1,9 +1,14 @@
 <script setup>
 import { ref } from 'vue'
-import { ForumManagementTab, RouteName } from '@/utils/constantsUtil.js'
+import {
+  EmitterEvent,
+  ForumManagementTab,
+  RouteName,
+} from '@/utils/constantsUtil.js'
 
 import Posts from './PostList.vue'
 import Comments from './CommentsList.vue'
+import emitter from '@/utils/emitterUtil.js'
 
 // 当前的tab
 const activeTab = ref(ForumManagementTab.POSTS)
@@ -26,6 +31,9 @@ const goToPostList = () => {
 const goToCommentList = () => {
   activeTab.value = ForumManagementTab.COMMENTS
 }
+
+// 修改面包屑
+emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, [])
 </script>
 
 <template>
