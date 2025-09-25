@@ -141,26 +141,26 @@ watch(
 </script>
 
 <template>
-  <div class="flex-between mx-32 flex h-24 gap-8">
-    <div class="flex h-24 gap-8">
-      <!-- 状态搜索 -->
-      <base-filter-panel
-        v-model="typeList"
-        :section-list="filterParams"
-        condition-text="Type"
-        @search="refresh"
-      />
-      <!-- 重置条件搜索 -->
-      <el-button
-        text
-        type="primary"
-        class="h-24!"
-        @click="typeList = []"
-        v-show="hasCondition"
-      >
-        Clear
-      </el-button>
-    </div>
+  <div class="flex-end mx-32 flex h-24 gap-8">
+    <!--<div class="flex h-24 gap-8">-->
+    <!--  &lt;!&ndash; 状态搜索 &ndash;&gt;-->
+    <!--  <base-filter-panel-->
+    <!--    v-model="typeList"-->
+    <!--    :section-list="filterParams"-->
+    <!--    condition-text="Type"-->
+    <!--    @search="refresh"-->
+    <!--  />-->
+    <!--  &lt;!&ndash; 重置条件搜索 &ndash;&gt;-->
+    <!--  <el-button-->
+    <!--    text-->
+    <!--    type="primary"-->
+    <!--    class="h-24!"-->
+    <!--    @click="typeList = []"-->
+    <!--    v-show="hasCondition"-->
+    <!--  >-->
+    <!--    Clear-->
+    <!--  </el-button>-->
+    <!--</div>-->
     <!-- 条件搜索 -->
     <base-filter-input
       v-model="conditionSearchParams.searchText"
