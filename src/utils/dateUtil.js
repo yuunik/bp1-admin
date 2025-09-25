@@ -127,3 +127,12 @@ export const getDateWithDDMMMYYYYhhmma = (timestamp) => {
   // 格式化日期, 如 "Generated: 22 Aug 2024 10:30am"
   return date.format('DD MMM YYYY hh:mm a')
 }
+
+/**
+ * 获取今天日期, 格式为 "29 Jul 2025, Friday"
+ * @returns {string}
+ */
+export const getTodayWithWeekday = () => {
+  const today = dayjs()
+  return today.format('dddd, DD MMM YYYY')
+}
