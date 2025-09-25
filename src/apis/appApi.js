@@ -109,9 +109,11 @@ export const getBrandModalListApi = (params) => {
  * 获取 AI 管理问题
  * @returns {Promise<ApiResponse<AiQuestionItem[]>>}
  */
-export const getAiQuestionListApi = () => {
+export const getAiQuestionListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
 
   return request({
     url: AppApi.GET_AI_QUESTION_LIST,

@@ -10,20 +10,28 @@ import {
 } from '@/apis/appApi.js'
 import { AIChatManagementTab } from '@/utils/constantsUtil.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import { useSort } from '@/composables/useSort.js'
 
 // 当前的tab
 const activeTab = ref(AIChatManagementTab.PRESET_QUESTIONS)
+
 // ai 问题列表
 const aiQuestionList = reactive([])
+
 // 待添加的问题
 const addQuestion = ref('')
+
+const conditionParams = reactive({
+  sortBy: '',
+  sort: '',
+})
 
 // tab 点击事件
 const handleTabChange = (tab) => (activeTab.value = tab)
 
 // 获取 ai 问题列表
 const getAiQuestionList = async () => {
-  const { data } = await getAiQuestionListApi()
+  const { data } = await getAiQuestionListApi(conditionParams)
   // 赋值
   Object.assign(aiQuestionList, data)
 }
@@ -133,6 +141,9 @@ const handleDeleteQuestion = async (id) => {
   ElMessage.success('Delete AI Question List Success')
 }
 
+// 排序
+const handleSearchBySort = useSort(conditionParams, () => getAiQuestionList())
+
 // 网络请求
 getAiQuestionList()
 
@@ -154,6 +165,7 @@ onBeforeUnmount(() => {
       :data="aiQuestionList"
       :span-method="handleTableSpan"
       class="flex-1"
+      @sort-change="handleSearchBySort"
     >
       <!-- 序号 -->
       <el-table-column
@@ -204,6 +216,7 @@ onBeforeUnmount(() => {
         sortable="custom"
         column-key="status"
         min-width="11%"
+        prop="status"
       >
         <!-- 月姐说了: 激活 1, 禁用 0 -->
         <template #default="{ row }">
