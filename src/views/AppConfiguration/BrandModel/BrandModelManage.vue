@@ -16,6 +16,7 @@ import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
+import BaseTag from '@/components/BaseTag.vue'
 
 // 车辆详情
 const brandModelInfo = ref({})
@@ -128,7 +129,7 @@ const handleDeleteBrand = async () => {
       <h3 class="heading-h2-20px-medium neutrals-off-black">
         {{ brandModelInfo.brand }}
       </h3>
-      <div class="flex gap-8">
+      <div class="flex gap-8" v-if="!brandModelInfo.isDelete">
         <el-button @click="handleDeleteBrand">Delete</el-button>
       </div>
     </div>
@@ -181,7 +182,7 @@ const handleDeleteBrand = async () => {
             </template>
           </div>
           <!-- 状态 -->
-          <div class="flex gap-8">
+          <div class="row-center gap-8">
             <!-- 标签 -->
             <label
               class="w-112 heading-body-body-12px-medium neutrals-grey-3 leading-32 h-32"
@@ -189,12 +190,11 @@ const handleDeleteBrand = async () => {
               Status
             </label>
             <!-- 值 -->
-            <div class="w-264 h-32">
-              <el-tag
-                :type="brandModelInfo.isDelete === 0 ? 'success' : 'info'"
-              >
-                {{ brandModelInfo.isDelete === 0 ? 'Active' : 'Disabled' }}
-              </el-tag>
+            <div class="w-264 row-center h-32">
+              <base-tag
+                :color="brandModelInfo.isDelete === 0 ? 'green' : 'gray'"
+                :text="brandModelInfo.isDelete === 0 ? 'Active' : 'Disabled'"
+              />
             </div>
           </div>
         </div>
