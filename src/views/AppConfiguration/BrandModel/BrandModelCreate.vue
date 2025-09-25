@@ -5,6 +5,8 @@ import { useRouter } from 'vue-router'
 
 import { addBrandApi, addBrandModelApi } from '@/apis/appApi.js'
 import useFileUpload from '@/composables/useFileUpload.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseUpload from '@/components/BaseUpload.vue'
 
 const router = useRouter()
 
@@ -12,6 +14,7 @@ const router = useRouter()
 const pendingBrand = reactive({
   name: '',
   editing: true,
+  logo: null,
 })
 
 // 待添加的车辆品牌型号列表, 初始默认添加三个
@@ -20,9 +23,6 @@ const pendingBrandModelList = reactive([
   { isChecked: false, brandModelName: '', editing: true },
   { isChecked: false, brandModelName: '', editing: true },
 ])
-
-// 文件上传
-const fileUpload = useFileUpload()
 
 // 新增待添加的车辆品牌
 const handleAddPendingBrandModel = () =>
@@ -36,8 +36,8 @@ const handleAddPendingBrandModel = () =>
 const handleDeletePendingBrandModelItem = (index) =>
   pendingBrandModelList.splice(index, 1)
 
-// logo 加载失败时的回退行为
-const errorAvatarHandler = () => true
+// 获取上传的本地文件
+const handleGetLocalFile = (file) => (pendingBrand.logo = file)
 
 // 新增车辆品牌及型号
 const handleAddBrand = async () => {
@@ -60,7 +60,7 @@ const handleAddBrand = async () => {
       .filter((item) => item.brandModelName.trim() !== '')
       .map((item) => item.brandModelName.trim())
       .join(','),
-    logo: fileUpload.uploadFile.value || '',
+    logo: pendingBrand.logo || '',
   })
   // 添加成功
   ElMessage.success('Add Brand Model Success')
@@ -111,44 +111,12 @@ const handleBrandInputBlur = () => {
     <!-- content -->
     <!-- 品牌信息 -->
     <div class="flex gap-24 px-32 pb-24 pt-16">
-      <!-- 品牌 logo -->
-      <div class="w-400 flex h-80 flex-1 gap-24">
-        <!-- logo -->
-        <el-avatar
-          :size="64"
-          :src="fileUpload.localFilePath"
-          fit="cover"
-          @error="errorAvatarHandler"
-        >
-          <!-- logo 加载失败的默认显示 -->
-          <i class="flex-center h-64 w-64">
-            <el-text class="heading-h1-26px-medium neutrals-off-black">
-              B
-            </el-text>
-          </i>
-        </el-avatar>
-        <!-- desc -->
-        <div class="flex flex-col">
-          <p class="heading-body-large-body-14px-medium text-strong-950 mb-12">
-            Upload Logo
-          </p>
-          <span
-            class="heading-body-body-12px-regular text-neutrals-grey-3 mb-16"
-          >
-            Min 400x400px, PNG or JPEG
-          </span>
-          <!-- 更换 logo 图片 -->
-          <el-upload
-            :auto-upload="false"
-            :show-file-list="false"
-            :on-change="fileUpload.handleValidateImageUpload"
-          >
-            <template #trigger>
-              <el-button>Upload</el-button>
-            </template>
-          </el-upload>
-        </div>
-      </div>
+      <!-- logo -->
+      <base-upload
+        default-avatar-text="B"
+        :img-path="pendingBrand.logo"
+        @get-local-file="handleGetLocalFile"
+      />
       <!-- 品牌名称 -->
       <div
         class="w-384 bottom-border-only flex h-80 flex-1 justify-start gap-8"
