@@ -9,10 +9,12 @@ import {
   getBrandModelInfoApi,
   modifyBrandModelNameApi,
   modifyBrandNameApi,
+  uploadBrandLogoApi,
 } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
+import BaseUpload from '@/components/BaseUpload.vue'
 
 // 车辆详情
 const brandModelInfo = ref({})
@@ -44,6 +46,19 @@ if (route.params.id) {
 } else {
   // 无 id , 则跳转至首页
   router.push({ name: RouteName.DASHBOARD })
+}
+
+// 获取上传的本地文件
+const handleGetLocalFile = async (file) => {
+  const {
+    data: { logo },
+  } = await uploadBrandLogoApi({
+    file: file,
+    brandId: brandModelInfo.value.id,
+  })
+  // 修改成功
+  ElMessage.success('Upload Logo Success')
+  brandModelInfo.value.logo = logo
 }
 
 // 编辑车辆品牌名称
@@ -115,23 +130,13 @@ const handleDeleteBrandModel = async (id) => {
     <div>
       <!-- 品牌信息 -->
       <div class="flex gap-24 px-32 pb-24 pt-16">
-        <!-- 品牌 logo -->
-        <div class="w-400 flex h-80 flex-1 gap-24">
-          <!-- logo -->
-          <el-image
-            v-if="brandModelInfo"
-            :src="getFullFilePath(brandModelInfo?.logo)"
-            fit="cover"
-            class="h-64 w-64"
-            loading="lazy"
-          />
-          <!-- desc -->
-          <div class="flex flex-col gap-16">
-            <el-text class="w-full!">Logo</el-text>
-            <!-- 更换 logo 图片 -->
-            <el-button>Change</el-button>
-          </div>
-        </div>
+        <!-- logo -->
+        <base-upload
+          :key="brandModelInfo.logo"
+          default-avatar-text="B"
+          :img-path="getFullFilePath(brandModelInfo.logo)"
+          @get-local-file="handleGetLocalFile"
+        />
         <!-- 品牌名称 -->
         <div class="w-384 flex h-80 flex-1 flex-col gap-4">
           <!-- 名称 -->

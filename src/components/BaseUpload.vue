@@ -55,6 +55,13 @@ onMounted(() => {
   localFilePath.value = imgPath || ''
 })
 
+watch(
+  () => imgPath,
+  (newVal) => {
+    localFilePath.value = newVal || ''
+  },
+)
+
 // 清空图片
 const clear = () => {
   localFilePath.value = ''

@@ -75,6 +75,8 @@ const AppApi = Object.freeze({
   MODIFY_EXPENSE_ITEM: '/manager/expenditure/edit',
   // 管理员获取用户信息，筛选使用
   GET_USER_LIST: '/manager/expenditure/users',
+  // 上传品牌logo
+  UPLOAD_BRAND_LOGO: '/manager/brand/logo',
 })
 
 // 获取 token
@@ -701,6 +703,22 @@ export const getExpenditureUserListApi = () => {
 
   return request({
     url: AppApi.GET_USER_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 上传品牌logo
+ */
+export const uploadBrandLogoApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('file', params.file)
+  data.append('brandId', params.brandId)
+
+  return request({
+    url: AppApi.UPLOAD_BRAND_LOGO,
     method: 'POST',
     data,
   })
