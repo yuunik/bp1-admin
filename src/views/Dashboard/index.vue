@@ -106,7 +106,7 @@ const chartOptions = ref({
             <div class="order_2_allorders-data">100</div>
           </div>
           <div class="order_2_box1">
-            <div class="order_2_new">新增</div>
+            <div class="order_2_new text-nowrap">Add New</div>
             <div class="order_2_new-data">20</div>
           </div>
         </div>
@@ -156,11 +156,11 @@ const chartOptions = ref({
             <div class="type-2">200</div>
           </div>
           <div class="user_box">
-            <div class="type-1">活跃用户</div>
+            <div class="type-1">Active Users</div>
             <div class="type-2">80</div>
           </div>
           <div class="user_box">
-            <div class="type-1">使用OBD用户</div>
+            <div class="type-1">OBD Users</div>
             <div class="type-2">60</div>
           </div>
         </div>
@@ -175,7 +175,7 @@ const chartOptions = ref({
             <div class="type-2">50</div>
           </div>
           <div class="container-card1-right">
-            <div class="type-1">订阅率</div>
+            <div class="type-1">Subscription Rate</div>
             <div class="type-2">40%</div>
           </div>
         </div>
