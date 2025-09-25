@@ -77,6 +77,8 @@ const AppApi = Object.freeze({
   GET_USER_LIST: '/manager/expenditure/users',
   // 上传品牌logo
   UPLOAD_BRAND_LOGO: '/manager/brand/logo',
+  // 删除品牌
+  DELETE_BRAND: '/manager/brand/delete',
 })
 
 // 获取 token
@@ -719,6 +721,21 @@ export const uploadBrandLogoApi = (params) => {
 
   return request({
     url: AppApi.UPLOAD_BRAND_LOGO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除品牌
+ */
+export const deleteBrandApi = (brandId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', brandId)
+
+  return request({
+    url: AppApi.DELETE_BRAND,
     method: 'POST',
     data,
   })

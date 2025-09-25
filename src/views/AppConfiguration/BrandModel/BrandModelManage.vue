@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 
 import {
   addBrandModelApi,
+  deleteBrandApi,
   deleteBrandModelApi,
   getBrandModelInfoApi,
   modifyBrandModelNameApi,
@@ -103,12 +104,20 @@ const handleAddPendingBrandModel = () => {
   })
 }
 
-// 删除车辆品牌
+// 删除车辆品牌型号
 const handleDeleteBrandModel = async (id) => {
   await deleteBrandModelApi(id)
   // 删除成功
   ElMessage.success('Delete Brand Model Success')
   getBrandModelInfo(route.params.id)
+}
+
+// 删除车辆品牌
+const handleDeleteBrand = async () => {
+  await deleteBrandApi(brandModelInfo.value.id)
+  // 删除成功
+  ElMessage.success('Delete Brand Success')
+  router.push({ name: 'BrandAndModelTable' })
 }
 </script>
 
@@ -120,8 +129,7 @@ const handleDeleteBrandModel = async (id) => {
         {{ brandModelInfo.brand }}
       </h3>
       <div class="flex gap-8">
-        <el-button>Disable</el-button>
-        <el-button>Sort</el-button>
+        <el-button @click="handleDeleteBrand">Delete</el-button>
       </div>
     </div>
     <!-- divider -->
