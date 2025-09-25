@@ -9,8 +9,11 @@ import BasePagination from '@/components/BasePagination.vue'
 import { getFormattedPublishTime } from '@/utils/dateUtil.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import { computed, ref } from 'vue'
 
-const searchText = ref('')
+const searchKey = ref('')
 
 const handleSearch = () => {}
 
@@ -38,10 +41,28 @@ const deleteContent = ref('')
 // 所选中的版本信息
 const selectedRow = ref({})
 
+const platformList = ref([])
+
+const platformKeys = computed(() =>
+  platformList.value.length > 0 ? platformList.value.join(',') : '',
+)
+
+const platformFilterParams = ref([
+  {
+    label: 'iOS',
+    value: 'iOS',
+  },
+  {
+    label: 'Android',
+    value: 'Android',
+  },
+])
+
 // 获取版本列表
 const getAppVersionList = useDebounceFn(async () => {
   const { data, count } = await getAppVersionListApi({
-    types: searchType.value,
+    searchKey: searchKey.value,
+    types: platformKeys.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
@@ -131,44 +152,28 @@ getAppVersionList()
         New Config
       </el-button>
     </div>
-    <!-- search -->
-    <div class="flex-between mx-32 h-24 gap-8">
-      <!-- 搜索栏 -->
-      <el-input
-        placeholder="Search..."
-        class="version-control-list-search"
-        v-model="searchText"
-        @input="handleSearch"
-      >
-        <template #prefix>
-          <!-- 前置搜索图标 -->
-          <i class="icon-mail-send-line-1 text-16" />
-        </template>
-      </el-input>
-      <!-- 状态搜索 -->
-      <el-dropdown @command="handlePlatformChange" v-if="!searchType">
-        <span
-          class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
+    <!-- 搜索栏 -->
+    <div class="flex-between mx-32 h-24">
+      <div class="row-center h-24 gap-8">
+        <!-- 账号状态筛选 -->
+        <base-filter-panel
+          v-model="platformList"
+          :section-list="platformFilterParams"
+          condition-text="Platform"
+          @search="refresh"
+        />
+        <!-- 清除按钮 -->
+        <el-button
+          text
+          class="h-24! text-status-colours-blue!"
+          @click="platformList = []"
+          v-show="platformList.length"
         >
-          Platform
-          <i class="icon-typesdropdown" />
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="iOS">iOS</el-dropdown-item>
-            <el-dropdown-item command="Android">Android</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-      <el-tag
-        v-else
-        closable
-        type="primary"
-        @close="removeSearchPlatform"
-        class="w-84 h-24"
-      >
-        {{ searchType }}
-      </el-tag>
+          Clear
+        </el-button>
+      </div>
+      <!-- 输入搜索 -->
+      <base-filter-input v-model="searchKey" @inputChange="refresh" />
     </div>
     <!-- divider -->
     <el-divider />

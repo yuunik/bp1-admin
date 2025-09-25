@@ -483,6 +483,7 @@ export const getAppVersionInfoApi = (id) => {
  * @param {string} params.types 版本类型 (IOS,Android)
  * @param {string} params.page 不填默认0
  * @param {string} params.pageSize 不填默认20
+ * @param {string} params.searchKey 搜索关键字
  * @returns {Promise<ApiResponse<any>>}
  */
 export const getAppVersionListApi = (params) => {
@@ -491,6 +492,7 @@ export const getAppVersionListApi = (params) => {
   data.append('types', params.types)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
+  data.append('searchKey', params.searchKey)
 
   return request({
     url: AppApi.GET_VERSION_LIST,
