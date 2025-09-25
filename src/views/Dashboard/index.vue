@@ -5,6 +5,8 @@ import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
 // 静态资源
 import GreetingIcon from '@/assets/images/Waving Hand.png'
+import { useUserStore } from '@/store/index.js'
+import { storeToRefs } from 'pinia'
 
 const chartData = ref({
   labels: [
@@ -74,6 +76,11 @@ const chartOptions = ref({
     },
   },
 })
+
+const userStore = useUserStore()
+
+// 获取用户相关信息
+const { username } = storeToRefs(userStore)
 </script>
 
 <template>
@@ -83,7 +90,7 @@ const chartOptions = ref({
         <div class="greeting-left">
           <p class="greeting-left_welcome">Welcome back!</p>
           <div class="greeting-left_name">
-            <h2 class="greeting-left_name_text">Jonathan Wong</h2>
+            <h2 class="greeting-left_name_text">{{ username }}</h2>
             <div class="h-24 w-24">
               <img :src="GreetingIcon" alt="Waving Hand" />
             </div>
@@ -311,7 +318,7 @@ const chartOptions = ref({
 }
 
 .greeting-left_name_text {
-  width: 150px;
+  width: fit-content;
   height: 15px;
   content: 'Jonathan Wong';
   font-weight: 500;
