@@ -164,9 +164,6 @@ const getOBDBindVehicleList = async (id) => {
 // 查看 OBD 绑定的车辆详情
 const handleViewVehicleDetails = async (id) =>
   router.push(`/obd-management/obd-list/obd-details/vehicle-details/${id}`)
-// router.push(
-//   `/obd-management/obd-list/obd-details/vehicle-details/${id}?obdId=${nowObdId.value}`,
-// )
 
 // 获取 OBD 操作记录
 const getOBDOperationRecord = async (id) => {
@@ -324,11 +321,7 @@ const loadOBDData = async (id) => {
 </script>
 
 <template>
-  <router-view
-    v-if="$route.name === RouteName.VIEW_VEHICLE"
-    @refresh="getOBDInfo"
-  />
-  <section class="flex h-full flex-col overflow-auto" v-else>
+  <section class="flex h-full flex-col overflow-auto">
     <!-- header -->
     <div class="flex-between px-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">

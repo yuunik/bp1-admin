@@ -47,7 +47,7 @@ const constantRoutes = [
   {
     path: '/orderManagement',
     redirect: '/order-management',
-    name: 'OrderManagement',
+    name: RouteName.ORDER_MANAGEMENT_INDEX,
     component: () => import('@/layout/index.vue'),
     children: [
       {
@@ -64,7 +64,7 @@ const constantRoutes = [
       },
     ],
     meta: {
-      title: 'OrderManagement',
+      title: RouteName.ORDER_MANAGEMENT_INDEX,
       showInMenu: false,
       showInBreadcrumb: false,
       // 是否为一级路由
@@ -93,22 +93,20 @@ const constantRoutes = [
         path: '/obd-management/obd-details/:id',
         name: RouteName.OBD_DETAILS,
         component: () => import('@/views/ObdManagement/ObdDetails/index.vue'),
-        children: [
-          // 车辆详情页
-          {
-            path: '/obd-management/obd-list/obd-details/vehicle-details/:id',
-            name: RouteName.VIEW_VEHICLE,
-            component: () =>
-              import('@/views/ObdManagement/VehicleDetails/index.vue'),
-            meta: {
-              title: RouteName.VIEW_VEHICLE,
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-        ],
         meta: {
           title: RouteName.OBD_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      // 车辆详情页
+      {
+        path: '/obd-management/obd-list/obd-details/vehicle-details/:id',
+        name: RouteName.VIEW_VEHICLE,
+        component: () =>
+          import('@/views/ObdManagement/VehicleDetails/index.vue'),
+        meta: {
+          title: RouteName.VIEW_VEHICLE,
           showInMenu: false,
           showInBreadcrumb: true,
         },
