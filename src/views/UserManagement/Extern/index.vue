@@ -18,6 +18,9 @@ import { getLastUsedDate } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { useSort } from '@/composables/useSort.js'
 import StarIcon from '@/assets/specialIcons/fi_star.svg'
+import BaseTag from '@/components/BaseTag.vue'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
 // 修理厂列表
 const merchantList = ref([])
@@ -56,6 +59,28 @@ const dialogResetPasswordVisible = ref(false)
 // 重置密码的用户信息
 const resetPasswordUser = ref(null)
 
+// 状态筛选参数
+const statusList = ref([])
+
+const statusKeys = computed(() =>
+  statusList.value.length > 0 ? statusList.value.join(',') : '',
+)
+
+const statusFilterParams = ref([
+  {
+    label: 'Active',
+    value: 1,
+  },
+  {
+    label: 'Banned',
+    value: 2,
+  },
+  {
+    label: 'Disabled',
+    value: 0,
+  },
+])
+
 const router = useRouter()
 
 // 获取用户列表
@@ -66,6 +91,7 @@ const getUserList = useDebounceFn(async () => {
     pageSize: pagination.value.pageSize,
     sort: userSortParams.sort,
     sortBy: userSortParams.sortBy,
+    statusKey: statusKeys.value,
   })
   // 记录总数
   pagination.value.total = count
@@ -81,6 +107,7 @@ const getMerchantList = useDebounceFn(async () => {
     pageSize: pagination.value.pageSize,
     sort: merchantSortParams.sort,
     sortBy: merchantSortParams.sortBy,
+    statusKey: statusKeys.value,
   })
   // 记录总数
   pagination.value.total = count
@@ -213,6 +240,52 @@ const handleCopyPassword = async () => {
   }
 }
 
+// 获取 tag 颜色
+const getTagColor = (state) => {
+  switch (state) {
+    case 1:
+      return 'green'
+    case 2:
+      return 'red'
+    default:
+      return 'gray'
+  }
+}
+
+// 获取 tag 文本
+const getTagText = (state) => {
+  switch (state) {
+    case 1:
+      return 'Active'
+    case 2:
+      return 'Banned'
+    default:
+      return 'Disabled'
+  }
+}
+
+const refresh = () => {
+  if (activeTab.value === UserManagementTab.PERSON) {
+    onUserListRefresh()
+  } else if (activeTab.value === UserManagementTab.Workshop) {
+    onMerchantListRefresh()
+  }
+}
+
+const onUserListRefresh = () => {
+  if (pagination.value.currentPage === 0) {
+    return getUserList()
+  }
+  pagination.value.currentPage = 0
+}
+
+const onMerchantListRefresh = () => {
+  if (pagination.value.currentPage === 0) {
+    return getMerchantList()
+  }
+  pagination.value.currentPage = 0
+}
+
 // 监听tab变化，获取对应列表
 watch(
   () => activeTab.value,
@@ -223,8 +296,6 @@ watch(
       pageSize: 15,
       total: 0,
     }
-    // 清空条件搜索文本
-    searchKey.value = ''
     // 获取对应列表
     if (val === UserManagementTab.PERSON) {
       getUserList()
@@ -255,9 +326,9 @@ watch(
   <router-view v-if="$route.name === 'Person Manage'" />
   <router-view v-else-if="$route.name === 'Create Workshop'" />
   <router-view v-else-if="$route.name === 'Workshop Manage'" />
-  <section class="flex h-full flex-col" v-else>
+  <section class="flex h-full flex-col gap-16" v-else>
     <!-- Extern Header -->
-    <div class="flex-between mx-32 mb-16 h-32">
+    <div class="flex-between mx-32 h-32">
       <!-- 标题栏 -->
       <h3 class="heading-h2-20px-medium">Extern</h3>
       <!-- 创建修理厂按钮 -->
@@ -282,38 +353,27 @@ watch(
       />
     </el-tabs>
     <!-- 搜索栏 -->
-    <div class="flex-between mx-32">
-      <!-- 条件搜索 -->
-      <el-input
-        v-model="searchKey"
-        @input="handleSearchByCondition"
-        placeholder="Search..."
-        class="extern-search mt-16"
-      >
-        <template #prefix>
-          <!-- 前置搜索图标 -->
-          <i class="icon-mail-send-line-1 text-16" />
-        </template>
-      </el-input>
-      <!-- 状态搜索 -->
-      <el-dropdown trigger="click">
-        <span
-          class="border-1 neutrals-grey-3 flex cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4"
+    <div class="flex-between mx-32 h-24">
+      <div class="row-center h-24 gap-8">
+        <!-- 账号状态筛选 -->
+        <base-filter-panel
+          v-model="statusList"
+          :section-list="statusFilterParams"
+          condition-text="Status"
+          @search="refresh"
+        />
+        <!-- 清除按钮 -->
+        <el-button
+          text
+          class="h-24! text-status-colours-blue!"
+          @click="statusList = []"
+          v-show="statusList.length"
         >
-          Status
-          <i class="icon-typesdropdown" />
-        </span>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item>Action 1</el-dropdown-item>
-            <el-dropdown-item>Action 2</el-dropdown-item>
-            <el-dropdown-item>Action 3</el-dropdown-item>
-            <el-dropdown-item disabled>Action 4</el-dropdown-item>
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
-            <el-dropdown-item divided>Action 6</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+          Clear
+        </el-button>
+      </div>
+      <!-- 输入搜索 -->
+      <base-filter-input v-model="searchKey" @inputChange="refresh" />
     </div>
     <!-- 分割线 -->
     <el-divider />
@@ -377,9 +437,10 @@ watch(
           >
             <template #default="{ row }">
               <!-- 用户状态, state 为 1, 激活, 为 0, 删除 , 为2, 禁用-->
-              <el-tag :type="row.state === 1 ? 'success' : 'info'">
-                {{ row?.state === 1 ? 'Active' : 'Disabled' }}
-              </el-tag>
+              <base-tag
+                :text="getTagText(row?.state)"
+                :color="getTagColor(row?.state)"
+              />
             </template>
           </el-table-column>
           <!-- OBD 数量 -->
@@ -596,5 +657,10 @@ watch(
 
 :deep(.el-table__body) {
   @apply w-full!;
+}
+
+// 重置 tab 的下划线
+:deep(.el-tabs__header) {
+  border: none;
 }
 </style>

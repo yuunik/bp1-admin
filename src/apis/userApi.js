@@ -67,6 +67,7 @@ export const getUserListApi = (params) => {
   data.append('pageSize', params.pageSize)
   data.append('sort', params.sort)
   data.append('sortBy', params.sortBy)
+  data.append('status', params.statusKey)
 
   return request({
     url: UserApi.GET_USER_LIST,
