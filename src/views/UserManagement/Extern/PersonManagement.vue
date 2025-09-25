@@ -83,6 +83,14 @@ const dialogResetPasswordVisible = ref(false)
 // 重置的密码
 const resetPassword = ref('')
 
+const customDetailsRef = ref(null)
+
+const obdDevicesRef = ref(null)
+
+const vehiclesRef = ref(null)
+
+const logsAndNoteRef = ref(null)
+
 // 复制 handleCopyTransactionID
 const handleCopyTransactionID = async () => {
   try {
@@ -163,6 +171,50 @@ const handleCopyResetPassword = async () => {
 const handleViewVehicleDetails = async (id) =>
   router.push(`/obd-management/obd-list/obd-details/vehicle-details/${id}`)
 
+// 监听 tab 切换
+watch(activeTab, (val) => {
+  if (val === 'OBD Devices') {
+    obdDevicesRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Vehicles') {
+    vehiclesRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Logs & Note') {
+    logsAndNoteRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Customer Details') {
+    customDetailsRef.value.scrollIntoView({ behavior: 'smooth' })
+  }
+})
+
+const sectionMap = [
+  { key: 'Customer Details', ref: customDetailsRef },
+  { key: 'OBD Devices', ref: obdDevicesRef },
+  { key: 'Vehicles', ref: vehiclesRef },
+  { key: 'Logs & Note', ref: logsAndNoteRef },
+]
+
+const scrollbarRef = ref()
+
+const handleScroll = () => {
+  const scrollTop = scrollbarRef.value?.wrapRef?.scrollTop ?? 0
+
+  let closestSection = sectionMap[0]
+  let minDistance = Infinity
+
+  for (const section of sectionMap) {
+    const el = section.ref.value
+    if (!el) continue
+
+    const offset = el.offsetTop
+    const distance = Math.abs(scrollTop - offset)
+
+    if (distance < minDistance) {
+      minDistance = distance
+      closestSection = section
+    }
+  }
+
+  activeTab.value = closestSection.key
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -202,12 +254,20 @@ onMounted(async () => {
     <el-divider />
     <el-tabs v-model="activeTab">
       <el-tab-pane label="Customer Details" name="Customer Details" />
-      <el-tab-pane label="OBD Devices" name="OBD Devices" />
-      <el-tab-pane label="Vehicles" name="Vehicles" />
-      <el-tab-pane label="Logs & Note" name="Logs & Note" />
+      <el-tab-pane
+        label="OBD Devices"
+        name="OBD Devices"
+        v-if="obdDeviceList.length"
+      />
+      <el-tab-pane label="Vehicles" name="Vehicles" v-if="vehicleList.length" />
+      <el-tab-pane
+        label="Logs & Note"
+        name="Logs & Note"
+        v-if="logAndNoteDataList.length"
+      />
     </el-tabs>
-    <el-scrollbar>
-      <div class="row-center mx-32 h-72 gap-16">
+    <el-scrollbar @scroll="handleScroll" ref="scrollbarRef">
+      <div class="row-center mx-32 h-72 gap-16" ref="customDetailsRef">
         <el-avatar
           :size="40"
           :src="getFullFilePath(userInfo.logo)"
@@ -239,7 +299,11 @@ onMounted(async () => {
         </dd>
       </dl>
       <!-- OBD Devices -->
-      <div class="flex flex-col gap-8" v-if="obdDeviceList.length">
+      <div
+        class="flex flex-col gap-8"
+        v-if="obdDeviceList.length"
+        ref="obdDevicesRef"
+      >
         <!-- header -->
         <div
           class="row-center heading-body-large-body-14px-medium mx-32 h-24 gap-8"
@@ -291,7 +355,11 @@ onMounted(async () => {
         </div>
       </div>
       <!-- Vehicles -->
-      <div class="flex flex-col gap-8" v-if="vehicleList.length">
+      <div
+        class="flex flex-col gap-8"
+        v-if="vehicleList.length"
+        ref="vehiclesRef"
+      >
         <!-- header -->
         <h4
           class="row-center heading-body-large-body-14px-medium text-neutrals-off-black mx-32 h-24"
@@ -362,7 +430,11 @@ onMounted(async () => {
         </div>
       </div>
       <!-- logs & note -->
-      <div class="flex flex-col gap-8" v-if="logAndNoteDataList.length">
+      <div
+        class="flex flex-col gap-8"
+        v-if="logAndNoteDataList.length"
+        ref="logsAndNoteRef"
+      >
         <!-- header -->
         <div class="flex-between mx-32 h-24">
           <!-- header -->
