@@ -6,6 +6,7 @@ import { onMounted, reactive, ref } from 'vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
   adminUserStatusApi,
+  disableMerchantApi,
   getMerchantInfoApi,
   getUserOBDListApi,
   getUserVehicleListApi,
@@ -59,11 +60,11 @@ const obdDeviceList = ref([])
 const vehicleList = ref([])
 
 // 当前用户 id
-const userId = ref('')
+const workshopId = ref('')
 
 const dialogUnbindOBDVisible = ref(false)
 
-const dialogDisabledUserVisible = ref(false)
+const dialogDisabledWorkshopVisible = ref(false)
 
 const dialogBanUserVisible = ref(false)
 
@@ -92,19 +93,19 @@ const handleCopyTransactionID = async () => {
 
 // 获取用户详情
 const getUserInfo = async () => {
-  const { data } = await getMerchantInfoApi(userId.value)
+  const { data } = await getMerchantInfoApi(workshopId.value)
   Object.assign(workshop, data)
 }
 
 // 获取用户已绑定的OBD列表
 const getUserOBDList = async () => {
-  const { data } = await getUserOBDListApi(userId.value)
+  const { data } = await getUserOBDListApi(workshopId.value)
   obdDeviceList.value = data
 }
 
 // 获取用户已绑定的车辆列表
 const getUserVehicleList = async () => {
-  const { data } = await getUserVehicleListApi(userId.value)
+  const { data } = await getUserVehicleListApi(workshopId.value)
   vehicleList.value = data
 }
 
@@ -113,7 +114,7 @@ const avatarErrorHandler = () => true
 
 // 管理员禁用、解禁用户
 const handleUserStatus = async () => {
-  await adminUserStatusApi(userId.value)
+  await adminUserStatusApi(workshopId.value)
   // 提示
   ElMessage.success('Success')
   // 刷新列表
@@ -127,7 +128,7 @@ const initData = async () => {
 
 // 重置用户密码
 const handleResetPassword = async () => {
-  const { data } = await resetUserPasswordApi(userId.value)
+  const { data } = await resetUserPasswordApi(workshopId.value)
   ElMessage.success('Reset password successfully')
   // 记录重置的用户密码
   resetPassword.value = data
@@ -156,41 +157,45 @@ const handleCopyResetPassword = async () => {
   }
 }
 
+// 禁用修理厂
+const handleDisabledWorkshop = async () => {
+  try {
+    await disableMerchantApi(workshopId.value)
+    // 提示
+    ElMessage.success('Disabled Successfully')
+    // 刷新列表
+    initData()
+  } finally {
+    // 关闭弹窗
+    dialogDisabledWorkshopVisible.value &&
+      (dialogDisabledWorkshopVisible.value = false)
+  }
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
 } = route
 
 onMounted(async () => {
-  userId.value = id
+  workshopId.value = id
   initData()
 })
 </script>
 
 <template>
+  <!-- isDelete 为0, 则正常状态 , 为 1 , 则为删除状态-->
   <section class="box-border flex flex-col gap-16 overflow-auto pb-32">
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         {{ workshop.name || '-' }}
       </h3>
-      <div class="flex gap-8">
-        <!-- state 为 1, 则用户账号状态正常 -->
-        <!--<el-button-->
-        <!--  v-if="workshop.state === 1"-->
-        <!--  @click="dialogBanUserVisible = true"-->
-        <!--&gt;-->
-        <!--  Ban-->
-        <!--</el-button>-->
-        <!--&lt;!&ndash; state 不为 1, 则用户账号状态异常 &ndash;&gt;-->
-        <!--<el-button v-else @click="dialogUnbanUserVisible = true">-->
-        <!--  Unban-->
-        <!--</el-button>-->
-        <!--<el-button @click="dialogResetPasswordConfirmVisible = true">-->
-        <!--  Reset Password-->
-        <!--</el-button>-->
-        <el-button>Disable</el-button>
-        <el-button>Reset Password</el-button>
-      </div>
+      <el-button
+        @click="dialogDisabledWorkshopVisible = true"
+        v-if="!workshop.isDelete"
+      >
+        Disable
+      </el-button>
     </div>
     <el-divider />
     <el-tabs v-model="activeTab">
@@ -228,8 +233,8 @@ onMounted(async () => {
         <dt>Status</dt>
         <dd>
           <base-tag
-            :color="workshop.userDto?.state === 0 ? 'green' : 'gray'"
-            :text="workshop.userDto?.state === 0 ? 'Active' : 'Disabled'"
+            :color="workshop.isDelete === 0 ? 'green' : 'gray'"
+            :text="workshop.isDelete === 0 ? 'Active' : 'Disabled'"
           />
         </dd>
       </dl>
@@ -279,17 +284,19 @@ onMounted(async () => {
   </base-dialog>
   <!-- Disabled -->
   <base-dialog
-    v-model="dialogDisabledUserVisible"
-    title="Disable tim.jennings@example.com ?"
+    v-model="dialogDisabledWorkshopVisible"
+    :title="`Disable ${workshop.name} ?`"
     button-type="danger"
     confirm-text="Disable"
-    @cancel="dialogDisabledUserVisible = false"
-    @confirm="dialogDisabledUserVisible = true"
+    @cancel="dialogDisabledWorkshopVisible = false"
+    @confirm="handleDisabledWorkshop"
   >
     <template #content>
       <p class="heading-body-body-12px-medium text-neutrals-grey-3">
-        Are you sure you want to disable this account? Once disabled, the user
-        will no longer have access to their account until re-enabled.
+        `Are you sure you want to disable the workshop "{{
+          workshop.name || '-'
+        }}"? Once disabled, it will no longer be accessible to its users or
+        linked vehicles until re-enabled.
       </p>
     </template>
   </base-dialog>

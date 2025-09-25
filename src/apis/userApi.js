@@ -28,6 +28,8 @@ const UserApi = Object.freeze({
   ADD_MANAGER: '/manager/add',
   // 获取修理厂详情
   GET_MERCHANT_INFO: '/merchant/getshopinfo',
+  // 禁用修理厂
+  DISABLE_MERCHANT: '/manager/merchant/disable',
 })
 
 // 获取 token
@@ -215,6 +217,23 @@ export const getMerchantInfoApi = (workShopId) => {
 
   return request({
     url: UserApi.GET_MERCHANT_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 禁用修理厂
+ * @param workShopId { id: number } 修理厂id
+ * @returns {Promise<ApiResponse>} Promise
+ */
+export const disableMerchantApi = (workShopId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('merchantId', workShopId)
+
+  return request({
+    url: UserApi.DISABLE_MERCHANT,
     method: 'POST',
     data,
   })
