@@ -1,7 +1,7 @@
 <script setup>
 import { DocumentCopy } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { onMounted, reactive, ref } from 'vue'
 
 import BaseDialog from '@/components/BaseDialog.vue'
@@ -19,6 +19,7 @@ import {
   getLastUsedDate,
 } from '@/utils/dateUtil.js'
 import BaseTag from '@/components/BaseTag.vue'
+import { RouteName } from '@/utils/constantsUtil.js'
 
 const logAndNoteDataList = ref([
   {
@@ -41,16 +42,9 @@ const logAndNoteDataList = ref([
   },
 ])
 
-const dataDetails = ref({
-  name: 'Theresa Webb',
-  email: 'tim.jennings@example.com',
-  role: 'Support',
-  phone: '+65 9876 5432',
-  status: 'Active',
-  isEditing: false,
-})
-
 const route = useRoute()
+
+const router = useRouter()
 
 const userInfo = reactive({})
 
@@ -124,11 +118,18 @@ const avatarErrorHandler = () => true
 
 // 管理员禁用、解禁用户
 const handleUserStatus = async () => {
-  await adminUserStatusApi(userId.value)
-  // 提示
-  ElMessage.success('Success')
-  // 刷新列表
-  initDate()
+  try {
+    await adminUserStatusApi(userId.value)
+    // 提示
+    ElMessage.success('Success')
+    // 刷新列表
+    initDate()
+  } finally {
+    // 关闭解禁用户弹窗
+    dialogUnbanUserVisible.value && (dialogUnbanUserVisible.value = false)
+    // 关闭禁用用户弹窗
+    dialogBanUserVisible.value && (dialogBanUserVisible.value = false)
+  }
 }
 
 // 刷新页面
@@ -169,7 +170,7 @@ const handleCopyResetPassword = async () => {
 
 // 查看 OBD 绑定的车辆详情
 const handleViewVehicleDetails = async (id) =>
-  router.push(`/obd-management/obd-list/obd-details/vehicle-details/${id}`)
+  router.push({ name: RouteName.VIEW_VEHICLE, params: { id: id } })
 
 // 监听 tab 切换
 watch(activeTab, (val) => {
@@ -194,25 +195,25 @@ const sectionMap = [
 const scrollbarRef = ref()
 
 const handleScroll = () => {
-  const scrollTop = scrollbarRef.value?.wrapRef?.scrollTop ?? 0
-
-  let closestSection = sectionMap[0]
-  let minDistance = Infinity
-
-  for (const section of sectionMap) {
-    const el = section.ref.value
-    if (!el) continue
-
-    const offset = el.offsetTop
-    const distance = Math.abs(scrollTop - offset)
-
-    if (distance < minDistance) {
-      minDistance = distance
-      closestSection = section
-    }
-  }
-
-  activeTab.value = closestSection.key
+  // const scrollTop = scrollbarRef.value?.wrapRef?.scrollTop ?? 0
+  //
+  // let closestSection = sectionMap[0]
+  // let minDistance = Infinity
+  //
+  // for (const section of sectionMap) {
+  //   const el = section.ref.value
+  //   if (!el) continue
+  //
+  //   const offset = el.offsetTop
+  //   const distance = Math.abs(scrollTop - offset)
+  //
+  //   if (distance < minDistance) {
+  //     minDistance = distance
+  //     closestSection = section
+  //   }
+  // }
+  //
+  // activeTab.value = closestSection.key
 }
 
 // 组件创建后, 发起请求
