@@ -171,7 +171,7 @@ onMounted(async () => {
   <section class="box-border flex flex-col gap-16 overflow-auto pb-32">
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
-        Bessie Cooper
+        {{ workshop.name || '-' }}
       </h3>
       <div class="flex gap-8">
         <!-- state 为 1, 则用户账号状态正常 -->
@@ -195,7 +195,6 @@ onMounted(async () => {
     <el-divider />
     <el-tabs v-model="activeTab">
       <el-tab-pane label="Customer Details" name="Customer Details" />
-      <el-tab-pane label="Logs & Note" name="Logs & Note" />
     </el-tabs>
     <el-scrollbar>
       <div class="row-center mx-32 h-72 gap-16">
@@ -249,12 +248,12 @@ onMounted(async () => {
         >
           <dt>Operating Hours</dt>
           <dd>{{ workshop.businessHours || '-' }}</dd>
-          <dt>Phone Number</dt>
-          <dd>{{ workshop.phoneNumber || '-' }}</dd>
           <dt>Phone Country</dt>
           <dd>{{ workshop.phoneCountry || '-' }}</dd>
           <dt>Address</dt>
           <dd>{{ workshop.shopAddress || '-' }}</dd>
+          <dt>Phone Number</dt>
+          <dd>{{ workshop.phoneNumber || '-' }}</dd>
           <dt>UNE</dt>
           <dd>{{ workshop.UEN || '-' }}</dd>
         </dl>
