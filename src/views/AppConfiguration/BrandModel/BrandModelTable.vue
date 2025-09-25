@@ -4,13 +4,14 @@ import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination.vue'
-import { getBrandModalListApi } from '@/apis/appApi.js'
+import { deleteBrandApi, getBrandModalListApi } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import BaseTag from '@/components/BaseTag.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import { ElMessage } from 'element-plus'
 
 // 响应式数据
 const loading = ref(false)
@@ -109,6 +110,14 @@ const refresh = () => {
     return getBrandModelList()
   }
   pagination.currentPage = 0
+}
+
+// 删除车辆品牌
+const handleDeleteBrand = async (id) => {
+  await deleteBrandApi(id)
+  // 删除成功
+  ElMessage.success('Delete Brand Success')
+  refresh()
 }
 
 // 网络请求
@@ -239,10 +248,17 @@ watch(
         </el-table-column>
         <!-- 操作 -->
         <el-table-column min-width="6%" align="center">
-          <template #default>
-            <div class="w-48 cursor-pointer">
-              <i class="icon-more-2-line text-24" />
-            </div>
+          <template #default="{ row }">
+            <el-dropdown trigger="click">
+              <i class="icon-more-2-line text-16 cursor-pointer" />
+              <template #dropdown>
+                <el-dropdown-menu class="px-16! py-8! rounded-8!">
+                  <el-dropdown-item @click="handleDeleteBrand(row.id)">
+                    Disabled
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>

@@ -512,7 +512,7 @@ onMounted(async () => {
             {{ getDateWithDDMMMYYYY(row.createTime) }}
           </template>
         </el-table-column>
-        <el-table-column min-width="6%" class="flex1111">
+        <el-table-column min-width="6%">
           <template #default="{ row }">
             <el-dropdown trigger="click">
               <i class="icon-more-2-line text-16 cursor-pointer" />
