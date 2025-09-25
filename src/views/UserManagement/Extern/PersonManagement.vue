@@ -159,6 +159,10 @@ const handleCopyResetPassword = async () => {
   }
 }
 
+// 查看 OBD 绑定的车辆详情
+const handleViewVehicleDetails = async (id) =>
+  router.push(`/obd-management/obd-list/obd-details/vehicle-details/${id}`)
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -174,7 +178,7 @@ onMounted(async () => {
   <section class="box-border flex flex-col gap-16 overflow-auto pb-32">
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
-        Bessie Cooper
+        {{ userInfo.name || '-' }}
       </h3>
       <div class="flex gap-8">
         <!-- state 为 1, 则用户账号状态正常 -->
@@ -346,7 +350,12 @@ onMounted(async () => {
             </el-table-column>
             <el-table-column>
               <template #default="{ row }">
-                <el-button class="rounded-full!">View Details</el-button>
+                <el-button
+                  class="rounded-full!"
+                  @click.stop="handleViewVehicleDetails(row.id)"
+                >
+                  View Details
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -363,12 +372,12 @@ onMounted(async () => {
             Logs & Note
           </h4>
           <!-- 新增按钮 -->
-          <el-button type="primary" text class="my-8 w-fit">
-            <template #icon>
-              <i class="icon-typesadd branding-colours-primary" />
-            </template>
-            <template #default>New Note</template>
-          </el-button>
+          <!--<el-button type="primary" text class="my-8 w-fit">-->
+          <!--  <template #icon>-->
+          <!--    <i class="icon-typesadd branding-colours-primary" />-->
+          <!--  </template>-->
+          <!--  <template #default>New Note</template>-->
+          <!--</el-button>-->
         </div>
         <el-divider />
         <!-- table -->
