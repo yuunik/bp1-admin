@@ -154,7 +154,6 @@ onBeforeUnmount(() => {
       :data="aiQuestionList"
       :span-method="handleTableSpan"
       class="flex-1"
-      :fit="false"
     >
       <!-- 序号 -->
       <el-table-column
@@ -202,7 +201,7 @@ onBeforeUnmount(() => {
       <!-- 状态 -->
       <el-table-column
         label="Status"
-        :sortable="true"
+        sortable="custom"
         column-key="status"
         min-width="11%"
       >
@@ -271,12 +270,4 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style scoped lang="scss">
-:deep(.el-table__header) {
-  @apply w-full!;
-}
-
-:deep(.el-table__body) {
-  @apply w-full!;
-}
-</style>
+<style scoped lang="scss"></style>
