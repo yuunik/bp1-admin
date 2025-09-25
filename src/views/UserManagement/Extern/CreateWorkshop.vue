@@ -112,7 +112,7 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium">Create Workshop</h3>
       <div class="flex h-32 gap-8">
-        <el-button>Cancel</el-button>
+        <el-button @click="$router.go(-1)">Cancel</el-button>
         <el-button type="primary" @click="addWorkshop">Create</el-button>
       </div>
     </div>
