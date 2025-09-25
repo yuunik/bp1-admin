@@ -294,12 +294,12 @@ const constantRoutes = [
   },
   {
     path: '/forum-management',
-    redirect: '/forum-management/list',
+    redirect: '/forum-management/list1',
     name: 'Forum Management',
     component: () => import('@/layout/index.vue'),
     children: [
       {
-        path: '/forum-management/list',
+        path: '/forum-management/list1',
         name: 'Forum Management List',
         component: () => import('@/views/ForumManagement/index.vue'),
         children: [
@@ -490,28 +490,28 @@ const constantRoutes = [
   {
     path: '/club-management',
     redirect: '/club-management/list',
-    name: 'Forum Management',
+    name: RouteName.CLUB_MANAGEMENT_INDEX,
     component: () => import('@/layout/index.vue'),
     children: [
       {
         path: '/club-management/list',
-        name: 'Club Management List',
+        name: RouteName.CLUB_MANAGEMENT,
         component: () => import('@/views/ClubManagement/index.vue'),
         meta: {
-          title: 'Club Management',
+          title: RouteName.CLUB_MANAGEMENT,
           showInMenu: true,
           showInBreadcrumb: true,
-          icon: 'icon-typeForum',
-          selectedIcon: 'icon-typeForum',
+          icon: 'icon-group',
+          selectedIcon: 'icon-group',
         },
       },
     ],
     meta: {
-      title: 'Club Management',
+      title: RouteName.CLUB_MANAGEMENT_INDEX,
       showInMenu: true,
       showInBreadcrumb: false,
-      icon: 'icon-typeForum',
-      selectedIcon: 'icon-typeForum',
+      icon: 'icon-group',
+      selectedIcon: 'icon-group',
       // 是否为一级路由
       isTopLevelRoute: true,
     },

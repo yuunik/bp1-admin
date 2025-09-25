@@ -56,7 +56,7 @@ const isMenuCollapsed = inject('isMenuCollapsed')
           route.children?.length === 1 &&
           route.children?.[0]?.meta?.showInMenu
         "
-        @click="handleNavigation(route.path)"
+        @click="handleNavigation(route.children?.[0]?.path)"
         @mouseenter="hoveredIndex = route.path"
         @mouseleave="hoveredIndex = null"
       >

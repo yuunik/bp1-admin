@@ -58,6 +58,8 @@ export const RouteName = Object.freeze({
   INTERVAL_WARNING: 'Interval & Warning',
   POST_DETAILS: 'Post Details',
   COMMENT_DETAILS: 'Comment Details',
+  CLUB_MANAGEMENT_INDEX: 'Club Management Index',
+  CLUB_MANAGEMENT: 'Club Management',
 })
 
 // 分享模块跳转路径
