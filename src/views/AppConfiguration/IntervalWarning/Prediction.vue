@@ -176,17 +176,17 @@ getPredictionList()
       </el-table-column>
     </el-table>
     <!-- 新增按钮 -->
-    <el-button
-      type="primary"
-      text
-      class="my-8 w-fit"
-      @click="addNewPredictionItem"
-    >
-      <template #icon>
-        <i class="icon-typesadd branding-colours-primary" />
-      </template>
-      <template #default>New Prediction</template>
-    </el-button>
+    <!--<el-button-->
+    <!--  type="primary"-->
+    <!--  text-->
+    <!--  class="my-8 w-fit"-->
+    <!--  @click="addNewPredictionItem"-->
+    <!--&gt;-->
+    <!--  <template #icon>-->
+    <!--    <i class="icon-typesadd branding-colours-primary" />-->
+    <!--  </template>-->
+    <!--  <template #default>New Prediction</template>-->
+    <!--</el-button>-->
   </el-scrollbar>
 </template>
 

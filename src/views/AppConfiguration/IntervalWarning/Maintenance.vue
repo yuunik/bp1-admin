@@ -196,17 +196,17 @@ getMaintenanceList()
       </el-table-column>
     </el-table>
     <!-- 新增按钮 -->
-    <el-button
-      type="primary"
-      text
-      class="my-8 w-fit"
-      @click="addNewMaintenanceItem"
-    >
-      <template #icon>
-        <i class="icon-typesadd branding-colours-primary" />
-      </template>
-      <template #default>New Item</template>
-    </el-button>
+    <!--<el-button-->
+    <!--  type="primary"-->
+    <!--  text-->
+    <!--  class="my-8 w-fit"-->
+    <!--  @click="addNewMaintenanceItem"-->
+    <!--&gt;-->
+    <!--  <template #icon>-->
+    <!--    <i class="icon-typesadd branding-colours-primary" />-->
+    <!--  </template>-->
+    <!--  <template #default>New Item</template>-->
+    <!--</el-button>-->
   </div>
 </template>
 
