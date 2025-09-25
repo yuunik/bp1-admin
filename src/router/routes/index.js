@@ -77,6 +77,9 @@ const constantRoutes = [
     name: RouteName.OBD_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
+      /**
+       * OBD 列表模块
+       */
       // OBD 列表
       {
         path: '/obd-management/obd-list',
@@ -111,39 +114,42 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      /**
+       * 库存管理模块
+       */
+      // 库存管理页
       {
         path: '/obd-management/inventory',
         name: RouteName.INVENTORY,
         component: () => import('@/views/ObdManagement/Inventory/index.vue'),
-        children: [
-          // create stock order
-          {
-            path: '/obd-management/inventory/create-stock-order',
-            name: 'Inventory Create Stocker Order',
-            component: () =>
-              import('@/views/ObdManagement/Inventory/CreateStockOrder.vue'),
-            meta: {
-              title: 'Create Stock Order',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-          // detail
-          {
-            path: '/obd-management/inventory/:id',
-            name: 'Inventory Details',
-            component: () =>
-              import('@/views/ObdManagement/Inventory/InventoryDetails.vue'),
-            meta: {
-              title: 'Inventory Details',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-        ],
+        children: [],
         meta: {
           title: RouteName.INVENTORY,
           showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
+      // create stock order
+      {
+        path: '/obd-management/inventory/create-stock-order',
+        name: 'Inventory Create Stocker Order',
+        component: () =>
+          import('@/views/ObdManagement/Inventory/CreateStockOrder.vue'),
+        meta: {
+          title: 'Create Stock Order',
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      // 库存 detail
+      {
+        path: '/obd-management/inventory/:id',
+        name: 'Inventory Details',
+        component: () =>
+          import('@/views/ObdManagement/Inventory/InventoryDetails.vue'),
+        meta: {
+          title: 'Inventory Details',
+          showInMenu: false,
           showInBreadcrumb: true,
         },
       },
