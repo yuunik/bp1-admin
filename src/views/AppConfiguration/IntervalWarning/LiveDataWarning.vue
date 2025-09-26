@@ -1,6 +1,4 @@
 <script setup>
-import { reactive } from 'vue'
-
 import {
   addLivingDataWarningDataApi,
   getLiveWarningDataListApi,
@@ -99,20 +97,23 @@ const handleEditLiveDataWarningData = async (index) => {
 
 // 新增实时预警数据
 const handleAddLiveDataWarningData = async (index) => {
-  await addLivingDataWarningDataApi({
-    id: liveWarningDataList.value[index].id,
-    name: liveWarningDataList.value[index].name,
-    minValue: liveWarningDataList.value[index].minValue,
-    maxValue: liveWarningDataList.value[index].maxValue,
-    groupKey: liveWarningDataList.value[index].groupKey,
-    obdKey: liveWarningDataList.value[index + 1].obdKey,
-    unit: liveWarningDataList.value[index].unit,
-  })
-  //// 关闭编辑状态
-  liveWarningDataList.value[index].editing = false
-  liveWarningDataList.value[index + 1].editing = false
-  // 刷新列表
-  getLiveWarningDataList()
+  try {
+    await addLivingDataWarningDataApi({
+      id: liveWarningDataList.value[index].id,
+      name: liveWarningDataList.value[index].name,
+      minValue: liveWarningDataList.value[index].minValue,
+      maxValue: liveWarningDataList.value[index].maxValue,
+      groupKey: liveWarningDataList.value[index].groupKey,
+      obdKey: liveWarningDataList.value[index + 1].obdKey,
+      unit: liveWarningDataList.value[index].unit,
+    })
+    // 刷新列表
+    getLiveWarningDataList()
+  } finally {
+    //// 关闭编辑状态
+    liveWarningDataList.value[index].editing = false
+    liveWarningDataList.value[index + 1].editing = false
+  }
 }
 
 // 关闭新增或编辑模式

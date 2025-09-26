@@ -360,7 +360,6 @@ export const modifyLivingDataWarningDataApi = (params) => {
 export const addLivingDataWarningDataApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('vehicleWarnId', params.id)
   data.append('minValue', params.minValue)
   data.append('maxValue', params.maxValue)
   data.append('name', params.name)
