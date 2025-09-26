@@ -9,7 +9,7 @@ import {
   deleteBrandModelApi,
   getBrandModelInfoApi,
   modifyBrandModelNameApi,
-  modifyBrandNameApi,
+  modifyBrandInfoApi,
   uploadBrandLogoApi,
 } from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
@@ -64,13 +64,24 @@ const handleGetLocalFile = async (file) => {
 }
 
 // 编辑车辆品牌名称
-const handleEditBrandName = async () => {
-  await modifyBrandNameApi({
+const handleEditBrand = async () => {
+  await modifyBrandInfoApi({
     id: brandModelInfo.value.id,
     name: brandModelInfo.value.brand,
   })
   // 修改成功
   ElMessage.success('Edit Brand Name Success')
+  getBrandModelInfo(route.params.id)
+}
+
+// 删除车辆品牌
+const handleEnableBrand = async () => {
+  await modifyBrandInfoApi({
+    id: brandModelInfo.value.id,
+    isDelete: 0,
+  })
+  // 修改状态成功
+  ElMessage.success('Enable Brand Success')
   getBrandModelInfo(route.params.id)
 }
 
@@ -113,8 +124,8 @@ const handleDeleteBrandModel = async (id) => {
   getBrandModelInfo(route.params.id)
 }
 
-// 删除车辆品牌
-const handleDeleteBrand = async () => {
+// 禁用车辆品牌
+const handleDisabledBrand = async () => {
   await deleteBrandApi(brandModelInfo.value.id)
   // 删除成功
   ElMessage.success('Delete Brand Success')
@@ -130,10 +141,10 @@ const handleDeleteBrand = async () => {
       <h3 class="heading-h2-20px-medium neutrals-off-black">
         {{ brandModelInfo.brand }}
       </h3>
-      <el-button v-if="!brandModelInfo.isDelete" @click="handleDeleteBrand">
-        Delete
+      <el-button v-if="!brandModelInfo.isDelete" @click="handleDisabledBrand">
+        Disabled
       </el-button>
-      <el-button v-else>Enable</el-button>
+      <el-button v-else @click="handleEnableBrand">Enable</el-button>
     </div>
     <!-- divider -->
     <el-divider />
@@ -168,7 +179,7 @@ const handleDeleteBrand = async () => {
                 <el-button @click="brandModelInfo.isEdit = false">
                   Cancel
                 </el-button>
-                <el-button @click="handleEditBrandName" type="primary">
+                <el-button @click="handleEditBrand" type="primary">
                   Save
                 </el-button>
               </div>
