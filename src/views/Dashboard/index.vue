@@ -5,6 +5,9 @@ import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
 // 静态资源
 import GreetingIcon from '@/assets/images/Waving Hand.png'
+import { useUserStore } from '@/store/index.js'
+import { storeToRefs } from 'pinia'
+import { getTodayWithWeekday } from '@/utils/dateUtil.js'
 
 const chartData = ref({
   labels: [
@@ -74,6 +77,11 @@ const chartOptions = ref({
     },
   },
 })
+
+const userStore = useUserStore()
+
+// 获取用户相关信息
+const { username } = storeToRefs(userStore)
 </script>
 
 <template>
@@ -83,13 +91,13 @@ const chartOptions = ref({
         <div class="greeting-left">
           <p class="greeting-left_welcome">Welcome back!</p>
           <div class="greeting-left_name">
-            <h2 class="greeting-left_name_text">Jonathan Wong</h2>
+            <h2 class="greeting-left_name_text">{{ username }}</h2>
             <div class="h-24 w-24">
               <img :src="GreetingIcon" alt="Waving Hand" />
             </div>
           </div>
         </div>
-        <p class="greeting-right">Tuesday,20 Aug</p>
+        <p class="greeting-right">{{ getTodayWithWeekday() }}</p>
       </div>
       <div class="order">
         <div class="order_1">
@@ -106,7 +114,7 @@ const chartOptions = ref({
             <div class="order_2_allorders-data">100</div>
           </div>
           <div class="order_2_box1">
-            <div class="order_2_new">新增</div>
+            <div class="order_2_new text-nowrap">Add New</div>
             <div class="order_2_new-data">20</div>
           </div>
         </div>
@@ -156,11 +164,11 @@ const chartOptions = ref({
             <div class="type-2">200</div>
           </div>
           <div class="user_box">
-            <div class="type-1">活跃用户</div>
+            <div class="type-1">Active Users</div>
             <div class="type-2">80</div>
           </div>
           <div class="user_box">
-            <div class="type-1">使用OBD用户</div>
+            <div class="type-1">OBD Users</div>
             <div class="type-2">60</div>
           </div>
         </div>
@@ -175,8 +183,9 @@ const chartOptions = ref({
             <div class="type-2">50</div>
           </div>
           <div class="container-card1-right">
-            <div class="type-1">订阅率</div>
+            <div class="type-1 text-nowrap">Rate</div>
             <div class="type-2">40%</div>
+            Subscription
           </div>
         </div>
         <div class="container-card2 w-full">
@@ -311,7 +320,7 @@ const chartOptions = ref({
 }
 
 .greeting-left_name_text {
-  width: 150px;
+  width: fit-content;
   height: 15px;
   content: 'Jonathan Wong';
   font-weight: 500;
