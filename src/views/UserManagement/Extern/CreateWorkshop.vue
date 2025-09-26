@@ -66,8 +66,10 @@ const workShopFormRules = reactive({
 // 商家表单
 const workShopFormRef = ref(null)
 const workShopFormRef2 = ref(null)
+const passwordRef = ref(null)
 
 // 是否显示密码
+const readonlyInput = ref(true)
 const isShowPassword = ref(false)
 
 const router = useRouter()
@@ -105,6 +107,37 @@ const addWorkshop = async () => {
 
 // 获取文件
 const handleGetLocalFile = (file) => (workShopForm.file = file)
+
+const inputChange = (e) => {
+  readonlyInput.value = true;
+  setTimeout(() => {
+    readonlyInput.value = false;
+  }, 50)
+}
+
+const inputClick = (e) => {
+  readonlyInput.value = true;
+  passwordRef.value.blur();
+}
+
+const cancelReadOnly = () => {
+  readonlyInput.value = true;
+  setTimeout(() => {
+    readonlyInput.value = false;
+  }, 50)
+}
+
+const setReadOnly = () => {
+  readonlyInput.value = true;
+}
+
+const showRealPassword = () => {
+  isShowPassword.value = !isShowPassword.value;
+  setTimeout(() => {
+    passwordRef.value.blur();
+  }, 100)
+}
+
 </script>
 
 <template>
@@ -155,16 +188,23 @@ const handleGetLocalFile = (file) => (workShopForm.file = file)
         </el-form-item>
         <el-form-item label="Password">
           <el-input
+            ref="passwordRef"
             placeholder="Enter"
             class="w-272! pwd-container"
             :type="isShowPassword ? 'text' : 'password'"
             v-model="workShopForm.password"
             autocomplete="new-password"
+            @focus="cancelReadOnly"
+            @blur="setReadOnly"
+            @input="inputChange"
+            :readonly="readonlyInput"
+            @mousedown.native="inputClick"
+            name="password"
           >
             <template #suffix>
               <i
                 :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
-                @click="isShowPassword = !isShowPassword"
+                @click="showRealPassword"
               />
             </template>
           </el-input>
