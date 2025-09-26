@@ -183,8 +183,9 @@ const { username } = storeToRefs(userStore)
             <div class="type-2">50</div>
           </div>
           <div class="container-card1-right">
-            <div class="type-1 text-nowrap">Subscription Rate</div>
+            <div class="type-1 text-nowrap">Rate</div>
             <div class="type-2">40%</div>
+            Subscription
           </div>
         </div>
         <div class="container-card2 w-full">
