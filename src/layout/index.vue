@@ -470,4 +470,8 @@ provide('isMenuCollapsed', isMenuCollapsed)
 .menu-container :deep(.el-scrollbar__view) {
   @apply w-fit!;
 }
+
+.menu-container :deep(.el-sub-menu) {
+  @apply pb-4!;
+}
 </style>

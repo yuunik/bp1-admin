@@ -128,4 +128,8 @@ const isMenuCollapsed = inject('isMenuCollapsed')
   </template>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.el-sub-menu) {
+  @apply pb-4!;
+}
+</style>
