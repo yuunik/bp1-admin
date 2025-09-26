@@ -14,7 +14,10 @@ const router = useRouter()
 const pendingBrand = reactive({
   name: '',
   editing: true,
-  logo: null,
+  // logo 用于图片的回显
+  logo: '',
+  // file 用于logo的上传
+  file: null,
 })
 
 // 待添加的车辆品牌型号列表, 初始默认添加三个
@@ -37,7 +40,12 @@ const handleDeletePendingBrandModelItem = (index) =>
   pendingBrandModelList.splice(index, 1)
 
 // 获取上传的本地文件
-const handleGetLocalFile = (file) => (pendingBrand.logo = file)
+const handleGetLocalFile = (file) => {
+  // 显示图片
+  pendingBrand.logo = URL.createObjectURL(file)
+  // 获取文件
+  pendingBrand.file = file
+}
 
 // 新增车辆品牌及型号
 const handleAddBrand = async () => {
@@ -60,7 +68,7 @@ const handleAddBrand = async () => {
       .filter((item) => item.brandModelName.trim() !== '')
       .map((item) => item.brandModelName.trim())
       .join(','),
-    logo: pendingBrand.logo || '',
+    logo: pendingBrand.file || '',
   })
   // 添加成功
   ElMessage.success('Add Brand Model Success')
