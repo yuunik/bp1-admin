@@ -109,35 +109,34 @@ const addWorkshop = async () => {
 const handleGetLocalFile = (file) => (workShopForm.file = file)
 
 const inputChange = (e) => {
-  readonlyInput.value = true;
+  readonlyInput.value = true
   setTimeout(() => {
-    readonlyInput.value = false;
+    readonlyInput.value = false
   }, 50)
 }
 
 const inputClick = (e) => {
-  readonlyInput.value = true;
-  passwordRef.value.blur();
+  readonlyInput.value = true
+  passwordRef.value.blur()
 }
 
 const cancelReadOnly = () => {
-  readonlyInput.value = true;
+  readonlyInput.value = true
   setTimeout(() => {
-    readonlyInput.value = false;
+    readonlyInput.value = false
   }, 50)
 }
 
 const setReadOnly = () => {
-  readonlyInput.value = true;
+  readonlyInput.value = true
 }
 
 const showRealPassword = () => {
-  isShowPassword.value = !isShowPassword.value;
+  isShowPassword.value = !isShowPassword.value
   setTimeout(() => {
-    passwordRef.value.blur();
+    passwordRef.value.blur()
   }, 100)
 }
-
 </script>
 
 <template>
