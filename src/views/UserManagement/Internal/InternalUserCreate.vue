@@ -67,9 +67,12 @@ const internalUserFormRules = reactive({
   ],
 })
 
+const passwordRef = ref(null)
 const internalUserRef = ref(null)
 
 const router = useRouter()
+
+const readonlyInput = ref(true)
 
 const isShowPassword = ref(false)
 
@@ -90,6 +93,37 @@ const createInternalUser = async () => {
     internalUserForm.value.confirmPassword = ''
   }
 }
+
+const inputChange = (e) => {
+  readonlyInput.value = true;
+  setTimeout(() => {
+    readonlyInput.value = false;
+  }, 50)
+}
+
+const inputClick = (e) => {
+  readonlyInput.value = true;
+  passwordRef.value.blur();
+}
+
+const cancelReadOnly = () => {
+  readonlyInput.value = true;
+  setTimeout(() => {
+    readonlyInput.value = false;
+  }, 50)
+}
+
+const setReadOnly = () => {
+  readonlyInput.value = true;
+}
+
+const showRealPassword = () => {
+  isShowPassword.value = !isShowPassword.value;
+  setTimeout(() => {
+    passwordRef.value.blur();
+  }, 100)
+}
+
 </script>
 
 <template>
@@ -134,15 +168,22 @@ const createInternalUser = async () => {
         <el-col :span="12">
           <el-form-item label="Password" prop="password">
             <el-input
+              ref="passwordRef"
               v-model="internalUserForm.password"
               style="width: 100%"
               placeholder="Enter password"
               :type="isShowPassword ? 'text' : 'password'"
+              autocomplete="new-password"
+              @focus="cancelReadOnly"
+              @blur="setReadOnly"
+              @input="inputChange"
+              :readonly="readonlyInput"
+              @mousedown.native="inputClick"
             >
               <template #suffix>
                 <i
                   :class="`text-24 cursor-pointer ${isShowPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
-                  @click="isShowPassword = !isShowPassword"
+                  @click="showRealPassword"
                 />
               </template>
             </el-input>
