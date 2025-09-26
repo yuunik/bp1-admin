@@ -144,14 +144,18 @@ const computedMenuItems = computed(() => (row) => {
   const items = []
 
   if (row.state === 0) {
-    items.push({ label: 'Unban', action: 'unban' })
+    // Disabled
+    // items.push({ label: 'Reactivate', action: 'reactivate' })
   } else if (row.state === 1) {
+    //  Active
     items.push(
       { label: 'Reset Password', action: 'resetPassword' },
       { label: 'Ban', action: 'ban' },
     )
   } else if (row.state === 2) {
-    items.push({ label: 'Reactivate', action: 'reactivate' })
+    // Banned
+    // items.push({ label: 'Reactivate', action: 'reactivate' })
+    items.push({ label: 'Unban', action: 'unban' })
   }
 
   return items
@@ -164,10 +168,11 @@ const handleDropdownItemClick = (action, row) => {
       handleUserStatus(row.id)
       break
     case 'ban':
-      break
-    case 'reactivate':
       handleUserStatus(row.id)
       break
+    // case 'reactivate':
+    //   handleUserStatus(row.id)
+    //   break
     case 'resetPassword':
       handleResetPassword(row)
       break
@@ -495,7 +500,7 @@ watch(
           <!-- 操作栏 -->
           <el-table-column align="center" min-width="11%">
             <template #default="{ row }">
-              <el-dropdown trigger="click">
+              <el-dropdown trigger="click" v-if="row.state !== 0">
                 <i class="icon-more-2-line cursor-pointer" />
                 <template #dropdown>
                   <el-dropdown-menu>
