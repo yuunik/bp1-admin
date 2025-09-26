@@ -341,11 +341,7 @@ getObdList()
           </template>
         </el-table-column>
         <!-- 详情 -->
-        <el-table-column
-          prop="remark"
-          label="Remark"
-          min-width="20%"
-        >
+        <el-table-column prop="remark" label="Remark" min-width="20%">
           <template #default="{ row }">
             {{ row.remark ? row.remark : '-' }}
           </template>

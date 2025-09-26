@@ -12,7 +12,8 @@ import {
   RouteName,
 } from '@/utils/constantsUtil.js'
 import {
-  closeOBDApi, editOBDApi,
+  closeOBDApi,
+  editOBDApi,
   getOBDBindHistoryApi,
   getOBDBindVehiclesApi,
   getOBDInfoApi,
@@ -263,7 +264,7 @@ const handleTabChange = (val) => {
 }
 
 const handleRemarkChange = async () => {
-  await editOBDApi({obdId: currentObdId.value, remark: obdInfo.value.remark})
+  await editOBDApi({ obdId: currentObdId.value, remark: obdInfo.value.remark })
   ElMessage.success('Edit successfully')
   // 刷新
   getOBDInfo(currentObdId.value)
@@ -427,8 +428,19 @@ const loadOBDData = async (id) => {
         </div>
         <div class="leading-32 flex gap-8">
           <label for="order" class="w-112 leading-32 h-32">Remark</label>
-          <span class="heading-body-body-12px-regular text-neutrals-off-black flex-1" style="padding-top: 10px;">
-            <el-input type="textarea" resize="none" :rows="4" v-model="obdInfo.remark" @blur="handleRemarkChange" show-word-limit :maxlength="250"></el-input>
+          <span
+            class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
+            style="padding-top: 10px"
+          >
+            <el-input
+              type="textarea"
+              resize="none"
+              :rows="4"
+              v-model="obdInfo.remark"
+              @blur="handleRemarkChange"
+              show-word-limit
+              :maxlength="250"
+            ></el-input>
           </span>
         </div>
       </div>
