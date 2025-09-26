@@ -16,6 +16,8 @@ const ObdApi = Object.freeze({
   CLOSE_OBD: '/manager/obd/close',
   // 获取 OBD 详情
   GET_OBD_DETAIL: '/manager/obd/info',
+  // 修改 OBD
+  EDIT_OBD: '/manager/obd/edit',
   // 获取 OBD 绑定过的账号历史信息
   GET_OBD_BIND_HISTORY: '/manager/obd/users',
   // 获取 OBD 绑过的车辆信息列表
@@ -198,6 +200,26 @@ export const getVehicleScanRecordsApi = (params) => {
 
   return request({
     url: ObdApi.GET_VEHICLE_SCAN_RECORDS,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 关闭 OBD
+ * @param params
+ * @param params.obdId obd id
+ * @param params.remark 秒速
+ * @returns {*}
+ */
+export const editOBDApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('obdId', params.obdId)
+  data.append('remark', params.remark)
+
+  return request({
+    url: ObdApi.EDIT_OBD,
     method: 'POST',
     data,
   })

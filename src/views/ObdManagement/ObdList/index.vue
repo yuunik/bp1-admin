@@ -340,6 +340,16 @@ getObdList()
             {{ row.userDto?.id === '' ? '-' : row.userDto?.name }}
           </template>
         </el-table-column>
+        <!-- 详情 -->
+        <el-table-column
+          prop="remark"
+          label="Remark"
+          min-width="20%"
+        >
+          <template #default="{ row }">
+            {{ row.remark ? row.remark : '-' }}
+          </template>
+        </el-table-column>
         <!-- 操作 -->
         <el-table-column
           align="center"
