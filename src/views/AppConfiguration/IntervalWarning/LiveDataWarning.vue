@@ -262,12 +262,6 @@ getLiveWarningDataList()
               v-show="row.name !== 'obdKey'"
               @click="handleEditLiveDataWarningDataStatusChange(row, $index)"
             />
-            <!-- 删除 -->
-            <i
-              class="icon-delete-bin-line text-24 inline-flex h-48 w-48 cursor-pointer items-center justify-center"
-              v-show="row.name !== 'obdKey'"
-              @click="handleDelete(row, $index)"
-            />
           </template>
         </template>
       </el-table-column>
