@@ -242,10 +242,16 @@ onMounted(async () => {
           Ban
         </el-button>
         <!-- state 不为 1, 则用户账号状态异常 -->
-        <el-button v-else @click="dialogUnbanUserVisible = true">
+        <el-button
+          v-if="userInfo.state === 2"
+          @click="dialogUnbanUserVisible = true"
+        >
           Unban
         </el-button>
-        <el-button @click="dialogResetPasswordConfirmVisible = true">
+        <el-button
+          v-if="userInfo.state !== 0"
+          @click="dialogResetPasswordConfirmVisible = true"
+        >
           Reset Password
         </el-button>
         <!--<el-button>Bind OBD</el-button>-->
