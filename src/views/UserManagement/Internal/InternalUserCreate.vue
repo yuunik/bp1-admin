@@ -68,11 +68,13 @@ const internalUserFormRules = reactive({
 })
 
 const passwordRef = ref(null)
+const confirmPasswordRef = ref(null)
 const internalUserRef = ref(null)
 
 const router = useRouter()
 
 const readonlyInput = ref(true)
+const readonlyConfirmInput = ref(true)
 
 const isShowPassword = ref(false)
 
@@ -101,9 +103,21 @@ const inputChange = (e) => {
   }, 50)
 }
 
+const inputConfirmChange = (e) => {
+  readonlyConfirmInput.value = true;
+  setTimeout(() => {
+    readonlyConfirmInput.value = false;
+  }, 50)
+}
+
 const inputClick = (e) => {
   readonlyInput.value = true;
   passwordRef.value.blur();
+}
+
+const inputConfirmClick = (e) => {
+  readonlyConfirmInput.value = true;
+  confirmPasswordRef.value.blur();
 }
 
 const cancelReadOnly = () => {
@@ -113,14 +127,32 @@ const cancelReadOnly = () => {
   }, 50)
 }
 
+const cancelConfirmReadOnly = () => {
+  readonlyConfirmInput.value = true;
+  setTimeout(() => {
+    readonlyConfirmInput.value = false;
+  }, 50)
+}
+
 const setReadOnly = () => {
   readonlyInput.value = true;
+}
+
+const setConfirmReadOnly = () => {
+  readonlyConfirmInput.value = true;
 }
 
 const showRealPassword = () => {
   isShowPassword.value = !isShowPassword.value;
   setTimeout(() => {
     passwordRef.value.blur();
+  }, 100)
+}
+
+const showConfirmRealPassword = () => {
+  isShowConfirmPassword.value = !isShowConfirmPassword.value;
+  setTimeout(() => {
+    confirmPasswordRef.value.blur();
   }, 100)
 }
 
@@ -205,14 +237,21 @@ const showRealPassword = () => {
         <el-col :span="12">
           <el-form-item label="Confirm Password" prop="confirmPassword">
             <el-input
+              ref="confirmPasswordRef"
               v-model="internalUserForm.confirmPassword"
               placeholder="Enter confirm password"
               :type="isShowConfirmPassword ? 'text' : 'password'"
+              autocomplete="new-password"
+              @focus="cancelConfirmReadOnly"
+              @blur="setConfirmReadOnly"
+              @input="inputConfirmChange"
+              :readonly="readonlyConfirmInput"
+              @mousedown.native="inputConfirmClick"
             >
               <template #suffix>
                 <i
                   :class="`text-24 cursor-pointer ${isShowConfirmPassword ? 'icon-typespassword' : 'icon-eye-off-line'}`"
-                  @click="isShowConfirmPassword = !isShowConfirmPassword"
+                  @click="showConfirmRealPassword"
                 />
               </template>
             </el-input>
