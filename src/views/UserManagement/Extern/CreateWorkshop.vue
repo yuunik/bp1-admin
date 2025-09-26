@@ -116,6 +116,7 @@ const inputChange = (e) => {
 }
 
 const inputClick = (e) => {
+  readonlyInput.value = true;
   passwordRef.value.blur();
 }
 
@@ -197,7 +198,7 @@ const showRealPassword = () => {
             @blur="setReadOnly"
             @input="inputChange"
             :readonly="readonlyInput"
-            @click.self="inputClick"
+            @mousedown.native="inputClick"
             name="password"
           >
             <template #suffix>
