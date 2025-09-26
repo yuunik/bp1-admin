@@ -138,6 +138,21 @@ const handleGetLocalFile = (file) => (clubForm.value.logo = file)
 // 错误行为
 const errorHandler = () => true
 
+// 显示用于回显的logo
+const getLogoDisplay = (logo) => {
+  // logo为空, 直接返回
+  if (!logo) {
+    return logo
+  }
+  if (logo instanceof File) {
+    // logo为本地文件, 创建本地文件路径
+    return URL.createObjectURL(logo)
+  } else {
+    // logo为服务器文件, 拼接全称路径
+    return getFullFilePath(logo)
+  }
+}
+
 // 监听
 watch(dialogDeleteClubItemVisible, (val) => {
   if (!val) {
@@ -212,12 +227,12 @@ onMounted(async () => {
           sortable="custom"
         >
           <template #default="{ row }">
-            <div class="flex items-center">
+            <div class="row-center gap-8">
               <el-avatar
                 v-if="row.logo"
                 fit="cover"
                 :src="getFullFilePath(row.logo)"
-                class="mr-8 h-20 w-20"
+                class="mr-8 h-20 w-20 shrink-0"
                 alt="brand icon"
                 shape="circle"
                 :size="20"
@@ -227,7 +242,9 @@ onMounted(async () => {
                   <i class="i-ep:picture" />
                 </template>
               </el-avatar>
-              <el-text>{{ row.name || '-' }}</el-text>
+              <span class="text-wrap">
+                {{ row.name || '-' }}
+              </span>
             </div>
           </template>
         </el-table-column>
@@ -290,7 +307,7 @@ onMounted(async () => {
           v-if="dialogClubFormVisible"
           ref="baseUploadRef"
           default-avatar-text="A"
-          :img-path="getFullFilePath(clubForm.logo)"
+          :img-path="getLogoDisplay(clubForm.logo)"
           @get-local-file="handleGetLocalFile"
         />
         <div class="flex flex-col gap-8">
