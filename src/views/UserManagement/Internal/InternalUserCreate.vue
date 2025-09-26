@@ -97,65 +97,64 @@ const createInternalUser = async () => {
 }
 
 const inputChange = (e) => {
-  readonlyInput.value = true;
+  readonlyInput.value = true
   setTimeout(() => {
-    readonlyInput.value = false;
+    readonlyInput.value = false
   }, 50)
 }
 
 const inputConfirmChange = (e) => {
-  readonlyConfirmInput.value = true;
+  readonlyConfirmInput.value = true
   setTimeout(() => {
-    readonlyConfirmInput.value = false;
+    readonlyConfirmInput.value = false
   }, 50)
 }
 
 const inputClick = (e) => {
-  readonlyInput.value = true;
-  passwordRef.value.blur();
+  readonlyInput.value = true
+  passwordRef.value.blur()
 }
 
 const inputConfirmClick = (e) => {
-  readonlyConfirmInput.value = true;
-  confirmPasswordRef.value.blur();
+  readonlyConfirmInput.value = true
+  confirmPasswordRef.value.blur()
 }
 
 const cancelReadOnly = () => {
-  readonlyInput.value = true;
+  readonlyInput.value = true
   setTimeout(() => {
-    readonlyInput.value = false;
+    readonlyInput.value = false
   }, 50)
 }
 
 const cancelConfirmReadOnly = () => {
-  readonlyConfirmInput.value = true;
+  readonlyConfirmInput.value = true
   setTimeout(() => {
-    readonlyConfirmInput.value = false;
+    readonlyConfirmInput.value = false
   }, 50)
 }
 
 const setReadOnly = () => {
-  readonlyInput.value = true;
+  readonlyInput.value = true
 }
 
 const setConfirmReadOnly = () => {
-  readonlyConfirmInput.value = true;
+  readonlyConfirmInput.value = true
 }
 
 const showRealPassword = () => {
-  isShowPassword.value = !isShowPassword.value;
+  isShowPassword.value = !isShowPassword.value
   setTimeout(() => {
-    passwordRef.value.blur();
+    passwordRef.value.blur()
   }, 100)
 }
 
 const showConfirmRealPassword = () => {
-  isShowConfirmPassword.value = !isShowConfirmPassword.value;
+  isShowConfirmPassword.value = !isShowConfirmPassword.value
   setTimeout(() => {
-    confirmPasswordRef.value.blur();
+    confirmPasswordRef.value.blur()
   }, 100)
 }
-
 </script>
 
 <template>
