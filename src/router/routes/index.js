@@ -170,6 +170,9 @@ const constantRoutes = [
     name: RouteName.USER_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
+      /**
+       * 内部用户管理模块
+       */
       {
         path: '/user-management/internal',
         name: RouteName.INTERNAL,
@@ -204,50 +207,51 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      /**
+       * 外部用户管理模块
+       */
       {
         path: '/user-management/extern',
         name: RouteName.EXTERN,
         component: () => import('@/views/UserManagement/Extern/index.vue'),
-        children: [
-          {
-            path: '/user-management/extern/person/:id',
-            name: 'Person Manage',
-            component: () =>
-              import('@/views/UserManagement/Extern/PersonManagement.vue'),
-            meta: {
-              title: 'Person Manage',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-          // 创建商家
-          {
-            path: '/user-management/extern/workshop/create',
-            name: 'Create Workshop',
-            component: () =>
-              import('@/views/UserManagement/Extern/CreateWorkshop.vue'),
-            meta: {
-              title: 'Create Workshop',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-          // 商家详情
-          {
-            path: '/user-management/extern/workshop/:id',
-            name: 'Workshop Manage',
-            component: () =>
-              import('@/views/UserManagement/Extern/WorkshopManagement.vue'),
-            meta: {
-              title: 'Workshop Manage',
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-        ],
         meta: {
           title: RouteName.EXTERN,
           showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
+      {
+        path: '/user-management/extern/person/:id',
+        name: 'Person Manage',
+        component: () =>
+          import('@/views/UserManagement/Extern/PersonManagement.vue'),
+        meta: {
+          title: 'Person Manage',
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      // 创建商家
+      {
+        path: '/user-management/extern/workshop/create',
+        name: 'Create Workshop',
+        component: () =>
+          import('@/views/UserManagement/Extern/CreateWorkshop.vue'),
+        meta: {
+          title: 'Create Workshop',
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      // 商家详情
+      {
+        path: '/user-management/extern/workshop/:id',
+        name: 'Workshop Manage',
+        component: () =>
+          import('@/views/UserManagement/Extern/WorkshopManagement.vue'),
+        meta: {
+          title: 'Workshop Manage',
+          showInMenu: false,
           showInBreadcrumb: true,
         },
       },

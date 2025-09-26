@@ -328,10 +328,7 @@ watch(
 </script>
 
 <template>
-  <router-view v-if="$route.name === 'Person Manage'" />
-  <router-view v-else-if="$route.name === 'Create Workshop'" />
-  <router-view v-else-if="$route.name === 'Workshop Manage'" />
-  <section class="flex h-full flex-col gap-16" v-else>
+  <section class="flex h-full flex-col gap-16">
     <!-- Extern Header -->
     <div class="flex-between mx-32 h-32">
       <!-- 标题栏 -->
