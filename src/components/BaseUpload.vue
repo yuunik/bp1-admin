@@ -58,6 +58,7 @@ onMounted(() => {
 watch(
   () => imgPath,
   (newVal) => {
+    // 监听图片路径的更新, 此时都为本地图片路径
     localFilePath.value = newVal || ''
   },
 )

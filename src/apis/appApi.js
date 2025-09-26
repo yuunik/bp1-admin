@@ -18,7 +18,7 @@ const AppApi = Object.freeze({
   // 修改 AI 问题
   MODIFY_AI_QUESTION: '/manager/aichat/edit',
   // 编辑车辆品牌名字
-  MODIFY_BRAND_NAME: '/manager/brand/edit',
+  MODIFY_BRAND_INFO: '/manager/brand/edit',
   // 获取车辆品牌详情
   GET_BRAND_MODEL_INFO: '/manager/vehicle/brandinfo',
   // 新增车辆品牌
@@ -375,39 +375,15 @@ export const addLivingDataWarningDataApi = (params) => {
   })
 }
 
-/**
- * 修改车辆品牌信息
- * @param params 修改车辆品牌信息参数
- * @param params.id 车辆品牌ID
- * @param params.name 车辆品牌名称
- * @param params.models 车辆品牌型号名称列表
- * @param params.file 车辆品牌logo
- * @param params.isdelete 删除车辆品牌
- * @returns {Promise<ApiResponse<any>>}
- */
 export const modifyBrandInfoApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('brandId', params.id)
-  data.append('name', params.name)
-  data.append('models', params.models)
-  data.append('file', params.file)
-  data.append('isdelete', params.isdelete)
+  params.name && data.append('name', params.name)
+  params.isDelete === 0 && data.append('isdelete', params.isDelete)
+
   return request({
     url: AppApi.MODIFY_BRAND_INFO,
-    method: 'POST',
-    data,
-  })
-}
-
-export const modifyBrandNameApi = (params) => {
-  const data = new FormData()
-  data.append('token', getToken())
-  data.append('brandId', params.id)
-  data.append('name', params.name)
-
-  return request({
-    url: AppApi.MODIFY_BRAND_NAME,
     method: 'POST',
     data,
   })
