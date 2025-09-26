@@ -74,7 +74,7 @@ const handleEditBrand = async () => {
   getBrandModelInfo(route.params.id)
 }
 
-// 删除车辆品牌
+// 解禁车辆品牌
 const handleEnableBrand = async () => {
   await modifyBrandInfoApi({
     id: brandModelInfo.value.id,

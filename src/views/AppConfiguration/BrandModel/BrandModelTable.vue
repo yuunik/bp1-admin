@@ -4,7 +4,11 @@ import { useDebounceFn } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination.vue'
-import { deleteBrandApi, getBrandModalListApi } from '@/apis/appApi.js'
+import {
+  deleteBrandApi,
+  getBrandModalListApi,
+  modifyBrandInfoApi,
+} from '@/apis/appApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
@@ -112,11 +116,22 @@ const refresh = () => {
   pagination.currentPage = 0
 }
 
-// 删除车辆品牌
-const handleDeleteBrand = async (id) => {
+// 禁用车辆品牌
+const handleDisabledBrand = async (id) => {
   await deleteBrandApi(id)
   // 删除成功
-  ElMessage.success('Delete Brand Success')
+  ElMessage.success('Brand disabled successfully')
+  refresh()
+}
+
+// 解禁车辆品牌
+const handleEnableBrand = async (id) => {
+  await modifyBrandInfoApi({
+    id: id,
+    isDelete: 0,
+  })
+  // 修改状态成功
+  ElMessage.success('Brand enabled successfully')
   refresh()
 }
 
@@ -253,8 +268,14 @@ watch(
               <i class="icon-more-2-line text-16 cursor-pointer" />
               <template #dropdown>
                 <el-dropdown-menu class="px-16! py-8! rounded-8!">
-                  <el-dropdown-item @click="handleDeleteBrand(row.id)">
+                  <el-dropdown-item
+                    v-if="!row.isDelete"
+                    @click="handleDisabledBrand(row.id)"
+                  >
                     Disabled
+                  </el-dropdown-item>
+                  <el-dropdown-item v-else @click="handleEnableBrand(row.id)">
+                    Enable
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
