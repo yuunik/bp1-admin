@@ -118,7 +118,8 @@ const handleDeleteBrand = async () => {
   await deleteBrandApi(brandModelInfo.value.id)
   // 删除成功
   ElMessage.success('Delete Brand Success')
-  router.push({ name: 'BrandAndModelTable' })
+  // 刷新
+  getBrandModelInfo(route.params.id)
 }
 </script>
 
@@ -129,9 +130,10 @@ const handleDeleteBrand = async () => {
       <h3 class="heading-h2-20px-medium neutrals-off-black">
         {{ brandModelInfo.brand }}
       </h3>
-      <div class="flex gap-8" v-if="!brandModelInfo.isDelete">
-        <el-button @click="handleDeleteBrand">Delete</el-button>
-      </div>
+      <el-button v-if="!brandModelInfo.isDelete" @click="handleDeleteBrand">
+        Delete
+      </el-button>
+      <el-button v-else>Enable</el-button>
     </div>
     <!-- divider -->
     <el-divider />
