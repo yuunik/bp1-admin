@@ -198,11 +198,11 @@ onMounted(() => {
         <div class="container-card1">
           <div class="container-card1-left">
             <div class="type-1">Subcription</div>
-            <div class="type-2">50</div>
+            <div class="type-2">-</div>
           </div>
           <div class="container-card1-right">
             <div class="type-1 text-nowrap">Rate</div>
-            <div class="type-2">40%</div>
+            <div class="type-2">- %</div>
             Subscription
           </div>
         </div>
@@ -210,9 +210,9 @@ onMounted(() => {
           <div class="container-card2-left">
             <div class="card2-left_1">New Subscription</div>
             <div class="card2-left_2">
-              <div class="card2-left_2-1">5</div>
+              <div class="card2-left_2-1">-</div>
               <div class="card2-left_2-2-1">
-                <div class="card2-left_2-2-2">-2%</div>
+                <div class="card2-left_2-2-2 text-nowrap">- %</div>
               </div>
             </div>
             <div class="card2-left_3">Compared to last month</div>
@@ -230,14 +230,14 @@ onMounted(() => {
                 <div class="card3-right_2-icon"></div>
                 <div class="card3-right_2-text">App</div>
               </div>
-              <div class="card3-right_2-num">20</div>
+              <div class="card3-right_2-num">-</div>
             </div>
             <div class="card3-right_3">
               <div class="card3-right_3-left">
                 <div class="card3-right_3-icon"></div>
                 <div class="card3-right_3-text">Web</div>
               </div>
-              <div class="card3-right_3-num">80</div>
+              <div class="card3-right_3-num">-</div>
             </div>
           </div>
         </div>
