@@ -11,17 +11,26 @@ import dayjs from 'dayjs'
  */
 export const getLastUsedDate = (timestamp) => {
   if (timestamp === 0) {
-    // 未使用过
     return '-'
   }
-  // 时间戳转日期
-  const date = dayjs(timestamp)
-  // 格式化日期, 如 "03 Apr 2026"
-  const formatDate = date.format('DD MMM YYYY')
-  // 相对时间, 计算距今天的天数差的绝对值
-  const diffDays = Math.abs(dayjs().diff(date, 'day'))
 
-  return `${formatDate} (${diffDays === 0 ? 'Today' : `${diffDays} days ago`})`
+  const date = dayjs(timestamp)
+  const formatDate = date.format('DD MMM YYYY')
+
+  const now = dayjs()
+  const diffDays = now.diff(date, 'day')
+
+  if (diffDays === 0) {
+    const diffHours = now.diff(date, 'hour')
+    const label =
+      diffHours === 0
+        ? 'Just now'
+        : `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+
+    return `${formatDate} (${label})`
+  }
+
+  return `${formatDate} (${Math.abs(diffDays)} days ago)`
 }
 
 /**
