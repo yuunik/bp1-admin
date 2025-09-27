@@ -8,6 +8,7 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 import { useUserStore } from '@/store/index.js'
 import { storeToRefs } from 'pinia'
 import { getTodayWithWeekday } from '@/utils/dateUtil.js'
+import { getDashboardDataApi } from '@/apis/dahboardApi.js'
 
 const chartData = ref({
   labels: [
@@ -82,6 +83,23 @@ const userStore = useUserStore()
 
 // 获取用户相关信息
 const { username } = storeToRefs(userStore)
+
+const dashboardData = ref({})
+
+// 获取数据
+const getDashboardData = async () => {
+  // 获取数据
+  const { data } = await getDashboardDataApi()
+  dashboardData.value = data
+}
+
+onMounted(() => {
+  // 获取数据
+  getDashboardData()
+})
+
+// 获取数据
+// getDashboardData()
 </script>
 
 <template>
@@ -111,25 +129,25 @@ const { username } = storeToRefs(userStore)
         <div class="order_2">
           <div class="order_2_box1">
             <div class="order_2_allorders">All Orders</div>
-            <div class="order_2_allorders-data">100</div>
+            <div class="order_2_allorders-data">-</div>
           </div>
           <div class="order_2_box1">
             <div class="order_2_new text-nowrap">Add New</div>
-            <div class="order_2_new-data">20</div>
+            <div class="order_2_new-data">-</div>
           </div>
         </div>
         <div class="order_3">
           <div class="order_3_box3">
             <div class="order_3_pending">Pending</div>
-            <div class="order_3_pending-data">20</div>
+            <div class="order_3_pending-data">-</div>
           </div>
           <div class="order_3_box3">
             <div class="order_3_shipped">Shipped</div>
-            <div class="order_3_shipped-data">20</div>
+            <div class="order_3_shipped-data">-</div>
           </div>
           <div class="order_3_box3">
             <div class="order_3_refund">Refund</div>
-            <div class="order_3_refund-data">10</div>
+            <div class="order_3_refund-data">-</div>
           </div>
         </div>
       </div>
@@ -143,11 +161,11 @@ const { username } = storeToRefs(userStore)
         <div class="obd_content">
           <div class="obd_box_1">
             <div class="type-1">In Stock</div>
-            <div class="obd_box-data1">500</div>
+            <div class="obd_box-data1">-</div>
           </div>
           <div class="obd_box_2">
             <div class="type-1">In Use</div>
-            <div class="obd_box-data2">500</div>
+            <div class="obd_box-data2">-</div>
           </div>
         </div>
       </div>
@@ -161,15 +179,15 @@ const { username } = storeToRefs(userStore)
         <div class="user_content">
           <div class="user_box">
             <div class="type-1">All User</div>
-            <div class="type-2">200</div>
+            <div class="type-2">{{ dashboardData.totalUserCount }}</div>
           </div>
           <div class="user_box">
-            <div class="type-1">Active Users</div>
-            <div class="type-2">80</div>
+            <div class="type-1">New Users</div>
+            <div class="type-2">{{ dashboardData.todayUserCount }}</div>
           </div>
           <div class="user_box">
             <div class="type-1">OBD Users</div>
-            <div class="type-2">60</div>
+            <div class="type-2">{{ dashboardData.obdUserCount }}</div>
           </div>
         </div>
       </div>
