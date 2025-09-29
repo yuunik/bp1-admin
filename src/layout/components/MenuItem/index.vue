@@ -53,7 +53,9 @@ const isMenuCollapsed = inject('isMenuCollapsed')
         :index="route.children?.[0]?.path"
         v-else-if="
           route.children &&
-          route.children?.length === 1 &&
+          route.children.length &&
+          route.children?.filter((item) => item.meta.showInMenu)?.length ===
+            1 &&
           route.children?.[0]?.meta?.showInMenu
         "
         @click="handleNavigation(route.children?.[0]?.path)"

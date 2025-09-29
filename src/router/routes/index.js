@@ -509,6 +509,17 @@ const constantRoutes = [
           selectedIcon: 'icon-group',
         },
       },
+      // 俱乐部详情
+      {
+        path: '/club-management/detail/:id',
+        name: RouteName.CLUB_DETAILS,
+        component: () => import('@/views/ClubManagement/ClubDetails.vue'),
+        meta: {
+          title: RouteName.CLUB_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
     ],
     meta: {
       title: RouteName.CLUB_MANAGEMENT_INDEX,

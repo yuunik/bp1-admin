@@ -61,6 +61,7 @@ export const RouteName = Object.freeze({
   COMMENT_DETAILS: 'Comment Details',
   CLUB_MANAGEMENT_INDEX: 'Club Management Index',
   CLUB_MANAGEMENT: 'Club Management',
+  CLUB_DETAILS: 'Club Details',
 })
 
 // 分享模块跳转路径
