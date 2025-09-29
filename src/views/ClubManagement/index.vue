@@ -468,7 +468,6 @@ onMounted(async () => {
             >
               <div
                 class="flex cursor-pointer gap-8"
-                @click.stop="handleDropdownClick"
                 :class="{ 'cursor-default!': clubForm.memberCount === 0 }"
               >
                 <p class="text-16">Members: {{ clubForm.memberCount }}</p>
