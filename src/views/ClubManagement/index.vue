@@ -461,8 +461,16 @@ onMounted(async () => {
           </el-avatar>
           <div class="flex flex-col gap-4">
             <span class="text-30 font-500">{{ clubForm.name }}</span>
-            <el-dropdown trigger="click">
-              <div class="flex cursor-pointer gap-8">
+            <el-dropdown
+              trigger="click"
+              max-height="500"
+              :disabled="clubForm.memberCount === 0"
+            >
+              <div
+                class="flex cursor-pointer gap-8"
+                @click.stop="handleDropdownClick"
+                :class="{ 'cursor-default!': clubForm.memberCount === 0 }"
+              >
                 <p class="text-16">Members: {{ clubForm.memberCount }}</p>
                 <i class="icon-typesdropdown text-16" />
               </div>
@@ -471,7 +479,7 @@ onMounted(async () => {
                   <el-scrollbar>
                     <div
                       class="row-center gap-10"
-                      v-for="userInfo in 1"
+                      v-for="userInfo in clubMemberList"
                       :key="userInfo.id"
                     >
                       <el-avatar
@@ -486,7 +494,7 @@ onMounted(async () => {
                           src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
                         />
                       </el-avatar>
-                      <span class="text-16">userName</span>
+                      <span class="text-16">{{ userInfo.name }}</span>
                     </div>
                   </el-scrollbar>
                 </div>
@@ -495,9 +503,11 @@ onMounted(async () => {
           </div>
         </div>
         <!-- description -->
-        <p class="rounded-4 text-neutrals-grey-3 bg-[#EAEEF4] p-8">
-          {{ clubForm.description }}
-        </p>
+        <div class="mr-100">
+          <p class="rounded-4 text-neutrals-grey-3 bg-[#EAEEF4] p-8">
+            {{ clubForm.description }}
+          </p>
+        </div>
       </div>
       <!-- post -->
       <div class="flex flex-col gap-12">
