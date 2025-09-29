@@ -32,8 +32,9 @@ export const getForumListApi = (params) => {
   data.append('token', getToken())
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
-  data.append('searchKey', params.searchKey)
+  params.searchKey && data.append('searchKey', params.searchKey)
   params.type && data.append('type', params.type)
+  params.clubIds && data.append('clubIds', params.clubIds)
 
   return request({
     url: ForumApi.GET_FORUM_LIST,

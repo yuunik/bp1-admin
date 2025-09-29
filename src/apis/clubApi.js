@@ -10,6 +10,8 @@ const ClubApi = Object.freeze({
   EDIT_CLUB: '/manager/club/edit',
   // 删除俱乐部接口
   DELETE_CLUB: '/manager/club/delete',
+  // 获取俱乐部成员
+  GET_CLUB_MEMBER: '/club/getuser',
 })
 
 // 获取 token
@@ -67,6 +69,20 @@ export const deleteClubApi = (clubId) => {
 
   return request({
     url: ClubApi.DELETE_CLUB,
+    method: 'POST',
+    data,
+  })
+}
+
+export const getClubMemberApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('clubId', params.clubId)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
+  return request({
+    url: ClubApi.GET_CLUB_MEMBER,
     method: 'POST',
     data,
   })

@@ -5,7 +5,10 @@ import { useCloned, useDebounceFn } from '@vueuse/core'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
-import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
+import {
+  getDateWithDDMMMYYYY,
+  getDateWithDDMMMYYYYhhmma,
+} from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { useSort } from '@/composables/useSort.js'
 import BaseUpload from '@/components/BaseUpload.vue'
@@ -14,13 +17,29 @@ import {
   deleteClubApi,
   editClubApi,
   getClubListApi,
+  getClubMemberApi,
 } from '@/apis/clubApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import { getForumListApi } from '@/apis/forumApi.js'
 
 const clubList = ref([])
 
 // 分页数据
 const pagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
+// 帖子列表的分页数据
+const postPagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
+// 俱乐部成员
+const clubMemberPagination = reactive({
   currentPage: 0,
   pageSize: 15,
   total: 0,
@@ -52,6 +71,15 @@ const sortParams = reactive({
 const selectedClubIdList = ref([])
 
 const baseUploadRef = ref(null)
+
+// 俱乐部详情
+const dialogClubInfoVisible = ref(false)
+
+// 帖子列表
+const postList = ref([])
+
+// 俱乐部成员列表
+const clubMemberList = ref([])
 
 // 刷新
 const refresh = useDebounceFn(() => {
@@ -153,6 +181,46 @@ const getLogoDisplay = (logo) => {
   }
 }
 
+// 获取俱乐部所属的贴文列表数据
+const getClubPostList = async (clubId) => {
+  const { data, count } = await getForumListApi({
+    clubIds: clubId,
+    page: postPagination.currentPage,
+    pageSize: postPagination.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+  })
+  postList.value = data
+  postPagination.total = count
+}
+
+// 获取俱乐部的成员
+const getClubMemberList = async (clubId) => {
+  const { data } = await getClubMemberApi({
+    clubId: clubId,
+    page: clubMemberPagination.currentPage,
+    pageSize: clubMemberPagination.pageSize,
+  })
+  clubMemberList.value = data
+  clubMemberPagination.total = data.total
+}
+
+// 打开查看俱乐部详情弹窗
+const handleOpenClubInfoDialog = async (row, column) => {
+  const { no } = column
+  if (no === 4) {
+    return
+  }
+  // 记录当前的俱乐部信息
+  const { cloned } = useCloned(row)
+  clubForm.value = cloned.value
+  await Promise.all([
+    getClubPostList(clubForm.value.id),
+    getClubMemberList(clubForm.value.id),
+  ])
+  dialogClubInfoVisible.value = true
+}
+
 // 监听
 watch(dialogDeleteClubItemVisible, (val) => {
   if (!val) {
@@ -217,8 +285,10 @@ onMounted(async () => {
         :data="clubList"
         style="width: 100%"
         class="flex-1"
+        row-class-name="clickable-row"
         @sort-change="handleSortChange"
         @selection-change="handleSelectionChange"
+        @row-click="handleOpenClubInfoDialog"
       >
         <el-table-column
           prop="name"
@@ -271,7 +341,7 @@ onMounted(async () => {
         <el-table-column min-width="6%">
           <template #default="{ row }">
             <el-dropdown trigger="click">
-              <i class="icon-more-2-line text-16 cursor-pointer" />
+              <i class="icon-more-2-line text-16" />
               <template #dropdown>
                 <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
                   <el-dropdown-item @click="openEditClubItemDialog(row)">
@@ -352,6 +422,162 @@ onMounted(async () => {
       </p>
     </template>
   </base-dialog>
+  <!-- 查看 club 详情弹窗 -->
+  <div
+    v-if="dialogClubInfoVisible"
+    class="z-100 fixed inset-0 flex items-center justify-center bg-black bg-opacity-40"
+    @click.stop.self="dialogClubInfoVisible = false"
+  >
+    <div
+      class="shadow-default bg-neutrals-card-filling rounded-12 flex max-h-[50vh] w-[50vw] flex-col gap-24 p-16"
+    >
+      <!-- header -->
+      <div class="flex-between h-24">
+        <h3 class="heading-h2-20px-medium text-neutrals-off-black">
+          Group Details
+        </h3>
+        <i
+          class="icon-typesclose text-24 cursor-pointer"
+          @click.stop="dialogClubInfoVisible = false"
+        />
+      </div>
+      <!-- divider -->
+      <el-divider />
+      <!-- info -->
+      <div class="flex flex-col gap-12">
+        <!--  -->
+        <div class="row-center gap-12">
+          <el-avatar
+            fit="cover"
+            :src="getFullFilePath(clubForm.logo)"
+            alt="brand icon"
+            shape="square"
+            :size="70"
+            @error="errorHandler"
+          >
+            <img
+              src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+            />
+          </el-avatar>
+          <div class="flex flex-col gap-4">
+            <span class="text-30 font-500">{{ clubForm.name }}</span>
+            <el-dropdown trigger="click">
+              <div class="flex cursor-pointer gap-8">
+                <p class="text-16">Members: {{ clubForm.memberCount }}</p>
+                <i class="icon-typesdropdown text-16" />
+              </div>
+              <template #dropdown>
+                <div class="max-h-500 scrollbar-container px-20 py-12">
+                  <el-scrollbar>
+                    <div
+                      class="row-center gap-10"
+                      v-for="userInfo in 1"
+                      :key="userInfo.id"
+                    >
+                      <el-avatar
+                        fit="cover"
+                        :src="getFullFilePath(userInfo.logo)"
+                        alt="user avatar"
+                        shape="circle"
+                        :size="32"
+                        @error="errorHandler"
+                      >
+                        <img
+                          src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
+                        />
+                      </el-avatar>
+                      <span class="text-16">userName</span>
+                    </div>
+                  </el-scrollbar>
+                </div>
+              </template>
+            </el-dropdown>
+          </div>
+        </div>
+        <!-- description -->
+        <p class="rounded-4 text-neutrals-grey-3 bg-[#EAEEF4] p-8">
+          {{ clubForm.description }}
+        </p>
+      </div>
+      <!-- post -->
+      <div class="flex flex-col gap-12">
+        <h4>Posts</h4>
+        <div>
+          <el-table :data="postList">
+            <el-table-column
+              prop="Title"
+              label="title"
+              column-key="title"
+              min-width="17%"
+            >
+              <template #default="{ row }">
+                <el-text>{{ row.title || '-' }}</el-text>
+              </template>
+            </el-table-column>
+            <!-- 用户 -->
+            <el-table-column
+              prop="userDto?.name"
+              label="Author"
+              column-key="user"
+              min-width="17%"
+            >
+              <template #default="{ row }">
+                <div class="flex items-center">
+                  <el-avatar
+                    v-if="row.userDto?.logo"
+                    fit="cover"
+                    :src="getFullFilePath(row.userDto?.logo)"
+                    class="mr-8 h-20 w-20"
+                    alt="brand icon"
+                    shape="circle"
+                    :size="20"
+                    @error="errorHandler"
+                  >
+                    <template #error>
+                      <i class="i-ep:picture" />
+                    </template>
+                  </el-avatar>
+                  <el-text>{{ row.userDto?.name || '-' }}</el-text>
+                </div>
+              </template>
+            </el-table-column>
+            <!-- 点赞数 -->
+            <el-table-column
+              prop="likeCount"
+              label="Like"
+              column-key="status"
+              min-width="12%"
+            >
+              <template #default="{ row }">
+                <span>{{ row.likeCount || '-' }}</span>
+              </template>
+            </el-table-column>
+            <!-- 评论数 -->
+            <el-table-column
+              prop="commentCount"
+              label="Comments"
+              sortable
+              column-key="comments"
+              min-width="12%"
+            />
+            <!-- 日期 -->
+            <el-table-column
+              prop="date"
+              label="Date"
+              sortable
+              column-key="date"
+              min-width="19%"
+            >
+              <template #default="{ row }">
+                {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
+              </template>
+            </el-table-column>
+          </el-table>
+          <base-pagination v-model="postPagination" />
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
@@ -367,5 +593,14 @@ onMounted(async () => {
   .el-input__wrapper {
     @apply rounded-12 h-32 bg-[#EAEEF480];
   }
+}
+
+// 重置滚动条布局
+.scrollbar-container :deep(.el-scrollbar__view) {
+  @apply flex flex-col gap-16;
+}
+
+:deep(.el-table__header .cell) {
+  @apply text-neutrals-grey-3;
 }
 </style>
