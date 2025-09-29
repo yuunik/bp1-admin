@@ -5,9 +5,12 @@ import { getClubInfoApi, getClubMemberApi } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import { getForumListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import { getDateWithDDMMMYYYYhhmma } from '../../utils/dateUtil.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 const route = useRoute()
+
+// 当前俱乐部的 id
+const clubId = ref('')
 
 // 俱乐部详情
 const clubInfo = ref({})
@@ -28,7 +31,7 @@ const postPagination = reactive({
 // 俱乐部成员
 const clubMemberPagination = reactive({
   currentPage: 0,
-  pageSize: 15,
+  pageSize: 9999,
   total: 0,
 })
 
@@ -39,15 +42,15 @@ const sortParams = reactive({
 })
 
 // 获取俱乐部详情
-const getClubInfo = async (clubId) => {
-  const { data } = await getClubInfoApi(clubId)
+const getClubInfo = async () => {
+  const { data } = await getClubInfoApi(clubId.value)
   clubInfo.value = data
 }
 
 // 获取俱乐部所属的贴文列表数据
-const getClubPostList = async (clubId) => {
+const getClubPostList = async () => {
   const { data, count } = await getForumListApi({
-    clubIds: clubId,
+    clubIds: clubId.value,
     page: postPagination.currentPage,
     pageSize: postPagination.pageSize,
     sort: sortParams.sort,
@@ -58,9 +61,9 @@ const getClubPostList = async (clubId) => {
 }
 
 // 获取俱乐部的成员
-const getClubMemberList = async (clubId) => {
+const getClubMemberList = async () => {
   const { data } = await getClubMemberApi({
-    clubId: clubId,
+    clubId: clubId.value,
     page: clubMemberPagination.currentPage,
     pageSize: clubMemberPagination.pageSize,
   })
@@ -68,10 +71,8 @@ const getClubMemberList = async (clubId) => {
   clubMemberPagination.total = data.total
 }
 
-// 错误行为
-const errorHandler = () => true
-
-onMounted(async () => {
+// 初始化
+const init = async () => {
   if (route.params.id) {
     const clubId = route.params.id
     await Promise.all([
@@ -79,9 +80,34 @@ onMounted(async () => {
       getClubPostList(clubId),
       getClubMemberList(clubId),
     ])
-    // getClubPostList(clubId)
-    // getClubMemberList(clubId)
-    // getClubInfo(clubId)
+  }
+}
+
+// 错误行为
+const errorHandler = () => true
+
+// 刷新
+const refresh = () => {
+  if (!postPagination.currentPage) {
+    return init()
+  }
+  postPagination.currentPage = 0
+}
+
+watch(
+  () => postPagination.currentPage,
+  () => {
+    init()
+  },
+)
+
+onMounted(async () => {
+  const {
+    params: { id },
+  } = route
+  if (id) {
+    clubId.value = id
+    init()
   }
 })
 </script>
