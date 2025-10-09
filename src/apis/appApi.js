@@ -91,12 +91,12 @@ const { getToken } = useAuthToken()
 export const getBrandModalListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('page', params.page)
-  data.append('pageSize', params.pageSize)
-  data.append('sort', params.sort)
-  data.append('sortBy', params.sortBy)
-  data.append('searchKey', params.searchKey)
-  data.append('status', params.status)
+  params?.page && data.append('page', params.page)
+  params?.pageSize && data.append('pageSize', params.pageSize)
+  params?.sort && data.append('sort', params.sort)
+  params?.sortBy && data.append('sortBy', params.sortBy)
+  params?.searchKey && data.append('searchKey', params.searchKey)
+  params?.status && data.append('status', params.status)
 
   return request({
     url: AppApi.GET_BRAND_MODEL_LIST,
