@@ -151,7 +151,7 @@ if (id) {
   <section class="flex flex-col gap-16">
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
-        Theresa Webb
+        {{ adminDetails.name }}
       </h3>
       <div class="flex gap-8">
         <template v-if="!adminDetails.isEditing">
