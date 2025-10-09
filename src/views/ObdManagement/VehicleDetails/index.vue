@@ -30,9 +30,6 @@ const scannedHistoryRef = ref([])
 
 const currentVehicleId = ref('')
 
-// 编辑模式
-const isEditMode = ref(false)
-
 // 获取车辆详情
 const getVehicleDetails = async () => {
   const { data } = await getVehicleInfoApi(currentVehicleId.value)
@@ -106,18 +103,9 @@ onMounted(async () => {
 <template>
   <section class="flex h-full flex-col">
     <!-- header -->
-    <div class="flex-between mx-32 mb-16">
-      <h3 class="heading-h2-20px-medium text-neutrals-off-black">
-        {{ vehicleDetails.brand }}
-      </h3>
-      <!-- btn group -->
-      <el-button v-show="!isEditMode" @click="isEditMode = true">
-        Edit
-      </el-button>
-      <el-button type="primary" v-show="isEditMode" @click="isEditMode = false">
-        Save
-      </el-button>
-    </div>
+    <h3 class="heading-h2-20px-medium text-neutrals-off-black mx-32 mb-16">
+      {{ vehicleDetails.brand }}
+    </h3>
     <!-- divider -->
     <el-divider />
     <!-- tabs -->
@@ -142,55 +130,27 @@ onMounted(async () => {
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Brand</dt>
               <dd class="flex-1">
-                <span v-if="!isEditMode">
-                  {{ vehicleDetails.brand || '-' }}
-                </span>
-                <el-input
-                  v-else
-                  v-model="vehicleDetails.brand"
-                  placeholder="Enter"
-                />
+                {{ vehicleDetails.brand || '-' }}
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Model</dt>
               <dd class="flex-1">
-                <span v-if="!isEditMode">
-                  {{ vehicleDetails.model || '-' }}
-                </span>
-                <el-input
-                  v-else
-                  v-model="vehicleDetails.model"
-                  placeholder="Enter"
-                />
+                {{ vehicleDetails.model || '-' }}
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Year</dt>
-              <dd class="flex-1">
-                <span v-if="!isEditMode">{{ vehicleDetails.year || '-' }}</span>
-                <el-input
-                  v-else
-                  v-model="vehicleDetails.year"
-                  placeholder="Enter"
-                />
-              </dd>
+              <dd class="flex-1">{{ vehicleDetails.year || '-' }}</dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Engine</dt>
               <dd class="flex-1">
-                <span v-if="!isEditMode">
-                  {{
-                    vehicleDetails.engineCapacity
-                      ? `${vehicleDetails.engineCapacity} T`
-                      : '-'
-                  }}
-                </span>
-                <el-input
-                  v-else
-                  v-model="vehicleDetails.engineCapacity"
-                  placeholder="Enter"
-                />
+                {{
+                  vehicleDetails.engineCapacity
+                    ? `${vehicleDetails.engineCapacity} T`
+                    : '-'
+                }}
               </dd>
             </dl>
           </div>
@@ -200,27 +160,13 @@ onMounted(async () => {
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">License Plate</dt>
               <dd class="flex-1">
-                <span v-if="!isEditMode">
-                  {{ vehicleDetails.licensePlate || '-' }}
-                </span>
-                <el-input
-                  v-else
-                  v-model="vehicleDetails.licensePlate"
-                  placeholder="Enter"
-                />
+                {{ vehicleDetails.licensePlate || '-' }}
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">VIN</dt>
               <dd class="flex-1">
-                <span v-if="!isEditMode">
-                  {{ vehicleDetails.vin || '-' }}
-                </span>
-                <el-input
-                  v-else
-                  v-model="vehicleDetails.vin"
-                  placeholder="Enter"
-                />
+                {{ vehicleDetails.vin || '-' }}
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
