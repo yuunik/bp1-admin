@@ -2,7 +2,11 @@
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { EmitterEvent, VehicleDetailTabs } from '@/utils/constantsUtil.js'
+import {
+  EmitterEvent,
+  RouteName,
+  VehicleDetailTabs,
+} from '@/utils/constantsUtil.js'
 import { getVehicleInfoApi, getVehicleScanRecordsApi } from '@/apis/obdApi.js'
 import {
   getDateWithDDMMMYYYY,
@@ -194,6 +198,61 @@ onMounted(async () => {
           </div>
         </div>
       </div>
+      <!-- Scanned History -->
+      <div class="mt-24 flex flex-col gap-8" ref="scannedHistoryRef">
+        <h4
+          class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
+        >
+          Scanned History
+        </h4>
+        <!-- divider -->
+        <el-divider />
+        <!-- table -->
+        <div class="mx-32 pb-32">
+          <el-table
+            :data="scannedHistoryList"
+            row-class-name="clickable-row"
+            @sort-change="sortByScannedHistoryParams"
+            @row-click="
+              (row) =>
+                $router.push({
+                  name: RouteName.SCAN_FAULT_CODE,
+                  params: { id: row.id },
+                })
+            "
+          >
+            <el-table-column
+              prop="createTime"
+              label="Scanned Date"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="type" label="Type">
+              <template #default="{ row }">
+                <span>Quick Scan</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="dtcCount"
+              label="Fault Codes"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                <span>
+                  {{
+                    row.dtcCount
+                      ? `${row.dtcCount} DTC${row.dtcCount > 1 ? 's' : ''}`
+                      : '-'
+                  }}
+                </span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
       <!-- Fault Codes -->
       <div class="mt-24 flex flex-col gap-8" ref="faultCodesRef">
         <h4
@@ -226,53 +285,6 @@ onMounted(async () => {
                 <template v-if="row.faultCount === 0">0</template>
                 <template v-else-if="row.faultCount === 1">1 DTC</template>
                 <template v-else>{{ row.faultCount }} DTCs</template>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <!-- Scanned History -->
-      <div class="mt-24 flex flex-col gap-8" ref="scannedHistoryRef">
-        <h4
-          class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
-        >
-          Scanned History
-        </h4>
-        <!-- divider -->
-        <el-divider />
-        <!-- table -->
-        <div class="mx-32 pb-32">
-          <el-table
-            :data="scannedHistoryList"
-            @sort-change="sortByScannedHistoryParams"
-          >
-            <el-table-column
-              prop="createTime"
-              label="Scanned Date"
-              sortable="custom"
-            >
-              <template #default="{ row }">
-                {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="type" label="Type">
-              <template #default="{ row }">
-                <span>Quick Scan</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="dtcCount"
-              label="Fault Codes"
-              sortable="custom"
-            >
-              <template #default="{ row }">
-                <span>
-                  {{
-                    row.dtcCount
-                      ? `${row.dtcCount} DTC${row.dtcCount > 1 ? 's' : ''}`
-                      : '-'
-                  }}
-                </span>
               </template>
             </el-table-column>
           </el-table>

@@ -114,6 +114,18 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      // 车辆扫描故障码详细页
+      {
+        path: '/obd-management/obd-list/obd-details/scan-record-details/:id',
+        name: RouteName.SCAN_RECORD_DETAIL,
+        component: () =>
+          import('@/views/ObdManagement/ScanRecordDetails/index.vue'),
+        meta: {
+          title: RouteName.SCAN_RECORD_DETAIL,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
       /**
        * 库存管理模块
        */
