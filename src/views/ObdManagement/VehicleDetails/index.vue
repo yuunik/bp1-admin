@@ -30,6 +30,9 @@ const scannedHistoryRef = ref([])
 
 const currentVehicleId = ref('')
 
+// 编辑模式
+const isEditMode = ref(false)
+
 // 获取车辆详情
 const getVehicleDetails = async () => {
   const { data } = await getVehicleInfoApi(currentVehicleId.value)
@@ -103,9 +106,18 @@ onMounted(async () => {
 <template>
   <section class="flex h-full flex-col">
     <!-- header -->
-    <h3 class="heading-h2-20px-medium text-neutrals-off-black mb-16 px-32">
-      {{ vehicleDetails.brand }}
-    </h3>
+    <div class="flex-between mx-32 mb-16">
+      <h3 class="heading-h2-20px-medium text-neutrals-off-black">
+        {{ vehicleDetails.brand }}
+      </h3>
+      <!-- btn group -->
+      <el-button v-show="!isEditMode" @click="isEditMode = true">
+        Edit
+      </el-button>
+      <el-button type="primary" v-show="isEditMode" @click="isEditMode = false">
+        Save
+      </el-button>
+    </div>
     <!-- divider -->
     <el-divider />
     <!-- tabs -->
@@ -122,29 +134,63 @@ onMounted(async () => {
     <!-- content, 滚动区域 -->
     <el-scrollbar class="flex flex-1 flex-col" ref="vehicleDetailRef">
       <!-- vehicle info -->
-      <div class="mx-32 mt-6 flex max-w-full justify-between gap-24">
+      <div
+        class="vehicle-info-container mx-32 mt-6 flex max-w-full justify-between gap-24"
+      >
         <div class="flex-1">
           <div class="flex flex-col gap-4">
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Brand</dt>
-              <dd class="flex-1">{{ vehicleDetails.brand || '-' }}</dd>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.brand || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.brand"
+                  placeholder="Enter"
+                />
+              </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Model</dt>
-              <dd class="flex-1">{{ vehicleDetails.model || '-' }}</dd>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.model || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.model"
+                  placeholder="Enter"
+                />
+              </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Year</dt>
-              <dd class="flex-1">{{ vehicleDetails.year || '-' }}</dd>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">{{ vehicleDetails.year || '-' }}</span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.year"
+                  placeholder="Enter"
+                />
+              </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Engine</dt>
               <dd class="flex-1">
-                {{
-                  vehicleDetails.engineCapacity
-                    ? `${vehicleDetails.engineCapacity} T`
-                    : '-'
-                }}
+                <span v-if="!isEditMode">
+                  {{
+                    vehicleDetails.engineCapacity
+                      ? `${vehicleDetails.engineCapacity} T`
+                      : '-'
+                  }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.engineCapacity"
+                  placeholder="Enter"
+                />
               </dd>
             </dl>
           </div>
@@ -153,11 +199,29 @@ onMounted(async () => {
           <div class="flex flex-col gap-4">
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">License Plate</dt>
-              <dd class="flex-1">{{ vehicleDetails.licensePlate || '-' }}</dd>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.licensePlate || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.licensePlate"
+                  placeholder="Enter"
+                />
+              </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">VIN</dt>
-              <dd class="flex-1">{{ vehicleDetails.vin || '-' }}</dd>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.vin || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.vin"
+                  placeholder="Enter"
+                />
+              </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Bound Date</dt>
@@ -231,4 +295,22 @@ onMounted(async () => {
   </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.vehicle-info-container :deep(.el-input__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.vehicle-info-container :deep(.el-input__wrapper::after) {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--el-input-border-color, var(--el-border-color));
+  pointer-events: none;
+}
+</style>
