@@ -12,7 +12,6 @@ import {
   getDateWithDDMMMYYYY,
   getDateWithDDMMMYYYYhhmma,
 } from '@/utils/dateUtil.js'
-import { getFaultCodeListApi } from '@/apis/appApi.js'
 import emitter from '@/utils/emitterUtil.js'
 import { useSort } from '@/composables/useSort.js'
 
@@ -45,9 +44,6 @@ const pagination = reactive({
   total: 100,
 })
 
-// 车辆故障码列表
-const faultCodeList = ref([])
-
 const scannedHistoryList = ref([])
 
 // 车辆dtc列表排序参数
@@ -55,12 +51,6 @@ const scannedHistoryPaginationParams = reactive({
   sortBy: '',
   sort: '',
 })
-
-// 获取车辆故障码列表
-const getFaultCodeList = async () => {
-  const { data } = await getFaultCodeListApi(currentVehicleId.value)
-  faultCodeList.value = data.dtcItemDtos
-}
 
 // 监听currentPage, 刷新列表
 watch(
@@ -78,10 +68,6 @@ watch(activeTabName, (val) => {
     scannedHistoryRef.value.scrollIntoView({ behavior: 'smooth' })
   }
 })
-
-const handleScroll = (scrollData) => {
-  // console.log(scrollData, '##############')
-}
 
 // 获取车辆dtc历史列表
 const getScannedHistoryList = async () => {
@@ -109,11 +95,7 @@ onMounted(async () => {
   } = route
   if (id) {
     currentVehicleId.value = id
-    await Promise.all([
-      getVehicleDetails(),
-      getFaultCodeList(),
-      getScannedHistoryList(),
-    ])
+    await Promise.all([getVehicleDetails(), getScannedHistoryList()])
   }
 })
 </script>
@@ -133,20 +115,12 @@ onMounted(async () => {
         :name="VehicleDetailTabs.VEHICLE_DETAILS"
       />
       <el-tab-pane
-        :label="VehicleDetailTabs.FAULT_CODES"
-        :name="VehicleDetailTabs.FAULT_CODES"
-      />
-      <el-tab-pane
         :label="VehicleDetailTabs.SCANNED_HISTORY"
         :name="VehicleDetailTabs.SCANNED_HISTORY"
       />
     </el-tabs>
     <!-- content, 滚动区域 -->
-    <el-scrollbar
-      class="flex flex-1 flex-col"
-      ref="vehicleDetailRef"
-      @scroll="handleScroll"
-    >
+    <el-scrollbar class="flex flex-1 flex-col" ref="vehicleDetailRef">
       <!-- vehicle info -->
       <div class="mx-32 mt-6 flex max-w-full justify-between gap-24">
         <div class="flex-1">
@@ -248,43 +222,6 @@ onMounted(async () => {
                       : '-'
                   }}
                 </span>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
-      <!-- Fault Codes -->
-      <div class="mt-24 flex flex-col gap-8" ref="faultCodesRef">
-        <h4
-          class="leading-24 heading-body-large-body-14px-medium text-neutrals-off-black mx-32"
-        >
-          Fault Codes
-        </h4>
-        <!-- divider -->
-        <el-divider />
-        <!-- table -->
-        <div class="mx-32">
-          <el-table :data="faultCodeList" class="w-full">
-            <el-table-column type="expand" min-width="2%">
-              <template #default="{ row }">
-                <el-table :data="row.dtcItemDtcDtos">
-                  <el-table-column prop="name" label="DTC Name" />
-                  <el-table-column prop="code" label="Code" />
-                  <!--<el-table-column prop="severity" label="Severity" />-->
-                  <!--<el-table-column>-->
-                  <!--  <template #default="{ row }">-->
-                  <!--    <el-button class="rounded-full!">View Details</el-button>-->
-                  <!--  </template>-->
-                  <!--</el-table-column>-->
-                </el-table>
-              </template>
-            </el-table-column>
-            <el-table-column prop="systemName" label="ECU" min-width="50%" />
-            <el-table-column label="Fault Codes" min-width="48%">
-              <template #default="{ row }">
-                <template v-if="row.faultCount === 0">0</template>
-                <template v-else-if="row.faultCount === 1">1 DTC</template>
-                <template v-else>{{ row.faultCount }} DTCs</template>
               </template>
             </el-table-column>
           </el-table>
