@@ -5,6 +5,10 @@ const clickOutside = {
         binding.value(event) // 执行传入的方法
       }
     }
+    // 延迟到下一个事件循环再绑定，避免初次点击触发
+    // setTimeout(() => {
+    //   document.addEventListener('click', el.clickOutsideEvent)
+    // })
     document.addEventListener('click', el.clickOutsideEvent)
   },
   unmounted(el) {

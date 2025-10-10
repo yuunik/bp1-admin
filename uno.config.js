@@ -94,6 +94,7 @@ export default defineConfig({
       'bg-status-colours-light-yellow': 'bg-[#FFEEC0]',
       'bg-input': 'bg-[#EAEEF4]',
       'bg-neutrals-card-filling': 'bg-[#FBFCFD]',
+      'bg-neutrals/off-white': 'bg-[#FCFCFC]',
       /* 文字颜色样式 */
       'text-status-colours-green': 'text-[#05AD9D]',
       'text-status-colours-orange': 'text-[#FF6D1A]',
@@ -105,6 +106,7 @@ export default defineConfig({
       'text-neutrals-off-white': 'text-[#EFF4F9]',
       'text-neutrals-white': 'text-[#FFFFFF]',
       'text-neutrals-off-black': 'text-[#1B1A1E]',
+      'text-neutrals-grey-1': 'text-[#EAEEF4]',
       'text-neutrals-grey-2': 'text-[#CACFD8]',
       'text-neutrals-grey-3': 'text-[#99A0AE]',
       'text-neutrals-grey-4': 'text-[#6F7788]',

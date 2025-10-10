@@ -492,6 +492,18 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      // push notifications
+      {
+        path: '/app-configuration/push-notifications',
+        name: RouteName.PUSH_NOTIFICATIONS,
+        component: () =>
+          import('@/views/AppConfiguration/PushNotifications/index.vue'),
+        meta: {
+          title: RouteName.PUSH_NOTIFICATIONS,
+          showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
     ],
     meta: {
       title: RouteName.APP_MANAGEMENT,
