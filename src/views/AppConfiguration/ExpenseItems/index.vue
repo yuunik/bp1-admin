@@ -317,7 +317,9 @@ const getMaintenanceList = async () => {
 // 监听分页数据变化
 watch(
   () => pagination.currentPage,
-  () => {},
+  () => {
+    initData()
+  },
 )
 
 // 监听
