@@ -1,6 +1,7 @@
 <script setup>
 import { watch, ref } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
+import { Clock } from '@element-plus/icons-vue'
 
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
@@ -200,7 +201,26 @@ const dialogNotificationDetailsVisible = ref(false)
 const dialogNotificationFormVisible = ref(false)
 
 // Notification 表单
-const notificationForm = ref({})
+const notificationForm = ref({
+  title: '',
+  content: '',
+  type: 'system',
+  obdVersion: 'all',
+  applicationType: 'all',
+  userStatus: 'all', // all / selected
+  sendType: 'now', // now / schedule
+  scheduleTime: '', // 仅当 sendType = schedule 时有效
+})
+
+// 日期选择器
+const datePickerVisible = computed(
+  () => notificationForm.value.sendType === 'schedule',
+)
+
+// 用户选择器
+const userSelectorVisible = computed(
+  () => notificationForm.value.userStatus === 'selected',
+)
 
 // 数据初始化
 const initData = async () => {
@@ -267,7 +287,9 @@ watch(
       <h2 class="heading-h2-20px-medium text-neutrals-off-black">
         Push notifications
       </h2>
-      <el-button type="primary">Create</el-button>
+      <el-button type="primary" @click="dialogNotificationFormVisible = true">
+        Create
+      </el-button>
     </div>
     <!-- Search bar -->
     <div class="flex-between h-24">
@@ -525,12 +547,258 @@ watch(
         ? 'Edit Push notification'
         : 'Create Push notification'
     "
-    :confirm-text="notificationForm.id ? 'Edit' : 'Create'"
+    :confirm-text="notificationForm.id ? 'Save' : 'Create'"
+    :dialog-width="850"
     @cancel="dialogNotificationFormVisible = false"
     @confirm="handleManageNotification"
   >
-    111111111111111111
+    <template #content>
+      <el-form
+        :model="notificationForm"
+        label-position="top"
+        class="flex w-full flex-col gap-16"
+      >
+        <!-- Title -->
+        <el-form-item label="Title" prop="title" class="label-required">
+          <el-input
+            v-model="notificationForm.title"
+            placeholder="Enter title"
+          />
+        </el-form-item>
+
+        <!-- Content -->
+        <el-form-item label="Content" prop="content" class="label-required">
+          <el-input
+            type="textarea"
+            v-model="notificationForm.content"
+            placeholder="Enter content"
+            :rows="3"
+          />
+        </el-form-item>
+
+        <!-- 三列布局 -->
+        <el-row :gutter="8">
+          <el-col :span="8">
+            <el-form-item
+              label="Notification Type"
+              prop="type"
+              class="label-required"
+            >
+              <el-select
+                v-model="notificationForm.type"
+                placeholder="Select type"
+              >
+                <el-option label="System" value="system" />
+                <el-option label="Custom" value="custom" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="OBD Version" prop="obdVersion">
+              <el-select
+                v-model="notificationForm.obdVersion"
+                placeholder="Select OBD"
+              >
+                <el-option label="All" value="all" />
+                <el-option label="OBD 1" value="obd1" />
+                <el-option label="OBD 2" value="obd2" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="Application Type" prop="applicationType">
+              <el-select
+                v-model="notificationForm.applicationType"
+                placeholder="Select application"
+              >
+                <el-option label="All" value="all" />
+                <el-option label="OBD" value="obd" />
+                <el-option label="OBD+" value="obd+" />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- User status -->
+        <el-form-item
+          label="User status"
+          prop="userStatus"
+          class="label-required user-status-container"
+        >
+          <el-radio-group
+            v-model="notificationForm.userStatus"
+            class="flex! items-start! w-full flex-col gap-8"
+          >
+            <el-radio label="all">All Users</el-radio>
+            <el-radio label="selected" class="relative w-full">
+              <span>Selected Users</span>
+              <!-- 用户账号状态筛选 -->
+              <base-filter-panel
+                v-model="userStatusList"
+                v-model:keywords="userSearchText"
+                :section-list="userStatusFilterParams"
+                condition-text="+ New Note"
+                :is-need-input="true"
+                v-show="userSelectorVisible"
+              >
+                <template #text>
+                  <el-button type="primary" text class="w-fit">
+                    <template #icon>
+                      <i class="icon-typesadd text-neutrals-blue" />
+                    </template>
+                    <template #default>New Note</template>
+                  </el-button>
+                </template>
+              </base-filter-panel>
+              <el-button
+                type="primary"
+                text
+                class="absolute bottom-0 right-0 w-fit"
+                v-show="userSelectorVisible"
+              >
+                Clear
+              </el-button>
+            </el-radio>
+          </el-radio-group>
+          <!-- selected user -->
+          <template v-if="userSelectorVisible">
+            <div
+              class="rounded-4 bg-default-light-blue flex-between w-full p-4"
+              v-for="item in 3"
+              :key="item"
+            >
+              <div class="row-center h-28 gap-8">
+                <el-avatar
+                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                  :size="20"
+                />
+                <span class="heading-body-large-body-14px-regular leading-18">
+                  Jonathan Lim
+                </span>
+              </div>
+              <i
+                class="icon-typesclose text-12 text-default-offset-primary-colour cursor-pointer"
+              />
+            </div>
+          </template>
+        </el-form-item>
+
+        <!-- Actual Sent Time -->
+        <el-form-item
+          label="Actual Sent Time"
+          prop="actualSentTime"
+          class="label-required"
+        >
+          <el-radio-group
+            v-model="notificationForm.sendType"
+            class="flex! items-start! flex-col gap-8"
+            @change="handleSendTypeChange"
+          >
+            <el-radio label="now">Send Now</el-radio>
+            <el-radio label="schedule" class="schedule-container">
+              <span>Schedule</span>
+              <el-date-picker
+                v-model="notificationForm.scheduleTime"
+                type="datetime"
+                placeholder="Select date and time"
+                format="DD MMM YYYY HH:mm:ss"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                class="w-730! ml-8"
+                v-if="datePickerVisible"
+              />
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template #descriptionFooter>
+      <p class="heading-body-body-12px-regular text-neutrals-off-black">
+        Estimated reach:
+        <span class="text-neutrals-blue">500</span>
+        users.
+      </p>
+    </template>
   </base-dialog>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 重置 el-input 的样式
+:deep(.el-input) {
+  @apply rounded-12 h-32;
+
+  .el-input__wrapper {
+    @apply rounded-12 bg-[#EAEEF480];
+  }
+}
+
+// 重置 el-input 的样式
+:deep(.el-textarea) {
+  .el-textarea__inner {
+    @apply rounded-12 bg-[#EAEEF480];
+  }
+}
+
+// 重置选择框的样式
+:deep(.el-select) {
+  .el-select__wrapper {
+    @apply rounded-12 h-32 bg-[#EAEEF480];
+  }
+}
+
+:deep(.el-form-item__label) {
+  color: #1b1a1e !important;
+}
+
+:deep(.el-radio__label) {
+  display: flex;
+  gap: 4px;
+}
+
+.schedule-container {
+  :deep(.el-date-editor) {
+    &:not(.el-date-editor--daterange) {
+      // 隐藏默认前缀图标
+      .el-input__prefix {
+        @apply hidden;
+      }
+
+      // 自定义后缀图标
+      .el-input__suffix-inner {
+        position: relative;
+
+        &::before {
+          content: '';
+          display: block;
+          width: 20px;
+          height: 20px;
+          background-color: currentColor; // 用文字颜色填充
+          -webkit-mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat
+            center;
+          mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat center;
+          -webkit-mask-size: contain;
+          mask-size: contain;
+        }
+      }
+    }
+  }
+}
+
+// 添加必填星号
+.label-required :deep(.el-form-item__label) {
+  &::after {
+    margin-left: 3px;
+    content: '*';
+    color: red;
+  }
+}
+
+// 用户选择框样式
+.user-status-container :deep(.el-form-item__content) {
+  @apply flex-col items-start gap-8;
+}
+
+// 表单单项样式调整
+:deep(.el-form-item) {
+  @apply mb-0;
+}
+</style>
