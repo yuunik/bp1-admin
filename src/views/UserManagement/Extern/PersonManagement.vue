@@ -21,6 +21,9 @@ import {
 import BaseTag from '@/components/BaseTag.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
 
+import EmptyOBD from '@/assets/specialIcons/empty-obd.svg'
+import EmptyCar from '@/assets/specialIcons/empty-car.svg'
+
 const logAndNoteDataList = ref([
   {
     date: '15 May 2025 9:00 am',
@@ -306,17 +309,13 @@ onMounted(async () => {
         </dd>
       </dl>
       <!-- OBD Devices -->
-      <div
-        class="flex flex-col gap-8"
-        v-if="obdDeviceList.length"
-        ref="obdDevicesRef"
-      >
+      <div class="flex flex-col gap-8" ref="obdDevicesRef">
         <!-- header -->
         <div
           class="row-center heading-body-large-body-14px-medium mx-32 h-24 gap-8"
         >
           <h4 class="text-neutrals-off-black">OBD Devices</h4>
-          <span class="text-neutrals-grey-3">3</span>
+          <span class="text-neutrals-grey-3">{{ obdDeviceList.length }}</span>
         </div>
         <el-divider />
         <!-- table -->
@@ -358,15 +357,17 @@ onMounted(async () => {
                 <el-button class="rounded-full!">Unbind</el-button>
               </template>
             </el-table-column>
+            <template #empty>
+              <div class="mt-20 flex flex-col items-center">
+                <el-image :src="EmptyOBD" class="w-120 h-120" fit="cover" />
+                <span class="text-neutrals-grey-3">No OBD Devices</span>
+              </div>
+            </template>
           </el-table>
         </div>
       </div>
       <!-- Vehicles -->
-      <div
-        class="flex flex-col gap-8"
-        v-if="vehicleList.length"
-        ref="vehiclesRef"
-      >
+      <div class="flex flex-col gap-8" ref="vehiclesRef">
         <!-- header -->
         <h4
           class="row-center heading-body-large-body-14px-medium text-neutrals-off-black mx-32 h-24"
@@ -433,6 +434,12 @@ onMounted(async () => {
                 </el-button>
               </template>
             </el-table-column>
+            <template #empty>
+              <div class="mt-20 flex flex-col items-center">
+                <el-image :src="EmptyCar" class="w-100 h-100" fit="cover" />
+                <span class="text-neutrals-grey-3">No Vehicles</span>
+              </div>
+            </template>
           </el-table>
         </div>
       </div>
