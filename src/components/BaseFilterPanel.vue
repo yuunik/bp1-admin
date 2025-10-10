@@ -69,7 +69,9 @@ watch(searchKeys, () => {
 <template>
   <!-- 触发框 -->
   <el-dropdown trigger="click" placement="bottom-start">
+    <slot v-if="$slots.text" name="text" />
     <div
+      v-else
       class="border-1 neutrals-grey-3 default-transition row-center box-border h-24 w-fit cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
       :class="
         searchKeyList.length
