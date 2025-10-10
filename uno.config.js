@@ -89,6 +89,7 @@ export default defineConfig({
       'bg-status-colours-light-orange': 'bg-[#FFF0E8]',
       'bg-status-colours-light-purple': 'bg-[#F5EAFB]',
       'bg-status-colours-light-blue': 'bg-[#E8F0F8]',
+      'bg-status-colours-light-blue-hover': 'bg-[#E3EAF3]',
       'bg-status-colours-light-red': 'bg-[#FDECEA]',
       'bg-status-colours-light-yellow': 'bg-[#FFEEC0]',
       'bg-input': 'bg-[#EAEEF4]',

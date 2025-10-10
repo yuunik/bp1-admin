@@ -30,6 +30,11 @@ const scannedHistoryRef = ref([])
 
 const currentVehicleId = ref('')
 
+// 车辆名称
+const carName = computed(
+  () => vehicleDetails.brand + ' ' + vehicleDetails.model,
+)
+
 // 获取车辆详情
 const getVehicleDetails = async () => {
   const { data } = await getVehicleInfoApi(currentVehicleId.value)
@@ -104,7 +109,7 @@ onMounted(async () => {
   <section class="flex h-full flex-col">
     <!-- header -->
     <h3 class="heading-h2-20px-medium text-neutrals-off-black mx-32 mb-16">
-      {{ vehicleDetails.brand }}
+      {{ carName }}
     </h3>
     <!-- divider -->
     <el-divider />
@@ -200,8 +205,11 @@ onMounted(async () => {
             @row-click="
               (row) =>
                 $router.push({
-                  name: RouteName.SCAN_FAULT_CODE,
+                  name: RouteName.SCAN_RECORD_DETAIL,
                   params: { id: row.id },
+                  query: {
+                    name: carName,
+                  },
                 })
             "
           >

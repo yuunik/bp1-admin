@@ -28,6 +28,8 @@ const ObdApi = Object.freeze({
   GET_OBD_OPERATION_RECORDS: '/manager/obd/logs',
   // 获取车辆 dtc 历史列表
   GET_VEHICLE_SCAN_RECORDS: '/manager/dtc/dtcs',
+  // 获取车辆 dtc 详情
+  GET_VEHICLE_SCAN_RECORD_DETAIL: '/manager/dtc/info',
 })
 
 // 获取 token
@@ -220,6 +222,23 @@ export const editOBDApi = (params) => {
 
   return request({
     url: ObdApi.EDIT_OBD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆 dtc 详情
+ * @param dtcId
+ * @returns {*}
+ */
+export const getVehicleScanRecordDetailApi = (dtcId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('dtcId', dtcId)
+
+  return request({
+    url: ObdApi.GET_VEHICLE_SCAN_RECORD_DETAIL,
     method: 'POST',
     data,
   })
