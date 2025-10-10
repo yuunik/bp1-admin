@@ -20,6 +20,10 @@ defineProps({
     type: String,
     default: 'primary',
   },
+  dialogWidth: {
+    type: String,
+    default: '520',
+  },
 })
 
 // 定义事件
@@ -39,12 +43,13 @@ const confirm = () => emit('confirm')
   <el-dialog
     v-model="dialogVisible"
     :title="title"
-    width="520"
+    :width="dialogWidth"
     align-center
     :showClose="false"
   >
     <slot name="content" />
     <template #footer>
+      <slot name="descriptionFooter" />
       <el-button @click="cancel">{{ cancelText }}</el-button>
       <el-button :type="buttonType" @click="confirm">
         {{ confirmText }}

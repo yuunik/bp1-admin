@@ -141,11 +141,12 @@
 
   // 对话框底部
   .el-dialog__footer {
-    @apply p-16 flex gap-8;
+    @apply p-16 row-center gap-16;
     border-top: 1px solid #EAEEF4;
 
     .el-button {
       @apply flex-1;
+      margin: 0;
     }
   }
 }
