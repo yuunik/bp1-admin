@@ -817,7 +817,7 @@ export const editPushTaskApi = (params) => {
  * @param params.appTypes app类型
  * @param params.sort 排序字段
  * @param params.sortBy 排序方式
- * @param params.isGlobal 是否全局 (0: 否,指定用户, 1:是)
+ * @param params.userKey 用户ids
  * @param params.page 页码
  * @param params.pageSize 每页数量
  *
@@ -832,7 +832,7 @@ export const getPushTaskListApi = (params) => {
   data.append('appTypes', params.appTypes)
   data.append('sort', params.sort)
   data.append('sortBy', params.sortBy)
-  data.append('isGlobal', params.isGlobal)
+  data.append('userIds', params.userKey)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
 

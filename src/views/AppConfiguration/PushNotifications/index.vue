@@ -17,101 +17,11 @@ import { ElMessage } from 'element-plus'
 import { getOBDVersionListApi } from '@/apis/obdApi.js'
 import { getFirstLetter, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseTag from '@/components/BaseTag.vue'
-import { getDateWithDDMMMYYYYhhmma } from '../../../utils/dateUtil.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import { useSort } from '@/composables/useSort.js'
 
 // 通知列表
-const notificationList = ref([
-  {
-    id: 1,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Pending',
-    editedAt: '09 Oct 2023 14:30:25',
-    actualSentTime: '09 Oct 2023 14:30:25',
-    targeted: 500,
-  },
-  {
-    id: 2,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:28',
-    actualSentTime: '09 Oct 2023 14:30:28',
-    targeted: 500,
-  },
-  {
-    id: 3,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:30',
-    actualSentTime: '09 Oct 2023 14:30:30',
-    targeted: 500,
-  },
-  {
-    id: 4,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:33',
-    actualSentTime: '09 Oct 2023 14:30:33',
-    targeted: 500,
-  },
-  {
-    id: 5,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:35',
-    actualSentTime: '09 Oct 2023 14:30:35',
-    targeted: 500,
-  },
-  {
-    id: 6,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:37',
-    actualSentTime: '09 Oct 2023 14:30:37',
-    targeted: 500,
-  },
-  {
-    id: 7,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:39',
-    actualSentTime: '09 Oct 2023 14:30:39',
-    targeted: 500,
-  },
-  {
-    id: 8,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:41',
-    actualSentTime: '09 Oct 2023 14:30:41',
-    targeted: 500,
-  },
-  {
-    id: 9,
-    title: 'App Update Available',
-    content: 'Version 2.3.1 is ready to download.',
-    type: 'System',
-    status: 'Sent',
-    editedAt: '09 Oct 2023 14:30:43',
-    actualSentTime: '09 Oct 2023 14:30',
-    targeted: 500,
-  },
-])
+const notificationList = ref([])
 
 // 当前的时间戳
 const currentTimestamp = ref(dayjs().valueOf())
@@ -386,7 +296,7 @@ const getNotificationList = async () => {
     appTypes: applicationKeys.value,
     sort: conditionParams.sort,
     sortBy: conditionParams.sortBy,
-    isGlobal: 1,
+    userKey: userStatusKeys.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
@@ -512,6 +422,9 @@ const handleCloseNotificationInfoDialog = () => {
   }
 }
 
+// 排序函数
+const sort = useSort(conditionParams, () => refresh())
+
 // 监听分页数据变化
 watch(
   () => pagination.currentPage,
@@ -619,6 +532,7 @@ initData()
           @cell-mouse-leave="handleCellMouseLeave"
           @row-click="handleViewDetails"
           row-class-name="clickable-row"
+          @sort-change="sort"
         >
           <el-table-column type="selection" min-width="6%" align="center" />
           <el-table-column
@@ -672,7 +586,12 @@ initData()
               {{ getDateWithDDMMMYYYYhhmma(row.sentTime) }}
             </template>
           </el-table-column>
-          <el-table-column prop="targeted" label="Targeted" min-width="7%">
+          <el-table-column
+            prop="targeted"
+            label="Targeted"
+            min-width="7%"
+            sortable="custom"
+          >
             <template #default="{ row }">
               {{ row.targeted || '-' }}
             </template>
