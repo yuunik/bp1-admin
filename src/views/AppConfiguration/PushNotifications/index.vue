@@ -207,13 +207,17 @@ const hasPushUser = computed(() => {
 const hasPushTime = computed(() => {
   const { sendTime, scheduleTime } = notificationForm.value
 
-  // 情况 1：sendTime 为空 → 没有选择
-  if (!sendTime) return false
+  // 情况 1：sendTime 为空字符串、null 或 undefined → 没有选择
+  if (sendTime === '' || sendTime === null || sendTime === undefined) {
+    return false
+  }
 
-  // 情况 2：sendTime 为 schedule，但 scheduleTime 为空 → 没有选择
-  if (sendTime === 'schedule' && !scheduleTime) return false
+  // 情况 2：sendTime 为 'schedule'，但 scheduleTime 为空 → 没有选择
+  if (sendTime === 'schedule' && !scheduleTime) {
+    return false
+  }
 
-  // 其他情况 → 已选择
+  // 其他情况（包括 sendTime === 0）→ 已选择
   return true
 })
 
@@ -918,7 +922,7 @@ initData()
             v-model="notificationForm.sendTime"
             class="flex! items-start! flex-col gap-8"
           >
-            <el-radio label="now" :value="currentTimestamp">Send Now</el-radio>
+            <el-radio label="now" :value="0">Send Now</el-radio>
             <el-radio
               label="schedule"
               class="schedule-container"
