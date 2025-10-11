@@ -8,6 +8,7 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BasePagination from '@/components/BasePagination.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { getPushTaskListApi } from '@/apis/appApi.js'
 
 // 通知列表
 const notificationList = ref([
@@ -212,6 +213,12 @@ const notificationForm = ref({
   scheduleTime: '', // 仅当 sendType = schedule 时有效
 })
 
+// 条件搜索参数
+const conditionParams = reactive({
+  sortBy: '',
+  sort: '',
+})
+
 // 日期选择器
 const datePickerVisible = computed(
   () => notificationForm.value.sendType === 'schedule',
@@ -222,6 +229,25 @@ const userSelectorVisible = computed(
   () => notificationForm.value.userStatus === 'selected',
 )
 
+// 获取通知列表
+const getNotificationList = async () => {
+  const { data, count } = await getPushTaskListApi({
+    searchKey: searchKeywords.value,
+    types: typeKeys.value,
+    obdVersions: obdVersionKeys.value,
+    appTypes: applicationKeys.value,
+    sort: conditionParams.sort,
+    sortBy: conditionParams.sortBy,
+    isGlobal: 1,
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+  })
+  // 设置分页数据
+  pagination.total = count
+  // 设置通知列表数据
+  notificationList.value = data
+}
+
 // 数据初始化
 const initData = async () => {
   /// todo 获取数据
@@ -230,7 +256,7 @@ const initData = async () => {
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
-    return initData()
+    return getNotificationList()
   }
   // 设置当前页为 1
   pagination.currentPage = 0
@@ -275,9 +301,12 @@ const handleManageNotification = async () => {
 watch(
   () => pagination.currentPage,
   () => {
-    initData()
+    getNotificationList()
   },
 )
+
+// 组件创建, 发起网络请求
+getNotificationList()
 </script>
 
 <template>
