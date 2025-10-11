@@ -745,9 +745,9 @@ export const createPushTaskApi = (params) => {
   data.append('title', params.title)
   data.append('content', params.content)
   data.append('type', params.type)
-  data.append('obdVersions', params.obdVersions)
-  data.append('appType', params.appType)
-  data.append('pushUserIds', params.pushUserIds)
+  params.obdVersions && data.append('obdVersions', params.obdVersions)
+  params.appType && data.append('appType', params.appType)
+  params.pushUserIds && data.append('pushUserIds', params.pushUserIds)
   data.append('sentTime', params.sentTime)
 
   return request({

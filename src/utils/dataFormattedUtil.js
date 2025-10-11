@@ -21,3 +21,15 @@ export const getFullFilePath = (path) => {
  */
 export const getFormatNumber = (number) =>
   new Intl.NumberFormat().format(number)
+
+/**
+ * @description 获取字符串第一个字母, 输出其大写形式
+ * @param str
+ * @returns {string}
+ */
+export const getFirstLetter = (str) => {
+  if (!str) {
+    return '-'
+  }
+  return str.charAt(0).toUpperCase()
+}

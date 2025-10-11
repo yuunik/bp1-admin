@@ -1,7 +1,7 @@
 <script setup>
 import { watch, ref } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
-import { Clock } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
 
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
@@ -15,6 +15,7 @@ import {
 } from '@/apis/appApi.js'
 import { ElMessage } from 'element-plus'
 import { getOBDVersionListApi } from '@/apis/obdApi.js'
+import { getFirstLetter, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 // 通知列表
 const notificationList = ref([
@@ -110,6 +111,9 @@ const notificationList = ref([
   },
 ])
 
+// 当前的时间戳
+const currentTimestamp = ref(dayjs().valueOf())
+
 // 通知类型筛选参数
 const typeList = ref([])
 
@@ -161,6 +165,13 @@ const userStatusKeys = computed(() =>
 )
 
 const userStatusFilterParams = ref([])
+
+// 被选择的用户的完整信息的列表
+const selectedUserList = computed(() =>
+  userStatusFilterParams.value.filter((userInfo) =>
+    userStatusList.value.includes(userInfo.value),
+  ),
+)
 
 // 用户搜索条件
 const userSearchText = ref('')
@@ -234,9 +245,9 @@ const notificationForm = ref({
   type: 'system',
   obdVersion: 'all',
   applicationType: 'all',
-  userStatus: 'all', // all / selected
-  sendType: 'now', // now / schedule
-  scheduleTime: '', // 仅当 sendType = schedule 时有效
+  userStatus: '', // all / selected
+  sendTime: '', // 推送任务的目标时间戳
+  scheduleTime: '',
 })
 
 // 条件搜索参数
@@ -247,7 +258,7 @@ const conditionParams = reactive({
 
 // 日期选择器
 const datePickerVisible = computed(
-  () => notificationForm.value.sendType === 'schedule',
+  () => notificationForm.value.sendTime === 'schedule',
 )
 
 // 用户选择器
@@ -262,31 +273,104 @@ const actualSendTimeRangeDisplay = computed(() =>
     : 'Actual Sent Time',
 )
 
-// 筛选有值时的颜色
-const conditionTextColor = computed(() =>
-  actualSentTimeList.value.length ? ' text-[#006BF7]' : 'text-neutrals-grey-3 ',
-)
-
+// 筛选有值时的边框颜色
 const conditionBorderColor = computed(() =>
   actualSentTimeList.value.length ? '#006BF7' : ' #CACFD8',
 )
 
+// 是否选择了推送用户
+const hasPushUser = computed(() => {
+  const { userStatus } = notificationForm.value
+
+  // 情况 1：userStatus 为空 → 没有选择
+  if (!userStatus) return false
+
+  // 情况 2：userStatus 为 custom，但 userStatusKeys 为空 → 没有选择
+  if (userStatus === 'custom' && !userStatusKeys.value) return false
+
+  return true
+})
+
+// 是否选择了推送时间
+const hasPushTime = computed(() => {
+  const { sendTime, scheduleTime } = notificationForm.value
+
+  // 情况 1：sendTime 为空 → 没有选择
+  if (!sendTime) return false
+
+  // 情况 2：sendTime 为 schedule，但 scheduleTime 为空 → 没有选择
+  if (sendTime === 'schedule' && !scheduleTime) return false
+
+  // 其他情况 → 已选择
+  return true
+})
+
+// 弹窗推送任务的指定时间的时间戳
+const scheduleTime = ref(-1)
+
 // 新增推送任务
 const addNotification = async () => {
-  await createPushTaskApi({
+  console.log('新增 notification')
+
+  // 基础参数（必传）
+  const params = {
     title: notificationForm.value.title,
     content: notificationForm.value.content,
     type: notificationForm.value.type,
-    obdVersion: notificationForm.value.obdVersion,
-    appType: notificationForm.value.applicationType,
-    pushUserIds: notificationForm.value.userStatus,
-    sentTime: '',
-    // notificationForm.value.sendType,
-    // scheduleTime: notificationForm.value.scheduleTime,
-  })
-  // 新增成功
-  ElMessage.success('Add Notification Success')
-  refresh()
+    sentTime:
+      hasPushTime.value && notificationForm.value.sendTime === 'schedule'
+        ? scheduleTime.value
+        : notificationForm.value.sendTime,
+  }
+
+  // 条件传递 obdVersion
+  if (notificationForm.value.obdVersion !== 'all') {
+    params.obdVersion = notificationForm.value.obdVersion
+  }
+
+  // 条件传递 appType
+  if (notificationForm.value.applicationType !== 'all') {
+    params.appType = notificationForm.value.applicationType
+  }
+
+  // 条件传递 pushUserIds
+  if (hasPushUser.value && notificationForm.value.userStatus === 'selected') {
+    params.pushUserIds = userStatusKeys.value
+  }
+
+  // 必填校验
+  if (!params.title) {
+    ElMessage.error('Title is required')
+    return
+  }
+  if (!params.content) {
+    ElMessage.error('Content is required')
+    return
+  }
+  if (!params.type) {
+    ElMessage.error('Type is required')
+    return
+  }
+  if (!hasPushUser.value) {
+    ElMessage.error('User Status is required')
+    return
+  }
+  if (!hasPushTime.value) {
+    ElMessage.error('Send Time is required')
+    return
+  }
+
+  try {
+    // 新增
+    await createPushTaskApi(params)
+    // 提示
+    ElMessage.success('Add Notification Success')
+    // 刷新
+    refresh()
+  } finally {
+    // 关闭弹窗
+    dialogNotificationFormVisible.value = false
+  }
 }
 
 // 获取通知列表
@@ -308,11 +392,15 @@ const getNotificationList = async () => {
   notificationList.value = data
 }
 
+// 获取用户列表
 const getUserList = async () => {
   const { data } = await getExpenditureUserListApi()
   userStatusFilterParams.value = data.map((item) => ({
+    id: item.id,
     label: item.name,
     value: item.name === 'Admin' ? 'admin' : item.id,
+    logo: item.logo,
+    name: item.name,
   }))
 }
 
@@ -366,10 +454,24 @@ const handleViewDetails = (_, column) => {
 // 管理Notification
 const handleManageNotification = async () => {
   if (!notificationForm.value.id) {
-    console.log('新增 notificaiton')
+    addNotification()
   } else {
     console.log('编辑 notificaiton')
   }
+}
+
+// 取消选择用户
+const handleUnselectUser = (userId) => {
+  userStatusList.value = userStatusList.value.filter((item) => item !== userId)
+}
+
+// 取消全部的选择用户
+const handleResetUserList = () => {
+  userStatusList.value = []
+}
+
+const handleDateChange = (val) => {
+  scheduleTime.value = dayjs(val).valueOf()
 }
 
 // 监听分页数据变化
@@ -702,8 +804,12 @@ initData()
                 v-model="notificationForm.type"
                 placeholder="Select type"
               >
-                <el-option label="System" value="system" />
-                <el-option label="Custom" value="custom" />
+                <el-option
+                  v-for="typeInfo in typeFilterParams"
+                  :key="typeInfo.label"
+                  :label="typeInfo.label"
+                  :value="typeInfo.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -714,8 +820,12 @@ initData()
                 placeholder="Select OBD"
               >
                 <el-option label="All" value="all" />
-                <el-option label="OBD 1" value="obd1" />
-                <el-option label="OBD 2" value="obd2" />
+                <el-option
+                  v-for="obdInfo in obdVersionFilterParams"
+                  :key="obdInfo.label"
+                  :label="obdInfo.label"
+                  :value="obdInfo.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -726,8 +836,12 @@ initData()
                 placeholder="Select application"
               >
                 <el-option label="All" value="all" />
-                <el-option label="OBD" value="obd" />
-                <el-option label="OBD+" value="obd+" />
+                <el-option
+                  v-for="appInfo in applicationFilterParams"
+                  :key="appInfo.label"
+                  :label="appInfo.label"
+                  :value="appInfo.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -743,8 +857,8 @@ initData()
             v-model="notificationForm.userStatus"
             class="flex! items-start! w-full flex-col gap-8"
           >
-            <el-radio label="all">All Users</el-radio>
-            <el-radio label="selected" class="relative w-full">
+            <el-radio label="all" value="all">All Users</el-radio>
+            <el-radio label="selected" class="relative w-full" value="selected">
               <span>Selected Users</span>
               <!-- 用户账号状态筛选 -->
               <base-filter-panel
@@ -765,10 +879,14 @@ initData()
                 </template>
               </base-filter-panel>
               <el-button
-                type="primary"
                 text
                 class="absolute bottom-0 right-0 w-fit"
+                :class="{
+                  'text-neutrals-blue!': selectedUserList.length,
+                  'text-neutrals-grey-4!': !selectedUserList.length,
+                }"
                 v-show="userSelectorVisible"
+                @click.stop="handleResetUserList"
               >
                 Clear
               </el-button>
@@ -776,40 +894,49 @@ initData()
           </el-radio-group>
           <!-- selected user -->
           <template v-if="userSelectorVisible">
-            <div
-              class="rounded-4 bg-default-light-blue flex-between w-full p-4"
-              v-for="item in 3"
-              :key="item"
-            >
-              <div class="row-center h-28 gap-8">
-                <el-avatar
-                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                  :size="20"
+            <el-scrollbar :heigh="200" :max-height="200">
+              <div
+                class="rounded-4 bg-default-light-blue flex-between box-border w-full p-4"
+                v-for="(selectedUserInfo, index) in selectedUserList"
+                :key="`${selectedUserInfo.id}${index}`"
+              >
+                <div class="row-center h-28 gap-8">
+                  <el-avatar
+                    :src="getFullFilePath(selectedUserInfo.logo)"
+                    :size="24"
+                    @error="() => true"
+                  >
+                    {{ getFirstLetter(selectedUserInfo.name) }}
+                  </el-avatar>
+                  <span class="heading-body-large-body-14px-regular leading-18">
+                    {{ selectedUserInfo.name }}
+                  </span>
+                </div>
+                <i
+                  class="icon-typesclose text-20 text-default-offset-primary-colour cursor-pointer"
+                  @click="handleUnselectUser(selectedUserInfo.id)"
                 />
-                <span class="heading-body-large-body-14px-regular leading-18">
-                  Jonathan Lim
-                </span>
               </div>
-              <i
-                class="icon-typesclose text-12 text-default-offset-primary-colour cursor-pointer"
-              />
-            </div>
+            </el-scrollbar>
           </template>
         </el-form-item>
 
         <!-- Actual Sent Time -->
         <el-form-item
           label="Actual Sent Time"
-          prop="actualSentTime"
+          prop="sendTime"
           class="label-required"
         >
           <el-radio-group
-            v-model="notificationForm.sendType"
+            v-model="notificationForm.sendTime"
             class="flex! items-start! flex-col gap-8"
-            @change="handleSendTypeChange"
           >
-            <el-radio label="now">Send Now</el-radio>
-            <el-radio label="schedule" class="schedule-container">
+            <el-radio label="now" :value="currentTimestamp">Send Now</el-radio>
+            <el-radio
+              label="schedule"
+              class="schedule-container"
+              value="schedule"
+            >
               <span>Schedule</span>
               <el-date-picker
                 v-model="notificationForm.scheduleTime"
@@ -819,6 +946,7 @@ initData()
                 value-format="YYYY-MM-DD HH:mm:ss"
                 class="w-730! ml-8"
                 v-if="datePickerVisible"
+                @change="handleDateChange"
               />
             </el-radio>
           </el-radio-group>
@@ -955,6 +1083,15 @@ initData()
     .el-range__close-icon {
       @apply hidden;
     }
+  }
+}
+
+/// 用户选择栏滚动条样式重置
+.user-status-container :deep(.el-scrollbar) {
+  @apply w-full;
+
+  .el-scrollbar__view {
+    @apply flex flex-col gap-8;
   }
 }
 </style>
