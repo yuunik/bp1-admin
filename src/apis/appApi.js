@@ -79,6 +79,14 @@ const AppApi = Object.freeze({
   UPLOAD_BRAND_LOGO: '/manager/brand/logo',
   // 删除品牌
   DELETE_BRAND: '/manager/brand/delete',
+  // 创建推送任务
+  CREATE_PUSH_TASK: '/manager/pushtask/add',
+  // 删除推送任务
+  DELETE_PUSH_TASK: '/manager/pushtask/delete',
+  // 编辑推送任务
+  MODIFY_PUSH_TASK: '/manager/pushtask/edit',
+  // 获取推送任务列表
+  GET_PUSH_TASK_LIST: '/manager/pushtask/pushtasks',
 })
 
 // 获取 token
@@ -713,6 +721,123 @@ export const deleteBrandApi = (brandId) => {
 
   return request({
     url: AppApi.DELETE_BRAND,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 创建推送任务
+ * @param params
+ * @param params.title 标题
+ * @param params.content 内容
+ * @param params.type 类型
+ * @param params.obdVersions obd版本
+ * @param params.appType app类型
+ * @param params.pushUserIds 推送用户id
+ * @param params.sentTime 发送时间
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const createPushTaskApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('title', params.title)
+  data.append('content', params.content)
+  data.append('type', params.type)
+  data.append('obdVersions', params.obdVersions)
+  data.append('appType', params.appType)
+  data.append('pushUserIds', params.pushUserIds)
+  data.append('sentTime', params.sentTime)
+
+  return request({
+    url: AppApi.CREATE_PUSH_TASK,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除推送任务
+ * @param pushTaskId
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const deletePushTaskApi = (pushTaskId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('pushTaskId', pushTaskId)
+
+  return request({
+    url: AppApi.DELETE_PUSH_TASK,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 编辑推送任务
+ * @param params
+ * @param params.pushTaskId 推送任务id
+ * @param params.title 标题
+ * @param params.content 内容
+ * @param params.type 类型
+ * @param params.obdVersions obd版本
+ * @param params.appType app类型
+ * @param params.pushUserIds 推送用户id
+ * @param params.sentTime 推送时间
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const editPushTaskApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('pushTaskId', params.pushTaskId)
+  data.append('title', params.title)
+  data.append('content', params.content)
+  data.append('type', params.type)
+  data.append('obdVersions', params.obdVersions)
+  data.append('appType', params.appType)
+  data.append('pushUserIds', params.pushUserIds)
+  data.append('sentTime', params.sentTime)
+
+  return request({
+    url: AppApi.MODIFY_PUSH_TASK,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取推送任务列表
+ * @param params
+ * @param params.searchKey 搜索关键字
+ * @param params.types 类型
+ * @param params.obdVersions obd版本
+ * @param params.appTypes app类型
+ * @param params.sort 排序字段
+ * @param params.sortBy 排序方式
+ * @param params.isGlobal 是否全局 (0: 否,指定用户, 1:是)
+ * @param params.page 页码
+ * @param params.pageSize 每页数量
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getPushTaskListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('searchKey', params.searchKey)
+  data.append('types', params.types)
+  data.append('obdVersions', params.obdVersions)
+  data.append('appTypes', params.appTypes)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
+  data.append('isGlobal', params.isGlobal)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
+  return request({
+    url: AppApi.GET_PUSH_TASK_LIST,
     method: 'POST',
     data,
   })
