@@ -759,14 +759,14 @@ export const createPushTaskApi = (params) => {
 
 /**
  * 删除推送任务
- * @param pushTaskId
+ * @param pushTaskIds
  *
  * @returns {Promise<ApiResponse<any>>}
  */
-export const deletePushTaskApi = (pushTaskId) => {
+export const deletePushTaskApi = (pushTaskIds) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('pushTaskId', pushTaskId)
+  data.append('pushTaskIds', pushTaskIds)
 
   return request({
     url: AppApi.DELETE_PUSH_TASK,

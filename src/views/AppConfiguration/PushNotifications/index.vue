@@ -10,6 +10,7 @@ import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
   createPushTaskApi,
+  deletePushTaskApi,
   getExpenditureUserListApi,
   getPushTaskListApi,
 } from '@/apis/appApi.js'
@@ -154,7 +155,7 @@ const dialogNotificationFormVisible = ref(false)
 const notificationForm = ref({
   title: '',
   content: '',
-  type: 'system',
+  type: 'System',
   obdVersion: 'all',
   applicationType: 'all',
   userStatus: '', // all / selected
@@ -223,6 +224,12 @@ const hasPushTime = computed(() => {
 
 // 弹窗推送任务的指定时间的时间戳
 const scheduleTime = ref(-1)
+
+// 删除推送任务弹窗
+const dialogDeleteNotificationVisible = ref(false)
+
+// 需要删除的推送任务id
+const deleteNotificationId = ref('')
 
 // 新增推送任务
 const addNotification = async () => {
@@ -390,7 +397,7 @@ const handleReset = () => {
   notificationForm.value = {
     title: '',
     content: '',
-    type: 'system',
+    type: 'System',
     obdVersion: 'all',
     applicationType: 'all',
     userStatus: '', // all / selected
@@ -417,7 +424,7 @@ const handleCloseNotificationInfoDialog = () => {
   notificationForm.value = {
     title: '',
     content: '',
-    type: 'system',
+    type: 'System',
     obdVersion: 'all',
     applicationType: 'all',
     userStatus: '', // all / selected
@@ -428,6 +435,29 @@ const handleCloseNotificationInfoDialog = () => {
 
 // 排序函数
 const sort = useSort(conditionParams, () => refresh())
+
+// 打开删除推送任务弹窗
+const openDeleteNotificationDialog = async (id) => {
+  // 如果 查看详情弹窗打开，则关闭
+  if (dialogNotificationDetailsVisible.value) {
+    await handleCloseNotificationInfoDialog()
+  }
+  deleteNotificationId.value = id
+  dialogDeleteNotificationVisible.value = true
+}
+
+// 确认删除
+const handleDeleteNotification = async () => {
+  try {
+    await deletePushTaskApi(deleteNotificationId.value)
+    // 提示
+    ElMessage.success('Delete successfully')
+    // 刷新
+    refresh()
+  } finally {
+    dialogDeleteNotificationVisible.value = false
+  }
+}
 
 // 监听分页数据变化
 watch(
@@ -524,9 +554,7 @@ initData()
         <span class="text-neutrals-off-black heading-body-body-12px-regular">
           {{ selectedNotificationIdList.length }} selected
         </span>
-        <el-button @click="dialogBatchDeleteNotificationItemVisible = true">
-          Delete
-        </el-button>
+        <el-button>Delete</el-button>
       </div>
       <div class="flex flex-1 flex-col justify-between">
         <el-table
@@ -607,7 +635,11 @@ initData()
                 <template #dropdown>
                   <el-dropdown-menu class="px-16! py-8! rounded-8!">
                     <el-dropdown-item>Edit</el-dropdown-item>
-                    <el-dropdown-item>Delete</el-dropdown-item>
+                    <el-dropdown-item
+                      @click="openDeleteNotificationDialog(row.id)"
+                    >
+                      Delete
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -645,7 +677,11 @@ initData()
           <template #dropdown>
             <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
               <el-dropdown-item>Edit</el-dropdown-item>
-              <el-dropdown-item>Delete</el-dropdown-item>
+              <el-dropdown-item
+                @click="openDeleteNotificationDialog(notificationForm.id)"
+              >
+                Delete
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -955,6 +991,23 @@ initData()
           }}
         </span>
         users.
+      </p>
+    </template>
+  </base-dialog>
+  <!-- 确认删除弹窗 -->
+  <!-- 删除 expense item 提示框 -->
+  <base-dialog
+    v-model="dialogDeleteNotificationVisible"
+    title="Delete Push notification ?"
+    button-type="danger"
+    confirm-text="Delete"
+    @cancel="dialogDeleteNotificationVisible = false"
+    @confirm="handleDeleteNotification"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+        Are you sure you want to delete this scheduled Push notification?This
+        action cannot be undone and the message will not be sent.
       </p>
     </template>
   </base-dialog>
