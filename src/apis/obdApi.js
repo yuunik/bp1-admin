@@ -32,6 +32,8 @@ const ObdApi = Object.freeze({
   GET_VEHICLE_SCAN_RECORD_DETAIL: '/manager/dtc/info',
   // 编辑车辆信息
   EDIT_VEHICLE: '/manager/vehicle/edit',
+  // 获取 OBD 版本号列表
+  GET_OBD_VERSION_LIST: '/manager/obd/versions',
 })
 
 // 获取 token
@@ -294,6 +296,20 @@ export const editVehicleApi = (params) => {
 
   return request({
     url: ObdApi.EDIT_VEHICLE,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取obd版本号列表
+ */
+export const getOBDVersionListApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  return request({
+    url: ObdApi.GET_OBD_VERSION_LIST,
     method: 'POST',
     data,
   })

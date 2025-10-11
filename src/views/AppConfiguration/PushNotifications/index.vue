@@ -8,7 +8,13 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BasePagination from '@/components/BasePagination.vue'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
-import { getPushTaskListApi } from '@/apis/appApi.js'
+import {
+  createPushTaskApi,
+  getExpenditureUserListApi,
+  getPushTaskListApi,
+} from '@/apis/appApi.js'
+import { ElMessage } from 'element-plus'
+import { getOBDVersionListApi } from '@/apis/obdApi.js'
 
 // 通知列表
 const notificationList = ref([
@@ -111,7 +117,32 @@ const typeKeys = computed(() =>
   typeList.value.length ? typeList.value.join(',') : '',
 )
 
-const typeFilterParams = ref([])
+const typeFilterParams = ref([
+  {
+    label: 'Order',
+    value: 'Order',
+  },
+  {
+    label: 'System',
+    value: 'System',
+  },
+  {
+    label: 'Brakes',
+    value: 'Brakes',
+  },
+  {
+    label: 'Liked',
+    value: 'Liked',
+  },
+  {
+    label: 'Collected',
+    value: 'Collected',
+  },
+  {
+    label: 'Commented',
+    value: 'Commented',
+  },
+])
 
 // OBD 版本筛选参数
 const obdVersionList = ref([])
@@ -141,33 +172,28 @@ const applicationKeys = computed(() =>
   applicationTypeList.value.length ? applicationTypeList.value.join(',') : '',
 )
 
-const applicationFilterParams = ref([])
+const applicationFilterParams = ref([
+  {
+    label: 'iOS',
+    value: 'iOS',
+  },
+  {
+    label: 'Android',
+    value: 'Android',
+  },
+])
 
 // 实际发送时间筛选参数
 const actualSentTimeList = ref([])
 
-const actualSentTimeKeys = computed(() =>
-  actualSentTimeList.value.length ? actualSentTimeList.value.join(',') : '',
-)
-
-const actualSentTimeFilterParams = ref([
-  {
-    label: 'All',
-    value: 'All',
-  },
-  {
-    label: 'Today',
-    value: 'Today',
-  },
-  {
-    label: 'This Month',
-    value: 'This Month',
-  },
-  {
-    label: 'This Year',
-    value: 'This Year',
-  },
-])
+const actualSentTimeKeys = computed(() => {
+  if (!actualSentTimeList.value || actualSentTimeList.value.length !== 2) {
+    return []
+  }
+  return actualSentTimeList.value
+    .map((date) => new Date(date).getTime())
+    .join(',')
+})
 
 // 分页数据
 const pagination = reactive({
@@ -229,6 +255,40 @@ const userSelectorVisible = computed(
   () => notificationForm.value.userStatus === 'selected',
 )
 
+// 实际发送时间显示文字
+const actualSendTimeRangeDisplay = computed(() =>
+  actualSentTimeList.value.length
+    ? `Actual Sent Time: ${actualSentTimeList.value.join(' ~ ')}`
+    : 'Actual Sent Time',
+)
+
+// 筛选有值时的颜色
+const conditionTextColor = computed(() =>
+  actualSentTimeList.value.length ? ' text-[#006BF7]' : 'text-neutrals-grey-3 ',
+)
+
+const conditionBorderColor = computed(() =>
+  actualSentTimeList.value.length ? '#006BF7' : ' #CACFD8',
+)
+
+// 新增推送任务
+const addNotification = async () => {
+  await createPushTaskApi({
+    title: notificationForm.value.title,
+    content: notificationForm.value.content,
+    type: notificationForm.value.type,
+    obdVersion: notificationForm.value.obdVersion,
+    appType: notificationForm.value.applicationType,
+    pushUserIds: notificationForm.value.userStatus,
+    sentTime: '',
+    // notificationForm.value.sendType,
+    // scheduleTime: notificationForm.value.scheduleTime,
+  })
+  // 新增成功
+  ElMessage.success('Add Notification Success')
+  refresh()
+}
+
 // 获取通知列表
 const getNotificationList = async () => {
   const { data, count } = await getPushTaskListApi({
@@ -248,15 +308,30 @@ const getNotificationList = async () => {
   notificationList.value = data
 }
 
-// 数据初始化
-const initData = async () => {
-  /// todo 获取数据
+const getUserList = async () => {
+  const { data } = await getExpenditureUserListApi()
+  userStatusFilterParams.value = data.map((item) => ({
+    label: item.name,
+    value: item.name === 'Admin' ? 'admin' : item.id,
+  }))
 }
+
+const getOBDVersionList = async () => {
+  const { data } = await getOBDVersionListApi()
+  obdVersionFilterParams.value = data.map((item) => ({
+    label: item,
+    value: item,
+  }))
+}
+
+// 数据初始化
+const initData = async () =>
+  await Promise.all([getNotificationList(), getUserList(), getOBDVersionList()])
 
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
-    return getNotificationList()
+    return initData()
   }
   // 设置当前页为 1
   pagination.currentPage = 0
@@ -301,12 +376,12 @@ const handleManageNotification = async () => {
 watch(
   () => pagination.currentPage,
   () => {
-    getNotificationList()
+    initData()
   },
 )
 
 // 组件创建, 发起网络请求
-getNotificationList()
+initData()
 </script>
 
 <template>
@@ -322,7 +397,7 @@ getNotificationList()
     </div>
     <!-- Search bar -->
     <div class="flex-between h-24">
-      <div class="row-center flex-wrap gap-8">
+      <div class="row-center filter-container flex-wrap gap-8">
         <!-- 通知类型筛选 -->
         <base-filter-panel
           v-model="typeList"
@@ -354,11 +429,21 @@ getNotificationList()
           @search="refresh"
         />
         <!-- 实际发送时间筛选 -->
-        <base-filter-panel
+        <el-date-picker
           v-model="actualSentTimeList"
-          :section-list="actualSentTimeFilterParams"
-          condition-text="Actual Sent Time"
-          @search="refresh"
+          type="daterange"
+          :range-separator="actualSendTimeRangeDisplay"
+          start-placeholder="Start date"
+          end-placeholder="End date"
+          format="DD MMM YYYY"
+          value-format="YYYY-MM-DD"
+          placement="bottom-start"
+          :class="{
+            '[&>.el-range-separator]:text-[#006BF7]!':
+              actualSentTimeList.length,
+            '[&>.el-date-editor--daterange]:border-[#006BF7]!':
+              actualSentTimeList.length,
+          }"
         />
 
         <!-- 清除按钮 -->
@@ -829,5 +914,47 @@ getNotificationList()
 // 表单单项样式调整
 :deep(.el-form-item) {
   @apply mb-0;
+}
+
+// 重置datepicker样式
+.filter-container {
+  :deep(.el-date-editor--daterange) {
+    @apply border-1! neutrals-grey-3 default-transition row-center box-border h-24 w-fit cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4 shadow-none;
+    border-color: v-bind(conditionBorderColor);
+
+    .el-range__icon {
+      @apply hidden;
+    }
+
+    .el-range-input {
+      @apply hidden;
+    }
+
+    .el-range-separator {
+      @apply text-neutrals-grey-3;
+    }
+
+    .el-range-separator {
+      position: relative;
+
+      &::after {
+        margin-left: 4px;
+        content: '';
+        display: block;
+        width: 20px;
+        height: 20px;
+        background-color: currentColor; // 用文字颜色填充
+        -webkit-mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat
+          center;
+        mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+      }
+    }
+
+    .el-range__close-icon {
+      @apply hidden;
+    }
+  }
 }
 </style>

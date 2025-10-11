@@ -90,7 +90,8 @@ watch(searchKeys, () => {
       />
     </div>
     <template #dropdown>
-      <div class="w-190 h-93 h-fit! flex flex-col gap-8 px-16 py-12">
+      <slot v-if="$slots.customDropdown" name="customDropdown" />
+      <div v-else class="w-190 h-93 h-fit! flex flex-col gap-8 px-16 py-12">
         <div class="flex-between">
           <p class="heading-body-body-12px-medium text-neutrals-grey-3">
             {{ conditionText }}
@@ -149,5 +150,9 @@ watch(searchKeys, () => {
 // 重置勾选框样式
 :deep(.el-checkbox__inner) {
   @apply rounded-4;
+}
+
+:deep(.el-date-editor--daterange) {
+  @apply invisible;
 }
 </style>
