@@ -372,6 +372,8 @@ const addNotification = async () => {
   } finally {
     // 关闭弹窗
     dialogNotificationFormVisible.value = false
+    // 重置
+    handleReset()
   }
 }
 
@@ -444,11 +446,13 @@ const handleCellMouseEnter = (row) => (row.isHover = true)
 const handleCellMouseLeave = (row) => (row.isHover = false)
 
 // 查看详情
-const handleViewDetails = (_, column) => {
+const handleViewDetails = (row, column) => {
   const { no } = column
   if (no === 0 || no === 8) {
     return
   }
+  // 设置表单数据
+  notificationForm.value = row
   // 打开详情弹窗
   dialogNotificationDetailsVisible.value = true
 }
@@ -468,12 +472,44 @@ const handleUnselectUser = (userId) => {
 }
 
 // 取消全部的选择用户
-const handleResetUserList = () => {
+const handleReset = () => {
+  notificationForm.value = {
+    title: '',
+    content: '',
+    type: 'system',
+    obdVersion: 'all',
+    applicationType: 'all',
+    userStatus: '', // all / selected
+    sendTime: '', // 推送任务的目标时间戳
+    scheduleTime: '',
+  }
   userStatusList.value = []
 }
 
 const handleDateChange = (val) => {
   scheduleTime.value = dayjs(val).valueOf()
+}
+
+const handleClose = () => {
+  handleReset()
+  dialogNotificationFormVisible.value = false
+}
+
+// 关闭详情弹窗
+const handleCloseNotificationInfoDialog = () => {
+  // 关闭
+  dialogNotificationDetailsVisible.value = false
+  // 重置
+  notificationForm.value = {
+    title: '',
+    content: '',
+    type: 'system',
+    obdVersion: 'all',
+    applicationType: 'all',
+    userStatus: '', // all / selected
+    sendTime: '', // 推送任务的目标时间戳
+    scheduleTime: '',
+  }
 }
 
 // 监听分页数据变化
@@ -663,7 +699,7 @@ initData()
   <div
     class="flex-center z-9999 fixed inset-0 bg-black/50"
     v-show="dialogNotificationDetailsVisible"
-    @click.self="dialogNotificationDetailsVisible = false"
+    @click.self="handleCloseNotificationInfoDialog"
   >
     <div
       class="bg-neutrals/off-white rounded-8 w-700 flex flex-col gap-16 px-16 py-24"
@@ -674,15 +710,14 @@ initData()
           <h3
             class="heading-body-large-body-14px-medium text-neutrals-off-black"
           >
-            Rainy Day Driving Tip
+            {{ notificationForm.title }}
           </h3>
-          <i
-            class="rounded-4 text-neutrals-grey-4 bg-neutrals-grey-1 heading-caption-caption-10px-regular block p-8"
-          >
-            Pending
-          </i>
+          <base-tag
+            :color="notificationForm.status === 'Sent' ? 'green' : 'gray'"
+            :text="notificationForm.status === 'Sent' ? 'Sent' : 'Pending'"
+          />
         </div>
-        <el-dropdown trigger="click">
+        <el-dropdown>
           <i class="icon-more-2-line text-16 cursor-pointer" />
           <template #dropdown>
             <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
@@ -703,8 +738,7 @@ initData()
           <p
             class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
           >
-            Roads may be slippery today. Please drive carefully and check your
-            wipers and lights.
+            {{ notificationForm.content }}
           </p>
         </div>
         <div class="flex gap-8 py-8">
@@ -717,7 +751,7 @@ initData()
             <p
               class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
             >
-              System
+              {{ notificationForm.type }}
             </p>
           </div>
           <div class="flex flex-1 flex-col gap-8">
@@ -729,7 +763,7 @@ initData()
             <p
               class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
             >
-              All
+              {{ notificationForm.obdVersion || '-' }}
             </p>
           </div>
         </div>
@@ -743,7 +777,7 @@ initData()
             <p
               class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
             >
-              All
+              {{ notificationForm.isGlobal === 1 ? 'All' : 'Specific' }}
             </p>
           </div>
           <div class="flex flex-1 flex-col gap-8">
@@ -755,7 +789,7 @@ initData()
             <p
               class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
             >
-              All
+              {{ notificationForm.appType || '-' }}
             </p>
           </div>
         </div>
@@ -769,7 +803,8 @@ initData()
             <p
               class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
             >
-              Schedule 20 Oct 2023 14:30:00
+              Schedule
+              {{ getDateWithDDMMMYYYYhhmma(notificationForm.sentTime) }}
             </p>
           </div>
           <div class="flex flex-1 flex-col gap-8">
@@ -781,7 +816,7 @@ initData()
             <p
               class="leading-24 heading-body-body-12px-regular text-neutrals-grey-4 h-24"
             >
-              3
+              {{ notificationForm.targeted || '-' }}
             </p>
           </div>
         </div>
@@ -798,7 +833,7 @@ initData()
     "
     :confirm-text="notificationForm.id ? 'Save' : 'Create'"
     :dialog-width="850"
-    @cancel="dialogNotificationFormVisible = false"
+    @cancel="handleClose"
     @confirm="handleManageNotification"
   >
     <template #content>
@@ -919,7 +954,7 @@ initData()
                   'text-neutrals-grey-4!': !selectedUserList.length,
                 }"
                 v-show="userSelectorVisible"
-                @click.stop="handleResetUserList"
+                @click.stop="userStatusList = []"
               >
                 Clear
               </el-button>
@@ -989,7 +1024,13 @@ initData()
     <template #descriptionFooter>
       <p class="heading-body-body-12px-regular text-neutrals-off-black">
         Estimated reach:
-        <span class="text-neutrals-blue">500</span>
+        <span class="text-neutrals-blue">
+          {{
+            notificationForm.userStatus === 'all'
+              ? 'All'
+              : selectedUserList.length
+          }}
+        </span>
         users.
       </p>
     </template>
