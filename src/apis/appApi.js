@@ -818,6 +818,8 @@ export const editPushTaskApi = (params) => {
  * @param params.sort 排序字段
  * @param params.sortBy 排序方式
  * @param params.userKey 用户ids
+ * @param params.sentStart 发送开始时间
+ * @param params.sentEnd 推送结束
  * @param params.page 页码
  * @param params.pageSize 每页数量
  *
@@ -833,6 +835,8 @@ export const getPushTaskListApi = (params) => {
   data.append('sort', params.sort)
   data.append('sortBy', params.sortBy)
   data.append('userIds', params.userKey)
+  data.append('sentStart', params.sentStart)
+  data.append('sentEnd', params.sentEnd)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
 

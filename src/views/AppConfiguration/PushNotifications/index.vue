@@ -1,6 +1,6 @@
 <script setup>
 import { watch, ref } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
+import { useCloned, useDebounceFn } from '@vueuse/core'
 import dayjs from 'dayjs'
 
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
@@ -231,6 +231,12 @@ const dialogDeleteNotificationVisible = ref(false)
 // 需要删除的推送任务id
 const deleteNotificationId = ref('')
 
+// 日期筛选参数
+const dateFilterParams = ref({
+  sentStart: -1,
+  sentEnd: -1,
+})
+
 // 新增推送任务
 const addNotification = async () => {
   console.log('新增 notification')
@@ -308,6 +314,8 @@ const getNotificationList = async () => {
     sort: conditionParams.sort,
     sortBy: conditionParams.sortBy,
     userKey: userStatusKeys.value,
+    sentStart: dateFilterParams.value.sentStart,
+    sentEnd: dateFilterParams.value.sentEnd,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
@@ -357,6 +365,10 @@ const handleClearCondition = () => {
   userStatusList.value = []
   applicationTypeList.value = []
   actualSentTimeList.value = []
+  dateFilterParams.value = {
+    sentStart: -1,
+    sentEnd: -1,
+  }
   refresh()
 }
 
@@ -459,6 +471,25 @@ const handleDeleteNotification = async () => {
   }
 }
 
+// 打开编辑弹窗
+const openEditNotificationDialog = (notification) => {
+  // 创建一个副本
+  const { cloned } = useCloned(notification)
+  // 设置表单数据
+  notificationForm.value = cloned.value
+  notificationForm.value.userStatus = cloned.value.isGlobal === 1 ? 'all' : ''
+  // 打开编辑弹窗
+  dialogNotificationFormVisible.value = true
+}
+
+// 日期筛选
+const handleDateFilterChange = (selectedDateList) => {
+  const [startTime, endTime] = selectedDateList
+  dateFilterParams.value.sentStart = dayjs(startTime).valueOf()
+  dateFilterParams.value.sentEnd = dayjs(endTime).valueOf()
+  refresh()
+}
+
 // 监听分页数据变化
 watch(
   () => pagination.currentPage,
@@ -531,6 +562,7 @@ initData()
             '[&>.el-date-editor--daterange]:border-[#006BF7]!':
               actualSentTimeList.length,
           }"
+          @change="handleDateFilterChange"
         />
 
         <!-- 清除按钮 -->
@@ -634,7 +666,9 @@ initData()
                 <i class="icon-more-2-line text-16 cursor-pointer" />
                 <template #dropdown>
                   <el-dropdown-menu class="px-16! py-8! rounded-8!">
-                    <el-dropdown-item>Edit</el-dropdown-item>
+                    <el-dropdown-item @click="openEditNotificationDialog(row)">
+                      Edit
+                    </el-dropdown-item>
                     <el-dropdown-item
                       @click="openDeleteNotificationDialog(row.id)"
                     >
@@ -676,7 +710,11 @@ initData()
           <i class="icon-more-2-line text-16 cursor-pointer" />
           <template #dropdown>
             <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
-              <el-dropdown-item>Edit</el-dropdown-item>
+              <el-dropdown-item
+                @click="openEditNotificationDialog(notificationForm)"
+              >
+                Edit
+              </el-dropdown-item>
               <el-dropdown-item
                 @click="openDeleteNotificationDialog(notificationForm.id)"
               >
@@ -995,7 +1033,6 @@ initData()
     </template>
   </base-dialog>
   <!-- 确认删除弹窗 -->
-  <!-- 删除 expense item 提示框 -->
   <base-dialog
     v-model="dialogDeleteNotificationVisible"
     title="Delete Push notification ?"
