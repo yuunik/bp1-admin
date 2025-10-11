@@ -16,6 +16,8 @@ import {
 import { ElMessage } from 'element-plus'
 import { getOBDVersionListApi } from '@/apis/obdApi.js'
 import { getFirstLetter, getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseTag from '@/components/BaseTag.vue'
+import { getDateWithDDMMMYYYYhhmma } from '../../../utils/dateUtil.js'
 
 // 通知列表
 const notificationList = ref([
@@ -583,37 +585,68 @@ initData()
           row-class-name="clickable-row"
         >
           <el-table-column type="selection" min-width="6%" align="center" />
-          <el-table-column prop="title" label="Title" min-width="20%" />
+          <el-table-column
+            prop="title"
+            label="Title"
+            min-width="20%"
+            sortable="custom"
+          />
           <el-table-column
             prop="content"
             label="Content"
             min-width="20%"
             show-overflow-tooltip
           />
-          <el-table-column prop="type" label="Type" min-width="10%" />
-          <el-table-column label="Status" min-width="12%">
+          <el-table-column
+            prop="type"
+            label="Type"
+            min-width="10%"
+            sortable="custom"
+          />
+          <el-table-column
+            prop="status"
+            label="Status"
+            min-width="12%"
+            sortable="custom"
+          >
             <template #default="{ row }">
-              <el-tag :type="row.status === 'Sent' ? 'success' : 'info'">
-                {{ row.status }}
-              </el-tag>
+              <base-tag
+                :color="row.status === 'Sent' ? 'green' : 'gray'"
+                :text="row.status === 'Sent' ? 'Sent' : 'Pending'"
+              />
             </template>
           </el-table-column>
-          <el-table-column prop="editedAt" label="Edited At" min-width="18%" />
           <el-table-column
-            prop="actualSentTime"
+            prop="updateTime"
+            label="Edited At"
+            min-width="18%"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              {{ getDateWithDDMMMYYYYhhmma(row.updateTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="sentTime"
             label="Actual Sent Time"
             min-width="21%"
-          />
-          <el-table-column prop="targeted" label="Targeted" min-width="7%" />
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              {{ getDateWithDDMMMYYYYhhmma(row.sentTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="targeted" label="Targeted" min-width="7%">
+            <template #default="{ row }">
+              {{ row.targeted || '-' }}
+            </template>
+          </el-table-column>
           <el-table-column min-width="6%" align="center">
             <template #default="{ row }">
-              <el-dropdown trigger="click">
-                <i
-                  v-show="row.isHover"
-                  class="icon-more-2-line text-16 cursor-pointer"
-                />
+              <el-dropdown trigger="click" v-show="row.status !== 'Sent'">
+                <i class="icon-more-2-line text-16 cursor-pointer" />
                 <template #dropdown>
-                  <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
+                  <el-dropdown-menu class="px-16! py-8! rounded-8!">
                     <el-dropdown-item>Edit</el-dropdown-item>
                     <el-dropdown-item>Delete</el-dropdown-item>
                   </el-dropdown-menu>
