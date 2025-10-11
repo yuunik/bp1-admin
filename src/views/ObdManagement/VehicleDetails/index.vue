@@ -1,19 +1,29 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import dayjs from 'dayjs'
+import { useDebounceFn } from '@vueuse/core'
 
 import {
   EmitterEvent,
   RouteName,
+  TimingPreset,
   VehicleDetailTabs,
 } from '@/utils/constantsUtil.js'
-import { getVehicleInfoApi, getVehicleScanRecordsApi } from '@/apis/obdApi.js'
+import {
+  editVehicleApi,
+  getVehicleInfoApi,
+  getVehicleScanRecordsApi,
+} from '@/apis/obdApi.js'
 import {
   getDateWithDDMMMYYYY,
   getDateWithDDMMMYYYYhhmma,
 } from '@/utils/dateUtil.js'
 import emitter from '@/utils/emitterUtil.js'
 import { useSort } from '@/composables/useSort.js'
+import { getBrandModalListApi } from '@/apis/appApi.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import { ElMessage } from 'element-plus'
 
 const activeTabName = ref(VehicleDetailTabs.VEHICLE_DETAILS)
 
@@ -22,16 +32,55 @@ const route = useRoute()
 // 车辆详情
 const vehicleDetails = reactive({})
 
+// 车辆详情 dom
 const vehicleDetailRef = ref(null)
 
+// 故障码 dom
 const faultCodesRef = ref([])
 
+// 扫描历史 dom
 const scannedHistoryRef = ref([])
 
+// 当前车辆 id
 const currentVehicleId = ref('')
 
+// 编辑模式
+const isEditMode = ref(false)
+
+// 车辆品牌列表
+const vehicleBrandList = ref([])
+
+// 车辆品牌名称
+const vehicleBrandName = ref('')
+
+// 车辆品牌型号名称
+const vehicleModelName = ref('')
+
+// 车辆品牌型号列表
+const vehicleModelList = ref([])
+
+// 当前年份
+const currentYear = dayjs().year()
+
+// 当前选择的年份
+const selectedYear = ref(-1)
+
+// 年份选项列表
+const yearOption = computed(() => {
+  const optionList = []
+
+  for (let i = 2008; i <= currentYear; i++) {
+    optionList.push({
+      label: i,
+      value: i,
+    })
+  }
+
+  return optionList
+})
+
 // 车辆名称
-const carName = computed(
+const vehicleName = computed(
   () => vehicleDetails.brand + ' ' + vehicleDetails.model,
 )
 
@@ -39,6 +88,12 @@ const carName = computed(
 const getVehicleDetails = async () => {
   const { data } = await getVehicleInfoApi(currentVehicleId.value)
   Object.assign(vehicleDetails, data)
+  // 获取车辆品牌名称
+  vehicleBrandName.value = data.brand
+  // 获取车辆型号名称
+  vehicleModelName.value = data.model
+  // 获取车辆年份
+  selectedYear.value = data.year
   // 更新面包屑
   emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, data.OBDDto)
 }
@@ -49,6 +104,7 @@ const pagination = reactive({
   total: 100,
 })
 
+// 扫描历史列表
 const scannedHistoryList = ref([])
 
 // 车辆dtc列表排序参数
@@ -86,12 +142,74 @@ const getScannedHistoryList = async () => {
   scannedHistoryList.value = data
 }
 
+// 数据初始化
+const init = async () =>
+  await Promise.all([getVehicleDetails(), getScannedHistoryList()])
+
+// 排序参数
 const sortByScannedHistoryParams = useSort(
   scannedHistoryPaginationParams,
   () => {
     getScannedHistoryList()
   },
 )
+
+// 获取车辆品牌列表
+const getVehicleBrandList = async () => {
+  const { data } = await getBrandModalListApi()
+  vehicleBrandList.value = data
+}
+
+// 切换编辑模式
+const switchToEditMode = useDebounceFn(
+  () => (isEditMode.value = true),
+  TimingPreset.DEBOUNCE,
+)
+
+// 选择车辆品牌
+const handleBrandChange = async (brandId) => {
+  vehicleModelName.value = ''
+  const brandInfo = vehicleBrandList.value.find((brand) => brand.id === brandId)
+  // 获取车辆型号列表
+  vehicleModelList.value = brandInfo.vehicleModelDtos
+  // 更新车辆品牌名称
+  vehicleBrandName.value = brandInfo.brand
+}
+
+// 选择车辆品牌型号
+const handleModelChange = (modelId) => {
+  const modelInfo = vehicleModelList.value.find((model) => model.id === modelId)
+  // 更新车辆型号名称
+  vehicleModelName.value = modelInfo.name
+}
+
+// 编辑车辆信息
+const editVehicleInfo = async () => {
+  try {
+    await editVehicleApi({
+      vehicleId: currentVehicleId.value,
+      licensePlate: vehicleDetails.licensePlate,
+      vin: vehicleDetails.vin,
+      brand: vehicleBrandName.value,
+      model: vehicleModelName.value,
+      year: selectedYear.value,
+      name: vehicleDetails.name,
+    })
+    // 修改成功
+    ElMessage.success('Edit success')
+    // 刷新
+    init()
+  } finally {
+    // 关闭编辑模式
+    isEditMode.value = false
+  }
+}
+
+watch(isEditMode, (val) => {
+  if (val) {
+    getVehicleBrandList()
+  }
+})
 
 onMounted(async () => {
   // 获取页面路径id, 发起请求
@@ -100,7 +218,7 @@ onMounted(async () => {
   } = route
   if (id) {
     currentVehicleId.value = id
-    await Promise.all([getVehicleDetails(), getScannedHistoryList()])
+    init()
   }
 })
 </script>
@@ -108,9 +226,16 @@ onMounted(async () => {
 <template>
   <section class="flex h-full flex-col">
     <!-- header -->
-    <h3 class="heading-h2-20px-medium text-neutrals-off-black mx-32 mb-16">
-      {{ carName }}
-    </h3>
+    <div class="flex-between mx-32 mb-16">
+      <h3 class="heading-h2-20px-medium text-neutrals-off-black">
+        {{ vehicleName }}
+      </h3>
+      <!-- btn group -->
+      <el-button v-show="!isEditMode" @click="switchToEditMode">Edit</el-button>
+      <el-button type="primary" v-show="isEditMode" @click="editVehicleInfo">
+        Save
+      </el-button>
+    </div>
     <!-- divider -->
     <el-divider />
     <!-- tabs -->
@@ -133,21 +258,82 @@ onMounted(async () => {
         <div class="flex-1">
           <div class="flex flex-col gap-4">
             <dl class="flex items-center gap-8">
+              <dt class="w-112 leading-32 h-32">Name</dt>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.name || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.name"
+                  placeholder="Enter"
+                />
+              </dd>
+            </dl>
+            <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Brand</dt>
               <dd class="flex-1">
-                {{ vehicleDetails.brand || '-' }}
+                <span v-if="!isEditMode">
+                  {{ vehicleBrandName || '-' }}
+                </span>
+                <el-select
+                  v-else
+                  v-model="vehicleBrandName"
+                  placeholder="Select brand"
+                  @change="handleBrandChange"
+                >
+                  <el-option
+                    v-for="brandInfo in vehicleBrandList"
+                    :key="brandInfo.id"
+                    :label="brandInfo.brand"
+                    :value="brandInfo.id"
+                  >
+                    <el-avatar
+                      :src="getFullFilePath(brandInfo.logo)"
+                      :size="20"
+                      class="vertical-mid"
+                    />
+                    <span class="ml-8">{{ brandInfo.brand }}</span>
+                  </el-option>
+                </el-select>
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Model</dt>
               <dd class="flex-1">
-                {{ vehicleDetails.model || '-' }}
+                <span v-if="!isEditMode">
+                  {{ vehicleModelName || '-' }}
+                </span>
+                <el-select
+                  v-else
+                  v-model="vehicleModelName"
+                  placeholder="Select model"
+                  @change="handleModelChange"
+                >
+                  <el-option
+                    v-for="modelInfo in vehicleModelList"
+                    :key="modelInfo.id"
+                    :label="modelInfo.name"
+                    :value="modelInfo.id"
+                  />
+                </el-select>
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Year</dt>
-              <dd class="flex-1">{{ vehicleDetails.year || '-' }}</dd>
+              <dd class="flex-1">
+                <span v-if="!isEditMode">{{ selectedYear || '-' }}</span>
+                <el-select v-else v-model="selectedYear" placeholder="Enter">
+                  <el-option
+                    v-for="year in yearOption"
+                    :key="year.value"
+                    :label="year.label"
+                    :value="year.value"
+                  />
+                </el-select>
+              </dd>
             </dl>
+            <!-- 引擎马力 -->
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">Engine</dt>
               <dd class="flex-1">
@@ -165,13 +351,27 @@ onMounted(async () => {
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">License Plate</dt>
               <dd class="flex-1">
-                {{ vehicleDetails.licensePlate || '-' }}
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.licensePlate || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.licensePlate"
+                  placeholder="Enter"
+                />
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
               <dt class="w-112 leading-32 h-32">VIN</dt>
               <dd class="flex-1">
-                {{ vehicleDetails.vin || '-' }}
+                <span v-if="!isEditMode">
+                  {{ vehicleDetails.vin || '-' }}
+                </span>
+                <el-input
+                  v-else
+                  v-model="vehicleDetails.vin"
+                  placeholder="Enter"
+                />
               </dd>
             </dl>
             <dl class="flex items-center gap-8">
@@ -208,7 +408,7 @@ onMounted(async () => {
                   name: RouteName.SCAN_RECORD_DETAIL,
                   params: { id: row.id },
                   query: {
-                    name: carName,
+                    name: vehicleName,
                   },
                 })
             "
@@ -258,6 +458,24 @@ onMounted(async () => {
 }
 
 .vehicle-info-container :deep(.el-input__wrapper::after) {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: var(--el-input-border-color, var(--el-border-color));
+  pointer-events: none;
+}
+
+.vehicle-info-container :deep(.el-select__wrapper) {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.vehicle-info-container :deep(.el-select__wrapper::after) {
   content: '';
   position: absolute;
   left: 0;

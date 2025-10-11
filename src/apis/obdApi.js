@@ -30,6 +30,8 @@ const ObdApi = Object.freeze({
   GET_VEHICLE_SCAN_RECORDS: '/manager/dtc/dtcs',
   // 获取车辆 dtc 详情
   GET_VEHICLE_SCAN_RECORD_DETAIL: '/manager/dtc/info',
+  // 编辑车辆信息
+  EDIT_VEHICLE: '/manager/vehicle/edit',
 })
 
 // 获取 token
@@ -239,6 +241,59 @@ export const getVehicleScanRecordDetailApi = (dtcId) => {
 
   return request({
     url: ObdApi.GET_VEHICLE_SCAN_RECORD_DETAIL,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 编辑车辆信息
+ * @param params
+ * @param params.vehicleId 车辆 id
+ * @param params.licensePlate 车牌号
+ * @param params.vin VIN
+ * @param params.brand 品牌
+ * @param params.model 型号
+ * @param params.year 年份
+ * @param params.name 名称
+ * @param params.coverPath 封面图片路径
+ * @param params.selected 是否选中
+ * @param params.mileage 行驶里程
+ * @param params.linkBrand 联动品牌
+ * @param params.linkDevTop 联动设备
+ * @param params.obdId OBD id
+ * @returns {*}
+ */
+export const editVehicleApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  // 遍历需要的字段，存在才 append
+  const fields = [
+    'vehicleId',
+    'licensePlate',
+    'vin',
+    'brand',
+    'model',
+    'year',
+    'name',
+    'coverPath',
+    'selected',
+    'mileage',
+    'linkBrand',
+    'linkDevTop',
+    'obdId',
+  ]
+
+  fields.forEach((key) => {
+    const value = params[key]
+    if (value !== undefined && value !== null && value !== '') {
+      data.append(key, value)
+    }
+  })
+
+  return request({
+    url: ObdApi.EDIT_VEHICLE,
     method: 'POST',
     data,
   })
