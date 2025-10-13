@@ -91,7 +91,7 @@ watch(searchKeys, () => {
     </div>
     <template #dropdown>
       <slot v-if="$slots.customDropdown" name="customDropdown" />
-      <div v-else class="w-190 h-93 h-fit! flex flex-col gap-8 px-16 py-12">
+      <div v-else class="w-190 max-h-600! flex flex-col gap-8 px-16 py-12">
         <div class="flex-between">
           <p class="heading-body-body-12px-medium text-neutrals-grey-3">
             {{ conditionText }}
@@ -116,26 +116,31 @@ watch(searchKeys, () => {
           v-model="keywords"
           clearable
         />
-        <!-- 勾选框筛选 -->
-        <el-checkbox-group v-model="searchKeyList" class="flex flex-col gap-4">
-          <el-checkbox
-            v-for="section in sectionList"
-            :key="section.label"
-            :value="section.value"
-            v-show="!keywords || section.label.includes(keywords)"
+        <el-scrollbar>
+          <!-- 勾选框筛选 -->
+          <el-checkbox-group
+            v-model="searchKeyList"
+            class="max-h-534 flex flex-col gap-4"
           >
-            <span
-              :class="[
-                'heading-body-body-12px-regular',
-                searchKeyList.includes(section.label)
-                  ? 'text-neutrals-blue'
-                  : 'text-neutrals-grey-3',
-              ]"
+            <el-checkbox
+              v-for="section in sectionList"
+              :key="section.label"
+              :value="section.value"
+              v-show="!keywords || section.label.includes(keywords)"
             >
-              {{ section.label }}
-            </span>
-          </el-checkbox>
-        </el-checkbox-group>
+              <span
+                :class="[
+                  'heading-body-body-12px-regular',
+                  searchKeyList.includes(section.label)
+                    ? 'text-neutrals-blue'
+                    : 'text-neutrals-grey-3',
+                ]"
+              >
+                {{ section.label }}
+              </span>
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-scrollbar>
       </div>
     </template>
   </el-dropdown>
