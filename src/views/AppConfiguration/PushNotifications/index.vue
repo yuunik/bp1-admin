@@ -12,7 +12,6 @@ import {
   createPushTaskApi,
   deletePushTaskApi,
   editPushTaskApi,
-  getExpenditureUserListApi,
   getPushTaskListApi,
   getPushTaskUserListApi,
 } from '@/apis/appApi.js'
@@ -22,6 +21,7 @@ import { getFirstLetter, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseTag from '@/components/BaseTag.vue'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useSort } from '@/composables/useSort.js'
+import { getUserListApi } from '@/apis/userApi.js'
 
 // 通知列表
 const notificationList = ref([])
@@ -397,11 +397,18 @@ const getNotificationList = async () => {
 
 // 获取用户列表
 const getUserList = async () => {
-  const { data } = await getExpenditureUserListApi()
+  const { data } = await getUserListApi({
+    page: 0,
+    pageSize: 9999,
+    sort: '',
+    sortBy: '',
+    statusKey: '',
+    searchKey: '',
+  })
   userStatusFilterParams.value = data.map((item) => ({
     id: item.id,
     label: item.name,
-    value: item.name === 'Admin' ? 'admin' : item.id,
+    value: item.id,
     logo: item.logo,
     name: item.name,
   }))
@@ -1024,7 +1031,7 @@ initData()
                 v-model="userStatusList"
                 v-model:keywords="userSearchText"
                 :section-list="userStatusFilterParams"
-                condition-text="+ New Note"
+                condition-text="New User"
                 :is-need-input="true"
                 v-show="userSelectorVisible"
               >
@@ -1033,7 +1040,7 @@ initData()
                     <template #icon>
                       <i class="icon-typesadd text-neutrals-blue" />
                     </template>
-                    <template #default>New Note</template>
+                    <template #default>New User</template>
                   </el-button>
                 </template>
               </base-filter-panel>
