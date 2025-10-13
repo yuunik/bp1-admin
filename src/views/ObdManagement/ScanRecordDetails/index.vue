@@ -229,7 +229,7 @@ if (id) {
       </div>
     </div>
     <!-- Fault Codes -->
-    <div class="section-container mx-32" v-if="hasFaultCodeList">
+    <div class="section-container mx-32 pb-32" v-if="hasFaultCodeList">
       <h3 class="section-header">
         <em
           class="title heading-body-large-body-14px-medium text-neutrals-off-black not-italic"
@@ -286,7 +286,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in engineItemList" :key="item.id">
+          <div v-for="(item, index) in engineItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -305,6 +305,12 @@ if (id) {
                 }}
               </el-col>
             </el-row>
+            <el-row v-if="index !== engineItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
+            </el-row>
+
             <!-- DTC 数量 -->
             <template
               v-if="
@@ -364,7 +370,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
         <!-- Transmission -->
         <template v-if="transmissionItemList.length > 0">
@@ -402,7 +408,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in transmissionItemList" :key="item.id">
+          <div v-for="(item, index) in transmissionItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -420,6 +426,11 @@ if (id) {
                     : '-'
                 }}
               </el-col>
+            </el-row>
+            <el-row v-if="index !== transmissionItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
             </el-row>
             <!-- DTC 数量 -->
             <template
@@ -480,7 +491,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
         <!-- Brakes -->
         <template v-if="brakesItemList.length > 0">
@@ -518,7 +529,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in brakesItemList" :key="item.id">
+          <div v-for="(item, index) in brakesItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -536,6 +547,11 @@ if (id) {
                     : '-'
                 }}
               </el-col>
+            </el-row>
+            <el-row v-if="index !== brakesItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
             </el-row>
             <!-- DTC 数量 -->
             <template
@@ -596,7 +612,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
         <!-- Electrical -->
         <template v-if="electricalItemList.length > 0">
@@ -634,7 +650,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in electricalItemList" :key="item.id">
+          <div v-for="(item, index) in electricalItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -652,6 +668,11 @@ if (id) {
                     : '-'
                 }}
               </el-col>
+            </el-row>
+            <el-row v-if="index !== electricalItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
             </el-row>
             <!-- DTC 数量 -->
             <template
@@ -712,7 +733,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
         <!-- Chassis -->
         <template v-if="chassisItemList.length > 0">
@@ -750,7 +771,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in chassisItemList" :key="item.id">
+          <div v-for="(item, index) in chassisItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -768,6 +789,11 @@ if (id) {
                     : '-'
                 }}
               </el-col>
+            </el-row>
+            <el-row v-if="index !== chassisItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
             </el-row>
             <!-- DTC 数量 -->
             <template
@@ -828,7 +854,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
         <!-- Body and Trim -->
         <template v-if="bodyAndTrimItemList.length > 0">
@@ -866,7 +892,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in bodyAndTrimItemList" :key="item.id">
+          <div v-for="(item, index) in bodyAndTrimItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -884,6 +910,11 @@ if (id) {
                     : '-'
                 }}
               </el-col>
+            </el-row>
+            <el-row v-if="index !== bodyAndTrimItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
             </el-row>
             <!-- DTC 数量 -->
             <template
@@ -944,7 +975,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
         <!-- Others -->
         <template v-if="otherItemList.length > 0">
@@ -982,7 +1013,7 @@ if (id) {
               </i>
             </el-col>
           </el-row>
-          <div v-for="item in otherItemList" :key="item.id">
+          <div v-for="(item, index) in otherItemList" :key="item.id">
             <el-row
               class="poppins-10px-regular text-neutrals-off-black"
               :gutter="16"
@@ -1000,6 +1031,11 @@ if (id) {
                     : '-'
                 }}
               </el-col>
+            </el-row>
+            <el-row v-if="index !== otherItemList.length - 1">
+              <el-col :span="2"></el-col>
+              <el-col :span="6"></el-col>
+              <el-col :span="16"><el-divider /></el-col>
             </el-row>
             <!-- DTC 数量 -->
             <template
@@ -1060,7 +1096,7 @@ if (id) {
               </el-row>
             </template>
           </div>
-          <el-divider />
+          <el-divider class="border-t-4!" />
         </template>
       </div>
     </div>
