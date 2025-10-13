@@ -597,7 +597,7 @@ initData()
 </script>
 
 <template>
-  <section class="flex flex-col gap-16 px-32 pb-32">
+  <section class="flex h-full flex-col gap-16 px-32 pb-32">
     <!-- header -->
     <div class="flex-between h-32">
       <h2 class="heading-h2-20px-medium text-neutrals-off-black">
