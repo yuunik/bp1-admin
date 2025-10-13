@@ -389,7 +389,6 @@ watch(
         <el-table
           :data="userList"
           class="flex-1"
-          :fit="false"
           @sort-change="handleUserSortChange"
           @row-click="handleUserRowClick"
           row-class-name="clickable-row"
@@ -651,14 +650,6 @@ watch(
   &::before {
     vertical-align: middle;
   }
-}
-
-:deep(.el-table__header) {
-  @apply w-full!;
-}
-
-:deep(.el-table__body) {
-  @apply w-full!;
 }
 
 // 重置 tab 的下划线
