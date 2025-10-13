@@ -179,7 +179,7 @@ onBeforeUnmount(() => {
         prop="question"
         label="Question"
         column-key="question"
-        min-width="64%"
+        min-width="56%"
       >
         <template #default="{ row }">
           <template v-if="row.isDraft">
@@ -231,7 +231,7 @@ onBeforeUnmount(() => {
         </template>
       </el-table-column>
       <!-- 操作 -->
-      <el-table-column column-key="actions" min-width="7%">
+      <el-table-column column-key="actions" min-width="15%">
         <template #default="{ row }">
           <template v-if="row.isDraft">
             <el-button type="primary" @click="handleConfirmAdd">Add</el-button>
