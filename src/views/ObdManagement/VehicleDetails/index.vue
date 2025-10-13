@@ -157,7 +157,14 @@ const sortByScannedHistoryParams = useSort(
 // 获取车辆品牌列表
 const getVehicleBrandList = async () => {
   const { data } = await getBrandModalListApi()
+  // 获取车辆品牌列表
   vehicleBrandList.value = data
+  // 初始化车辆品牌型号列表
+  const brandData = vehicleBrandList.value.find(
+    (brandInfo) => brandInfo.brand === vehicleBrandName.value,
+  )
+  // 初始化车辆型号列表
+  vehicleModelList.value = brandData.vehicleModelDtos
 }
 
 // 切换编辑模式
