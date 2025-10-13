@@ -574,7 +574,7 @@ const avatarErrorHandler = () => true
                   :gutter="16"
                 >
                   <el-col :span="2">
-                    <el-image :src="EngineIcon" class="h-16 w-16" fit="cover" />
+                    <el-image :src="EngineIcon" class="h-20 w-20" fit="cover" />
                   </el-col>
                   <el-col :span="6" class="poppins-10px-regular">
                     {{ VehicleEcuCategory.ENGINE }}
@@ -583,6 +583,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -599,7 +603,7 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in engineItemList" :key="item.id">
+                <div v-for="(item, index) in engineItemList" :key="item.id">
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -618,6 +622,12 @@ const avatarErrorHandler = () => true
                       }}
                     </el-col>
                   </el-row>
+                  <el-row v-if="index !== engineItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
+                  </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -677,7 +687,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
               <!-- Transmission -->
               <template v-if="transmissionItemList.length > 0">
@@ -688,7 +698,7 @@ const avatarErrorHandler = () => true
                   <el-col :span="2">
                     <el-image
                       :src="TransmissionIcon"
-                      class="h-16 w-16"
+                      class="h-20 w-20"
                       fit="cover"
                     />
                   </el-col>
@@ -699,6 +709,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -715,7 +729,10 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in transmissionItemList" :key="item.id">
+                <div
+                  v-for="(item, index) in transmissionItemList"
+                  :key="item.id"
+                >
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -733,6 +750,11 @@ const avatarErrorHandler = () => true
                           : '-'
                       }}
                     </el-col>
+                  </el-row>
+                  <el-row v-if="index !== transmissionItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
                   </el-row>
                   <!-- DTC 数量 -->
                   <template
@@ -793,7 +815,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
               <!-- Brakes -->
               <template v-if="brakesItemList.length > 0">
@@ -802,7 +824,7 @@ const avatarErrorHandler = () => true
                   :gutter="16"
                 >
                   <el-col :span="2">
-                    <el-image :src="BrakesIcon" class="h-16 w-16" fit="cover" />
+                    <el-image :src="BrakesIcon" class="h-20 w-20" fit="cover" />
                   </el-col>
                   <el-col :span="6" class="poppins-10px-regular">
                     {{ VehicleEcuCategory.BRAKES }}
@@ -811,6 +833,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -827,7 +853,7 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in brakesItemList" :key="item.id">
+                <div v-for="(item, index) in brakesItemList" :key="item.id">
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -845,6 +871,11 @@ const avatarErrorHandler = () => true
                           : '-'
                       }}
                     </el-col>
+                  </el-row>
+                  <el-row v-if="index !== brakesItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
                   </el-row>
                   <!-- DTC 数量 -->
                   <template
@@ -905,7 +936,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
               <!-- Electrical -->
               <template v-if="electricalItemList.length > 0">
@@ -916,7 +947,7 @@ const avatarErrorHandler = () => true
                   <el-col :span="2">
                     <el-image
                       :src="ElectricalIcon"
-                      class="h-16 w-16"
+                      class="h-20 w-20"
                       fit="cover"
                     />
                   </el-col>
@@ -927,6 +958,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -943,7 +978,7 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in electricalItemList" :key="item.id">
+                <div v-for="(item, index) in electricalItemList" :key="item.id">
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -961,6 +996,11 @@ const avatarErrorHandler = () => true
                           : '-'
                       }}
                     </el-col>
+                  </el-row>
+                  <el-row v-if="index !== electricalItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
                   </el-row>
                   <!-- DTC 数量 -->
                   <template
@@ -1021,7 +1061,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
               <!-- Chassis -->
               <template v-if="chassisItemList.length > 0">
@@ -1032,7 +1072,7 @@ const avatarErrorHandler = () => true
                   <el-col :span="2">
                     <el-image
                       :src="ChassisIcon"
-                      class="h-16 w-16"
+                      class="h-20 w-20"
                       fit="cover"
                     />
                   </el-col>
@@ -1043,6 +1083,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -1059,7 +1103,7 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in chassisItemList" :key="item.id">
+                <div v-for="(item, index) in chassisItemList" :key="item.id">
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -1077,6 +1121,11 @@ const avatarErrorHandler = () => true
                           : '-'
                       }}
                     </el-col>
+                  </el-row>
+                  <el-row v-if="index !== chassisItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
                   </el-row>
                   <!-- DTC 数量 -->
                   <template
@@ -1137,7 +1186,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
               <!-- Body and Trim -->
               <template v-if="bodyAndTrimItemList.length > 0">
@@ -1148,7 +1197,7 @@ const avatarErrorHandler = () => true
                   <el-col :span="2">
                     <el-image
                       :src="BodyAndTrimIcon"
-                      class="h-16 w-16"
+                      class="h-20 w-20"
                       fit="cover"
                     />
                   </el-col>
@@ -1159,6 +1208,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -1175,7 +1228,10 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in bodyAndTrimItemList" :key="item.id">
+                <div
+                  v-for="(item, index) in bodyAndTrimItemList"
+                  :key="item.id"
+                >
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -1193,6 +1249,11 @@ const avatarErrorHandler = () => true
                           : '-'
                       }}
                     </el-col>
+                  </el-row>
+                  <el-row v-if="index !== bodyAndTrimItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
                   </el-row>
                   <!-- DTC 数量 -->
                   <template
@@ -1253,7 +1314,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
               <!-- Others -->
               <template v-if="otherItemList.length > 0">
@@ -1262,7 +1323,7 @@ const avatarErrorHandler = () => true
                   :gutter="16"
                 >
                   <el-col :span="2">
-                    <el-image :src="OthersIcon" class="h-16 w-16" fit="cover" />
+                    <el-image :src="OthersIcon" class="h-20 w-20" fit="cover" />
                   </el-col>
                   <el-col :span="6" class="poppins-10px-regular">
                     {{ VehicleEcuCategory.OTHERS }}
@@ -1271,6 +1332,10 @@ const avatarErrorHandler = () => true
                   <el-col :span="4">
                     <i
                       :class="[
+                        'rounded-99',
+                        'px-6',
+                        'py-2',
+                        'text-neutrals-white',
                         'text-truncate',
                         'block',
                         'w-fit',
@@ -1287,7 +1352,7 @@ const avatarErrorHandler = () => true
                     </i>
                   </el-col>
                 </el-row>
-                <div v-for="item in otherItemList" :key="item.id">
+                <div v-for="(item, index) in otherItemList" :key="item.id">
                   <el-row
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
@@ -1305,6 +1370,11 @@ const avatarErrorHandler = () => true
                           : '-'
                       }}
                     </el-col>
+                  </el-row>
+                  <el-row v-if="index !== otherItemList.length - 1">
+                    <el-col :span="2"></el-col>
+                    <el-col :span="6"></el-col>
+                    <el-col :span="16"><el-divider /></el-col>
                   </el-row>
                   <!-- DTC 数量 -->
                   <template
@@ -1365,7 +1435,7 @@ const avatarErrorHandler = () => true
                     </el-row>
                   </template>
                 </div>
-                <el-divider />
+                <el-divider class="border-t-4!" />
               </template>
             </div>
           </section>
@@ -1645,11 +1715,6 @@ label {
     @apply pr-0!;
   }
 }
-
-:deep(.el-divider) {
-  @apply divider-neutral-grey-4-4px;
-}
-
 // 重置i标签样式, 做图标使用
 i {
   @apply text-neutrals-white poppins-10px-regular rounded-full px-6 py-2;
