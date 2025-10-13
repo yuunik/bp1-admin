@@ -11,8 +11,10 @@ import BaseDialog from '@/components/BaseDialog.vue'
 import {
   createPushTaskApi,
   deletePushTaskApi,
+  editPushTaskApi,
   getExpenditureUserListApi,
   getPushTaskListApi,
+  getPushTaskUserListApi,
 } from '@/apis/appApi.js'
 import { ElMessage } from 'element-plus'
 import { getOBDVersionListApi } from '@/apis/obdApi.js'
@@ -304,6 +306,74 @@ const addNotification = async () => {
   }
 }
 
+// 编辑推送任务
+const editNotification = async () => {
+  console.log('编辑 notification', notificationForm.value)
+
+  // 基础参数（必传）
+  const params = {
+    pushTaskId: notificationForm.value.id,
+    title: notificationForm.value.title,
+    content: notificationForm.value.content,
+    type: notificationForm.value.type,
+    sentTime:
+      hasPushTime.value && notificationForm.value.sendTime === 'schedule'
+        ? scheduleTime.value
+        : notificationForm.value.sendTime,
+  }
+
+  // 条件传递 obdVersion
+  if (notificationForm.value.obdVersion !== 'all') {
+    params.obdVersion = notificationForm.value.obdVersion
+  }
+
+  // 条件传递 appType
+  if (notificationForm.value.applicationType !== 'all') {
+    params.appType = notificationForm.value.applicationType
+  }
+
+  // 条件传递 pushUserIds
+  if (hasPushUser.value && notificationForm.value.userStatus === 'selected') {
+    params.pushUserIds = userStatusKeys.value
+  }
+
+  // 必填校验
+  if (!params.title) {
+    ElMessage.error('Title is required')
+    return
+  }
+  if (!params.content) {
+    ElMessage.error('Content is required')
+    return
+  }
+  if (!params.type) {
+    ElMessage.error('Type is required')
+    return
+  }
+  if (!hasPushUser.value) {
+    ElMessage.error('User Status is required')
+    return
+  }
+  if (!hasPushTime.value) {
+    ElMessage.error('Send Time is required')
+    return
+  }
+
+  try {
+    // 编辑
+    await editPushTaskApi(params)
+    // 提示
+    ElMessage.success('Edit Notification Success')
+    // 刷新
+    refresh()
+  } finally {
+    // 关闭弹窗
+    dialogNotificationFormVisible.value = false
+    // 重置
+    handleReset()
+  }
+}
+
 // 获取通知列表
 const getNotificationList = async () => {
   const { data, count } = await getPushTaskListApi({
@@ -393,9 +463,11 @@ const handleViewDetails = (row, column) => {
 // 管理Notification
 const handleManageNotification = async () => {
   if (!notificationForm.value.id) {
+    // 新增
     addNotification()
   } else {
-    console.log('编辑 notificaiton')
+    // 编辑
+    editNotification()
   }
 }
 
@@ -471,13 +543,35 @@ const handleDeleteNotification = async () => {
   }
 }
 
+// 获取目标推送任务所需要的推送用户列表
+const getPushTaskUserList = async (pushTaskId) => {
+  const { data } = await getPushTaskUserListApi(pushTaskId)
+  userStatusList.value = data.map((item) => item.userId)
+}
+
 // 打开编辑弹窗
-const openEditNotificationDialog = (notification) => {
+const openEditNotificationDialog = async (notification) => {
   // 创建一个副本
   const { cloned } = useCloned(notification)
   // 设置表单数据
   notificationForm.value = cloned.value
-  notificationForm.value.userStatus = cloned.value.isGlobal === 1 ? 'all' : ''
+  // 回显推送任务的时间
+  notificationForm.value.userStatus =
+    cloned.value.isGlobal === 1 ? 'all' : 'selected'
+  if (cloned.value.isGlobal !== 1) {
+    // 则不是推送所有用户，则需要获取推送用户列表
+    await getPushTaskUserList()
+  }
+  notificationForm.value.sendTime =
+    cloned.value.sendTime === cloned.value.updateTime ? 'schedule' : 0
+  // 回显obd版本
+  notificationForm.value.obdVersion = cloned.value.obdVersion
+    ? cloned.value.obdVersion
+    : 'all'
+  // 回显应用类型
+  notificationForm.value.applicationType = cloned.value.applicationType
+    ? cloned.value.applicationType
+    : 'all'
   // 打开编辑弹窗
   dialogNotificationFormVisible.value = true
 }

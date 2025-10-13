@@ -87,6 +87,8 @@ const AppApi = Object.freeze({
   MODIFY_PUSH_TASK: '/manager/pushtask/edit',
   // 获取推送任务列表
   GET_PUSH_TASK_LIST: '/manager/pushtask/pushtasks',
+  // 获取推送任务所推送的用户列表
+  GET_PUSH_TASK_USER_LIST: '/manager/pushtask/users',
 })
 
 // 获取 token
@@ -746,7 +748,7 @@ export const createPushTaskApi = (params) => {
   data.append('content', params.content)
   data.append('type', params.type)
   params.obdVersions && data.append('obdVersions', params.obdVersions)
-  params.appType && data.append('appType', params.appType)
+  params.appType && params.appType && data.append('appType', params.appType)
   params.pushUserIds && data.append('pushUserIds', params.pushUserIds)
   data.append('sentTime', params.sentTime)
 
@@ -796,9 +798,9 @@ export const editPushTaskApi = (params) => {
   data.append('title', params.title)
   data.append('content', params.content)
   data.append('type', params.type)
-  data.append('obdVersions', params.obdVersions)
-  data.append('appType', params.appType)
-  data.append('pushUserIds', params.pushUserIds)
+  params.obdVersions && data.append('obdVersions', params.obdVersions)
+  params.appType && data.append('appType', params.appType)
+  params.pushUserIds && data.append('pushUserIds', params.pushUserIds)
   data.append('sentTime', params.sentTime)
 
   return request({
@@ -842,6 +844,22 @@ export const getPushTaskListApi = (params) => {
 
   return request({
     url: AppApi.GET_PUSH_TASK_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取推送任务所推送的用户列表
+ * @param pushTaskId
+ */
+export const getPushTaskUserListApi = (pushTaskId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('pushTaskId', pushTaskId)
+
+  return request({
+    url: AppApi.GET_PUSH_TASK_USER_LIST,
     method: 'POST',
     data,
   })
