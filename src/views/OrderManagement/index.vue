@@ -293,4 +293,8 @@ const pageQueryParams = ref({
     background-color: transparent;
   }
 }
+
+:deep(.el-table__row) {
+  color: #ccc;
+}
 </style>
