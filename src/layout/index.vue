@@ -418,6 +418,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
 .bg-container {
   // 公用背景色
   @extend %common-bg-style;
+  @apply min-w-1080 min-h-750;
 
   // 菜单栏
   .nav-menu {
