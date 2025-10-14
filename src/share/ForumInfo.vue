@@ -1,6 +1,9 @@
 <script setup>
 import { reactive } from 'vue'
 import { useRoute } from 'vue-router'
+import Quill from 'quill'
+import 'quill/dist/quill.snow.css'
+// import 'quill/dist/quill.core.css'
 
 import AppScaffold from '@/components/AppScaffold.vue'
 import { getForumInfoApi } from '@/apis/shareApi.js'
@@ -22,6 +25,20 @@ const route = useRoute()
 // 修改该网页的标题
 document.title = route.meta.title
 
+const quillContainer = ref(null)
+
+// 内容是否为 json 字符串
+const isJson = computed(() => {
+  if (!forumInfo.content) return false
+
+  try {
+    const parsed = JSON.parse(forumInfo.content)
+    return typeof parsed === 'object' && parsed != null
+  } catch {
+    return false
+  }
+})
+
 // 贴文详情
 const forumInfo = reactive({})
 // 获取贴文详情
@@ -29,6 +46,19 @@ const getForumInfo = async (forumId) => {
   const { data } = await getForumInfoApi(forumId)
   // 获取成功
   Object.assign(forumInfo, data)
+  // 如果是富文本 则解析
+  if (!isJson.value) return
+  const deltaOps = JSON.parse(forumInfo.content)
+  const quill = new Quill(quillContainer.value, {
+    theme: 'snow',
+    readOnly: true, // 只读模式
+    modules: {
+      toolbar: false, // 隐藏工具栏
+    },
+  })
+  nextTick(() => {
+    quill.setContents({ ops: deltaOps })
+  })
 }
 
 // 获取当前页面的id
@@ -80,12 +110,13 @@ const handleErrorImage = () => true
         <h1 class="h2-20px-semibold">{{ forumInfo?.title }}</h1>
       </section>
       <!-- 内容 -->
-      <section v-if="forumInfo?.content">
+      <section v-if="!isJson && forumInfo?.content">
         <pre
-          class="heading-h3-16px-regular neutrals-off-black forum-content whitespace-pre-wrap break-words"
+          class="heading-h3-16px-regular forum-content neutrals-off-black whitespace-pre-wrap break-words"
           >{{ forumInfo?.content }}</pre
         >
       </section>
+      <section v-else ref="quillContainer" class="forum-content" />
       <!-- 图片 -->
       <section
         v-if="forumInfo?.attachmentDtos && forumInfo.attachmentDtos.length > 0"
@@ -175,5 +206,14 @@ const handleErrorImage = () => true
 <style scoped lang="scss">
 .forum-content {
   font-family: 'Roboto', sans-serif;
+}
+
+// 重置富文本编辑器的默认样式
+:deep(.ql-container) {
+  @apply border-none;
+
+  .ql-editor {
+    @apply text-16 font-400 text-neutrals-off-black p-0;
+  }
 }
 </style>
