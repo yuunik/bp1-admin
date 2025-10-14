@@ -166,7 +166,7 @@
 
 // 子菜单项选中样式
 .el-menu.el-menu--popup.el-menu--popup-right-start {
-  @apply p-8!;
+  @apply p-8! flex flex-col gap-4;
 
   .el-menu-item.is-active{
     @apply text-neutrals-off-black! bg-[#ecf5ff]!;
