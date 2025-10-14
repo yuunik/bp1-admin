@@ -615,7 +615,7 @@ initData()
       </el-button>
     </div>
     <!-- Search bar -->
-    <div class="flex-between h-24">
+    <div class="flex-between">
       <div class="row-center filter-container flex-wrap gap-8">
         <!-- 通知类型筛选 -->
         <base-filter-panel
@@ -680,7 +680,7 @@ initData()
       <base-filter-input v-model="searchKeywords" @inputChange="refresh" />
     </div>
     <!-- table container -->
-    <div class="flex flex-1 flex-col">
+    <div class="mt-8 flex flex-1 flex-col">
       <el-divider />
       <!-- Batch delete -->
       <div class="flex-between h-42" v-show="selectedNotificationIdList.length">
@@ -1235,7 +1235,7 @@ initData()
 // 重置datepicker样式
 .filter-container {
   :deep(.el-date-editor--daterange) {
-    @apply border-1! neutrals-grey-3 default-transition row-center box-border h-24 w-fit cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4 shadow-none;
+    @apply border-1! neutrals-grey-3 default-transition row-center box-border h-24 w-fit grow-0 cursor-pointer gap-5 rounded-full border-solid border-[#CACFD8] px-8 py-4 shadow-none;
     border-color: v-bind(conditionBorderColor);
 
     .el-range__icon {
@@ -1247,7 +1247,7 @@ initData()
     }
 
     .el-range-separator {
-      @apply text-neutrals-grey-3;
+      @apply text-neutrals-grey-3 w-fit! flex-[0_1_auto]!;
     }
 
     .el-range-separator {
