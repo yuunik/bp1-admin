@@ -520,7 +520,7 @@ const loadOBDData = async (id) => {
           <label for="order" class="w-112 leading-32 h-32">Order</label>
           <span
             id="order"
-            class="heading-body-body-12px-regular text-neutrals-off-black flex-1 underline"
+            class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
           >
             -
           </span>
