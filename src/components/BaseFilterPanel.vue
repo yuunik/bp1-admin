@@ -1,6 +1,4 @@
 <script setup>
-import { Search } from '@element-plus/icons-vue'
-
 const { sectionList, conditionText } = defineProps({
   // 搜索条件列表
   sectionList: {
@@ -60,6 +58,9 @@ const conditionTotalText = computed(() => {
   return conditionText
 })
 
+// 筛选框展开状态
+const isOpen = ref(false)
+
 // 提交查找
 watch(searchKeys, () => {
   emit('search', searchKeys.value)
@@ -68,7 +69,11 @@ watch(searchKeys, () => {
 
 <template>
   <!-- 触发框 -->
-  <el-dropdown trigger="click" placement="bottom-start">
+  <el-dropdown
+    trigger="click"
+    placement="bottom-start"
+    @visible-change="(val) => (isOpen = val)"
+  >
     <slot v-if="$slots.text" name="text" />
     <div
       v-else
@@ -83,10 +88,11 @@ watch(searchKeys, () => {
         {{ conditionTotalText }}
       </span>
       <i
-        class="icon-typesdropdown"
-        :class="
-          searchKeyList.length ? 'text-[#006BF7]' : 'text-neutrals-grey-3'
-        "
+        class="icon-typesdropdown default-transition"
+        :class="[
+          searchKeyList.length ? 'text-[#006BF7]' : 'text-neutrals-grey-3',
+          isOpen ? 'animate-rotate' : 'animate-rotate-reverse',
+        ]"
       />
     </div>
     <template #dropdown>
@@ -112,10 +118,13 @@ watch(searchKeys, () => {
         <el-input
           v-if="isNeedInput"
           placeholder="Enter..."
-          :prefix-icon="Search"
           v-model="keywords"
           clearable
-        />
+        >
+          <template #prefix>
+            <i class="icon-mail-send-line-1 text-16" />
+          </template>
+        </el-input>
         <el-scrollbar>
           <!-- 勾选框筛选 -->
           <el-checkbox-group
@@ -159,5 +168,41 @@ watch(searchKeys, () => {
 
 :deep(.el-date-editor--daterange) {
   @apply invisible;
+}
+
+// 箭头进行的动画效果
+@keyframes rotateArrow {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(90deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
+
+.animate-rotate {
+  animation: rotateArrow 0.3s ease forwards;
+}
+
+// 箭头反转的动画效果
+@keyframes rotateArrowReverse {
+  0% {
+    transform: rotate(180deg);
+  }
+  50% {
+    transform: rotate(90deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-rotate-reverse {
+  animation: rotateArrowReverse 0.3s ease forwards;
 }
 </style>
