@@ -1,8 +1,9 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { provide } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { useLocalStorage } from '@vueuse/core'
 
 import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
@@ -20,8 +21,6 @@ const userStore = useUserStore()
 
 // 获取用户相关信息
 const { userId, username, userRole, usernameAbbr } = storeToRefs(userStore)
-
-const route = useRoute()
 
 const router = useRouter()
 
@@ -59,7 +58,7 @@ const changeEmailForm = ref({
 const isShowCurrentPassword = ref(false)
 
 // 菜单栏是否折叠
-const isMenuCollapsed = ref(false)
+const isMenuCollapsed = useLocalStorage('isMenuCollapsed', false)
 
 // 打开修改密码弹窗
 const handleOpenChangePasswordDialog = () => {
