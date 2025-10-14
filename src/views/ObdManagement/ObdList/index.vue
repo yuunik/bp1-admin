@@ -172,9 +172,16 @@ const onCloseOBD = async (id) => {
 // 查看 OBD 详情
 const viewOBDDetail = (row, column) => {
   const { no } = column
-  if (no === 0 || no === 7) {
-    return
+  if (no === 0 || no === 8) return
+
+  if (no === 6 && row.userDto?.id) {
+    // OBD 已绑定用户, 查看用户详情
+    return router.push({
+      name: 'Workshop Manage',
+      params: { id: row.userDto.id },
+    })
   }
+
   router.push({ name: RouteName.OBD_DETAILS, params: { id: row.id } })
 }
 
@@ -337,7 +344,9 @@ getObdList()
           min-width="14%"
         >
           <template #default="{ row }">
-            {{ row.userDto?.id === '' ? '-' : row.userDto?.name }}
+            <span :class="{ underline: row.userDto?.id !== '' }">
+              {{ row.userDto?.id === '' ? '-' : row.userDto?.name }}
+            </span>
           </template>
         </el-table-column>
         <!-- 详情 -->
