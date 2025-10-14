@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Line } from 'vue-chartjs'
-import { nextTick, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import dayjs from 'dayjs'
 
 import {
@@ -181,49 +181,6 @@ const getOBDOperationRecord = async (id) => {
 }
 
 // 获取 OBD 链接量统计
-// const getOBDConnectedCountList = async (id) => {
-//   const { data } = await getOBDConnectedCountListApi({
-//     obdId: id,
-//     beginTime: beginTime.value,
-//     endTime: endTime.value,
-//   })
-//   obdConnectedCountList.value = data
-//   // 日期标签（X轴）
-//   const labels = data.map((item) => item.Day)
-//   // 模拟数据（Y轴）
-//   const dataPoints = data.map((item) => item.Count)
-//   // 获取最大使用值
-//   const maxCount = Math.max(...data.map((item) => item.Count))
-//
-//   // 计算四个关键日期点
-//   const total = labels.length
-//   const step = Math.floor(total / 3) // 3个间隔，4个点
-//   const keyDates = [
-//     labels[0],
-//     labels[step],
-//     labels[step * 2],
-//     labels[total - 1],
-//   ]
-//
-//   chartData.value = {
-//     labels,
-//     datasets: [
-//       {
-//         label: 'OBD link count', // 图例和 tooltip 中显示的名称
-//         data: dataPoints, // 数据点数组，对应每个 x 轴标签的值
-//         fill: false, // 是否填充线条下方区域，false 表示不填充
-//         borderColor: '#376DF7', // 折线的颜色
-//         backgroundColor: '#376DF7', // 数据点的填充颜色（也可用于填充区域）
-//         tension: 0, // 贝塞尔曲线的张力，0 表示直线，越大越平滑
-//         pointRadius: 0, // 数据点的默认半径大小（单位：像素）
-//         pointHoverRadius: 6, // 鼠标悬停时数据点的半径大小
-//       },
-//     ],
-//   }
-//
-//   chartOptions.value.scales.y.max = maxCount || 10
-// }
-
 const getOBDConnectedCountList = async (id) => {
   const { data } = await getOBDConnectedCountListApi({
     obdId: id,
@@ -231,47 +188,25 @@ const getOBDConnectedCountList = async (id) => {
     endTime: endTime.value,
   })
   obdConnectedCountList.value = data
-
-  // 1. 获取所有日期标签（X轴）
-  const allLabels = data.map((item) => item.Day)
-
-  // 2. 选取四个等距的日期点作为最终显示的标签
-  const numLabelsToShow = 4 // 需要显示的标签数量
-  const labels = []
-  const dataLength = allLabels.length
-
-  if (dataLength > 0) {
-    // 始终添加第一个日期
-    labels.push(allLabels[0])
-
-    // 如果总天数小于或等于4，则直接显示所有日期
-    if (dataLength <= numLabelsToShow) {
-      labels.length = 0 // 清空，重新赋值所有
-      labels.push(...allLabels)
-    } else {
-      // 计算步长，确保等距。这里用 numLabelsToShow - 1 来分区间
-      // 例如：100个数据，需要4个点，步长约是 100 / 3 = 33.33
-      const step = (dataLength - 1) / (numLabelsToShow - 1)
-
-      for (let i = 1; i < numLabelsToShow - 1; i++) {
-        // 计算索引，并取最近的整数。这里使用 Math.round 或 Math.floor/ceil 都可以
-        // 确保索引不越界：索引 = i * step
-        const index = Math.round(i * step)
-        labels.push(allLabels[index])
-      }
-
-      // 始终添加最后一个日期（避免步长计算导致的偏差）
-      labels.push(allLabels[dataLength - 1])
-    }
-  }
-
-  // 3. 模拟数据（Y轴）
+  // 日期标签（X轴）
+  const labels = data.map((item) => item.Day)
+  // 模拟数据（Y轴）
   const dataPoints = data.map((item) => item.Count)
-  // 4. 获取最大使用值
+  // 获取最大使用值
   const maxCount = Math.max(...data.map((item) => item.Count))
 
+  // 计算四个关键日期点
+  const total = labels.length
+  const step = Math.floor(total / 3) // 3个间隔，4个点
+  const keyDates = [
+    labels[0],
+    labels[step],
+    labels[step * 2],
+    labels[total - 1],
+  ]
+
   chartData.value = {
-    labels: allLabels, // 保留所有日期，保证与数据点一一对应
+    labels,
     datasets: [
       {
         label: 'OBD link count', // 图例和 tooltip 中显示的名称
@@ -286,27 +221,7 @@ const getOBDConnectedCountList = async (id) => {
     ],
   }
 
-  // 5. 设置 Y 轴最大值
   chartOptions.value.scales.y.max = maxCount || 10
-
-  // 6. **核心修改：更新 X 轴配置，只显示等距的四个标签**
-  // 这种方法假定 chartOptions.value 已经存在且包含 scales.x.ticks 结构。
-  if (chartOptions.value.scales && chartOptions.value.scales.x) {
-    chartOptions.value.scales.x.ticks = {
-      // autoSkip: true, // Chart.js 默认开启 autoSkip, 但为了精确控制，我们不用它
-      // maxTicksLimit: 4, // 可以尝试这个，让 Chart.js 自动选择
-
-      // 使用 callback 或 userCallback 来控制哪个标签显示
-      callback: function (val, index) {
-        // 检查当前标签是否在我们计算出的四个等距标签列表中
-        const currentLabel = allLabels[index]
-        if (labels.includes(currentLabel)) {
-          return currentLabel // 显示这个标签
-        }
-        return null // 否则不显示
-      },
-    }
-  }
 }
 
 const behaviorStatisticsRef = ref(null)
