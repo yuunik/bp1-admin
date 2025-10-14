@@ -409,19 +409,20 @@ const constantRoutes = [
       },
       {
         path: '/app-configuration/brand-model',
+        redirect: '/app-configuration/brand-model/list',
         name: RouteName.BRAND_MODEL,
         component: () =>
           import('@/views/AppConfiguration/BrandModel/index.vue'),
         children: [
-          // 车辆表格页面
+          // 车辆列表页
           {
-            path: '',
+            path: '/app-configuration/brand-model/list',
             name: 'BrandAndModelTable',
             component: () =>
               import('@/views/AppConfiguration/BrandModel/BrandModelTable.vue'),
             meta: {
               showInMenu: false,
-              showInBreadcrumb: false,
+              showInBreadcrumb: true,
             },
           },
           // 车辆管理页面
