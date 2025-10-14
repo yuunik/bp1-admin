@@ -513,4 +513,8 @@ const handleViewInventoryDetails = (row, column) => {
     background-color: transparent;
   }
 }
+
+:deep(.el-table__row) {
+  color: #ccc;
+}
 </style>
