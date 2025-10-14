@@ -256,7 +256,7 @@ watch(dialogForgetPasswordVisible, (val) => {
         </section>
       </article>
       <footer class="text-align-center heading-body-body-12px-regular">
-        discover, develop, deliver © Proteus 2024
+        discover, develop, deliver © Proteus 2025
       </footer>
     </div>
     <!-- Login form -->
