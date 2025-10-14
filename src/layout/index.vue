@@ -473,4 +473,11 @@ provide('isMenuCollapsed', isMenuCollapsed)
 .menu-container :deep(.el-sub-menu) {
   @apply pb-4!;
 }
+
+// 菜单项选中样式
+:deep(.el-menu-item) {
+  &.is-active {
+    @apply text-neutrals-off-black bg-[#ecf5ff];
+  }
+}
 </style>
