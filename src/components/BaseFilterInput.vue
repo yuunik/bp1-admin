@@ -1,4 +1,8 @@
 <script setup>
+import { useDebounceFn } from '@vueuse/core'
+
+import { TimingPreset } from '@/utils/constantsUtil.js'
+
 const searchKeywords = defineModel({
   required: true,
 })
@@ -9,7 +13,13 @@ const isShowInputContent = ref(false)
 
 const inputRef = ref(null)
 
-const handleInput = () => emit('inputChange')
+const handleInput = useDebounceFn(() => {
+  emit('inputChange')
+  setTimeout(() => {
+    // 失焦
+    inputRef.value.blur()
+  }, 100)
+}, TimingPreset.DEBOUNCE)
 
 watch(isShowInputContent, (val) => {
   if (val) {
