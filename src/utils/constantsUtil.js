@@ -64,6 +64,7 @@ export const RouteName = Object.freeze({
   CLUB_DETAILS: 'Club Details',
   SCAN_RECORD_DETAIL: 'View Scan Record',
   PUSH_NOTIFICATIONS: 'Push notifications',
+  DTC_LIST: 'DTC',
 })
 
 // 分享模块跳转路径

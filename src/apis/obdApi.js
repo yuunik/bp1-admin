@@ -34,6 +34,8 @@ const ObdApi = Object.freeze({
   EDIT_VEHICLE: '/manager/vehicle/edit',
   // 获取 OBD 版本号列表
   GET_OBD_VERSION_LIST: '/manager/obd/versions',
+  // 删除 DTC 记录
+  DELETE_DTC_RECORD: '/manager/dtc/delete',
 })
 
 // 获取 token
@@ -189,6 +191,7 @@ export const getOBDOperationRecordsApi = (params) => {
  * 获取车辆 dtc 历史列表
  * @param params
  * @param params.vehicleId 车辆 id
+ * @param params.searchKey 搜索关键字
  * @param params.sortKey 排序字段
  * @param params.sort 排序方式
  * @param params.page 页码
@@ -198,7 +201,8 @@ export const getOBDOperationRecordsApi = (params) => {
 export const getVehicleScanRecordsApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('vehicleId', params.vehicleId)
+  params.vehicleId && data.append('vehicleId', params.vehicleId)
+  params.searchKey && data.append('searchKey', params.searchKey)
   data.append('sortKey', params.sortKey)
   data.append('sort', params.sort)
   data.append('page', params.page)
@@ -310,6 +314,23 @@ export const getOBDVersionListApi = () => {
 
   return request({
     url: ObdApi.GET_OBD_VERSION_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除 DTC 记录
+ * @param dtcIds DTC ids
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const deleteDtcRecordApi = (dtcIds) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('dtcIds', dtcIds)
+
+  return request({
+    url: ObdApi.DELETE_DTC_RECORD,
     method: 'POST',
     data,
   })

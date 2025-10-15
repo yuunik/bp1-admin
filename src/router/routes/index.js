@@ -127,6 +127,19 @@ const constantRoutes = [
         },
       },
       /**
+       * DTC 模块
+       */
+      {
+        path: '/obd-management/dtc-list',
+        name: RouteName.DTC_LIST,
+        component: () => import('@/views/ObdManagement/DTC/index.vue'),
+        meta: {
+          title: RouteName.DTC_LIST,
+          showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
+      /**
        * 库存管理模块
        */
       // 库存管理页
