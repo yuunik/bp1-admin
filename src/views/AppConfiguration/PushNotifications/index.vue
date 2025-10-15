@@ -239,6 +239,9 @@ const dateFilterParams = ref({
   sentEnd: -1,
 })
 
+// 日期选择器是否触发
+const isDatePickerVisible = ref(false)
+
 // 新增推送任务
 const addNotification = async () => {
   console.log('新增 notification')
@@ -662,8 +665,10 @@ initData()
               actualSentTimeList.length,
             '[&>.el-date-editor--daterange]:border-[#006BF7]!':
               actualSentTimeList.length,
+            '[&>.el-range-separator]:after:rotate-180!': isDatePickerVisible,
           }"
           @change="handleDateFilterChange"
+          @visible-change="isDatePickerVisible = !isDatePickerVisible"
         />
 
         <!-- 清除按钮 -->
@@ -732,6 +737,16 @@ initData()
             </template>
           </el-table-column>
           <el-table-column
+            prop="isGlobal"
+            label="User status"
+            min-width="12%"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span>{{ row.isGlobal === 1 ? 'All Users' : '???' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
             prop="updateTime"
             label="Edited At"
             min-width="18%"
@@ -749,6 +764,26 @@ initData()
           >
             <template #default="{ row }">
               {{ getDateWithDDMMMYYYYhhmma(row.sentTime) }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="obdVersion"
+            label="OBD Version"
+            min-width="21%"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span>{{ row.obdVersion || 'All' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="appType"
+            label="Application Type"
+            min-width="21%"
+            sortable="custom"
+          >
+            <template #default="{ row }">
+              <span>{{ row.appType || 'All' }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -1257,14 +1292,18 @@ initData()
         margin-left: 4px;
         content: '';
         display: block;
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         background-color: currentColor; // 用文字颜色填充
-        -webkit-mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat
+        -webkit-mask: url('@/assets/specialIcons/arrow-down-line.svg') no-repeat
           center;
-        mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat center;
+        mask: url('@/assets/specialIcons/arrow-down-line.svg') no-repeat center;
         -webkit-mask-size: contain;
         mask-size: contain;
+
+        &.is-dropdown-active {
+          animation: rotateArrow 0.3s ease forwards !important;
+        }
       }
     }
 

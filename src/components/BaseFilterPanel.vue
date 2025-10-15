@@ -88,7 +88,7 @@ watch(searchKeys, () => {
         {{ conditionTotalText }}
       </span>
       <i
-        class="icon-typesdropdown default-transition"
+        class="icon-typesdropdown default-transition text-16"
         :class="[
           searchKeyList.length ? 'text-[#006BF7]' : 'text-neutrals-grey-3',
           isOpen ? 'animate-rotate' : 'animate-rotate-reverse',
@@ -168,41 +168,5 @@ watch(searchKeys, () => {
 
 :deep(.el-date-editor--daterange) {
   @apply invisible;
-}
-
-// 箭头进行的动画效果
-@keyframes rotateArrow {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  50% {
-    transform: rotate(90deg);
-  }
-
-  100% {
-    transform: rotate(180deg);
-  }
-}
-
-.animate-rotate {
-  animation: rotateArrow 0.3s ease forwards;
-}
-
-// 箭头反转的动画效果
-@keyframes rotateArrowReverse {
-  0% {
-    transform: rotate(180deg);
-  }
-  50% {
-    transform: rotate(90deg);
-  }
-  100% {
-    transform: rotate(0deg);
-  }
-}
-
-.animate-rotate-reverse {
-  animation: rotateArrowReverse 0.3s ease forwards;
 }
 </style>
