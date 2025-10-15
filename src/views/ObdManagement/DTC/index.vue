@@ -67,10 +67,7 @@ const refresh = () => {
 }
 
 // 条件搜索
-const handleSearchByInput = useDebounceFn(
-  async () => refresh(),
-  TimingPreset.DEBOUNCE,
-)
+const handleSearchByInput = () => refresh()
 
 // 获取 dtc 列表
 const getDtcList = async () => {
@@ -154,8 +151,13 @@ getDtcList()
         @cell-mouse-leave="handleCellMouseLeave"
         @selection-change="handleSelectionChange"
       >
-        <el-table-column type="selection" width="55" />
-        <el-table-column label="User" prop="name" sortable="custom">
+        <el-table-column type="selection" min-width="6%" />
+        <el-table-column
+          label="User"
+          prop="user"
+          sortable="custom"
+          min-width="25%"
+        >
           <template #default="{ row }">
             <div class="row-center">
               <!-- 用户头像 -->
@@ -172,12 +174,17 @@ getDtcList()
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="SN" prop="sn" sortable="custom">
+        <el-table-column label="SN" prop="sn" sortable="custom" min-width="15%">
           <template #default="{ row }">
             <span>{{ row.obdDto?.sn || '-' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Vehicle" prop="email" sortable="custom">
+        <el-table-column
+          label="Vehicle"
+          prop="vehiclename"
+          sortable="custom"
+          min-width="25%"
+        >
           <template #default="{ row }">
             <span v-if="row.vehicleDto?.name">
               {{ row.vehicleDto?.name || '-' }}
@@ -191,13 +198,18 @@ getDtcList()
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="Date" prop="role">
+        <el-table-column
+          label="Date"
+          prop="createtime"
+          min-width="25%"
+          sortable="custom"
+        >
           <template #default="{ row }">
             <span>{{ getDateWithDDMMMYYYYhhmma(row.createTime) }}</span>
           </template>
         </el-table-column>
         <!-- 操作 -->
-        <el-table-column align="center" prop="actions" width="100">
+        <el-table-column align="center" prop="actions" min-width="4%">
           <template #default="{ row }">
             <el-icon
               v-show="row.isHover"
