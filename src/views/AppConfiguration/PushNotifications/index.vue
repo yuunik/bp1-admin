@@ -743,7 +743,11 @@ initData()
             sortable="custom"
           >
             <template #default="{ row }">
-              <span>{{ row.isGlobal === 1 ? 'All Users' : '???' }}</span>
+              <span v-if="row.isGlobal === 1">All Users</span>
+              <span v-else>
+                {{ row.userDto?.id ? row.userDto.name : 'Unknown' }}
+                + {{ row.userCount - 1 }}
+              </span>
             </template>
           </el-table-column>
           <el-table-column

@@ -22,7 +22,7 @@ watch(isShowInputContent, (val) => {
 
 <template>
   <div
-    class="row-center w-200 h-16 cursor-pointer gap-8"
+    class="row-center h-24 w-fit cursor-pointer gap-8"
     @click="isShowInputContent = true"
     v-if="!isShowInputContent"
   >
