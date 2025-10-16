@@ -62,7 +62,6 @@ export const RouteName = Object.freeze({
   CLUB_MANAGEMENT_INDEX: 'Club Management Index',
   CLUB_MANAGEMENT: 'Club Management',
   CLUB_DETAILS: 'Club Details',
-  SCAN_RECORD_DETAIL: 'View Scan Record',
   PUSH_NOTIFICATIONS: 'Push notifications',
   DTC_LIST: 'DTC',
   DTC_DETAILS: 'DTC Details',

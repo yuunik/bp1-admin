@@ -413,11 +413,8 @@ onMounted(async () => {
             @row-click="
               (row) =>
                 $router.push({
-                  name: RouteName.SCAN_RECORD_DETAIL,
+                  name: RouteName.DTC_DETAILS,
                   params: { id: row.id },
-                  query: {
-                    name: vehicleName,
-                  },
                 })
             "
           >
