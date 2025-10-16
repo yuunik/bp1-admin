@@ -49,6 +49,7 @@ const colorStyleMap = Object.freeze({
       'px-8',
       'py-4',
       'box-border',
+      'leading-15',
       colorStyleMap[color]?.bg,
     ]"
   >
