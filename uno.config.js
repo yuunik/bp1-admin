@@ -132,7 +132,11 @@ export default defineConfig({
       'text-truncate': 'text-ellipsis overflow-hidden whitespace-nowrap',
       // 间隔线
       'divider-neutral-grey-4-1px': 'border-t-[#EAEEF4] border-t border-t-1',
+      'divider-neutral-off-white-1px': 'border-t-[#FCFCFC] border-t border-t-1',
       'divider-neutral-grey-4-4px': 'border-t-[#EAEEF4] border-t border-t-4',
+      'divider-bottom-grey-4-1px': 'border-b-[#EAEEF4] border-b border-b-1',
+      'divider-bottom-neutral-off-white-1px':
+        'border-b-[#FCFCFC] border-b border-b-1',
       // 默认过渡效果
       'default-transition': 'transition-all duration-250 ease-linear',
       // 菜单栏未折叠宽度

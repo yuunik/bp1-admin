@@ -1,12 +1,11 @@
 <script setup>
 import { watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { TimingPreset } from '@/utils/constantsUtil.js'
+import { RouteName } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import { deleteDtcRecordApi, getVehicleScanRecordsApi } from '@/apis/obdApi.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
@@ -14,8 +13,6 @@ import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import ErrorImage from '@/assets/images/error-img.png'
 import { Delete } from '@element-plus/icons-vue'
 import BaseDialog from '@/components/BaseDialog.vue'
-
-const route = useRoute()
 
 const router = useRouter()
 
@@ -25,7 +22,7 @@ const onRowClick = (row, column) => {
   if (no === 0 || no === 5) {
     return
   }
-  router.push({ name: 'Internal Manage', params: { id: row.id } })
+  router.push({ name: RouteName.DTC_DETAILS, params: { id: row.id } })
 }
 
 // 条件查询参数
