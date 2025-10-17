@@ -24,6 +24,10 @@ defineProps({
     type: String,
     default: '520',
   },
+  showCloseButton: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 // 定义事件
@@ -45,7 +49,7 @@ const confirm = () => emit('confirm')
     :title="title"
     :width="dialogWidth"
     align-center
-    :showClose="false"
+    :showClose="showCloseButton"
   >
     <slot name="content" />
     <template #footer>
