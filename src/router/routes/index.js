@@ -139,6 +139,18 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      // 错误码详情页
+      {
+        path: '/obd-management/dtc-list/dtc-details/error-code-details/:id',
+        name: RouteName.ERROR_CODE_DETAILS,
+        component: () =>
+          import('@/views/ObdManagement/DTC/ErrorCodeDetails.vue'),
+        meta: {
+          title: RouteName.ERROR_CODE_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
       /**
        * 库存管理模块
        */

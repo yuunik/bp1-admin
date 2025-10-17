@@ -36,6 +36,8 @@ const ObdApi = Object.freeze({
   GET_OBD_VERSION_LIST: '/manager/obd/versions',
   // 删除 DTC 记录
   DELETE_DTC_RECORD: '/manager/dtc/delete',
+  // 获取DTC描述
+  GET_DTC_DESC: '/dtc/getfaultcodeinfo',
 })
 
 // 获取 token
@@ -331,6 +333,32 @@ export const deleteDtcRecordApi = (dtcIds) => {
 
   return request({
     url: ObdApi.DELETE_DTC_RECORD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取DTC描述
+ * @param param
+ * @param param.vehicleId 车辆 id
+ * @param param.code DTC错误码
+ * @param param.title DTC错误码名称
+ * @param param.dtcName ECU名称
+ *
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getFaultCodeInfoApi = (param) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('vehicleId', param.vehicleId)
+  data.append('code', param.code)
+  data.append('title', param.title)
+  data.append('dtcName', param.dtcName)
+
+  return request({
+    url: ObdApi.GET_DTC_DESC,
     method: 'POST',
     data,
   })

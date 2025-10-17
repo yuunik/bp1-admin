@@ -25,6 +25,8 @@ export const EmitterEvent = Object.freeze({
   UPDATE_BREADCRUMB_LIST: 'updateBreadcrumbList',
   UPDATE_BREADCRUMB_TITLE: 'updateBreadcrumbTitle',
   CLEAR_BREADCRUMB_LIST: 'clearBreadcrumbList',
+  // dtc 详情页获取初始数据
+  GET_ERROR_CODE_INITIAL_DATA: 'getErrorCodeInitialData',
 })
 
 // 路由模块名称的常量定义
@@ -65,6 +67,7 @@ export const RouteName = Object.freeze({
   PUSH_NOTIFICATIONS: 'Push notifications',
   DTC_LIST: 'DTC',
   DTC_DETAILS: 'DTC Details',
+  ERROR_CODE_DETAILS: 'Error Code Details',
 })
 
 // 分享模块跳转路径

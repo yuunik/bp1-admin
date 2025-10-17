@@ -1,16 +1,10 @@
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useSessionStorage } from '@vueuse/core'
 
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { getVehicleScanRecordDetailApi } from '@/apis/obdApi.js'
-import EngineIcon from '@/assets/icons/engine-load.svg'
-import TransmissionIcon from '@/assets/icons/tranmission.svg'
-import BrakesIcon from '@/assets/icons/brakes.svg'
-import ElectricalIcon from '@/assets/icons/electronic-central-electric.svg'
-import ChassisIcon from '@/assets/icons/chassis.svg'
-import BodyAndTrimIcon from '@/assets/icons/services-icon.svg'
-import OthersIcon from '@/assets/icons/others-icon.svg'
-import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
+import { RouteName, VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
 // 展开图标
 import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
@@ -18,6 +12,8 @@ import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 
 const route = useRoute()
+
+const router = useRouter()
 
 // 车辆名称
 const carName = ref('')
@@ -212,6 +208,14 @@ const vehicleName = computed(
     '-',
 )
 
+// 错误码详情参数
+const faultData = useSessionStorage('faultData', {
+  code: '',
+  title: '',
+  vehicleId: '',
+  dtcName: '',
+})
+
 // 打开OEM 子项
 const handleOpenOEMItem = (oem) => {
   // 没有子项校验
@@ -225,6 +229,21 @@ const handleOpenOEMItem = (oem) => {
       // 其他项：全部收起
       item.isExpand && (item.isExpand = false)
     }
+  })
+}
+
+// 查看DTC详情
+const handleViewDtcDetail = (dtc, dtcName) => {
+  // 临时存储错误码详情信息
+  faultData.value = {
+    vehicleId: dtcInfo.value.vehicleId,
+    code: dtc.code,
+    title: dtc.name,
+    dtcName: dtcName,
+  }
+  // 跳转 dtc 详情页
+  router.push({
+    name: RouteName.ERROR_CODE_DETAILS,
   })
 }
 
@@ -497,7 +516,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
@@ -724,7 +748,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
@@ -949,7 +978,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
@@ -1174,7 +1208,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
@@ -1399,7 +1438,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
@@ -1624,7 +1668,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
@@ -1849,7 +1898,12 @@ if (id) {
                             }}
                           </el-col>
                           <el-col :span="4">
-                            <el-button class="rounded-full! h-24!">
+                            <el-button
+                              class="rounded-full! h-24!"
+                              @click.stop="
+                                handleViewDtcDetail(dtcDto, item.name)
+                              "
+                            >
                               View Details
                             </el-button>
                           </el-col>
