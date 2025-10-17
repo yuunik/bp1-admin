@@ -294,11 +294,21 @@ if (id) {
           </dl>
           <dl class="flex items-center gap-8">
             <dt class="w-112 leading-32 h-32">Serial Number</dt>
-            <dd class="flex-1">{{ dtcInfo.userDto?.name || '-' }}</dd>
+            <dd
+              class="flex-1 cursor-pointer underline"
+              @click="
+                $router.push({
+                  name: RouteName.OBD_DETAILS,
+                  params: { id: dtcInfo.vehicleDto?.id },
+                })
+              "
+            >
+              {{ dtcInfo.obdDto?.sn || '-' }}
+            </dd>
           </dl>
           <dl class="flex items-center gap-8">
             <dt class="w-112 leading-32 h-32">VIN</dt>
-            <dd class="flex-1">{{ dtcInfo.obdDto?.sn || '-' }}</dd>
+            <dd class="flex-1">{{ dtcInfo.vehicleDto?.vin || '-' }}</dd>
           </dl>
         </div>
       </div>
