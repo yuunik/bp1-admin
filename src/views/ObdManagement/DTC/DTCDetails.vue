@@ -11,6 +11,7 @@ import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 // 收起图标
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import CodeDetailsDrawer from '@/views/ObdManagement/DTC/components/CodeDetailsDrawer.vue'
 
 const route = useRoute()
 
@@ -209,6 +210,9 @@ const vehicleName = computed(
     '-',
 )
 
+// 错误码详情抽屉
+const drawerCodeInfoVisible = ref(false)
+
 // 错误码详情参数
 const faultData = useSessionStorage('faultData', {
   code: '',
@@ -243,9 +247,10 @@ const handleViewDtcDetail = (dtc, dtcName) => {
     dtcName: dtcName,
   }
   // 跳转 dtc 详情页
-  router.push({
-    name: RouteName.ERROR_CODE_DETAILS,
-  })
+  // router.push({
+  //   name: RouteName.ERROR_CODE_DETAILS,
+  // })
+  drawerCodeInfoVisible.value = true
 }
 
 const {
@@ -257,7 +262,7 @@ if (id) {
 </script>
 
 <template>
-  <section class="flex flex-col gap-16">
+  <section class="flex h-full flex-col gap-16">
     <!-- header -->
     <h3 class="heading-h2-20px-medium text-neutrals-off-black px-32">
       {{ vehicleName }}
@@ -346,7 +351,10 @@ if (id) {
       </div>
     </div>
     <!-- Fault Codes -->
-    <div class="section-container pb-32" v-if="hasFaultCodeList">
+    <div
+      class="section-container flex-1 overflow-auto pb-32"
+      v-if="hasFaultCodeList"
+    >
       <h3 class="section-header mx-32">
         <em
           class="title heading-body-large-body-14px-medium text-neutrals-off-black not-italic"
@@ -1976,6 +1984,7 @@ if (id) {
       </div>
     </div>
   </section>
+  <code-details-drawer v-model="drawerCodeInfoVisible" />
 </template>
 
 <style scoped lang="scss">
