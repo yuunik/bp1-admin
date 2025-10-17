@@ -142,7 +142,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <el-drawer v-model="drawerVisible">
+  <el-drawer v-model="drawerVisible" size="67%">
     <section class="flex flex-col gap-16" v-loading="loading">
       <h2
         class="row-center heading-h2-20px-medium text-neutrals-off-black mx-32 h-32"
