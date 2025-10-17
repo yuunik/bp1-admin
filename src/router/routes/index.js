@@ -335,13 +335,14 @@ const constantRoutes = [
   },
   {
     path: '/forum-management',
-    redirect: '/forum-management/list',
+    redirect: '/forum-management/forum-list',
     name: RouteName.FORUM_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
+      // 帖子列表
       {
-        path: '/forum-management/list',
-        name: RouteName.FORUM_MANAGEMENT_LIST,
+        path: '/forum-management/forum-list',
+        name: RouteName.FORUM,
         component: () => import('@/views/ForumManagement/Forum/index.vue'),
         children: [
           // 贴文详情页
@@ -370,11 +371,36 @@ const constantRoutes = [
           },
         ],
         meta: {
-          title: RouteName.FORUM_MANAGEMENT_LIST,
+          title: RouteName.FORUM,
           showInMenu: true,
           showInBreadcrumb: true,
           icon: 'icon-typeForum',
           selectedIcon: 'icon-typeForum',
+        },
+      },
+      // 俱乐部列表页
+      {
+        path: '/forum-management/group-list',
+        name: RouteName.GROUPS,
+        component: () => import('@/views/ForumManagement/Groups/index.vue'),
+        meta: {
+          title: RouteName.GROUPS,
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-group',
+          selectedIcon: 'icon-group',
+        },
+      },
+      // 俱乐部详情
+      {
+        path: '/forum-management/group-details/:id',
+        name: RouteName.CLUB_DETAILS,
+        component: () =>
+          import('@/views/ForumManagement/Groups/GroupDetails.vue'),
+        meta: {
+          title: RouteName.CLUB_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
         },
       },
     ],
@@ -538,46 +564,6 @@ const constantRoutes = [
       showInBreadcrumb: true,
       icon: 'icon-typesOrderManagement',
       selectedIcon: 'icon-typelist',
-      // 是否为一级路由
-      isTopLevelRoute: true,
-    },
-  },
-  {
-    path: '/club-management',
-    redirect: '/club-management/list',
-    name: RouteName.CLUB_MANAGEMENT_INDEX,
-    component: () => import('@/layout/index.vue'),
-    children: [
-      {
-        path: '/club-management/list',
-        name: RouteName.CLUB_MANAGEMENT,
-        component: () => import('@/views/ClubManagement/index.vue'),
-        meta: {
-          title: RouteName.CLUB_MANAGEMENT,
-          showInMenu: true,
-          showInBreadcrumb: true,
-          icon: 'icon-group',
-          selectedIcon: 'icon-group',
-        },
-      },
-      // 俱乐部详情
-      {
-        path: '/club-management/detail/:id',
-        name: RouteName.CLUB_DETAILS,
-        component: () => import('@/views/ClubManagement/ClubDetails.vue'),
-        meta: {
-          title: RouteName.CLUB_DETAILS,
-          showInMenu: false,
-          showInBreadcrumb: true,
-        },
-      },
-    ],
-    meta: {
-      title: RouteName.CLUB_MANAGEMENT_INDEX,
-      showInMenu: true,
-      showInBreadcrumb: false,
-      icon: 'icon-group',
-      selectedIcon: 'icon-group',
       // 是否为一级路由
       isTopLevelRoute: true,
     },
