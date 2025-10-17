@@ -270,8 +270,26 @@ if (id) {
         <div class="flex flex-col gap-4">
           <dl class="flex items-center gap-8">
             <dt class="w-112 leading-32 h-32">User</dt>
-            <dd class="flex-1">
-              {{ dtcInfo.userDto?.name || '-' }}
+            <dd
+              class="flex-1 cursor-pointer underline"
+              @click="
+                $router.push({
+                  name: RouteName.PERSON_MANAGE,
+                  params: { id: dtcInfo.userDto?.id },
+                })
+              "
+            >
+              <el-avatar
+                :src="getFullFilePath(dtcInfo.userDto?.logo)"
+                fit="cover"
+                :size="20"
+                @error="() => true"
+              >
+                B
+              </el-avatar>
+              <span class="text-neutrals-off-black ml-8">
+                {{ dtcInfo.userDto?.name || '-' }}
+              </span>
             </dd>
           </dl>
           <dl class="flex items-center gap-8">

@@ -68,6 +68,7 @@ export const RouteName = Object.freeze({
   DTC_LIST: 'DTC',
   DTC_DETAILS: 'DTC Details',
   ERROR_CODE_DETAILS: 'Error Code Details',
+  PERSON_MANAGE: 'Person Manage',
 })
 
 // 分享模块跳转路径
