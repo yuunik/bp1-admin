@@ -18,10 +18,18 @@ import {
 } from '@/apis/clubApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseTag from '@/components/BaseTag.vue'
 
 const clubList = ref([])
 
 const router = useRouter()
+
+const stateColorMap = {
+  Pending: 'orange',
+  Rejected: 'red',
+  Disabled: 'gray',
+  Active: 'green',
+}
 
 // 分页数据
 const pagination = reactive({
@@ -199,6 +207,66 @@ const handleOpenClubInfoDialog = async (row, column) => {
 // 拒绝俱乐部创建
 const handleRejectGroup = async () => {}
 
+// 根据 row.status 计算出当前行的菜单项
+const computedMenuItems = computed(() => (row) => {
+  const items = []
+
+  if (row.state === 'Pending') {
+    // Pending
+    items.push(
+      { label: 'Approve', action: 'approve' },
+      { label: 'Reject', action: 'reject' },
+    )
+  } else if (row.state === 'Rejected') {
+    //  Rejected
+    items.push(
+      { label: 'Edit', action: 'edit' },
+      { label: 'Re-Approve', action: 'reApprove' },
+    )
+  } else if (row.state === 'Disabled') {
+    // Disabled
+    items.push({ label: 'Enable', action: 'enable' })
+  } else if (row.state === 'Active') {
+    //  Active
+    items.push(
+      { label: 'Edit', action: 'edit' },
+      { label: 'Disable', action: 'disable' },
+      { label: 'Disband', action: 'disband' },
+    )
+  }
+
+  return items
+})
+
+// 处理 操作栏的事件
+const handleDropdownItemClick = (action, row) => {
+  switch (action) {
+    case 'approve':
+      handleUserStatus(row.id)
+      break
+    case 'reject':
+      handleUserStatus(row.id)
+      break
+    case 'edit':
+      handleUserStatus(row.id)
+      break
+    case 'reApprove':
+      handleResetPassword(row)
+      break
+    case 'enable':
+      handleResetPassword(row)
+      break
+    case 'disable':
+      handleResetPassword(row)
+      break
+    case 'disband':
+      handleResetPassword(row)
+      break
+    default:
+      console.warn('Unknown action:', action)
+  }
+}
+
 // 监听
 watch(dialogDeleteClubItemVisible, (val) => {
   if (!val) {
@@ -315,7 +383,36 @@ onMounted(async () => {
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="owner" label="Owner" min-width="23%" />
+        <el-table-column prop="owner" label="Owner" min-width="23%">
+          <template #default="{ row }">
+            <template v-if="row.usersDto && row.usersDto.length">
+              <div
+                v-for="user in row.usersDto"
+                :key="user.id"
+                class="row-center"
+              >
+                <el-avatar
+                  v-if="user.logo"
+                  fit="cover"
+                  :src="getFullFilePath(user.logo)"
+                  class="mr-8 h-20 w-20 shrink-0"
+                  alt="brand icon"
+                  shape="circle"
+                  :size="20"
+                  @error="errorHandler"
+                >
+                  <template #error>
+                    <i class="i-ep:picture" />
+                  </template>
+                </el-avatar>
+                <span class="text-wrap">
+                  {{ user.name || '-' }}
+                </span>
+              </div>
+            </template>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="memberCount"
           label="Members"
@@ -327,7 +424,11 @@ onMounted(async () => {
           label="Status"
           min-width="13%"
           sortable="custom"
-        />
+        >
+          <template #default="{ row }">
+            <base-tag :text="row.state" :color="stateColorMap[row.state]" />
+          </template>
+        </el-table-column>
         <el-table-column
           prop="createTime"
           label="Create Time"
@@ -338,19 +439,19 @@ onMounted(async () => {
             <span>{{ getDateWithDDMMMYYYY(row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column min-width="6%">
+        <!-- 操作栏 -->
+        <el-table-column align="center" min-width="6%">
           <template #default="{ row }">
-            <el-dropdown trigger="click">
-              <i class="icon-more-2-line text-16" />
+            <el-dropdown trigger="click" v-if="row.state !== 0">
+              <i class="icon-more-2-line cursor-pointer" />
               <template #dropdown>
-                <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
-                  <el-dropdown-item @click="openEditClubItemDialog(row)">
-                    Edit
-                  </el-dropdown-item>
+                <el-dropdown-menu class="custom-dropdown-menu">
                   <el-dropdown-item
-                    @click="handleOpenDeleteClubItemDialog(row)"
+                    v-for="item in computedMenuItems(row)"
+                    :key="item.label"
+                    @click="handleDropdownItemClick(item.action, row)"
                   >
-                    Delete
+                    {{ item.label }}
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>

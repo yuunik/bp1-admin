@@ -499,7 +499,7 @@ watch(
               <el-dropdown trigger="click" v-if="row.state !== 0">
                 <i class="icon-more-2-line cursor-pointer" />
                 <template #dropdown>
-                  <el-dropdown-menu>
+                  <el-dropdown-menu class="custom-dropdown-menu">
                     <el-dropdown-item
                       v-for="item in computedMenuItems(row)"
                       :key="item.label"
