@@ -83,6 +83,8 @@ const statusFilterParams = ref([
   },
 ])
 
+// 禁止俱乐部创建的弹窗
+const dialogRejectGroupVisible = ref(true)
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -193,6 +195,9 @@ const handleOpenClubInfoDialog = async (row, column) => {
 
   router.push({ name: RouteName.CLUB_DETAILS, params: { id: row.id } })
 }
+
+// 拒绝俱乐部创建
+const handleRejectGroup = async () => {}
 
 // 监听
 watch(dialogDeleteClubItemVisible, (val) => {
@@ -417,6 +422,39 @@ onMounted(async () => {
       </p>
     </template>
   </base-dialog>
+  <!-- 禁止俱乐部创办的提示框 -->
+  <base-dialog
+    v-model="dialogRejectGroupVisible"
+    title="Reject Group"
+    button-type="danger"
+    confirm-text="Reject Group"
+    @cancel="dialogRejectGroupVisible = false"
+    @confirm="handleRejectGroup"
+  >
+    <template #content>
+      <dl
+        class="[&>dt]:row-center [&>dd]:row-center grid grid-cols-[80px_1fr] gap-8 [&>dd]:h-32 [&>dt]:h-32"
+      >
+        <dt>Name</dt>
+        <dd>Audi Owners Crew SG</dd>
+        <dt>Creator</dt>
+        <dd>Esther Howard</dd>
+      </dl>
+      <el-divider class="my-8!" />
+      <div class="reason-container flex gap-8">
+        <p class="w-112">
+          Reason
+          <span class="text-red">*</span>
+        </p>
+        <el-input
+          placeholder="Enter"
+          class="club-name-input"
+          rows="3"
+          type="textarea"
+        />
+      </div>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -441,5 +479,15 @@ onMounted(async () => {
 
 :deep(.el-table__header .cell) {
   @apply text-neutrals-grey-3;
+}
+
+// 重置文本框样式
+.reason-container :deep(.el-textarea__inner) {
+  background-color: transparent !important;
+  border: none; /* 去掉默认边框 */
+  border-bottom: 1px solid #dcdfe6; /* 只保留底部边框 */
+  border-radius: 0; /* 去掉圆角 */
+  box-shadow: none;
+  padding: 0;
 }
 </style>
