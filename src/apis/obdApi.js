@@ -38,6 +38,8 @@ const ObdApi = Object.freeze({
   DELETE_DTC_RECORD: '/manager/dtc/delete',
   // 获取DTC描述
   GET_DTC_DESC: '/dtc/getfaultcodeinfo',
+  // 修改AI故障信息
+  EDIT_AI_FAULT_INFO: '/manager/dtc/editfaultcode',
 })
 
 // 获取 token
@@ -359,6 +361,52 @@ export const getFaultCodeInfoApi = (param) => {
 
   return request({
     url: ObdApi.GET_DTC_DESC,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 管理员修改AI故障信息
+ * @param param
+ * @param param.faultCodeId 故障码 id
+ * @param param.code 错误码
+ * @param param.title 错误码名称
+ * @param param.dtcName ECU名称
+ * @param param.description 描述
+ * @param param.symptoms 症状
+ * @param param.levelDescription 级别描述
+ * @param param.part 部件预计花费成本区间
+ * @param param.labour 工时预计花费成本区间
+ * @param param.total 总价预计花费成本区间
+ * @param param.brand  品牌
+ * @param param.model 型号
+ * @param param.level 维修评估
+ * @param param.year 年份
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+
+export const editFaultCodeInfoApi = (param) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('faultCodeId', param.faultCodeId)
+  data.append('code', param.code)
+  data.append('title', param.title)
+  data.append('dtcName', param.dtcName)
+  data.append('description', param.description)
+  data.append('symptoms', param.symptoms)
+  data.append('levelDescription', param.levelDescription)
+  data.append('part', param.part)
+  data.append('labour', param.labour)
+  data.append('total', param.total)
+  param.brand && data.append('brand', param.brand)
+  param.model && data.append('model', param.model)
+  data.append('level', param.level)
+  param.year && data.append('year', param.year)
+
+  return request({
+    url: ObdApi.EDIT_AI_FAULT_INFO,
     method: 'POST',
     data,
   })

@@ -1,12 +1,11 @@
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue'
-import { useSessionStorage } from '@vueuse/core'
+import { useCloned, useSessionStorage } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 
 import BaseTag from '@/components/BaseTag.vue'
-import BaseDialog from '@/components/BaseDialog.vue'
-import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent } from '@/utils/constantsUtil.js'
-import { getFaultCodeInfoApi } from '@/apis/obdApi.js'
+import { editFaultCodeInfoApi, getFaultCodeInfoApi } from '@/apis/obdApi.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 // 错误码
 const faultCode = ref('')
@@ -20,21 +19,15 @@ const vehicleId = ref('')
 // edu 名称
 const ecuName = ref('')
 
-// 修改维修重要性等级弹窗
-const dialogRepairImportanceLevelVisible = ref(false)
-
-// 修改预估成本弹窗
-const dialogEstimatedCostVisible = ref(false)
-
-// 重要性等级表单
-const repairImportanceLevelForm = reactive({
-  level: '',
-  description: '',
-})
-
 // 修改预估成本表单
-const estimatedCostForm = reactive({
-  currency: '',
+const errorCodeForm = reactive({
+  description: '',
+  symptoms: '',
+  levelDescription: '',
+  part: '',
+  labour: '',
+  total: '',
+  level: '',
   partMin: '',
   partMax: '',
   labourMin: '',
@@ -45,15 +38,6 @@ const estimatedCostForm = reactive({
 
 // 错误码详情
 const errorCodeInfo = ref({})
-
-// part 数组
-const partArray = computed(() => errorCodeInfo.value.part.split('-'))
-
-// labour 数组
-const labourArray = computed(() => errorCodeInfo.value.labour.split('-'))
-
-// total 数组
-const totalArray = computed(() => errorCodeInfo.value.total.split('-'))
 
 // 加载状态
 const loading = ref(false)
@@ -66,11 +50,44 @@ const faultCodeData = useSessionStorage('faultData', {
   dtcName: '',
 })
 
-// 修改维修重要性等级
-const handleModifyRepairImportanceLevel = async () => {}
+// 描述修改状态
+const isDescriptionModified = ref(false)
 
-// 修改预估成本
-const handleModifyEstimatedCost = async () => {}
+// 预计状态的修改状态
+const isPossibleSymptomsModified = ref(false)
+
+// 维修重要性等级的修改状态
+const isRepairImportanceLevelModified = ref(false)
+
+// 预计成本的修改状态
+const isEstimatedCostModified = ref(false)
+
+// 修改AI故障信息
+const handleModifyAIFaultInfo = async () => {
+  await editFaultCodeInfoApi({
+    faultCodeId: errorCodeInfo.value.id,
+    code: faultCode.value,
+    title: faultCodeName.value,
+    dtcName: ecuName.value,
+    description: errorCodeForm.description,
+    symptoms: errorCodeForm.symptoms,
+    levelDescription: errorCodeForm.levelDescription,
+    part: `${errorCodeForm.partMin}-${errorCodeForm.partMax}`,
+    labour: `${errorCodeForm.labourMin}-${errorCodeForm.labourMax}`,
+    total: `${errorCodeForm.totalMin}-${errorCodeForm.totalMax}`,
+    level: errorCodeForm.level,
+  })
+  // 修改成功
+  ElMessage.success('Saved successfully')
+  // 刷新
+  getErrorCodeDescription()
+  // 重置修改状态
+  isDescriptionModified.value && (isDescriptionModified.value = false)
+  isPossibleSymptomsModified.value && (isPossibleSymptomsModified.value = false)
+  isRepairImportanceLevelModified.value &&
+    (isRepairImportanceLevelModified.value = false)
+  isEstimatedCostModified.value && (isEstimatedCostModified.value = false)
+}
 
 // 获取DTC描述
 const getErrorCodeDescription = async () => {
@@ -84,41 +101,26 @@ const getErrorCodeDescription = async () => {
     })
     // 错误码详情
     errorCodeInfo.value = data
+    // 回显详情
+    const { cloned } = useCloned(data)
+    console.log('回显详情', cloned)
+    Object.assign(errorCodeForm, cloned.value)
     // 回显part
     const partArray = errorCodeInfo.value.part.split('-')
-    estimatedCostForm.partMin = partArray[0]
-    estimatedCostForm.partMax = partArray[1]
-    errorCodeInfo.value.partMin = partArray[0]
-    errorCodeInfo.value.partMax = partArray[1]
+    errorCodeForm.partMin = partArray[0]
+    errorCodeForm.partMax = partArray[1]
     // 回显labour
     const labourArray = errorCodeInfo.value.labour.split('-')
-    estimatedCostForm.labourMin = labourArray[0]
-    estimatedCostForm.labourMax = labourArray[1]
-    errorCodeInfo.value.labourMin = labourArray[0]
-    errorCodeInfo.value.labourMax = labourArray[1]
+    errorCodeForm.labourMin = labourArray[0]
+    errorCodeForm.labourMax = labourArray[1]
     // 回显total
     const totalArray = errorCodeInfo.value.total.split('-')
-    estimatedCostForm.totalMin = totalArray[0]
-    estimatedCostForm.totalMax = totalArray[1]
-    errorCodeInfo.value.totalMin = totalArray[0]
-    errorCodeInfo.value.totalMax = totalArray[1]
-    // 回显 repair importance
-    repairImportanceLevelForm.level = errorCodeInfo.value.level
-    repairImportanceLevelForm.description = errorCodeInfo.value.levelDescription
+    errorCodeForm.totalMin = totalArray[0]
+    errorCodeForm.totalMax = totalArray[1]
   } finally {
     loading.value = false
   }
 }
-
-// 监听事件
-emitter.on(EmitterEvent.GET_ERROR_CODE_INITIAL_DATA, (data) => {
-  faultCode.value = data.code
-  faultCodeName.value = data.title
-  vehicleId.value = data.vehicleId
-  ecuName.value = data.dtcName
-  // 获取DTC描述
-  getErrorCodeDescription()
-})
 
 onMounted(() => {
   faultCode.value = faultCodeData.value.code
@@ -130,7 +132,6 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  emitter.off(EmitterEvent.GET_ERROR_CODE_INITIAL_DATA)
   // 清空faultData
   faultCodeData.value = {}
 })
@@ -146,34 +147,106 @@ onBeforeUnmount(() => {
     <el-divider />
     <div class="flex flex-col gap-24">
       <!-- info -->
-      <div class="mx-32 flex flex-col gap-4">
+      <div class="info-container mx-32 flex flex-col gap-4">
+        <dl
+          class="grid h-32 grid-cols-[112px_1fr_112px_1fr] items-center gap-8"
+        >
+          <dt>
+            <span class="heading-body-body-12px-medium text-neutrals-grey-3">
+              Code Name
+            </span>
+          </dt>
+          <dd>{{ errorCodeInfo.title }}</dd>
+          <dt>
+            <span class="heading-body-body-12px-medium text-neutrals-grey-3">
+              Date
+            </span>
+          </dt>
+          <dd>{{ getDateWithDDMMMYYYYhhmma(errorCodeInfo.createTime) }}</dd>
+        </dl>
         <!-- description -->
-        <div class="h-49 grid grid-cols-[112px_1fr_16px] items-center gap-4">
+        <div
+          class="min-h-49 grid grid-cols-[112px_1fr_16px] items-center gap-4"
+        >
           <span class="heading-body-body-12px-medium text-neutrals-grey-3">
             Description
           </span>
           <span
             class="leading-16 heading-body-body-12px-regular text-neutrals-off-black"
+            v-if="!isDescriptionModified"
           >
             {{ errorCodeInfo.description }}
           </span>
-          <i class="icon-edit-line text-16" />
+          <el-input
+            v-else
+            v-model="errorCodeForm.description"
+            type="textarea"
+            rows="3"
+            placeholder="Type Here"
+            class="w-full"
+          />
+          <i
+            class="icon-edit-line text-16 cursor-pointer"
+            @click="isDescriptionModified = true"
+            v-show="!isDescriptionModified"
+          />
+        </div>
+        <!-- description confirm button-->
+        <div class="flex-end flex h-24" v-show="isDescriptionModified">
+          <el-button @click="isDescriptionModified = false" size="small">
+            Cancel
+          </el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="handleModifyAIFaultInfo"
+          >
+            Save
+          </el-button>
         </div>
         <!-- Possible Symptoms -->
-        <div class="h-49 grid grid-cols-[112px_1fr_16px] items-center gap-4">
+        <div
+          class="min-h-49 grid grid-cols-[112px_1fr_16px] items-center gap-4"
+        >
           <span class="heading-body-body-12px-medium text-neutrals-grey-3">
             Possible Symptoms
           </span>
           <span
             class="leading-16 heading-body-body-12px-regular text-neutrals-off-black"
+            v-if="!isPossibleSymptomsModified"
           >
             {{ errorCodeInfo.symptoms }}
           </span>
-          <i class="icon-edit-line text-16" />
+          <el-input
+            v-else
+            v-model="errorCodeForm.symptoms"
+            type="textarea"
+            rows="3"
+            placeholder="Type Here"
+            class="w-full"
+          />
+          <i
+            class="icon-edit-line text-16 cursor-pointer"
+            @click="isPossibleSymptomsModified = true"
+            v-show="!isPossibleSymptomsModified"
+          />
+        </div>
+        <!-- Possible Symptoms confirm button-->
+        <div class="flex-end flex h-24" v-show="isPossibleSymptomsModified">
+          <el-button @click="isPossibleSymptomsModified = false" size="small">
+            Cancel
+          </el-button>
+          <el-button
+            type="primary"
+            size="small"
+            @click="handleModifyAIFaultInfo"
+          >
+            Save
+          </el-button>
         </div>
       </div>
       <!-- Repair Importance Level -->
-      <div class="flex flex-col gap-8">
+      <div class="repair-importanceLevel-form flex flex-col gap-8">
         <!-- header -->
         <div class="flex-between mx-32 h-24">
           <h3
@@ -183,8 +256,25 @@ onBeforeUnmount(() => {
           </h3>
           <i
             class="icon-edit-line text-16 cursor-pointer"
-            @click="dialogRepairImportanceLevelVisible = true"
+            @click="isRepairImportanceLevelModified = true"
+            v-if="!isRepairImportanceLevelModified"
           />
+          <div class="flex gap-8" v-else>
+            <el-button
+              @click="isRepairImportanceLevelModified = false"
+              size="small"
+              v-if="isRepairImportanceLevelModified"
+            >
+              Cancel
+            </el-button>
+            <el-button
+              size="small"
+              type="primary"
+              @click="handleModifyAIFaultInfo"
+            >
+              Save
+            </el-button>
+          </div>
         </div>
         <!-- divider -->
         <el-divider />
@@ -212,23 +302,51 @@ onBeforeUnmount(() => {
                     ? 'orange'
                     : 'red'
               "
+              v-if="!isRepairImportanceLevelModified"
             />
+            <div class="flex-1" v-else>
+              <el-radio-group
+                v-model="errorCodeForm.level"
+                class="w-full gap-8"
+              >
+                <el-radio :value="0" class="flex-1">
+                  <base-tag text="Low" color="green" />
+                </el-radio>
+                <el-radio :value="1" class="flex-1">
+                  <base-tag text="Medium" color="orange" />
+                </el-radio>
+                <el-radio :value="2" class="flex-1">
+                  <base-tag text="High" color="red" />
+                </el-radio>
+              </el-radio-group>
+            </div>
           </div>
           <!-- description -->
-          <div class="row-center h-49 gap-8">
+          <div class="row-center min-h-49 gap-8">
             <span
               class="heading-body-body-12px-medium text-neutrals-grey-3 w-112"
             >
               Description
             </span>
-            <p class="heading-body-body-12px-regular text-neutrals-off-black">
+            <p
+              class="heading-body-body-12px-regular text-neutrals-off-black"
+              v-if="!isRepairImportanceLevelModified"
+            >
               {{ errorCodeInfo.levelDescription }}
             </p>
+            <el-input
+              v-else
+              v-model="errorCodeForm.levelDescription"
+              type="textarea"
+              rows="3"
+              placeholder="Type Here"
+              class="w-full"
+            />
           </div>
         </div>
       </div>
       <!-- Estimated Cost -->
-      <div class="flex flex-col gap-8">
+      <div class="estimated-cost-form flex flex-col gap-8">
         <!-- header -->
         <div class="flex-between mx-32 h-24">
           <h3
@@ -238,127 +356,90 @@ onBeforeUnmount(() => {
           </h3>
           <i
             class="icon-edit-line text-16 cursor-pointer"
-            @click="dialogEstimatedCostVisible = true"
+            @click="isEstimatedCostModified = true"
+            v-if="!isEstimatedCostModified"
           />
+          <!-- Possible Symptoms confirm button-->
+          <div class="flex-end flex h-24" v-else>
+            <el-button @click="isEstimatedCostModified = false" size="small">
+              Cancel
+            </el-button>
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleModifyAIFaultInfo"
+            >
+              Save
+            </el-button>
+          </div>
         </div>
         <!-- divider -->
         <el-divider />
         <!-- content -->
-        <dl class="mx-32 grid grid-cols-[112px_1fr_112px_1fr] gap-8">
+        <dl
+          class="mx-32 grid grid-cols-[112px_1fr_112px_1fr] items-center gap-8"
+        >
           <dt>Estimated Cost</dt>
-          <dd>{{ errorCodeInfo.part }}</dd>
+          <dd>
+            <span v-if="!isEstimatedCostModified">
+              {{ errorCodeInfo.part }}
+            </span>
+            <div class="flex items-center gap-16" v-else>
+              <el-input v-model="errorCodeForm.partMin" placeholder="Min" />
+              <span class="heading-body-body-12px-medium text-neutrals-grey-3">
+                to
+              </span>
+              <el-input v-model="errorCodeForm.partMax" placeholder="Max" />
+            </div>
+          </dd>
+
           <dt>Labour</dt>
-          <dd>{{ errorCodeInfo.labour }}</dd>
+          <dd>
+            <span v-if="!isEstimatedCostModified">
+              {{ errorCodeInfo.labour }}
+            </span>
+            <div class="flex items-center gap-16" v-else>
+              <el-input v-model="errorCodeForm.labourMin" placeholder="Min" />
+              <span class="heading-body-body-12px-medium text-neutrals-grey-3">
+                to
+              </span>
+              <el-input v-model="errorCodeForm.labourMax" placeholder="Max" />
+            </div>
+          </dd>
+
           <dt>Total</dt>
-          <dd>{{ errorCodeInfo.total }}</dd>
+          <dd>
+            <span v-if="!isEstimatedCostModified">
+              {{ errorCodeInfo.total }}
+            </span>
+            <div class="flex items-center gap-16" v-else>
+              <el-input v-model="errorCodeForm.totalMin" placeholder="Min" />
+              <span class="heading-body-body-12px-medium text-neutrals-grey-3">
+                to
+              </span>
+              <el-input v-model="errorCodeForm.totalMax" placeholder="Max" />
+            </div>
+          </dd>
         </dl>
       </div>
     </div>
   </section>
-  <!-- 修改维修重要性等级弹窗 -->
-  <base-dialog
-    v-model="dialogRepairImportanceLevelVisible"
-    title="Edit Repair Importance Level"
-    @cancel="dialogRepairImportanceLevelVisible = false"
-    @confirm="handleModifyRepairImportanceLevel"
-    confirm-text="Save"
-  >
-    <template #content>
-      <el-form
-        :model="repairImportanceLevelForm"
-        label-width="112px"
-        label-position="left"
-        class="repair-importanceLevel-form"
-      >
-        <el-form-item label="Level">
-          <el-radio-group v-model="repairImportanceLevelForm.level">
-            <el-radio :value="0">
-              <base-tag text="Low" color="green" />
-            </el-radio>
-            <el-radio :value="1">
-              <base-tag text="Medium" color="orange" />
-            </el-radio>
-            <el-radio :value="2">
-              <base-tag text="High" color="red" />
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="Description">
-          <el-input
-            placeholder="Enter description"
-            v-model="repairImportanceLevelForm.description"
-            type="textarea"
-            :rows="4"
-          />
-        </el-form-item>
-      </el-form>
-    </template>
-  </base-dialog>
-  <!-- 编辑预估成本弹窗 -->
-  <base-dialog
-    v-model="dialogEstimatedCostVisible"
-    title="Edit Estimated Cost"
-    @cancel="dialogEstimatedCostVisible = false"
-    @confirm="handleModifyEstimatedCost"
-    confirm-text="Save"
-  >
-    <template #content>
-      <el-form
-        :model="repairImportanceLevelForm"
-        label-width="112px"
-        label-position="left"
-        class="estimated-cost-form"
-      >
-        <el-form-item label="Currency">
-          <el-select
-            v-model="estimatedCostForm.currency"
-            placeholder="Select currency"
-          >
-            <el-option label="SGD ($)" value="SGD" />
-            <el-option label="MYR (RM)" value="MYR" />
-            <el-option label="THB (฿)" value="THB" />
-            <el-option label="IDR (Rp)" value="IDR" />
-            <el-option label="CNY (¥)" value="CNY" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Part">
-          <div class="flex items-center gap-16">
-            <el-input v-model="estimatedCostForm.partMin" placeholder="Min" />
-            <span class="heading-body-body-12px-medium text-neutrals-grey-3">
-              to
-            </span>
-            <el-input v-model="estimatedCostForm.partMax" placeholder="Max" />
-          </div>
-        </el-form-item>
-        <el-form-item label="Labour">
-          <div class="flex items-center gap-16">
-            <el-input v-model="estimatedCostForm.labourMin" placeholder="Min" />
-            <span class="heading-body-body-12px-medium text-neutrals-grey-3">
-              to
-            </span>
-            <el-input v-model="estimatedCostForm.labourMax" placeholder="Max" />
-          </div>
-        </el-form-item>
-        <el-form-item label="Total">
-          <div class="flex items-center gap-16">
-            <el-input v-model="estimatedCostForm.totalMin" placeholder="Min" />
-            <span class="heading-body-body-12px-medium text-neutrals-grey-3">
-              to
-            </span>
-            <el-input v-model="estimatedCostForm.totalMax" placeholder="Max" />
-          </div>
-        </el-form-item>
-      </el-form>
-    </template>
-  </base-dialog>
 </template>
 
 <style scoped lang="scss">
 .repair-importanceLevel-form :deep(.el-textarea__inner) {
+  background-color: transparent !important;
   border: none; /* 去掉默认边框 */
   border-bottom: 1px solid #dcdfe6; /* 只保留底部边框 */
   border-radius: 0; /* 去掉圆角 */
   box-shadow: none;
+}
+
+// 重置 el-textarea 的样式
+.info-container :deep(.el-textarea) {
+  .el-textarea__inner {
+    @apply rounded-12 bg-[#EAEEF480];
+  }
 }
 
 .estimated-cost-form :deep(.el-select__wrapper) {
