@@ -6,15 +6,18 @@ import { useRouter } from 'vue-router'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
-import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { useSort } from '@/composables/useSort.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 import {
   addClubApi,
+  approveClubApi,
   deleteClubApi,
   editClubApi,
   getClubListApi,
+  manageClubApi,
+  rejectClubApi,
 } from '@/apis/clubApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
@@ -144,9 +147,13 @@ const handleOpenDeleteClubItemDialog = (row) => {
   dialogDeleteClubItemVisible.value = true
 }
 
-// 删除 expense item
-const handleDeleteExpenseItem = async () => {
-  await deleteClubApi(clubForm.value.id)
+// 删除俱乐部
+const handleDeleteClub = async () => {
+  await deleteClubApi(
+    selectedClubIdList.value.length
+      ? selectedClubIdList.value.join(',')
+      : clubForm.value.id,
+  )
   dialogDeleteClubItemVisible.value = false
   // 提示
   ElMessage.success('Delete successfully')
@@ -238,29 +245,55 @@ const computedMenuItems = computed(() => (row) => {
   return items
 })
 
+// 批准俱乐部
+const handleApproveClub = async (clubId) => {
+  await approveClubApi(clubId)
+  // 提示
+  ElMessage.success('Approved successfully')
+  refresh()
+}
+
+// 拒绝俱乐部创建
+const handleRejectClub = async (clubId) => {
+  await rejectClubApi(clubId)
+  // 提示
+  ElMessage.success('Rejected successfully')
+  refresh()
+}
+
+// 禁用/启用俱乐部
+const handleClubStatus = async (clubId, type) => {
+  await manageClubApi(clubId)
+  // 提示
+  ElMessage.success(
+    `${type.charAt(0).toUpperCase() + type.slice(1)} successfully`,
+  )
+  refresh()
+}
+
 // 处理 操作栏的事件
 const handleDropdownItemClick = (action, row) => {
   switch (action) {
     case 'approve':
-      handleUserStatus(row.id)
+      handleApproveClub(row.id)
       break
     case 'reject':
-      handleUserStatus(row.id)
+      handleRejectClub(row.id)
       break
     case 'edit':
-      handleUserStatus(row.id)
+      openEditClubItemDialog(row)
       break
     case 'reApprove':
-      handleResetPassword(row)
+      handleApproveClub(row.id)
       break
     case 'enable':
-      handleResetPassword(row)
+      handleClubStatus(row.id, action)
       break
     case 'disable':
-      handleResetPassword(row)
+      handleClubStatus(row.id, action)
       break
     case 'disband':
-      handleResetPassword(row)
+      handleOpenDeleteClubItemDialog(row)
       break
     default:
       console.warn('Unknown action:', action)
@@ -339,9 +372,7 @@ onMounted(async () => {
       <span class="text-neutrals-off-black heading-body-body-12px-regular">
         {{ selectedClubIdList.length }} selected
       </span>
-      <el-button @click="dialogBatchDeleteExpenseItemVisible = true">
-        Delete
-      </el-button>
+      <el-button @click="dialogDeleteClubItemVisible = true">Delete</el-button>
     </div>
     <!-- 表格内容 -->
     <div class="flex flex-1 flex-col justify-between overflow-hidden">
@@ -436,7 +467,7 @@ onMounted(async () => {
           sortable="custom"
         >
           <template #default="{ row }">
-            <span>{{ getDateWithDDMMMYYYY(row.createTime) }}</span>
+            <span>{{ getDateWithDDMMMYYYYhhmma(row.createTime) }}</span>
           </template>
         </el-table-column>
         <!-- 操作栏 -->
@@ -506,20 +537,27 @@ onMounted(async () => {
       </div>
     </template>
   </base-dialog>
-  <!-- 删除 expense item 提示框 -->
+  <!-- 删除俱乐部提示框 -->
   <base-dialog
     v-model="dialogDeleteClubItemVisible"
     title="Delete Item ?"
     button-type="danger"
     confirm-text="Delete"
     @cancel="dialogDeleteClubItemVisible = false"
-    @confirm="handleDeleteExpenseItem"
+    @confirm="handleDeleteClub"
   >
     <template #content>
-      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+      <p
+        v-if="!selectedClubIdList.length"
+        class="heading-body-body-12px-regular text-neutrals-grey-3"
+      >
         Are you sure you want to delete the {{ clubForm.name }} Club? All data
         associated with this club will be permanently deleted, and this action
         cannot be undone.
+      </p>
+      <p v-else class="heading-body-body-12px-regular text-neutrals-grey-3">
+        Are you sure you want to delete these clubs? All data associated with
+        this club will be permanently deleted, and this action cannot be undone.
       </p>
     </template>
   </base-dialog>
