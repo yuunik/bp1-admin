@@ -84,7 +84,7 @@ const statusFilterParams = ref([
 ])
 
 // 禁止俱乐部创建的弹窗
-const dialogRejectGroupVisible = ref(true)
+const dialogRejectGroupVisible = ref(false)
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -189,11 +189,11 @@ const getLogoDisplay = (logo) => {
 // 打开查看俱乐部详情弹窗
 const handleOpenClubInfoDialog = async (row, column) => {
   const { no } = column
-  if (no === 4) {
+  if (no === 0 || no === 6) {
     return
   }
 
-  router.push({ name: RouteName.CLUB_DETAILS, params: { id: row.id } })
+  router.push({ name: RouteName.GROUP_DETAILS, params: { id: row.id } })
 }
 
 // 拒绝俱乐部创建
