@@ -10,6 +10,7 @@ import { RouteName, VehicleEcuCategory } from '@/utils/constantsUtil.js'
 import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 // 收起图标
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 
 const route = useRoute()
 
@@ -268,27 +269,49 @@ if (id) {
       <div class="flex-1">
         <div class="flex flex-col gap-4">
           <dl class="flex items-center gap-8">
-            <dt class="w-112 leading-32 h-32">Scanned Date</dt>
+            <dt class="w-112 leading-32 h-32">User</dt>
             <dd class="flex-1">
-              {{ getDateWithDDMMMYYYYhhmma(dtcInfo.createTime) }}
+              {{ dtcInfo.userDto?.name || '-' }}
             </dd>
           </dl>
           <dl class="flex items-center gap-8">
-            <dt class="w-112 leading-32 h-32">Type</dt>
-            <dd class="flex-1">Quick Scan</dd>
+            <dt class="w-112 leading-32 h-32">Serial Number</dt>
+            <dd class="flex-1">{{ dtcInfo.userDto?.name || '-' }}</dd>
+          </dl>
+          <dl class="flex items-center gap-8">
+            <dt class="w-112 leading-32 h-32">VIN</dt>
+            <dd class="flex-1">{{ dtcInfo.obdDto?.sn || '-' }}</dd>
           </dl>
         </div>
       </div>
       <div class="flex-1">
         <div class="flex flex-col gap-4">
           <dl class="flex items-center gap-8">
-            <dt class="w-112 leading-32 h-32">Fault Codes</dt>
+            <dt class="w-112 leading-32 h-32">Brand</dt>
             <dd class="flex-1">
-              {{
-                dtcInfo.dtcCount
-                  ? `${dtcInfo.dtcCount} DTC${dtcInfo.dtcCount > 1 ? 's' : ''}`
-                  : '-'
-              }}
+              <el-avatar
+                :src="getFullFilePath(dtcInfo.vehicleDto?.cover)"
+                fit="cover"
+                :size="20"
+                @error="() => true"
+              >
+                B
+              </el-avatar>
+              <span class="text-neutrals-off-black ml-8">
+                {{ dtcInfo.vehicleDto?.brand || '-' }}
+              </span>
+            </dd>
+          </dl>
+          <dl class="flex items-center gap-8">
+            <dt class="w-112 leading-32 h-32">Model</dt>
+            <dd class="flex-1">
+              {{ dtcInfo.vehicleDto?.model || '-' }}
+            </dd>
+          </dl>
+          <dl class="flex items-center gap-8">
+            <dt class="w-112 leading-32 h-32">Year</dt>
+            <dd class="flex-1">
+              {{ dtcInfo.vehicleDto?.year || '-' }}
             </dd>
           </dl>
         </div>
