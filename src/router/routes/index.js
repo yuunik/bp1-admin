@@ -342,13 +342,14 @@ const constantRoutes = [
       {
         path: '/forum-management/list',
         name: RouteName.FORUM_MANAGEMENT_LIST,
-        component: () => import('@/views/ForumManagement/index.vue'),
+        component: () => import('@/views/ForumManagement/Forum/index.vue'),
         children: [
           // 贴文详情页
           {
             path: '/forum-management/post-details/:id',
             name: RouteName.POST_DETAILS,
-            component: () => import('@/views/ForumManagement/PostDetails.vue'),
+            component: () =>
+              import('@/views/ForumManagement/Forum/PostDetails.vue'),
             meta: {
               title: RouteName.POST_DETAILS,
               showInMenu: false,
@@ -360,7 +361,7 @@ const constantRoutes = [
             path: '/forum-management/comment-details/:id',
             name: RouteName.COMMENT_DETAILS,
             component: () =>
-              import('@/views/ForumManagement/CommentDetails.vue'),
+              import('@/views/ForumManagement/Forum/CommentDetails.vue'),
             meta: {
               title: RouteName.COMMENT_DETAILS,
               showInMenu: false,
@@ -369,7 +370,7 @@ const constantRoutes = [
           },
         ],
         meta: {
-          title: RouteName.FORUM_MANAGEMENT,
+          title: RouteName.FORUM_MANAGEMENT_LIST,
           showInMenu: true,
           showInBreadcrumb: true,
           icon: 'icon-typeForum',
