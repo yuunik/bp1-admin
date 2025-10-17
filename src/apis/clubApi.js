@@ -27,6 +27,7 @@ export const getClubListApi = (params) => {
   data.append('searchKey', params.searchKey)
   data.append('sortBy', params.sortBy)
   data.append('sort', params.sort)
+  data.append('status', params.status)
 
   return request({
     url: ClubApi.GET_CLUB_LIST,

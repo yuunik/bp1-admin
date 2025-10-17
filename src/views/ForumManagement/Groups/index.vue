@@ -17,6 +17,7 @@ import {
   getClubListApi,
 } from '@/apis/clubApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 
 const clubList = ref([])
 
@@ -55,6 +56,32 @@ const sortParams = reactive({
 const selectedClubIdList = ref([])
 
 const baseUploadRef = ref(null)
+
+// 俱乐部状态筛选参数
+const statusList = ref([])
+
+const statusKeys = computed(() =>
+  statusList.value.length ? statusList.value.join(',') : '',
+)
+
+const statusFilterParams = ref([
+  {
+    label: 'Pending',
+    value: 'Pending',
+  },
+  {
+    label: 'Rejected',
+    value: 'Rejected',
+  },
+  {
+    label: 'Disabled',
+    value: 'Disabled',
+  },
+  {
+    label: 'Active',
+    value: 'Active',
+  },
+])
 
 // 刷新
 const refresh = useDebounceFn(() => {
@@ -131,6 +158,7 @@ const getClubList = async () => {
     searchKey: searchKeywords.value,
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
+    status: statusKeys.value,
   })
   clubList.value = data
 }
@@ -211,19 +239,37 @@ onMounted(async () => {
       </el-button>
     </div>
     <!-- 搜索栏 -->
-    <div class="row-center flex-end h-24">
+    <div class="flex-between">
+      <div class="row-center filter-container flex-wrap gap-8">
+        <!-- 应用平台筛选 -->
+        <base-filter-panel
+          v-model="statusList"
+          :section-list="statusFilterParams"
+          condition-text="Status"
+          @search="refresh"
+        />
+        <!-- 清除按钮 -->
+        <el-button
+          text
+          class="h-24! text-status-colours-blue!"
+          @click="statusList = []"
+          v-show="statusList.length"
+        >
+          Clear
+        </el-button>
+      </div>
       <!-- 输入搜索 -->
       <base-filter-input v-model="searchKeywords" @inputChange="refresh" />
     </div>
     <el-divider />
-    <!--<div class="flex-between h-42" v-show="selectedClubIdList.length">-->
-    <!--  <span class="text-neutrals-off-black heading-body-body-12px-regular">-->
-    <!--    {{ selectedClubIdList.length }} selected-->
-    <!--  </span>-->
-    <!--  <el-button @click="dialogBatchDeleteExpenseItemVisible = true">-->
-    <!--    Delete-->
-    <!--  </el-button>-->
-    <!--</div>-->
+    <div class="flex-between h-42" v-show="selectedClubIdList.length">
+      <span class="text-neutrals-off-black heading-body-body-12px-regular">
+        {{ selectedClubIdList.length }} selected
+      </span>
+      <el-button @click="dialogBatchDeleteExpenseItemVisible = true">
+        Delete
+      </el-button>
+    </div>
     <!-- 表格内容 -->
     <div class="flex flex-1 flex-col justify-between overflow-hidden">
       <el-table
@@ -235,10 +281,11 @@ onMounted(async () => {
         @selection-change="handleSelectionChange"
         @row-click="handleOpenClubInfoDialog"
       >
+        <el-table-column type="selection" min-width="6%" />
         <el-table-column
           prop="name"
-          label="Name"
-          min-width="23.5%"
+          label="Group"
+          min-width="23%"
           sortable="custom"
         >
           <template #default="{ row }">
@@ -263,20 +310,23 @@ onMounted(async () => {
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="description"
-          label="Description"
-          min-width="23.5%"
-        />
+        <el-table-column prop="owner" label="Owner" min-width="23%" />
         <el-table-column
           prop="memberCount"
-          label="Member Count"
-          min-width="23.5%"
+          label="Members"
+          min-width="13%"
+          sortable="custom"
+        />
+        <el-table-column
+          prop="state"
+          label="Status"
+          min-width="13%"
+          sortable="custom"
         />
         <el-table-column
           prop="createTime"
           label="Create Time"
-          min-width="23.5%"
+          min-width="16%"
           sortable="custom"
         >
           <template #default="{ row }">

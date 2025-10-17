@@ -374,8 +374,6 @@ const constantRoutes = [
           title: RouteName.FORUM,
           showInMenu: true,
           showInBreadcrumb: true,
-          icon: 'icon-typeForum',
-          selectedIcon: 'icon-typeForum',
         },
       },
       // 俱乐部列表页
@@ -387,18 +385,16 @@ const constantRoutes = [
           title: RouteName.GROUPS,
           showInMenu: true,
           showInBreadcrumb: true,
-          icon: 'icon-group',
-          selectedIcon: 'icon-group',
         },
       },
       // 俱乐部详情
       {
         path: '/forum-management/group-details/:id',
-        name: RouteName.CLUB_DETAILS,
+        name: RouteName.GROUP_DETAILS,
         component: () =>
           import('@/views/ForumManagement/Groups/GroupDetails.vue'),
         meta: {
-          title: RouteName.CLUB_DETAILS,
+          title: RouteName.GROUP_DETAILS,
           showInMenu: false,
           showInBreadcrumb: true,
         },
