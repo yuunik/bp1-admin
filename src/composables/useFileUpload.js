@@ -34,11 +34,24 @@ const useFileUpload = () => {
     uploadFileName.value = name
   }
 
+  // 上传图片的校验
+  const beforeAvatarUpload = (rawFile) => {
+    if (rawFile.type !== 'image/jpeg') {
+      ElMessage.error('Avatar picture must be JPG format!')
+      return false
+    } else if (rawFile.size / 1024 / 1024 > 2) {
+      ElMessage.error('Avatar picture size can not exceed 2MB!')
+      return false
+    }
+    return true
+  }
+
   return {
     localFilePath,
     uploadFile,
     uploadFileName,
     handleValidateImageUpload,
+    beforeAvatarUpload,
   }
 }
 
