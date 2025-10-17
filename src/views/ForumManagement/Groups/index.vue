@@ -206,6 +206,14 @@ const handleOpenClubInfoDialog = async (row, column) => {
   const { no } = column
   if (no === 0 || no === 6) {
     return
+  } else if (no === 2) {
+    if (row.usersDto?.length === 1) {
+      router.push({
+        name: RouteName.PERSON_MANAGE,
+        params: { id: row.usersDto[0].userId },
+      })
+    }
+    return
   }
 
   router.push({ name: RouteName.GROUP_DETAILS, params: { id: row.id } })
@@ -299,6 +307,13 @@ const handleDropdownItemClick = (action, row) => {
       console.warn('Unknown action:', action)
   }
 }
+
+// 查看用户详情
+const handleViewUserInfo = (userInfo) =>
+  router.push({
+    name: RouteName.PERSON_MANAGE,
+    params: { id: userInfo.userId },
+  })
 
 // 监听
 watch(dialogDeleteClubItemVisible, (val) => {
@@ -414,18 +429,14 @@ onMounted(async () => {
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="owner" label="Owner" min-width="23%">
+        <el-table-column prop="owner" label="Admin" min-width="23%">
           <template #default="{ row }">
             <template v-if="row.usersDto && row.usersDto.length">
-              <div
-                v-for="user in row.usersDto"
-                :key="user.id"
-                class="row-center"
-              >
+              <div v-if="row.usersDto.length === 1" class="row-center">
                 <el-avatar
-                  v-if="user.logo"
+                  v-if="row.usersDto[0].logo"
                   fit="cover"
-                  :src="getFullFilePath(user.logo)"
+                  :src="getFullFilePath(row.usersDto[0].logo)"
                   class="mr-8 h-20 w-20 shrink-0"
                   alt="brand icon"
                   shape="circle"
@@ -436,10 +447,61 @@ onMounted(async () => {
                     <i class="i-ep:picture" />
                   </template>
                 </el-avatar>
-                <span class="text-wrap">
-                  {{ user.name || '-' }}
+                <span class="text-wrap underline">
+                  {{ row.usersDto[0].name || '-' }}
                 </span>
               </div>
+              <el-dropdown v-else>
+                <div class="row-center">
+                  <el-avatar
+                    v-if="row.usersDto[0].logo"
+                    fit="cover"
+                    :src="getFullFilePath(row.usersDto[0].logo)"
+                    class="mr-8 h-20 w-20 shrink-0"
+                    alt="brand icon"
+                    shape="circle"
+                    :size="20"
+                    @error="errorHandler"
+                  >
+                    <template #error>
+                      <i class="i-ep:picture" />
+                    </template>
+                  </el-avatar>
+                  <span class="text-wrap underline">
+                    {{ row.usersDto[0].name || '-' }}
+                  </span>
+                  <span>+{{ row.usersDto.length - 1 }}</span>
+                </div>
+                <template #dropdown>
+                  <el-dropdown-menu class="custom-dropdown-menu">
+                    <el-dropdown-item
+                      v-for="user in row.usersDto"
+                      :key="user.id"
+                      @click="handleViewUserInfo(user)"
+                    >
+                      <div class="row-center">
+                        <el-avatar
+                          v-if="user.logo"
+                          fit="cover"
+                          :src="getFullFilePath(user.logo)"
+                          class="mr-8 h-20 w-20 shrink-0"
+                          alt="brand icon"
+                          shape="circle"
+                          :size="20"
+                          @error="errorHandler"
+                        >
+                          <template #error>
+                            <i class="i-ep:picture" />
+                          </template>
+                        </el-avatar>
+                        <span class="text-wrap">
+                          {{ user.name || '-' }}
+                        </span>
+                      </div>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
             <span v-else>-</span>
           </template>

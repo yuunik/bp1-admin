@@ -174,13 +174,13 @@ const getClubPostList = async () => {
 
 // 获取俱乐部的成员
 const getClubMemberList = async () => {
-  const { data } = await getClubMemberApi({
+  const { data, count } = await getClubMemberApi({
     clubId: clubId.value,
     page: clubMemberPagination.currentPage,
     pageSize: clubMemberPagination.pageSize,
   })
   clubMemberList.value = data
-  clubMemberPagination.total = data.total
+  clubMemberPagination.total = data.count
 }
 
 // 初始化
@@ -383,10 +383,10 @@ onMounted(async () => {
         </div>
         <!-- divider -->
         <el-divider />
-        <el-table :data="useList">
+        <el-table :data="clubMemberList">
           <el-table-column type="selection" min-width="6%" />
           <!-- 用户 -->
-          <el-table-column prop="user_name" label="User">
+          <el-table-column prop="name" label="User">
             <template #default="{ row }">
               <div class="flex items-center gap-2">
                 <el-avatar :src="row.avatar_url" size="small" />
@@ -396,7 +396,13 @@ onMounted(async () => {
           </el-table-column>
 
           <!-- 角色 -->
-          <el-table-column prop="role" label="Role" />
+          <el-table-column prop="role" label="Role">
+            <template #default="{ row }">
+              <!-- isOwner 为 1, 则Owner-->
+              <!-- isOwner 为 0, 则Member-->
+              <span>{{ row.isOwner === 1 ? 'Admin' : 'Member' }}</span>
+            </template>
+          </el-table-column>
 
           <!-- 添加日期 -->
           <el-table-column prop="added_date" label="Added Date" />
