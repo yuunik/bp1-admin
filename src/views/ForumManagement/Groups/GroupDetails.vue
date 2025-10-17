@@ -11,7 +11,7 @@ import {
 import BasePagination from '@/components/BasePagination.vue'
 import { getForumListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import { useUserStore } from '@/store/index.js'
 import useFileUpload from '@/composables/useFileUpload.js'
 import BaseTag from '@/components/BaseTag.vue'
@@ -21,6 +21,13 @@ import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
 const route = useRoute()
+
+const stateColorMap = {
+  Pending: 'orange',
+  Rejected: 'red',
+  Disabled: 'gray',
+  Active: 'green',
+}
 
 // 当前俱乐部的 id
 const clubId = ref('')
@@ -343,7 +350,7 @@ onMounted(async () => {
           <span
             class="heading-body-large-body-14px-medium text-neutrals-grey-3"
           >
-            112
+            {{ clubMemberList.length }}
           </span>
         </div>
         <!-- 添加按钮 -->
@@ -388,10 +395,23 @@ onMounted(async () => {
           <!-- 用户 -->
           <el-table-column prop="name" label="User">
             <template #default="{ row }">
-              <div class="flex items-center gap-2">
-                <el-avatar :src="row.avatar_url" size="small" />
-                <span>{{ row.user_name }}</span>
-              </div>
+              <el-avatar
+                v-if="row.logo"
+                fit="cover"
+                :src="getFullFilePath(row.logo)"
+                class="mr-8 h-20 w-20 shrink-0"
+                alt="brand icon"
+                shape="circle"
+                :size="20"
+                @error="errorHandler"
+              >
+                <template #error>
+                  <i class="i-ep:picture" />
+                </template>
+              </el-avatar>
+              <span class="text-wrap">
+                {{ row.name || '-' }}
+              </span>
             </template>
           </el-table-column>
 
@@ -405,33 +425,22 @@ onMounted(async () => {
           </el-table-column>
 
           <!-- 添加日期 -->
-          <el-table-column prop="added_date" label="Added Date" />
+          <el-table-column prop="createTime" label="Added Date">
+            <template #default="{ row }">
+              <span>{{ getDateWithDDMMMYYYY(row.createTime) }}</span>
+            </template>
+          </el-table-column>
 
           <!-- 状态 -->
-          <el-table-column prop="status" label="Status">
+          <el-table-column prop="state" label="Status">
             <template #default="{ row }">
-              <el-tag v-if="row.status === 'Active'" type="success">
-                Active
-              </el-tag>
-              <el-tag v-else-if="row.status === 'Pending'" type="warning">
-                Pending
-              </el-tag>
-              <el-tag v-else type="info">{{ row.status }}</el-tag>
-
-              <el-button
-                v-if="row.status === 'Pending'"
-                type="primary"
-                size="small"
-                class="ml-2"
-              >
-                Approve
-              </el-button>
+              <base-tag :text="row.state" :color="stateColorMap[row.state]" />
             </template>
           </el-table-column>
           <el-table-column min-width="6%">
             <template #default="{ row }">
               <el-dropdown trigger="click">
-                <i class="icon-more-2-line text-16" />
+                <i class="icon-more-2-line text-16 cursor-pointer" />
                 <template #dropdown>
                   <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
                     <el-dropdown-item @click="openEditClubItemDialog(row)">
