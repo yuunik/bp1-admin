@@ -54,11 +54,42 @@
 
     .el-tabs__nav-wrap {
       margin-left: 32px;
+
+      .el-tabs__item {
+        height: 48px;
+      }
     }
 
     .el-tabs__nav-wrap::after {
       // tabs 栏底部线隐藏
       display: none;
+    }
+  }
+
+  &.has-top {
+    .el-tabs__content {
+      display: none;
+    }
+
+    .el-tabs__header {
+      // tabs 头部栏margin重置
+      margin: 0 !important;
+      // tabs 头部栏底部边框重置
+      border-bottom: 1px solid #dadde5;
+      border-top: 1px solid #dadde5;
+
+      .el-tabs__nav-wrap {
+        margin-left: 32px;
+
+        .el-tabs__item {
+          height: 47px;
+        }
+      }
+
+      .el-tabs__nav-wrap::after {
+        // tabs 栏底部线隐藏
+        display: none;
+      }
     }
   }
 }
