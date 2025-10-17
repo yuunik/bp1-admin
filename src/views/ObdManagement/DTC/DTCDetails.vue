@@ -560,19 +560,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -789,9 +784,9 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                             <!--<span class="text-truncate">-->
@@ -799,12 +794,7 @@ if (id) {
                             <!--</span>-->
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1019,9 +1009,9 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                             <!--<span class="text-truncate">-->
@@ -1029,12 +1019,7 @@ if (id) {
                             <!--</span>-->
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1249,9 +1234,9 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                             <!--<span class="text-truncate">-->
@@ -1259,12 +1244,7 @@ if (id) {
                             <!--</span>-->
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1479,9 +1459,9 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                             <!--<span class="text-truncate">-->
@@ -1489,12 +1469,7 @@ if (id) {
                             <!--</span>-->
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1709,9 +1684,9 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                             <!--<span class="text-truncate">-->
@@ -1719,12 +1694,7 @@ if (id) {
                             <!--</span>-->
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1939,9 +1909,9 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.name">
+                            <el-tooltip :content="dtcDto.code">
                               <span class="text-truncate">
-                                {{ dtcDto.name || '-' }}
+                                {{ dtcDto.code || '-' }}
                               </span>
                             </el-tooltip>
                             <!--<span class="text-truncate">-->
@@ -1949,12 +1919,7 @@ if (id) {
                             <!--</span>-->
                           </el-col>
                           <el-col :span="15">
-                            {{
-                              dtcDto.dtcItemDtcDataDtos &&
-                              dtcDto.dtcItemDtcDataDtos.length > 0
-                                ? `${dtcDto.dtcItemDtcDataDtos.length} DTC${dtcDto.dtcItemDtcDataDtos.length > 1 ? 's' : ''}`
-                                : '-'
-                            }}
+                            {{ dtcDto.name || '-' }}
                           </el-col>
                           <el-col :span="4">
                             <el-button
