@@ -230,3 +230,20 @@ export const rejectUserApi = (params) => {
     data,
   })
 }
+
+/**
+ * 管理员设置或移除管理员
+ * @param userId
+ * @returns
+ */
+export const manageClubAdminApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+
+  return request({
+    url: ClubApi.MANAGE_CLUB_ADMIN,
+    method: 'POST',
+    data,
+  })
+}

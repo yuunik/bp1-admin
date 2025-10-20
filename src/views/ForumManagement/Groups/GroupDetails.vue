@@ -10,6 +10,7 @@ import {
   editClubApi,
   getClubInfoApi,
   getClubMemberApi,
+  manageClubAdminApi,
   rejectUserApi,
 } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
@@ -319,14 +320,22 @@ const handleApproveUser = async (userId) => {
   init()
 }
 
+// 管理员设置或移除管理员
+const handleSetOrRemoveAdmin = async (userId) => {
+  await manageClubAdminApi(userId)
+  // 提示
+  ElMessage.success('Updated successfully')
+  init()
+}
+
 // 处理 操作栏的事件
 const handleDropdownItemClick = (action, row) => {
   switch (action) {
     case 'Remove Admin':
-      // handleApproveUser(row.id)
+      handleSetOrRemoveAdmin(row.userId)
       break
     case 'Promote to Admin':
-      // handleRejectClub(row.id)
+      handleSetOrRemoveAdmin(row.userId)
       break
     case 'Remove':
       // openEditClubItemDialog(row)
