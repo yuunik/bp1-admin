@@ -2,14 +2,15 @@
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
+import { useCloned } from '@vueuse/core'
 
 import {
   addClubMemberApi,
-  approveClubApi,
   approveUserApi,
   editClubApi,
   getClubInfoApi,
   getClubMemberApi,
+  rejectUserApi,
 } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import { getForumListApi } from '@/apis/forumApi.js'
@@ -192,6 +193,14 @@ const computedMenuItems = computed(() => (row) => {
   return items
 })
 
+// 拒绝用户加入俱乐部的弹窗
+const dialogRejectUserVisible = ref(false)
+
+// 拒绝用户的表单
+const rejectUserForm = ref({
+  reason: '',
+})
+
 // 获取俱乐部详情
 const getClubInfo = async () => {
   const { data } = await getClubInfoApi(clubId.value)
@@ -303,7 +312,7 @@ const handleAddMember = async () => {
 }
 
 // 管理员批准用户加入俱乐部
-const handleApproveClub = async (userId) => {
+const handleApproveUser = async (userId) => {
   await approveUserApi(userId)
   // 提示
   ElMessage.success('Approved successfully')
@@ -314,17 +323,41 @@ const handleApproveClub = async (userId) => {
 const handleDropdownItemClick = (action, row) => {
   switch (action) {
     case 'Remove Admin':
-      handleApproveClub(row.id)
+      // handleApproveUser(row.id)
       break
     case 'Promote to Admin':
-      handleRejectClub(row.id)
+      // handleRejectClub(row.id)
       break
     case 'Remove':
-      openEditClubItemDialog(row)
+      // openEditClubItemDialog(row)
       break
     default:
       console.warn('Unknown action:', action)
   }
+}
+
+// 拒绝用户加入俱乐部
+const openRejectUserDialog = async (row) => {
+  // 创建一个副本
+  const { cloned } = useCloned(notification)
+  // 设置表单数据
+  rejectUserForm.value = cloned
+  dialogRejectUserVisible.value = true
+}
+
+// 拒绝用户加入俱乐部
+const handleRejectUser = async (userId) => {
+  if (!rejectUserForm.value.reason) {
+    ElMessage.error('Please enter a reason')
+    return
+  }
+  await rejectUserApi({
+    userId,
+    reason: 'Rejected',
+  })
+  // 提示
+  ElMessage.success('Rejected successfully')
+  init()
 }
 
 watch(
@@ -555,10 +588,12 @@ onMounted(async () => {
                     </el-dropdown-item>
                   </el-dropdown-menu>
                   <el-dropdown-menu class="custom-dropdown-menu" v-else>
-                    <el-dropdown-item @click="handleApproveClub(row.id)">
+                    <el-dropdown-item @click="handleApproveUser(row.id)">
                       Approve
                     </el-dropdown-item>
-                    <el-dropdown-item>Reject</el-dropdown-item>
+                    <el-dropdown-item @click="openRejectUserDialog(row)">
+                      Reject
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -635,6 +670,57 @@ onMounted(async () => {
       </div>
     </template>
   </base-dialog>
+  <!-- 拒绝用户加入俱乐部的弹窗 -->
+  <base-dialog
+    v-model="dialogRejectUserVisible"
+    title="Reject Member"
+    confirm-text="Reject Member"
+    @cancel="dialogRejectUserVisible = false"
+    @confirm="handleRejectUser"
+  >
+    <template #content>
+      <div class="row-center gap-8">
+        <span
+          class="w-112 leading-32 heading-body-body-12px-medium text-neutrals-grey-3 h-32"
+        >
+          Member
+        </span>
+        <div class="flex-1">
+          <el-avatar
+            v-if="rejectUserForm.logo"
+            fit="cover"
+            :src="getFullFilePath(rejectUserForm.logo)"
+            class="mr-8 h-20 w-20 shrink-0"
+            alt="brand icon"
+            shape="circle"
+            :size="20"
+            @error="errorHandler"
+          >
+            <template #error>
+              <i class="i-ep:picture" />
+            </template>
+          </el-avatar>
+          <span class="text-wrap">
+            {{ rejectUserForm.name || '-' }}
+          </span>
+        </div>
+      </div>
+      <el-divider />
+      <div class="row-center gap-8">
+        <span
+          class="w-112 leading-32 heading-body-body-12px-medium text-neutrals-grey-3 h-32"
+        >
+          Reason*
+        </span>
+        <el-input
+          placeholder="Enter"
+          class="reason-container"
+          rows="3"
+          type="textarea"
+        />
+      </div>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -655,5 +741,14 @@ onMounted(async () => {
     background-color: var(--el-input-border-color, var(--el-border-color));
     pointer-events: none;
   }
+}
+
+.reason-container :deep(.el-textarea__inner) {
+  background-color: transparent !important;
+  border: none; /* 去掉默认边框 */
+  border-bottom: 1px solid #dcdfe6; /* 只保留底部边框 */
+  border-radius: 0; /* 去掉圆角 */
+  box-shadow: none;
+  padding: 0;
 }
 </style>

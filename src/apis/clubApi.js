@@ -210,3 +210,23 @@ export const approveUserApi = (userId) => {
     data,
   })
 }
+
+/**
+ * 管理员拒绝用户
+ * @param params
+ * @param params.userId 用户ID
+ * @param params.reason 拒绝理由
+ * @returns
+ */
+export const rejectUserApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', params.userId)
+  data.append('reason', params.reason)
+
+  return request({
+    url: ClubApi.REJECT_USER,
+    method: 'POST',
+    data,
+  })
+}
