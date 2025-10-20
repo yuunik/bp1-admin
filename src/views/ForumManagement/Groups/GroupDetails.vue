@@ -5,6 +5,8 @@ import { storeToRefs } from 'pinia'
 
 import {
   addClubMemberApi,
+  approveClubApi,
+  approveUserApi,
   editClubApi,
   getClubInfoApi,
   getClubMemberApi,
@@ -172,6 +174,24 @@ const newUserList = ref([])
 // 新增加的用户的id
 const selectedUserId = ref('')
 
+// 根据 row.status 计算出当前行的菜单项
+const computedMenuItems = computed(() => (row) => {
+  const items = []
+
+  if (row.isOwner === '1') {
+    // Admin
+    items.push({ label: 'Remove Admin', action: 'Remove Admin' })
+  } else {
+    // Member
+    items.push(
+      { label: 'Promote to Admin', action: 'Promote to Admin' },
+      { label: 'Remove', action: 'Remove' },
+    )
+  }
+
+  return items
+})
+
 // 获取俱乐部详情
 const getClubInfo = async () => {
   const { data } = await getClubInfoApi(clubId.value)
@@ -279,6 +299,31 @@ const handleAddMember = async () => {
     init()
   } finally {
     dialogAddUserVisible.value = false
+  }
+}
+
+// 管理员批准用户加入俱乐部
+const handleApproveClub = async (userId) => {
+  await approveUserApi(userId)
+  // 提示
+  ElMessage.success('Approved successfully')
+  init()
+}
+
+// 处理 操作栏的事件
+const handleDropdownItemClick = (action, row) => {
+  switch (action) {
+    case 'Remove Admin':
+      handleApproveClub(row.id)
+      break
+    case 'Promote to Admin':
+      handleRejectClub(row.id)
+      break
+    case 'Remove':
+      openEditClubItemDialog(row)
+      break
+    default:
+      console.warn('Unknown action:', action)
   }
 }
 
@@ -497,15 +542,23 @@ onMounted(async () => {
               <el-dropdown trigger="click">
                 <i class="icon-more-2-line text-16 cursor-pointer" />
                 <template #dropdown>
-                  <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
-                    <el-dropdown-item @click="openEditClubItemDialog(row)">
-                      Edit
-                    </el-dropdown-item>
+                  <el-dropdown-menu
+                    class="custom-dropdown-menu"
+                    v-if="row.state === 'Active'"
+                  >
                     <el-dropdown-item
-                      @click="handleOpenDeleteClubItemDialog(row)"
+                      v-for="item in computedMenuItems(row)"
+                      :key="item.label"
+                      @click="handleDropdownItemClick(item.action, row)"
                     >
-                      Delete
+                      {{ item.label }}
                     </el-dropdown-item>
+                  </el-dropdown-menu>
+                  <el-dropdown-menu class="custom-dropdown-menu" v-else>
+                    <el-dropdown-item @click="handleApproveClub(row.id)">
+                      Approve
+                    </el-dropdown-item>
+                    <el-dropdown-item>Reject</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
