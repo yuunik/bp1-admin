@@ -561,18 +561,25 @@ onMounted(async () => {
     class="add-member-container"
   >
     <template #content>
-      <el-select
-        class="select-container"
-        v-model="selectedUserId"
-        placeholder="Select a user"
-      >
-        <el-option
-          v-for="userInfo in newUserList"
-          :key="userInfo.value"
-          :label="userInfo.label"
-          :value="userInfo.value"
-        />
-      </el-select>
+      <div class="row-center gap-8">
+        <span
+          class="w-112 leading-32 heading-body-body-12px-medium text-neutrals-grey-3 h-32"
+        >
+          User
+        </span>
+        <el-select
+          class="select-container h-32"
+          v-model="selectedUserId"
+          placeholder="Select a user"
+        >
+          <el-option
+            v-for="userInfo in newUserList"
+            :key="userInfo.value"
+            :label="userInfo.label"
+            :value="userInfo.value"
+          />
+        </el-select>
+      </div>
     </template>
   </base-dialog>
 </template>
