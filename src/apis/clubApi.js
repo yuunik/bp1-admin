@@ -20,6 +20,8 @@ const ClubApi = Object.freeze({
   REJECT_CLUB: '/manager/club/reject',
   // 俱乐部管理员禁用/启用俱乐部
   MANAGE_CLUB: '/manager/club/disable',
+  // 新增俱乐部成员
+  ADD_CLUB_MEMBER: '/manager/club/adduser',
 })
 
 // 获取 token
@@ -159,6 +161,26 @@ export const manageClubApi = (clubId) => {
 
   return request({
     url: ClubApi.MANAGE_CLUB,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 新增俱乐部成员
+ * @param params
+ * @param params.clubId 俱乐部ID
+ * @param params.userId 用户ID
+ * @returns
+ */
+export const addClubMemberApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('clubId', params.clubId)
+  data.append('userId', params.userId)
+
+  return request({
+    url: ClubApi.ADD_CLUB_MEMBER,
     method: 'POST',
     data,
   })

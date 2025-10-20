@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
 
 import {
+  addClubMemberApi,
   editClubApi,
   getClubInfoApi,
   getClubMemberApi,
@@ -17,6 +18,8 @@ import useFileUpload from '@/composables/useFileUpload.js'
 import BaseTag from '@/components/BaseTag.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseDialog from '@/components/BaseDialog.vue'
+import { getUserListApi } from '@/apis/userApi.js'
 
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
@@ -96,6 +99,9 @@ const roleFilterParams = ref([
 // 输入搜索关键字
 const searchKeywords = ref('')
 
+// 待添加用户弹窗
+const dialogAddUserVisible = ref(false)
+
 const userStore = useUserStore()
 
 const { token } = storeToRefs(userStore)
@@ -159,6 +165,12 @@ const useList = ref([
     avatar_url: 'https://example.com/michael.png',
   },
 ])
+
+// 新添加的用户列表
+const newUserList = ref([])
+
+// 新增加的用户的id
+const selectedUserId = ref('')
 
 // 获取俱乐部详情
 const getClubInfo = async () => {
@@ -231,6 +243,43 @@ const handleEditClubItem = async () => {
   // 提示
   ElMessage.success('Edit successfully')
   // refresh()
+}
+
+// 获取用户列表
+const getUserList = async () => {
+  const { data } = await getUserListApi({
+    page: 0,
+    pageSize: 9999,
+    sort: '',
+    sortBy: '',
+    statusKey: '',
+    searchKey: '',
+  })
+  newUserList.value = data.map((item) => ({
+    label: item.name,
+    value: item.id,
+  }))
+}
+
+// 打开新增用户的弹窗
+const openAddMemberDialog = async () => {
+  await getUserList()
+  dialogAddUserVisible.value = true
+}
+
+// 新增俱乐部的用户
+const handleAddMember = async () => {
+  try {
+    await addClubMemberApi({
+      clubId: clubId.value,
+      userId: selectedUserId.value,
+    })
+    // 提示
+    ElMessage.success('Add successfully')
+    init()
+  } finally {
+    dialogAddUserVisible.value = false
+  }
 }
 
 watch(
@@ -354,7 +403,13 @@ onMounted(async () => {
           </span>
         </div>
         <!-- 添加按钮 -->
-        <el-button type="primary" text class="w-fit" size="small">
+        <el-button
+          type="primary"
+          text
+          class="w-fit"
+          size="small"
+          @click="openAddMemberDialog"
+        >
           <template #icon>
             <i class="icon-typesadd text-neutrals-blue" />
           </template>
@@ -420,7 +475,7 @@ onMounted(async () => {
             <template #default="{ row }">
               <!-- isOwner 为 1, 则Owner-->
               <!-- isOwner 为 0, 则Member-->
-              <span>{{ row.isOwner === 1 ? 'Admin' : 'Member' }}</span>
+              <span>{{ row.isOwner === '1' ? 'Admin' : 'Member' }}</span>
             </template>
           </el-table-column>
 
@@ -496,6 +551,49 @@ onMounted(async () => {
       </div>
     </div>
   </section>
+  <!-- 待添加用户弹窗 -->
+  <base-dialog
+    v-model="dialogAddUserVisible"
+    title="Add Member"
+    confirm-text="Add Member"
+    @cancel="dialogAddUserVisible = false"
+    @confirm="handleAddMember"
+    class="add-member-container"
+  >
+    <template #content>
+      <el-select
+        class="select-container"
+        v-model="selectedUserId"
+        placeholder="Select a user"
+      >
+        <el-option
+          v-for="userInfo in newUserList"
+          :key="userInfo.value"
+          :label="userInfo.label"
+          :value="userInfo.value"
+        />
+      </el-select>
+    </template>
+  </base-dialog>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.select-container :deep(.el-select__wrapper) {
+  // 重置下拉框样式
+  background-color: $neutrals-off-white;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background-color: var(--el-input-border-color, var(--el-border-color));
+    pointer-events: none;
+  }
+}
+</style>
