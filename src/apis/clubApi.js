@@ -247,3 +247,20 @@ export const manageClubAdminApi = (userId) => {
     data,
   })
 }
+
+/**
+ * 管理员删除用户
+ * @param userId
+ * @returns
+ */
+export const deleteClubMemberApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+
+  return request({
+    url: ClubApi.DELETE_CLUB_MEMBER,
+    method: 'POST',
+    data,
+  })
+}

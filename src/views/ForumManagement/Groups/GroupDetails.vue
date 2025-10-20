@@ -7,6 +7,7 @@ import { useCloned } from '@vueuse/core'
 import {
   addClubMemberApi,
   approveUserApi,
+  deleteClubMemberApi,
   editClubApi,
   getClubInfoApi,
   getClubMemberApi,
@@ -328,6 +329,14 @@ const handleSetOrRemoveAdmin = async (userId) => {
   init()
 }
 
+// 管理员删除用户
+const handleRemoveUser = async (userId) => {
+  await deleteClubMemberApi(userId)
+  // 提示
+  ElMessage.success('Removed successfully')
+  init()
+}
+
 // 处理 操作栏的事件
 const handleDropdownItemClick = (action, row) => {
   switch (action) {
@@ -338,7 +347,7 @@ const handleDropdownItemClick = (action, row) => {
       handleSetOrRemoveAdmin(row.userId)
       break
     case 'Remove':
-      // openEditClubItemDialog(row)
+      handleRemoveUser(row.userId)
       break
     default:
       console.warn('Unknown action:', action)
