@@ -99,6 +99,10 @@ export const getClubMemberApi = (params) => {
   data.append('clubId', params.clubId)
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
+  data.append('isOwner', params.role)
+  data.append('searchKey', params.searchKey)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
 
   return request({
     url: ClubApi.GET_CLUB_MEMBER,

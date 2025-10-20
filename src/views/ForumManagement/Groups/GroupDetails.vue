@@ -25,6 +25,7 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { getUserListApi } from '@/apis/userApi.js'
+import { useSort } from '@/composables/useSort.js'
 
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
@@ -43,23 +44,13 @@ const clubId = ref('')
 // 俱乐部详情
 const clubInfo = ref({})
 
-// 帖子列表
-const postList = ref([])
-
 // 俱乐部成员列表
 const clubMemberList = ref([])
-
-// 帖子列表的分页数据
-const postPagination = reactive({
-  currentPage: 0,
-  pageSize: 15,
-  total: 0,
-})
 
 // 俱乐部成员
 const clubMemberPagination = reactive({
   currentPage: 0,
-  pageSize: 9999,
+  pageSize: 15,
   total: 0,
 })
 
@@ -88,16 +79,12 @@ const roleKeys = computed(() =>
 
 const roleFilterParams = ref([
   {
-    label: 'Owner',
-    value: 'Owner',
-  },
-  {
     label: 'Admin',
-    value: 'Admin',
+    value: '1',
   },
   {
     label: 'Member',
-    value: 'Member',
+    value: '0',
   },
 ])
 
@@ -209,51 +196,38 @@ const getClubInfo = async () => {
   clubInfo.value = data
 }
 
-// 获取俱乐部所属的贴文列表数据
-const getClubPostList = async () => {
-  const { data, count } = await getForumListApi({
-    clubIds: clubId.value,
-    page: postPagination.currentPage,
-    pageSize: postPagination.pageSize,
-    sort: sortParams.sort,
-    sortBy: sortParams.sortBy,
-  })
-  postList.value = data
-  postPagination.total = count
-}
-
 // 获取俱乐部的成员
 const getClubMemberList = async () => {
   const { data, count } = await getClubMemberApi({
     clubId: clubId.value,
     page: clubMemberPagination.currentPage,
     pageSize: clubMemberPagination.pageSize,
+    role: roleKeys.value,
+    searchKey: searchKeywords.value,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
   })
   clubMemberList.value = data
-  clubMemberPagination.total = data.count
+  clubMemberPagination.total = count
 }
 
 // 初始化
 const init = async () => {
   if (route.params.id) {
     const clubId = route.params.id
-    await Promise.all([
-      getClubInfo(clubId),
-      getClubPostList(clubId),
-      getClubMemberList(clubId),
-    ])
+    await Promise.all([getClubInfo(clubId), getClubMemberList(clubId)])
   }
 }
 
 // 错误行为
 const errorHandler = () => true
 
-// 刷新
+// 俱乐部用户表格刷新
 const refresh = () => {
-  if (!postPagination.currentPage) {
-    return init()
+  if (!clubMemberPagination.currentPage) {
+    return getClubMemberList()
   }
-  postPagination.currentPage = 0
+  clubMemberPagination.currentPage = 0
 }
 
 const handleTabChange = (val) => {
@@ -378,10 +352,12 @@ const handleRejectUser = async (userId) => {
   init()
 }
 
+const sort = useSort(sortParams, getClubMemberList)
+
 watch(
-  () => postPagination.currentPage,
+  () => clubMemberPagination.currentPage,
   () => {
-    init()
+    getClubMemberList()
   },
 )
 
@@ -523,7 +499,7 @@ onMounted(async () => {
             <base-filter-panel
               v-model="roleList"
               :section-list="roleFilterParams"
-              condition-text="Status"
+              condition-text="Role"
               @search="refresh"
             />
             <!-- 清除按钮 -->
@@ -541,7 +517,7 @@ onMounted(async () => {
         </div>
         <!-- divider -->
         <el-divider />
-        <el-table :data="clubMemberList">
+        <el-table :data="clubMemberList" @sort-change="sort">
           <el-table-column type="selection" min-width="6%" />
           <!-- 用户 -->
           <el-table-column prop="name" label="User">
@@ -567,16 +543,20 @@ onMounted(async () => {
           </el-table-column>
 
           <!-- 角色 -->
-          <el-table-column prop="role" label="Role">
+          <el-table-column prop="role" label="Role" sortable="custom">
             <template #default="{ row }">
-              <!-- isOwner 为 1, 则Owner-->
+              <!-- isOwner 为 1, 则Admin-->
               <!-- isOwner 为 0, 则Member-->
               <span>{{ row.isOwner === '1' ? 'Admin' : 'Member' }}</span>
             </template>
           </el-table-column>
 
           <!-- 添加日期 -->
-          <el-table-column prop="createTime" label="Added Date">
+          <el-table-column
+            prop="createTime"
+            label="Added Date"
+            sortable="custom"
+          >
             <template #default="{ row }">
               <span>{{ getDateWithDDMMMYYYY(row.createTime) }}</span>
             </template>
@@ -618,7 +598,7 @@ onMounted(async () => {
             </template>
           </el-table-column>
         </el-table>
-        <base-pagination v-model="postPagination" />
+        <base-pagination v-model="clubMemberPagination" />
       </div>
     </div>
     <!-- Logs & Note -->
