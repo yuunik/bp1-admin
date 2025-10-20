@@ -62,4 +62,38 @@ const confirm = () => emit('confirm')
   </el-dialog>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+// 重置对话框样式
+:deep(.el-dialog) {
+  padding: 0 !important;
+
+  // 对话框头部
+  .el-dialog__header {
+    --el-dialog-title-font-size: 20px;
+    --el-dialog-font-line-height: 30px;
+    --el-text-color-primary: #1b1a1e;
+    @apply pl-16 pt-24;
+
+    // 对话框标题
+    .el-dialog__title {
+      @apply font-medium;
+    }
+  }
+
+  // 对话框内容
+  .el-dialog__body {
+    @apply px-16 pb-24;
+  }
+
+  // 对话框底部
+  .el-dialog__footer {
+    @apply row-center gap-16 p-16;
+    border-top: 1px solid #eaeef4;
+
+    .el-button {
+      @apply flex-1;
+      margin: 0;
+    }
+  }
+}
+</style>
