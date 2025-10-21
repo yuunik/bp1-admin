@@ -450,6 +450,21 @@ onMounted(async () => {
                 </span>
               </template>
             </el-table-column>
+            <el-table-column>
+              <template #default="{ row }">
+                <el-button
+                  class="rounded-full!"
+                  @click.stop="
+                    $router.push({
+                      name: RouteName.DTC_DETAILS,
+                      params: { id: row.id },
+                    })
+                  "
+                >
+                  View Details
+                </el-button>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
       </div>
