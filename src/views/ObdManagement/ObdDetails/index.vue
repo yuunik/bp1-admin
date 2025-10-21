@@ -380,7 +380,7 @@ const loadOBDData = async (id) => {
             id="last-used"
             class="heading-body-body-12px-regular text-neutrals-off-black flex-1"
           >
-            {{ getLastUsedDate(obdInfo.createdTime) }}
+            {{ getLastUsedDate(obdInfo.useTime) }}
           </span>
         </div>
         <div class="leading-32 flex gap-8">
