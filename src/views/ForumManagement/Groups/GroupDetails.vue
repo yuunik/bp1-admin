@@ -484,7 +484,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="flex flex-col gap-16">
+  <section class="flex h-full flex-col gap-16">
     <!-- header -->
     <div class="flex-between mx-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
@@ -513,84 +513,57 @@ onUnmounted(() => {
       <el-tab-pane label="Members" name="Members" />
       <el-tab-pane label="Logs & Note" name="Logs & Note" />
     </el-tabs>
-    <!-- info -->
-    <div class="mx-32 flex flex-col gap-4">
-      <!-- logo -->
-      <div class="row-center h-76 gap-16">
-        <el-avatar
-          fit="cover"
-          :src="getFullFilePath(clubInfo.logo)"
-          alt="brand icon"
-          shape="circle"
-          :size="40"
-          @error="errorHandler"
-        >
-          <img
-            src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
-          />
-        </el-avatar>
-        <span>{{ clubInfo.name }}</span>
-        <el-upload
-          :action="uploadUrl"
-          name="file"
-          :show-file-list="false"
-          :data="{ token: token, clubId: clubInfo.id }"
-          :before-upload="fileUpload.beforeAvatarUpload"
-          :on-success="init"
-        >
-          <el-button>Change Avatar</el-button>
-        </el-upload>
-      </div>
+    <el-scrollbar class="flex-1">
       <!-- info -->
-      <div class="flex flex-col gap-4">
-        <div class="flex h-32 gap-24">
-          <div class="row-center h-32 gap-8">
-            <span
-              class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
-            >
-              Status
-            </span>
-            <base-tag
-              :text="clubInfo.state"
-              :color="stateColorMap[clubInfo.state]"
+      <div class="mx-32 flex flex-col gap-4">
+        <!-- logo -->
+        <div class="row-center h-76 gap-16">
+          <el-avatar
+            fit="cover"
+            :src="getFullFilePath(clubInfo.logo)"
+            alt="brand icon"
+            shape="circle"
+            :size="40"
+            @error="errorHandler"
+          >
+            <img
+              src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"
             />
-          </div>
-          <div class="row-center h-32 gap-8">
-            <span
-              class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
-            >
-              Owner
-            </span>
-            <template v-if="clubManagerList && clubManagerList.length">
-              <div v-if="clubManagerList.length === 1" class="row-center">
-                <el-avatar
-                  v-if="clubManagerList[0].logo"
-                  fit="cover"
-                  :src="getFullFilePath(clubManagerList[0].logo)"
-                  class="mr-8 h-20 w-20 shrink-0"
-                  alt="user avatar"
-                  shape="circle"
-                  :size="20"
-                  @error="errorHandler"
-                >
-                  <template #error>
-                    <i class="i-ep:picture" />
-                  </template>
-                </el-avatar>
-                <span
-                  class="text-wrap underline"
-                  @click="
-                    $router.push({
-                      name: RouteName.PERSON_MANAGE,
-                      params: { id: clubManagerList[0].userId },
-                    })
-                  "
-                >
-                  {{ clubManagerList[0].name || '-' }}
-                </span>
-              </div>
-              <el-dropdown v-else>
-                <div class="row-center">
+          </el-avatar>
+          <span>{{ clubInfo.name }}</span>
+          <el-upload
+            :action="uploadUrl"
+            name="file"
+            :show-file-list="false"
+            :data="{ token: token, clubId: clubInfo.id }"
+            :before-upload="fileUpload.beforeAvatarUpload"
+            :on-success="init"
+          >
+            <el-button>Change Avatar</el-button>
+          </el-upload>
+        </div>
+        <!-- info -->
+        <div class="flex flex-col gap-4">
+          <div class="flex h-32 gap-24">
+            <div class="row-center h-32 gap-8">
+              <span
+                class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
+              >
+                Status
+              </span>
+              <base-tag
+                :text="clubInfo.state"
+                :color="stateColorMap[clubInfo.state]"
+              />
+            </div>
+            <div class="row-center h-32 gap-8">
+              <span
+                class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
+              >
+                Owner
+              </span>
+              <template v-if="clubManagerList && clubManagerList.length">
+                <div v-if="clubManagerList.length === 1" class="row-center">
                   <el-avatar
                     v-if="clubManagerList[0].logo"
                     fit="cover"
@@ -605,282 +578,316 @@ onUnmounted(() => {
                       <i class="i-ep:picture" />
                     </template>
                   </el-avatar>
-                  <span class="text-wrap underline">
+                  <span
+                    class="text-wrap underline"
+                    @click="
+                      $router.push({
+                        name: RouteName.PERSON_MANAGE,
+                        params: { id: clubManagerList[0].userId },
+                      })
+                    "
+                  >
                     {{ clubManagerList[0].name || '-' }}
                   </span>
-                  <span>+{{ clubManagerList.length - 1 }}</span>
                 </div>
-                <template #dropdown>
-                  <el-dropdown-menu class="custom-dropdown-menu">
-                    <el-dropdown-item
-                      v-for="user in clubManagerList"
-                      :key="user.id"
+                <el-dropdown v-else>
+                  <div class="row-center">
+                    <el-avatar
+                      v-if="clubManagerList[0].logo"
+                      fit="cover"
+                      :src="getFullFilePath(clubManagerList[0].logo)"
+                      class="mr-8 h-20 w-20 shrink-0"
+                      alt="user avatar"
+                      shape="circle"
+                      :size="20"
+                      @error="errorHandler"
                     >
-                      <div class="clubManagerList-center">
-                        <el-avatar
-                          v-if="user.logo"
-                          fit="cover"
-                          :src="getFullFilePath(user.logo)"
-                          class="mr-8 h-20 w-20 shrink-0"
-                          alt="user avatar"
-                          shape="circle"
-                          :size="20"
-                          @error="errorHandler"
-                        >
-                          <template #error>
-                            <i class="i-ep:picture" />
-                          </template>
-                        </el-avatar>
-                        <span class="text-wrap">
-                          {{ user.name || '-' }}
-                        </span>
-                      </div>
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </template>
-            <span v-else>-</span>
+                      <template #error>
+                        <i class="i-ep:picture" />
+                      </template>
+                    </el-avatar>
+                    <span class="text-wrap underline">
+                      {{ clubManagerList[0].name || '-' }}
+                    </span>
+                    <span>+{{ clubManagerList.length - 1 }}</span>
+                  </div>
+                  <template #dropdown>
+                    <el-dropdown-menu class="custom-dropdown-menu">
+                      <el-dropdown-item
+                        v-for="user in clubManagerList"
+                        :key="user.id"
+                      >
+                        <div class="clubManagerList-center">
+                          <el-avatar
+                            v-if="user.logo"
+                            fit="cover"
+                            :src="getFullFilePath(user.logo)"
+                            class="mr-8 h-20 w-20 shrink-0"
+                            alt="user avatar"
+                            shape="circle"
+                            :size="20"
+                            @error="errorHandler"
+                          >
+                            <template #error>
+                              <i class="i-ep:picture" />
+                            </template>
+                          </el-avatar>
+                          <span class="text-wrap">
+                            {{ user.name || '-' }}
+                          </span>
+                        </div>
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </template>
+              <span v-else>-</span>
+            </div>
           </div>
-        </div>
-        <div class="row-center gap-8" v-if="clubInfo.state !== 'Rejected'">
-          <span
-            class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
-          >
-            Description
-          </span>
-          <p class="heading-body-body-12px-regular text-neutrals-off-black">
-            {{ clubInfo.description || '-' }}
-          </p>
-        </div>
-        <div class="row-center gap-8" v-else>
-          <span
-            class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
-          >
-            Reject Reason
-          </span>
-          <p class="heading-body-body-12px-regular text-neutrals-off-black">
-            {{ clubInfo.reason || '-' }}
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- members -->
-    <div class="flex flex-col gap-8">
-      <!-- header -->
-      <div class="flex-between mx-32">
-        <div class="row-center h-24 gap-8">
-          <h3
-            class="heading-body-large-body-14px-medium text-neutrals-off-black"
-          >
-            Members
-          </h3>
-          <span
-            class="heading-body-large-body-14px-medium text-neutrals-grey-3"
-          >
-            {{ clubMemberList.length }}
-          </span>
-        </div>
-        <!-- 添加按钮 -->
-        <el-button
-          type="primary"
-          text
-          class="w-fit"
-          size="small"
-          @click="openAddMemberDialog"
-        >
-          <template #icon>
-            <i class="icon-typesadd text-neutrals-blue" />
-          </template>
-          <template #default>Add Member</template>
-        </el-button>
-      </div>
-      <!-- divider -->
-      <el-divider />
-      <!-- table -->
-      <div class="mx-32 flex flex-col gap-8">
-        <!-- 搜索栏 -->
-        <div class="flex-between">
-          <div class="row-center filter-container flex-wrap gap-8">
-            <!-- 应用平台筛选 -->
-            <base-filter-panel
-              v-model="roleList"
-              :section-list="roleFilterParams"
-              condition-text="Role"
-              @search="refresh"
-            />
-            <!-- 清除按钮 -->
-            <el-button
-              text
-              class="h-24! text-status-colours-blue!"
-              @click="roleList = []"
-              v-show="roleList.length"
+          <div class="row-center gap-8" v-if="clubInfo.state !== 'Rejected'">
+            <span
+              class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
             >
-              Clear
-            </el-button>
+              Description
+            </span>
+            <p class="heading-body-body-12px-regular text-neutrals-off-black">
+              {{ clubInfo.description || '-' }}
+            </p>
           </div>
-          <!-- 输入搜索 -->
-          <base-filter-input v-model="searchKeywords" @inputChange="refresh" />
+          <div class="row-center gap-8" v-else>
+            <span
+              class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
+            >
+              Reject Reason
+            </span>
+            <p class="heading-body-body-12px-regular text-neutrals-off-black">
+              {{ clubInfo.reason || '-' }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <!-- members -->
+      <div class="flex flex-col gap-8">
+        <!-- header -->
+        <div class="flex-between mx-32">
+          <div class="row-center h-24 gap-8">
+            <h3
+              class="heading-body-large-body-14px-medium text-neutrals-off-black"
+            >
+              Members
+            </h3>
+            <span
+              class="heading-body-large-body-14px-medium text-neutrals-grey-3"
+            >
+              {{ clubMemberList.length }}
+            </span>
+          </div>
+          <!-- 添加按钮 -->
+          <el-button
+            type="primary"
+            text
+            class="w-fit"
+            size="small"
+            @click="openAddMemberDialog"
+          >
+            <template #icon>
+              <i class="icon-typesadd text-neutrals-blue" />
+            </template>
+            <template #default>Add Member</template>
+          </el-button>
         </div>
         <!-- divider -->
         <el-divider />
-        <el-table :data="clubMemberList" @sort-change="sort">
-          <el-table-column type="selection" min-width="6%" />
-          <!-- 用户 -->
-          <el-table-column prop="name" label="User">
-            <template #default="{ row }">
-              <el-avatar
-                v-if="row.logo"
-                fit="cover"
-                :src="getFullFilePath(row.logo)"
-                class="mr-8 h-20 w-20 shrink-0"
-                alt="brand icon"
-                shape="circle"
-                :size="20"
-                @error="errorHandler"
+        <!-- table -->
+        <div class="mx-32 flex flex-col gap-8">
+          <!-- 搜索栏 -->
+          <div class="flex-between">
+            <div class="row-center filter-container flex-wrap gap-8">
+              <!-- 应用平台筛选 -->
+              <base-filter-panel
+                v-model="roleList"
+                :section-list="roleFilterParams"
+                condition-text="Role"
+                @search="refresh"
+              />
+              <!-- 清除按钮 -->
+              <el-button
+                text
+                class="h-24! text-status-colours-blue!"
+                @click="roleList = []"
+                v-show="roleList.length"
               >
-                <template #error>
-                  <i class="i-ep:picture" />
-                </template>
-              </el-avatar>
-              <span
-                class="cursor-pointer text-wrap underline"
-                @click="
-                  $router.push({
-                    name: RouteName.PERSON_MANAGE,
-                    params: { id: row.userId },
-                  })
-                "
-              >
-                {{ row.name || '-' }}
-              </span>
-            </template>
-          </el-table-column>
+                Clear
+              </el-button>
+            </div>
+            <!-- 输入搜索 -->
+            <base-filter-input
+              v-model="searchKeywords"
+              @inputChange="refresh"
+            />
+          </div>
+          <!-- divider -->
+          <el-divider />
+          <el-table :data="clubMemberList" @sort-change="sort">
+            <el-table-column type="selection" min-width="6%" />
+            <!-- 用户 -->
+            <el-table-column prop="name" label="User">
+              <template #default="{ row }">
+                <el-avatar
+                  v-if="row.logo"
+                  fit="cover"
+                  :src="getFullFilePath(row.logo)"
+                  class="mr-8 h-20 w-20 shrink-0"
+                  alt="brand icon"
+                  shape="circle"
+                  :size="20"
+                  @error="errorHandler"
+                >
+                  <template #error>
+                    <i class="i-ep:picture" />
+                  </template>
+                </el-avatar>
+                <span
+                  class="cursor-pointer text-wrap underline"
+                  @click="
+                    $router.push({
+                      name: RouteName.PERSON_MANAGE,
+                      params: { id: row.userId },
+                    })
+                  "
+                >
+                  {{ row.name || '-' }}
+                </span>
+              </template>
+            </el-table-column>
 
-          <!-- 角色 -->
-          <el-table-column prop="role" label="Role" sortable="custom">
-            <template #default="{ row }">
-              <!-- isOwner 为 1, 则Admin-->
-              <!-- isOwner 为 0, 则Member-->
-              <span>{{ row.isOwner === '1' ? 'Admin' : 'Member' }}</span>
-            </template>
-          </el-table-column>
+            <!-- 角色 -->
+            <el-table-column prop="role" label="Role" sortable="custom">
+              <template #default="{ row }">
+                <!-- isOwner 为 1, 则Admin-->
+                <!-- isOwner 为 0, 则Member-->
+                <span>{{ row.isOwner === '1' ? 'Admin' : 'Member' }}</span>
+              </template>
+            </el-table-column>
 
-          <!-- 添加日期 -->
-          <el-table-column
-            prop="createTime"
-            label="Added Date"
-            sortable="custom"
-          >
-            <template #default="{ row }">
-              <span>{{ getDateWithDDMMMYYYY(row.createTime) }}</span>
-            </template>
-          </el-table-column>
+            <!-- 添加日期 -->
+            <el-table-column
+              prop="createTime"
+              label="Added Date"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                <span>{{ getDateWithDDMMMYYYY(row.createTime) }}</span>
+              </template>
+            </el-table-column>
 
-          <!-- 状态 -->
-          <el-table-column prop="state" label="Status">
-            <template #default="{ row }">
-              <base-tag :text="row.state" :color="stateColorMap[row.state]" />
-            </template>
-          </el-table-column>
-          <el-table-column min-width="6%">
-            <template #default="{ row }">
-              <el-dropdown trigger="click">
-                <i class="icon-more-2-line text-16 cursor-pointer" />
-                <template #dropdown>
-                  <el-dropdown-menu
-                    class="custom-dropdown-menu"
-                    v-if="row.state === 'Active'"
-                  >
-                    <el-dropdown-item
-                      v-for="item in computedMenuItems(row)"
-                      :key="item.label"
-                      @click="handleDropdownItemClick(item.action, row)"
+            <!-- 状态 -->
+            <el-table-column prop="state" label="Status">
+              <template #default="{ row }">
+                <base-tag :text="row.state" :color="stateColorMap[row.state]" />
+              </template>
+            </el-table-column>
+            <el-table-column min-width="6%">
+              <template #default="{ row }">
+                <el-dropdown trigger="click">
+                  <i class="icon-more-2-line text-16 cursor-pointer" />
+                  <template #dropdown>
+                    <el-dropdown-menu
+                      class="custom-dropdown-menu"
+                      v-if="row.state === 'Active'"
                     >
-                      {{ item.label }}
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                  <el-dropdown-menu class="custom-dropdown-menu" v-else>
-                    <el-dropdown-item @click="handleApproveUser(row.id)">
-                      Approve
-                    </el-dropdown-item>
-                    <el-dropdown-item @click="openRejectUserDialog(row)">
-                      Reject
-                    </el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
-        <base-pagination v-model="clubMemberPagination" />
+                      <el-dropdown-item
+                        v-for="item in computedMenuItems(row)"
+                        :key="item.label"
+                        @click="handleDropdownItemClick(item.action, row)"
+                      >
+                        {{ item.label }}
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                    <el-dropdown-menu class="custom-dropdown-menu" v-else>
+                      <el-dropdown-item @click="handleApproveUser(row.id)">
+                        Approve
+                      </el-dropdown-item>
+                      <el-dropdown-item @click="openRejectUserDialog(row)">
+                        Reject
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+          </el-table>
+          <base-pagination v-model="clubMemberPagination" />
+        </div>
       </div>
-    </div>
-    <!-- Logs & Note -->
-    <div class="flex flex-col gap-8">
-      <!-- header -->
-      <div class="flex-between mx-32 h-24">
-        <h3 class="heading-body-large-body-14px-medium text-neutrals-off-black">
-          Logs & Note
-        </h3>
-        <!-- 添加按钮 -->
-        <el-button type="primary" text class="w-fit" size="small">
-          <template #icon>
-            <i class="icon-typesadd text-neutrals-blue" />
-          </template>
-          <template #default>New Note</template>
-        </el-button>
+      <!-- Logs & Note -->
+      <div class="flex flex-col gap-8">
+        <!-- header -->
+        <div class="flex-between mx-32 h-24">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black"
+          >
+            Logs & Note
+          </h3>
+          <!-- 添加按钮 -->
+          <!--<el-button type="primary" text class="w-fit" size="small">-->
+          <!--  <template #icon>-->
+          <!--    <i class="icon-typesadd text-neutrals-blue" />-->
+          <!--  </template>-->
+          <!--  <template #default>New Note</template>-->
+          <!--</el-button>-->
+        </div>
+        <!-- divider -->
+        <el-divider />
+        <!-- table -->
+        <div class="mx-32!">
+          <el-table :data="clubLogList">
+            <el-table-column
+              prop="createTime"
+              label="Date & Time"
+              sortable="custom"
+              min-width="19%"
+            />
+            <el-table-column prop="name" label="User" min-width="19%">
+              <template #default="{ row }">
+                <el-avatar
+                  v-if="row.logo"
+                  fit="cover"
+                  :src="getFullFilePath(row.logo)"
+                  class="mr-8 h-20 w-20 shrink-0"
+                  alt="brand icon"
+                  shape="circle"
+                  :size="20"
+                  @error="errorHandler"
+                >
+                  <template #error>
+                    <i class="i-ep:picture" />
+                  </template>
+                </el-avatar>
+                <span
+                  class="cursor-pointer text-wrap underline"
+                  @click="
+                    $router.push({
+                      name: RouteName.PERSON_MANAGE,
+                      params: { id: row.userId },
+                    })
+                  "
+                >
+                  {{ row.name || '-' }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="action" label="Action" min-width="19%" />
+            <el-table-column prop="description" label="Detail" min-width="43%">
+              <template #default="{ row }">
+                <span class="text-wrap">{{ row.description || '-' }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+          <base-pagination v-model="clubLogPagination" />
+        </div>
       </div>
-      <!-- divider -->
-      <el-divider />
-      <!-- table -->
-      <div class="mx-32!">
-        <el-table :data="clubLogList">
-          <el-table-column
-            prop="createTime"
-            label="Date & Time"
-            sortable="custom"
-            min-width="19%"
-          />
-          <el-table-column prop="name" label="User" min-width="19%">
-            <template #default="{ row }">
-              <el-avatar
-                v-if="row.logo"
-                fit="cover"
-                :src="getFullFilePath(row.logo)"
-                class="mr-8 h-20 w-20 shrink-0"
-                alt="brand icon"
-                shape="circle"
-                :size="20"
-                @error="errorHandler"
-              >
-                <template #error>
-                  <i class="i-ep:picture" />
-                </template>
-              </el-avatar>
-              <span
-                class="cursor-pointer text-wrap underline"
-                @click="
-                  $router.push({
-                    name: RouteName.PERSON_MANAGE,
-                    params: { id: row.userId },
-                  })
-                "
-              >
-                {{ row.name || '-' }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="action" label="Action" min-width="19%" />
-          <el-table-column prop="description" label="Detail" min-width="43%">
-            <template #default="{ row }">
-              <span class="text-wrap">{{ row.description || '-' }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-        <base-pagination v-model="clubLogPagination" />
-      </div>
-    </div>
+    </el-scrollbar>
   </section>
   <!-- 待添加用户弹窗 -->
   <base-dialog
