@@ -461,7 +461,7 @@ const handleCellMouseLeave = (row) => (row.isHover = false)
 // 查看详情
 const handleViewDetails = (row, column) => {
   const { no } = column
-  if (no === 0 || no === 8) {
+  if (no === 0 || no === 11) {
     return
   }
   // 设置表单数据
@@ -582,6 +582,9 @@ const openEditNotificationDialog = async (notification) => {
   notificationForm.value.applicationType = cloned.value.applicationType
     ? cloned.value.applicationType
     : 'all'
+  // 若详情弹窗开启, 则说明是从详情弹窗中编辑的, 需关闭
+  dialogNotificationDetailsVisible.value &&
+    (dialogNotificationDetailsVisible.value = false)
   // 打开编辑弹窗
   dialogNotificationFormVisible.value = true
 }
