@@ -110,14 +110,18 @@ const handleEditQuestionStatusChange = (row) => {
   if (!findItem.isEdit) {
     // 切换为编辑状态
     findItem.isEdit = true
+    findItem.editQuestion = findItem.question
     return
   }
   // 切换为非编辑状态
+  findItem.editQuestion = findItem.question
   findItem.isEdit = !findItem.isEdit
 }
 
 // 处理确认编辑问题
 const handleConfirmEdit = async (row, isChangeStatus = true) => {
+  // 保存问题
+  row.question = row.editQuestion
   // 编辑问题
   await modifyAiQuestionApi(row)
   // 编辑问题成功
@@ -194,7 +198,7 @@ onBeforeUnmount(() => {
           </template>
           <template v-else-if="row.isEdit">
             <el-input
-              v-model="row.question"
+              v-model="row.editQuestion"
               @keyup.enter.native="handleConfirmEdit(row)"
             />
           </template>
