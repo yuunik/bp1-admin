@@ -242,10 +242,19 @@ const dateFilterParams = ref({
 // 日期选择器是否触发
 const isDatePickerVisible = ref(false)
 
+// 弹窗中的用户列表
+const addUserStatusList = ref([])
+
+// 弹窗中的推送任务用户筛选参数
+const addUserStatusKeys = computed(() =>
+  addUserStatusList.value.length ? addUserStatusList.value.join(',') : '',
+)
+
+// 弹窗中的推送任务搜索关键字
+const addUserSearchText = ref('')
+
 // 新增推送任务
 const addNotification = async () => {
-  console.log('新增 notification')
-
   // 基础参数（必传）
   const params = {
     title: notificationForm.value.title,
@@ -269,7 +278,7 @@ const addNotification = async () => {
 
   // 条件传递 pushUserIds
   if (hasPushUser.value && notificationForm.value.userStatus === 'selected') {
-    params.pushUserIds = userStatusKeys.value
+    params.pushUserIds = addUserStatusKeys.value
   }
 
   // 必填校验
@@ -311,8 +320,6 @@ const addNotification = async () => {
 
 // 编辑推送任务
 const editNotification = async () => {
-  console.log('编辑 notification', notificationForm.value)
-
   // 基础参数（必传）
   const params = {
     pushTaskId: notificationForm.value.id,
@@ -337,7 +344,7 @@ const editNotification = async () => {
 
   // 条件传递 pushUserIds
   if (hasPushUser.value && notificationForm.value.userStatus === 'selected') {
-    params.pushUserIds = userStatusKeys.value
+    params.pushUserIds = addUserStatusKeys.value
   }
 
   // 必填校验
@@ -415,6 +422,13 @@ const getUserList = async () => {
     logo: item.logo,
     name: item.name,
   }))
+  userStatusFilterParams.value.unshift({
+    id: '-1',
+    label: 'All users',
+    value: '-1',
+    logo: '',
+    name: 'All users',
+  })
 }
 
 const getOBDVersionList = async () => {
@@ -498,7 +512,8 @@ const handleReset = () => {
     sendTime: '', // 推送任务的目标时间戳
     scheduleTime: '',
   }
-  userStatusList.value = []
+  addUserStatusList.value = []
+  addUserStatusKeys.value = ''
 }
 
 const handleDateChange = (val) => {
@@ -972,7 +987,7 @@ initData()
         : 'Create Push notification'
     "
     :confirm-text="notificationForm.id ? 'Save' : 'Create'"
-    :dialog-width="850"
+    dialog-width="850"
     @cancel="handleClose"
     @confirm="handleManageNotification"
   >
@@ -1070,8 +1085,8 @@ initData()
               <span>Selected Users</span>
               <!-- 用户账号状态筛选 -->
               <base-filter-panel
-                v-model="userStatusList"
-                v-model:keywords="userSearchText"
+                v-model="addUserStatusList"
+                v-model:keywords="addUserSearchText"
                 :section-list="userStatusFilterParams"
                 condition-text="New User"
                 :is-need-input="true"
