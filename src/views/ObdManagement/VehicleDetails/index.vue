@@ -365,6 +365,9 @@ onMounted(async () => {
                   v-else
                   v-model="vehicleDetails.licensePlate"
                   placeholder="Enter"
+                  @input="
+                    (val) => (vehicleDetails.licensePlate = val.toUpperCase())
+                  "
                 />
               </dd>
             </dl>
