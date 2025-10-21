@@ -302,7 +302,7 @@ if (id) {
               @click="
                 $router.push({
                   name: RouteName.OBD_DETAILS,
-                  params: { id: dtcInfo.vehicleDto?.id },
+                  params: { id: dtcInfo.obdDto?.id },
                 })
               "
             >
