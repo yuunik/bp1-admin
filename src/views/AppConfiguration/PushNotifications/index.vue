@@ -871,7 +871,7 @@ initData()
             :text="notificationForm.status === 'Sent' ? 'Sent' : 'Pending'"
           />
         </div>
-        <el-dropdown>
+        <el-dropdown v-if="notificationForm.status !== 'Sent'">
           <i class="icon-more-2-line text-16 cursor-pointer" />
           <template #dropdown>
             <el-dropdown-menu class="px-16! py-8! rounded-8!" place>
