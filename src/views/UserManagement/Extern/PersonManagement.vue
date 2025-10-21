@@ -23,6 +23,7 @@ import { RouteName } from '@/utils/constantsUtil.js'
 
 import EmptyOBD from '@/assets/specialIcons/empty-obd.svg'
 import EmptyCar from '@/assets/specialIcons/empty-car.svg'
+import { unbindOBDApi } from '@/apis/obdApi.js'
 
 const logAndNoteDataList = ref([
   {
@@ -88,6 +89,10 @@ const vehiclesRef = ref(null)
 
 const logsAndNoteRef = ref(null)
 
+const unbindOBDDialogVisible = ref(false)
+
+const unbindOBDId = ref('')
+
 // 复制 handleCopyTransactionID
 const handleCopyTransactionID = async () => {
   try {
@@ -126,7 +131,7 @@ const handleUserStatus = async () => {
     // 提示
     ElMessage.success('Success')
     // 刷新列表
-    initDate()
+    initData()
   } finally {
     // 关闭解禁用户弹窗
     dialogUnbanUserVisible.value && (dialogUnbanUserVisible.value = false)
@@ -136,7 +141,7 @@ const handleUserStatus = async () => {
 }
 
 // 刷新页面
-const initDate = async () => {
+const initData = async () => {
   await Promise.all([getUserInfo(), getUserOBDList(), getUserVehicleList()])
 }
 
@@ -219,6 +224,23 @@ const handleScroll = () => {
   // activeTab.value = closestSection.key
 }
 
+// 打开解绑 OBD 对话框
+const handleOpenUnbindOBDDialog = (obdId) => {
+  unbindOBDId.value = obdId
+  unbindOBDDialogVisible.value = true
+}
+
+// 解绑 OBD
+const handleUnbindOBD = async () => {
+  try {
+    await unbindOBDApi(unbindOBDId.value)
+    ElMessage.success('Unbind success')
+    initData()
+  } finally {
+    unbindOBDDialogVisible.value = false
+  }
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -226,7 +248,7 @@ const {
 
 onMounted(async () => {
   userId.value = id
-  initDate()
+  initData()
 })
 </script>
 
@@ -353,8 +375,13 @@ onMounted(async () => {
               </template>
             </el-table-column>
             <el-table-column>
-              <template #default>
-                <el-button class="rounded-full!">Unbind</el-button>
+              <template #default="{ row }">
+                <el-button
+                  class="rounded-full!"
+                  @click.stop="handleOpenUnbindOBDDialog(row.id)"
+                >
+                  Unbind
+                </el-button>
               </template>
             </el-table-column>
             <template #empty>
@@ -651,6 +678,31 @@ onMounted(async () => {
       </dl>
     </template>
   </base-dialog>
+  <!-- 解绑OBD -->
+  <el-dialog
+    v-model="unbindOBDDialogVisible"
+    title="Unbind OBD ?"
+    align-center
+    width="304"
+    :show-close="false"
+  >
+    <div class="flex flex-col gap-16">
+      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+        You are about to unbind this user's OBD device. Once unbound, the device
+        will no longer be linked to this account or transmit data. Are you sure
+        you want to proceed?
+      </p>
+      <el-divider />
+      <div class="flex-between flex gap-16">
+        <el-button class="flex-1" @click="unbindOBDDialogVisible = false">
+          Cancel
+        </el-button>
+        <el-button type="danger" class="flex-1" @click="handleUnbindOBD">
+          Unbind
+        </el-button>
+      </div>
+    </div>
+  </el-dialog>
 </template>
 
 <style scoped lang="scss">
