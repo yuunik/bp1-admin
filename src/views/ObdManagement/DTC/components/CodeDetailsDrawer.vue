@@ -155,12 +155,12 @@ onMounted(() => {
             <span class="heading-body-body-12px-medium text-neutrals-grey-3">
               Description
             </span>
-            <span
-              class="leading-16 heading-body-body-12px-regular text-neutrals-off-black"
+            <p
+              class="leading-16 heading-body-body-12px-regular text-neutrals-off-black whitespace-pre-wrap"
               v-if="!isDescriptionModified"
             >
               {{ errorCodeInfo.description }}
-            </span>
+            </p>
             <el-input
               v-else
               v-model="errorCodeForm.description"
@@ -195,12 +195,12 @@ onMounted(() => {
             <span class="heading-body-body-12px-medium text-neutrals-grey-3">
               Possible Symptoms
             </span>
-            <span
-              class="leading-16 heading-body-body-12px-regular text-neutrals-off-black"
+            <p
+              class="leading-16 heading-body-body-12px-regular text-neutrals-off-black whitespace-pre-wrap"
               v-if="!isPossibleSymptomsModified"
             >
               {{ errorCodeInfo.symptoms }}
-            </span>
+            </p>
             <el-input
               v-else
               v-model="errorCodeForm.symptoms"
@@ -313,7 +313,7 @@ onMounted(() => {
                 Description
               </span>
               <p
-                class="heading-body-body-12px-regular text-neutrals-off-black"
+                class="heading-body-body-12px-regular text-neutrals-off-black whitespace-pre-wrap"
                 v-if="!isRepairImportanceLevelModified"
               >
                 {{ errorCodeInfo.levelDescription }}
