@@ -97,8 +97,12 @@ const statusFilterParams = ref([
 // 禁止俱乐部创建的弹窗
 const dialogRejectGroupVisible = ref(false)
 
-// 所选中的俱乐部管理者列表
-const selectedClubManagerList = useSessionStorage('selectedClubManagerList', [])
+// 拒绝的俱乐部表单
+const rejectClubForm = reactive({
+  clubId: '',
+  reason: '',
+  name: '',
+})
 
 // 刷新
 const refresh = useDebounceFn(() => {
@@ -219,14 +223,26 @@ const handleOpenClubInfoDialog = async (row, column) => {
     }
     return
   }
-  // 记录当前的俱乐部所属的管理者列表
-  selectedClubManagerList.value = row.usersDto
 
   router.push({ name: RouteName.GROUP_DETAILS, params: { id: row.id } })
 }
 
 // 拒绝俱乐部创建
-const handleRejectGroup = async () => {}
+const handleRejectGroup = async () => {
+  // 拒绝理由非空校验
+  if (!rejectClubForm.reason) {
+    ElMessage.error('Please enter a reason')
+    return
+  }
+  try {
+    await rejectClubApi(rejectClubForm)
+    // 提示
+    ElMessage.success('Rejected successfully')
+    refresh()
+  } finally {
+    dialogRejectGroupVisible.value = false
+  }
+}
 
 // 根据 row.status 计算出当前行的菜单项
 const computedMenuItems = computed(() => (row) => {
@@ -267,12 +283,12 @@ const handleApproveClub = async (clubId) => {
   refresh()
 }
 
-// 拒绝俱乐部创建
-const handleRejectClub = async (clubId) => {
-  await rejectClubApi(clubId)
-  // 提示
-  ElMessage.success('Rejected successfully')
-  refresh()
+// 打开拒绝俱乐部创建的弹窗
+const handleOpenRejectGroupDialog = (row) => {
+  const { cloned } = useCloned(row)
+  Object.assign(rejectClubForm, cloned.value)
+  rejectClubForm.clubId = row.id
+  dialogRejectGroupVisible.value = true
 }
 
 // 禁用/启用俱乐部
@@ -292,7 +308,7 @@ const handleDropdownItemClick = (action, row) => {
       handleApproveClub(row.id)
       break
     case 'reject':
-      handleRejectClub(row.id)
+      handleOpenRejectGroupDialog(row)
       break
     case 'edit':
       openEditClubItemDialog(row)
@@ -651,9 +667,9 @@ onMounted(async () => {
         class="[&>dt]:row-center [&>dd]:row-center grid grid-cols-[80px_1fr] gap-8 [&>dd]:h-32 [&>dt]:h-32"
       >
         <dt>Name</dt>
-        <dd>Audi Owners Crew SG</dd>
-        <dt>Creator</dt>
-        <dd>Esther Howard</dd>
+        <dd>{{ rejectClubForm.name }}</dd>
+        <!--<dt>Creator</dt>-->
+        <!--<dd>Esther Howard</dd>-->
       </dl>
       <el-divider class="my-8!" />
       <div class="reason-container flex gap-8">
@@ -662,6 +678,7 @@ onMounted(async () => {
           <span class="text-red">*</span>
         </p>
         <el-input
+          v-model="rejectClubForm.reason"
           placeholder="Enter"
           class="club-name-input"
           rows="3"
