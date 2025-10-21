@@ -580,22 +580,29 @@ const openEditNotificationDialog = async (notification) => {
   const { cloned } = useCloned(notification)
   // 设置表单数据
   notificationForm.value = cloned.value
-  // 回显推送任务的时间
+  // 回显推送任务的目标用户
   notificationForm.value.userStatus =
     cloned.value.isGlobal === 1 ? 'all' : 'selected'
   if (cloned.value.isGlobal !== 1) {
     // 则不是推送所有用户，则需要获取推送用户列表
     await getPushTaskUserList()
   }
+  // 回显推送任务的推送时间
   notificationForm.value.sendTime =
-    cloned.value.sendTime === cloned.value.updateTime ? 'schedule' : 0
+    cloned.value.sentTime === cloned.value.updateTime ? 0 : 'schedule'
+  // 回显推送任务的计划时间
+  if (notificationForm.value.sendTime === 'schedule') {
+    notificationForm.value.scheduleTime = dayjs(cloned.value.sentTime).format(
+      'YYYY-MM-DD HH:mm:ss',
+    )
+  }
   // 回显obd版本
   notificationForm.value.obdVersion = cloned.value.obdVersion
     ? cloned.value.obdVersion
     : 'all'
   // 回显应用类型
-  notificationForm.value.applicationType = cloned.value.applicationType
-    ? cloned.value.applicationType
+  notificationForm.value.applicationType = cloned.value.appType
+    ? cloned.value.appType
     : 'all'
   // 若详情弹窗开启, 则说明是从详情弹窗中编辑的, 需关闭
   dialogNotificationDetailsVisible.value &&
