@@ -97,6 +97,9 @@ const statusFilterParams = ref([
 // 禁止俱乐部创建的弹窗
 const dialogRejectGroupVisible = ref(false)
 
+// 所选中的俱乐部管理者列表
+const selectedClubManagerList = useSessionStorage('selectedClubManagerList', [])
+
 // 拒绝的俱乐部表单
 const rejectClubForm = reactive({
   clubId: '',
@@ -223,8 +226,18 @@ const handleOpenClubInfoDialog = async (row, column) => {
     }
     return
   }
+  // 记录当前的俱乐部所属的管理者列表
+  selectedClubManagerList.value = row.usersDto
 
   router.push({ name: RouteName.GROUP_DETAILS, params: { id: row.id } })
+}
+
+// 打开拒绝俱乐部创建的弹窗
+const handleOpenRejectGroupDialog = (row) => {
+  const { cloned } = useCloned(row)
+  Object.assign(rejectClubForm, cloned.value)
+  rejectClubForm.clubId = row.id
+  dialogRejectGroupVisible.value = true
 }
 
 // 拒绝俱乐部创建
@@ -281,14 +294,6 @@ const handleApproveClub = async (clubId) => {
   // 提示
   ElMessage.success('Approved successfully')
   refresh()
-}
-
-// 打开拒绝俱乐部创建的弹窗
-const handleOpenRejectGroupDialog = (row) => {
-  const { cloned } = useCloned(row)
-  Object.assign(rejectClubForm, cloned.value)
-  rejectClubForm.clubId = row.id
-  dialogRejectGroupVisible.value = true
 }
 
 // 禁用/启用俱乐部
@@ -592,7 +597,6 @@ onMounted(async () => {
     :confirm-text="clubForm.id ? 'Edit' : 'Create'"
     @cancel="dialogClubFormVisible = false"
     @confirm="handleManageClubItem"
-    class="club-form-container"
   >
     <template #content>
       <div class="flex flex-col gap-8">
