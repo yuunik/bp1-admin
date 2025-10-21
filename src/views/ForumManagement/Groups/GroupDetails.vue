@@ -16,6 +16,7 @@ import {
   getClubMemberApi,
   manageClubAdminApi,
   manageClubApi,
+  rejectClubApi,
   rejectUserApi,
 } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
@@ -458,6 +459,23 @@ const getClubLog = async () => {
   })
   clubLogList.value = data
   clubLogPagination.total = count
+}
+
+// 拒绝俱乐部创建
+const handleRejectGroup = async () => {
+  // 拒绝理由非空校验
+  if (!rejectClubForm.reason) {
+    ElMessage.error('Please enter a reason')
+    return
+  }
+  try {
+    await rejectClubApi(rejectClubForm)
+    // 提示
+    ElMessage.success('Rejected successfully')
+    init()
+  } finally {
+    dialogRejectGroupVisible.value = false
+  }
 }
 
 watch(
@@ -1029,6 +1047,40 @@ onUnmounted(() => {
         associated with this club will be permanently deleted, and this action
         cannot be undone.
       </p>
+    </template>
+  </base-dialog>
+  <!-- 禁止俱乐部创办的提示框 -->
+  <base-dialog
+    v-model="dialogRejectGroupVisible"
+    title="Reject Group"
+    button-type="danger"
+    confirm-text="Reject Group"
+    @cancel="dialogRejectGroupVisible = false"
+    @confirm="handleRejectGroup"
+  >
+    <template #content>
+      <dl
+        class="[&>dt]:row-center [&>dd]:row-center grid grid-cols-[80px_1fr] gap-8 [&>dd]:h-32 [&>dt]:h-32"
+      >
+        <dt>Name</dt>
+        <dd>{{ rejectClubForm.name }}</dd>
+        <!--<dt>Creator</dt>-->
+        <!--<dd>Esther Howard</dd>-->
+      </dl>
+      <el-divider class="my-8!" />
+      <div class="reason-container flex gap-8">
+        <p class="w-112">
+          Reason
+          <span class="text-red">*</span>
+        </p>
+        <el-input
+          v-model="rejectClubForm.reason"
+          placeholder="Enter"
+          class="club-name-input"
+          rows="3"
+          type="textarea"
+        />
+      </div>
     </template>
   </base-dialog>
 </template>
