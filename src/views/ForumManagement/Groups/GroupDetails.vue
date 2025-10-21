@@ -629,7 +629,15 @@ onUnmounted(() => {
                   <i class="i-ep:picture" />
                 </template>
               </el-avatar>
-              <span class="text-wrap">
+              <span
+                class="cursor-pointer text-wrap underline"
+                @click="
+                  $router.push({
+                    name: RouteName.PERSON_MANAGE,
+                    params: { id: row.userId },
+                  })
+                "
+              >
                 {{ row.name || '-' }}
               </span>
             </template>
