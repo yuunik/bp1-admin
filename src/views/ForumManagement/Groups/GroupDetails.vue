@@ -12,6 +12,7 @@ import {
   deleteClubMemberApi,
   editClubApi,
   getClubInfoApi,
+  getClubLogApi,
   getClubMemberApi,
   manageClubAdminApi,
   manageClubApi,
@@ -54,8 +55,15 @@ const clubInfo = ref({})
 // 俱乐部成员列表
 const clubMemberList = ref([])
 
-// 俱乐部成员
+// 俱乐部成员表格分页参数
 const clubMemberPagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
+// 俱乐部日志表格分页参数
+const clubLogPagination = reactive({
   currentPage: 0,
   pageSize: 15,
   total: 0,
@@ -107,63 +115,8 @@ const { token } = storeToRefs(userStore)
 
 const fileUpload = useFileUpload()
 
-const logList = ref([
-  {
-    login_time: '2023-05-15 09:30:00',
-    user_name: 'Jenny Wilson',
-    action: 'Login',
-    ip_address: '123.456',
-    device: 'iPhone 14',
-    avatar_url: 'https://example.com/jenny.png',
-  },
-  {
-    login_time: '2023-05-15 10:05:00',
-    user_name: 'Tom Smith',
-    action: 'Login',
-    ip_address: '192.168.1.2',
-    device: 'MacBook Pro',
-    avatar_url: 'https://example.com/tom.png',
-  },
-  {
-    login_time: '2023-05-15 11:20:00',
-    user_name: 'Alice Chen',
-    action: 'Logout',
-    ip_address: '10.0.0.8',
-    device: 'Windows 11',
-    avatar_url: 'https://example.com/alice.png',
-  },
-])
-
-const useList = ref([
-  {
-    user_name: 'Jenny Wilson',
-    role: 'Member',
-    added_date: '2025-04-03',
-    status: 'Pending',
-    avatar_url: 'https://example.com/jenny.png',
-  },
-  {
-    user_name: 'Tom Smith',
-    role: 'Owner',
-    added_date: '2025-04-03',
-    status: 'Active',
-    avatar_url: 'https://example.com/tom.png',
-  },
-  {
-    user_name: 'Alice Chen',
-    role: 'Admin',
-    added_date: '2025-04-03',
-    status: 'Active',
-    avatar_url: 'https://example.com/alice.png',
-  },
-  {
-    user_name: 'Michael Brown',
-    role: 'Member',
-    added_date: '2025-04-03',
-    status: 'Active',
-    avatar_url: 'https://example.com/michael.png',
-  },
-])
+// 日志列表
+const clubLogList = ref()
 
 // 新添加的用户列表
 const newUserList = ref([])
@@ -295,12 +248,8 @@ const getClubMemberList = async () => {
 }
 
 // 初始化
-const init = async () => {
-  if (route.params.id) {
-    const clubId = route.params.id
-    await Promise.all([getClubInfo(clubId), getClubMemberList(clubId)])
-  }
-}
+const init = async () =>
+  await Promise.all([getClubInfo(), getClubMemberList(), getClubLog()])
 
 // 错误行为
 const errorHandler = () => true
@@ -498,6 +447,17 @@ const handleDeleteClub = async () => {
   // 提示
   ElMessage.success('Delete successfully')
   init()
+}
+
+// 获取俱乐部日志
+const getClubLog = async () => {
+  const { data, count } = await getClubLogApi({
+    clubId: clubId.value,
+    page: clubLogPagination.currentPage,
+    pageSize: clubLogPagination.pageSize,
+  })
+  clubLogList.value = data
+  clubLogPagination.total = count
 }
 
 watch(
@@ -875,20 +835,50 @@ onUnmounted(() => {
       <el-divider />
       <!-- table -->
       <div class="mx-32!">
-        <el-table :data="logList">
-          <el-table-column prop="login_time" label="Date & Time" />
-          <el-table-column prop="user_name" label="User">
+        <el-table :data="clubLogList">
+          <el-table-column
+            prop="createTime"
+            label="Date & Time"
+            sortable="custom"
+            min-width="19%"
+          />
+          <el-table-column prop="name" label="User" min-width="19%">
             <template #default="{ row }">
-              <div class="flex items-center gap-2">
-                <el-avatar :src="row.avatar_url" size="small" />
-                <span>{{ row.user_name }}</span>
-              </div>
+              <el-avatar
+                v-if="row.logo"
+                fit="cover"
+                :src="getFullFilePath(row.logo)"
+                class="mr-8 h-20 w-20 shrink-0"
+                alt="brand icon"
+                shape="circle"
+                :size="20"
+                @error="errorHandler"
+              >
+                <template #error>
+                  <i class="i-ep:picture" />
+                </template>
+              </el-avatar>
+              <span
+                class="cursor-pointer text-wrap underline"
+                @click="
+                  $router.push({
+                    name: RouteName.PERSON_MANAGE,
+                    params: { id: row.userId },
+                  })
+                "
+              >
+                {{ row.name || '-' }}
+              </span>
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="Action" />
-          <el-table-column prop="ip_address" label="IP Address" />
-          <el-table-column prop="device" label="Device" />
+          <el-table-column prop="action" label="Action" min-width="19%" />
+          <el-table-column prop="description" label="Detail" min-width="43%">
+            <template #default="{ row }">
+              <span class="text-wrap">{{ row.description || '-' }}</span>
+            </template>
+          </el-table-column>
         </el-table>
+        <base-pagination v-model="clubLogPagination" />
       </div>
     </div>
   </section>
