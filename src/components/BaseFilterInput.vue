@@ -15,10 +15,6 @@ const inputRef = ref(null)
 
 const handleInput = useDebounceFn(() => {
   emit('inputChange')
-  setTimeout(() => {
-    // 失焦
-    inputRef.value.blur()
-  }, 100)
 }, TimingPreset.DEBOUNCE)
 
 watch(isShowInputContent, (val) => {
