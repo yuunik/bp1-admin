@@ -81,13 +81,6 @@ const userStatusKeys = computed(() =>
 
 const userStatusFilterParams = ref([])
 
-// 被选择的用户的完整信息的列表
-const selectedUserList = computed(() =>
-  userStatusFilterParams.value.filter((userInfo) =>
-    userStatusList.value.includes(userInfo.value),
-  ),
-)
-
 // 用户搜索条件
 const userSearchText = ref('')
 
@@ -248,6 +241,13 @@ const addUserStatusList = ref([])
 // 弹窗中的推送任务用户筛选参数
 const addUserStatusKeys = computed(() =>
   addUserStatusList.value.length ? addUserStatusList.value.join(',') : '',
+)
+
+// 被选择的用户的完整信息的列表
+const selectedUserList = computed(() =>
+  userStatusFilterParams.value.filter((userInfo) =>
+    addUserStatusList.value.includes(userInfo.value),
+  ),
 )
 
 // 弹窗中的推送任务搜索关键字
@@ -513,7 +513,7 @@ const handleReset = () => {
     scheduleTime: '',
   }
   addUserStatusList.value = []
-  addUserStatusKeys.value = ''
+  addUserSearchText.value = ''
 }
 
 const handleDateChange = (val) => {
