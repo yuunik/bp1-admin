@@ -23,7 +23,7 @@ const tabMap = Object.freeze({
 <template>
   <section class="flex h-full flex-col gap-16">
     <!-- 标题 -->
-    <h3 class="heading-h2-20px-medium text-neutrals-off-black mx-32 px-32">
+    <h3 class="heading-h2-20px-medium text-neutrals-off-black mx-32">
       AI Chat Management
     </h3>
     <!-- tabs 栏 -->
