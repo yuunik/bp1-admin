@@ -38,28 +38,24 @@ const typeKeys = computed(() =>
 
 const typeFilterParams = ref([
   {
-    label: 'Order',
-    value: 'Order',
+    label: 'Diagnostics',
+    value: 'Diagnostics',
+  },
+  {
+    label: 'Expense',
+    value: 'Expense',
+  },
+  {
+    label: 'Forum',
+    value: 'Forum',
+  },
+  {
+    label: 'AI Assistant',
+    value: 'AI Assistant',
   },
   {
     label: 'System',
     value: 'System',
-  },
-  {
-    label: 'Brakes',
-    value: 'Brakes',
-  },
-  {
-    label: 'Liked',
-    value: 'Liked',
-  },
-  {
-    label: 'Collected',
-    value: 'Collected',
-  },
-  {
-    label: 'Commented',
-    value: 'Commented',
   },
 ])
 
