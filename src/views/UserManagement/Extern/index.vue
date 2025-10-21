@@ -527,7 +527,6 @@ watch(
         <el-table
           :data="merchantList"
           class="flex-1"
-          :fit="false"
           @sort-change="handleMerchantSortChange"
           @row-click="handleMerchantRowClick"
           row-class-name="clickable-row"
