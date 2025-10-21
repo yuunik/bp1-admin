@@ -268,7 +268,7 @@ const addNotification = async () => {
 
   // 条件传递 obdVersion
   if (notificationForm.value.obdVersion !== 'all') {
-    params.obdVersion = notificationForm.value.obdVersion
+    params.obdVersions = notificationForm.value.obdVersion
   }
 
   // 条件传递 appType
