@@ -7,6 +7,25 @@ import BaseTag from '@/components/BaseTag.vue'
 import { editFaultCodeInfoApi, getFaultCodeInfoApi } from '@/apis/obdApi.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
+defineProps({
+  vehicleId: {
+    type: String,
+    required: true,
+  },
+  faultCode: {
+    type: String,
+    required: true,
+  },
+  ecuName: {
+    type: String,
+    required: true,
+  },
+  faultCodeInfo: {
+    type: Object,
+    required: true,
+  },
+})
+
 // 错误码
 const faultCode = ref('')
 
@@ -103,7 +122,6 @@ const getErrorCodeDescription = async () => {
     errorCodeInfo.value = data
     // 回显详情
     const { cloned } = useCloned(data)
-    console.log('回显详情', cloned)
     Object.assign(errorCodeForm, cloned.value)
     // 回显part
     const partArray = errorCodeInfo.value.part.split('-')

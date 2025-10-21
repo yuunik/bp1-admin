@@ -1,27 +1,24 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue'
-import { useCloned, useSessionStorage } from '@vueuse/core'
+import { onMounted, toRefs } from 'vue'
+import { useCloned } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 
 import BaseTag from '@/components/BaseTag.vue'
 import { editFaultCodeInfoApi, getFaultCodeInfoApi } from '@/apis/obdApi.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
-const drawerVisible = defineModel({
+const drawerCodeInfoVisible = defineModel({
   required: true,
 })
 
-// 错误码
-const faultCode = ref('')
+const props = defineProps({
+  codeInfo: {
+    type: Object,
+    required: true,
+  },
+})
 
-// 错误码名称
-const faultCodeName = ref('')
-
-// 车辆id
-const vehicleId = ref('')
-
-// edu 名称
-const ecuName = ref('')
+const { codeInfo } = toRefs(props)
 
 // 修改预估成本表单
 const errorCodeForm = reactive({
@@ -46,14 +43,6 @@ const errorCodeInfo = ref({})
 // 加载状态
 const loading = ref(false)
 
-// 错误码详情参数
-const faultCodeData = useSessionStorage('faultData', {
-  code: '',
-  title: '',
-  vehicleId: '',
-  dtcName: '',
-})
-
 // 描述修改状态
 const isDescriptionModified = ref(false)
 
@@ -70,9 +59,9 @@ const isEstimatedCostModified = ref(false)
 const handleModifyAIFaultInfo = async () => {
   await editFaultCodeInfoApi({
     faultCodeId: errorCodeInfo.value.id,
-    code: faultCode.value,
-    title: faultCodeName.value,
-    dtcName: ecuName.value,
+    code: codeInfo.value.code,
+    title: codeInfo.value.title,
+    dtcName: codeInfo.value.dtcName,
     description: errorCodeForm.description,
     symptoms: errorCodeForm.symptoms,
     levelDescription: errorCodeForm.levelDescription,
@@ -98,16 +87,15 @@ const getErrorCodeDescription = async () => {
   loading.value = true
   try {
     const { data } = await getFaultCodeInfoApi({
-      vehicleId: vehicleId.value,
-      code: faultCode.value,
-      title: faultCodeName.value,
-      dtcName: ecuName.value,
+      vehicleId: codeInfo.value.vehicleId,
+      code: codeInfo.value.code,
+      title: codeInfo.value.title,
+      dtcName: codeInfo.value.dtcName,
     })
     // 错误码详情
     errorCodeInfo.value = data
     // 回显详情
     const { cloned } = useCloned(data)
-    console.log('回显详情', cloned)
     Object.assign(errorCodeForm, cloned.value)
     // 回显part
     const partArray = errorCodeInfo.value.part.split('-')
@@ -127,22 +115,13 @@ const getErrorCodeDescription = async () => {
 }
 
 onMounted(() => {
-  faultCode.value = faultCodeData.value.code
-  faultCodeName.value = faultCodeData.value.title
-  vehicleId.value = faultCodeData.value.vehicleId
-  ecuName.value = faultCodeData.value.dtcName
   // 获取DTC描述
   getErrorCodeDescription()
-})
-
-onBeforeUnmount(() => {
-  // 清空faultData
-  faultCodeData.value = {}
 })
 </script>
 
 <template>
-  <el-drawer v-model="drawerVisible" size="67%">
+  <el-drawer v-model="drawerCodeInfoVisible" size="67%">
     <section class="flex flex-col gap-16" v-loading="loading">
       <h2
         class="row-center heading-h2-20px-medium text-neutrals-off-black mx-32 h-32"

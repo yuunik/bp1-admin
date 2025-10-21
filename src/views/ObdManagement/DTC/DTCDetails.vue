@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { useSessionStorage } from '@vueuse/core'
+import { useCloned, useSessionStorage } from '@vueuse/core'
 
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { getVehicleScanRecordDetailApi } from '@/apis/obdApi.js'
@@ -214,7 +214,7 @@ const vehicleName = computed(
 const drawerCodeInfoVisible = ref(false)
 
 // 错误码详情参数
-const faultData = useSessionStorage('faultData', {
+const selectedFaultData = ref({
   code: '',
   title: '',
   vehicleId: '',
@@ -239,17 +239,15 @@ const handleOpenOEMItem = (oem) => {
 
 // 查看DTC详情
 const handleViewDtcDetail = (dtc, dtcName) => {
-  // 临时存储错误码详情信息
-  faultData.value = {
+  // 复制副本
+  const { cloned } = useCloned({
     vehicleId: dtcInfo.value.vehicleId,
     code: dtc.code,
     title: dtc.name,
     dtcName: dtcName,
-  }
-  // 跳转 dtc 详情页
-  // router.push({
-  //   name: RouteName.ERROR_CODE_DETAILS,
-  // })
+  })
+  // 设置参数
+  selectedFaultData.value = cloned.value
   drawerCodeInfoVisible.value = true
 }
 
@@ -1949,7 +1947,11 @@ if (id) {
       </div>
     </div>
   </section>
-  <code-details-drawer v-model="drawerCodeInfoVisible" />
+  <code-details-drawer
+    v-if="drawerCodeInfoVisible"
+    v-model="drawerCodeInfoVisible"
+    :codeInfo="selectedFaultData"
+  />
 </template>
 
 <style scoped lang="scss">
