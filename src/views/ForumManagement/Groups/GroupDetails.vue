@@ -26,6 +26,7 @@ import BaseDialog from '@/components/BaseDialog.vue'
 import { getUserListApi } from '@/apis/userApi.js'
 import { useSort } from '@/composables/useSort.js'
 import { RouteName } from '@/utils/constantsUtil.js'
+import BaseUpload from '@/components/BaseUpload.vue'
 
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
@@ -193,6 +194,9 @@ const rejectUserForm = ref({
   reason: '',
 })
 
+// 俱乐部表单
+const dialogClubFormVisible = ref(false)
+
 // 获取俱乐部详情
 const getClubInfo = async () => {
   const { data } = await getClubInfoApi(clubId.value)
@@ -241,16 +245,6 @@ const handleTabChange = (val) => {
   // } else if (val === 'Details') {
   //   detailsRef.value.setScrollTop(0)
   // }
-}
-
-// 编辑 club
-const handleEditClubItem = async () => {
-  await editClubApi(clubForm.value)
-  // 关闭弹窗
-  // dialogClubFormVisible.value = false
-  // 提示
-  ElMessage.success('Edit successfully')
-  // refresh()
 }
 
 // 获取用户列表
@@ -357,6 +351,41 @@ const handleRejectUser = async (userId) => {
 
 const sort = useSort(sortParams, getClubMemberList)
 
+// 显示用于回显的logo
+const getLogoDisplay = (logo) => {
+  // logo为空, 直接返回
+  if (!logo) {
+    return logo
+  }
+  if (logo instanceof File) {
+    // logo为本地文件, 创建本地文件路径
+    return URL.createObjectURL(logo)
+  } else {
+    // logo为服务器文件, 拼接全称路径
+    return getFullFilePath(logo)
+  }
+}
+
+// 打开表单弹窗
+const openEditClubItemDialog = () => {
+  const { cloned } = useCloned(clubInfo.value)
+  clubForm.value = cloned.value
+  dialogClubFormVisible.value = true
+}
+
+// 获取上传的本地文件
+const handleGetLocalFile = (file) => (clubForm.value.logo = file)
+
+// 编辑 club
+const handleEditClubItem = async () => {
+  await editClubApi(clubForm.value)
+  // 关闭弹窗
+  dialogClubFormVisible.value = false
+  // 提示
+  ElMessage.success('Edit successfully')
+  refresh()
+}
+
 watch(
   () => clubMemberPagination.currentPage,
   () => {
@@ -390,7 +419,9 @@ onUnmounted(() => {
       <div class="flex h-32 gap-8">
         <el-button>Disable</el-button>
         <el-button>Disband</el-button>
-        <el-button type="primary">Edit</el-button>
+        <el-button type="primary" @click="openEditClubItemDialog">
+          Edit
+        </el-button>
       </div>
     </div>
     <!-- divider -->
@@ -817,6 +848,49 @@ onUnmounted(() => {
           rows="3"
           type="textarea"
         />
+      </div>
+    </template>
+  </base-dialog>
+  <!-- 编辑 club 弹窗 -->
+  <base-dialog
+    v-model="dialogClubFormVisible"
+    title="Edit Club"
+    confirm-text="Edit"
+    @cancel="dialogClubFormVisible = false"
+    @confirm="handleEditClubItem"
+  >
+    <template #content>
+      <div class="flex flex-col gap-8">
+        <!-- 上传 logo -->
+        <base-upload
+          v-if="dialogClubFormVisible"
+          ref="baseUploadRef"
+          default-avatar-text="A"
+          :img-path="getLogoDisplay(clubForm.logo)"
+          @get-local-file="handleGetLocalFile"
+        />
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Club Name
+          </p>
+          <el-input
+            v-model="clubForm.name"
+            placeholder="Enter"
+            class="club-name-input"
+          />
+        </div>
+        <div class="flex flex-col gap-8">
+          <p class="heading-body-body-12px-medium text-neutrals-off-black">
+            Description
+          </p>
+          <el-input
+            type="textarea"
+            v-model="clubForm.description"
+            rows="3"
+            placeholder="Enter"
+            class="club-description-input"
+          />
+        </div>
       </div>
     </template>
   </base-dialog>
