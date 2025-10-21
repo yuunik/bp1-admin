@@ -453,7 +453,15 @@ onMounted(async () => {
                     <i class="i-ep:picture" />
                   </template>
                 </el-avatar>
-                <span class="text-wrap underline">
+                <span
+                  class="text-wrap underline"
+                  @click="
+                    $router.push({
+                      name: RouteName.PERSON_MANAGE,
+                      params: { id: row.usersDto[0].userId },
+                    })
+                  "
+                >
                   {{ row.usersDto[0].name || '-' }}
                 </span>
               </div>
