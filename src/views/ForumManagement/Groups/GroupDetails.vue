@@ -6,12 +6,15 @@ import { useCloned, useSessionStorage } from '@vueuse/core'
 
 import {
   addClubMemberApi,
+  approveClubApi,
   approveUserApi,
+  deleteClubApi,
   deleteClubMemberApi,
   editClubApi,
   getClubInfoApi,
   getClubMemberApi,
   manageClubAdminApi,
+  manageClubApi,
   rejectUserApi,
 } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
@@ -186,6 +189,66 @@ const computedMenuItems = computed(() => (row) => {
   return items
 })
 
+// 根据 clubInfo.value.state 计算出当前所需的按钮组
+const computedButtonItems = computed(() => {
+  const items = []
+
+  if (clubInfo.value.state === 'Pending') {
+    // Pending
+    items.push(
+      { label: 'Approve', action: 'approve' },
+      { label: 'Reject', action: 'reject' },
+    )
+  } else if (clubInfo.value.state === 'Rejected') {
+    //  Rejected
+    items.push(
+      { label: 'Edit', action: 'edit' },
+      { label: 'Re-Approve', action: 'reApprove' },
+    )
+  } else if (clubInfo.value.state === 'Disabled') {
+    // Disabled
+    items.push({ label: 'Enable', action: 'enable' })
+  } else if (clubInfo.value.state === 'Active') {
+    //  Active
+    items.push(
+      { label: 'Edit', action: 'edit' },
+      { label: 'Disable', action: 'disable' },
+      { label: 'Disband', action: 'disband' },
+    )
+  }
+
+  return items
+})
+
+// 处理按键的时间
+const handleButtonItemClick = (action, row) => {
+  switch (action) {
+    case 'approve':
+      handleApproveClub(row.id)
+      break
+    case 'reject':
+      handleOpenRejectGroupDialog(row)
+      break
+    case 'edit':
+      openEditClubItemDialog()
+      break
+    case 'reApprove':
+      handleApproveClub(row.id)
+      break
+    case 'enable':
+      handleClubStatus(row.id, action)
+      break
+    case 'disable':
+      handleClubStatus(row.id, action)
+      break
+    case 'disband':
+      handleOpenDeleteClubItemDialog(row)
+      break
+    default:
+      console.warn('Unknown action:', action)
+  }
+}
+
 // 拒绝用户加入俱乐部的弹窗
 const dialogRejectUserVisible = ref(false)
 
@@ -196,6 +259,19 @@ const rejectUserForm = ref({
 
 // 俱乐部表单
 const dialogClubFormVisible = ref(false)
+
+// 确认删除弹窗
+const dialogDeleteClubItemVisible = ref(false)
+
+// 禁止俱乐部创建的弹窗
+const dialogRejectGroupVisible = ref(false)
+
+// 拒绝的俱乐部表单
+const rejectClubForm = reactive({
+  clubId: '',
+  reason: '',
+  name: '',
+})
 
 // 获取俱乐部详情
 const getClubInfo = async () => {
@@ -328,22 +404,19 @@ const handleDropdownItemClick = (action, row) => {
 // 拒绝用户加入俱乐部
 const openRejectUserDialog = async (row) => {
   // 创建一个副本
-  const { cloned } = useCloned(notification)
+  const { cloned } = useCloned(row)
   // 设置表单数据
   rejectUserForm.value = cloned
   dialogRejectUserVisible.value = true
 }
 
 // 拒绝用户加入俱乐部
-const handleRejectUser = async (userId) => {
+const handleRejectUser = async () => {
   if (!rejectUserForm.value.reason) {
     ElMessage.error('Please enter a reason')
     return
   }
-  await rejectUserApi({
-    userId,
-    reason: 'Rejected',
-  })
+  await rejectUserApi(rejectUserForm.value)
   // 提示
   ElMessage.success('Rejected successfully')
   init()
@@ -383,7 +456,48 @@ const handleEditClubItem = async () => {
   dialogClubFormVisible.value = false
   // 提示
   ElMessage.success('Edit successfully')
-  refresh()
+  init()
+}
+
+// 批准俱乐部
+const handleApproveClub = async (clubId) => {
+  await approveClubApi(clubId)
+  // 提示
+  ElMessage.success('Approved successfully')
+  init()
+}
+
+// 打开拒绝俱乐部创建的弹窗
+const handleOpenRejectGroupDialog = (row) => {
+  const { cloned } = useCloned(row)
+  Object.assign(rejectClubForm, cloned.value)
+  rejectClubForm.clubId = row.id
+  dialogRejectGroupVisible.value = true
+}
+
+// 禁用/启用俱乐部
+const handleClubStatus = async (clubId, type) => {
+  await manageClubApi(clubId)
+  // 提示
+  ElMessage.success(
+    `${type.charAt(0).toUpperCase() + type.slice(1)} successfully`,
+  )
+  init()
+}
+
+// 打开确认删除弹窗
+const handleOpenDeleteClubItemDialog = (row) => {
+  clubForm.value = row
+  dialogDeleteClubItemVisible.value = true
+}
+
+// 删除俱乐部
+const handleDeleteClub = async () => {
+  await deleteClubApi(clubForm.value.id)
+  dialogDeleteClubItemVisible.value = false
+  // 提示
+  ElMessage.success('Delete successfully')
+  init()
 }
 
 watch(
@@ -417,10 +531,19 @@ onUnmounted(() => {
         Group Details
       </h3>
       <div class="flex h-32 gap-8">
-        <el-button>Disable</el-button>
-        <el-button>Disband</el-button>
-        <el-button type="primary" @click="openEditClubItemDialog">
-          Edit
+        <el-button
+          v-for="item in computedButtonItems"
+          :key="item.label"
+          :type="
+            item.label === 'Edit'
+              ? 'primary'
+              : item.label === 'Reject'
+                ? 'danger'
+                : 'default'
+          "
+          @click="handleButtonItemClick(item.action, clubInfo)"
+        >
+          {{ item.label }}
         </el-button>
       </div>
     </div>
@@ -892,6 +1015,23 @@ onUnmounted(() => {
           />
         </div>
       </div>
+    </template>
+  </base-dialog>
+  <!-- 删除俱乐部提示框 -->
+  <base-dialog
+    v-model="dialogDeleteClubItemVisible"
+    title="Delete Item ?"
+    button-type="danger"
+    confirm-text="Delete"
+    @cancel="dialogDeleteClubItemVisible = false"
+    @confirm="handleDeleteClub"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-regular text-neutrals-grey-3">
+        Are you sure you want to delete the {{ clubForm.name }} Club? All data
+        associated with this club will be permanently deleted, and this action
+        cannot be undone.
+      </p>
     </template>
   </base-dialog>
 </template>

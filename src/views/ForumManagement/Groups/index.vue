@@ -279,9 +279,9 @@ const computedMenuItems = computed(() => (row) => {
   } else if (row.state === 'Active') {
     //  Active
     items.push(
-      { label: 'Edit', action: 'edit' },
       { label: 'Disable', action: 'disable' },
       { label: 'Disband', action: 'disband' },
+      { label: 'Edit', action: 'edit' },
     )
   }
 
