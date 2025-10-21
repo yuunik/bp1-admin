@@ -215,13 +215,13 @@ const getOBDConnectedCountList = async (id) => {
         borderColor: '#376DF7', // 折线的颜色
         backgroundColor: '#376DF7', // 数据点的填充颜色（也可用于填充区域）
         tension: 0, // 贝塞尔曲线的张力，0 表示直线，越大越平滑
-        pointRadius: 0, // 数据点的默认半径大小（单位：像素）
+        pointRadius: 3, // 数据点的默认半径大小（单位：像素）
         pointHoverRadius: 6, // 鼠标悬停时数据点的半径大小
       },
     ],
   }
 
-  chartOptions.value.scales.y.max = maxCount || 10
+  chartOptions.value.scales.y.max = maxCount + 5
 }
 
 const behaviorStatisticsRef = ref(null)
