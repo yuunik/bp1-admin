@@ -415,7 +415,7 @@ const loadOBDData = async (id) => {
           >
             <template v-if="obdInfo.warrantyTime">
               <span class="heading-body-body-12px-regular items-center">
-                {{ getOneYearLaterDateWithDDMMMYYYYY(obdInfo.warrantyTime) }}
+                {{ getDateWithDDMMMYYYY(obdInfo.warrantyTime) }}
               </span>
               <el-tag
                 :type="
