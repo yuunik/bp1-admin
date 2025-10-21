@@ -135,5 +135,13 @@ const tabTabObj = Object.freeze({
   :deep(.el-tabs__header) {
     border: none;
   }
+
+  & > * {
+    color: #ccc;
+  }
+
+  :deep(.el-table) {
+    @apply text-[#ccc];
+  }
 }
 </style>
