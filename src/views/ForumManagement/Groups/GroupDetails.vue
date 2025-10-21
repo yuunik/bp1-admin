@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { useCloned } from '@vueuse/core'
+import { useCloned, useSessionStorage } from '@vueuse/core'
 
 import {
   addClubMemberApi,
@@ -15,7 +15,6 @@ import {
   rejectUserApi,
 } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
-import { getForumListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import { useUserStore } from '@/store/index.js'
@@ -26,6 +25,7 @@ import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { getUserListApi } from '@/apis/userApi.js'
 import { useSort } from '@/composables/useSort.js'
+import { RouteName } from '@/utils/constantsUtil.js'
 
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
@@ -37,6 +37,9 @@ const stateColorMap = {
   Disabled: 'gray',
   Active: 'green',
 }
+
+// 俱乐部管理者列表
+const clubManagerList = useSessionStorage('selectedClubManagerList', [])
 
 // 当前俱乐部的 id
 const clubId = ref('')
@@ -370,6 +373,11 @@ onMounted(async () => {
     init()
   }
 })
+
+onUnmounted(() => {
+  // 销毁
+  clubManagerList.value = []
+})
 </script>
 
 <template>
@@ -428,7 +436,10 @@ onMounted(async () => {
             >
               Status
             </span>
-            <base-tag text="Active" color="green" />
+            <base-tag
+              :text="clubInfo.state"
+              :color="stateColorMap[clubInfo.state]"
+            />
           </div>
           <div class="row-center h-32 gap-8">
             <span
@@ -436,24 +447,106 @@ onMounted(async () => {
             >
               Owner
             </span>
-            <span
-              class="heading-body-body-12px-regular text-neutrals-off-black"
-            >
-              Bessie Cooper
-            </span>
+            <template v-if="clubManagerList && clubManagerList.length">
+              <div v-if="clubManagerList.length === 1" class="row-center">
+                <el-avatar
+                  v-if="clubManagerList[0].logo"
+                  fit="cover"
+                  :src="getFullFilePath(clubManagerList[0].logo)"
+                  class="mr-8 h-20 w-20 shrink-0"
+                  alt="user avatar"
+                  shape="circle"
+                  :size="20"
+                  @error="errorHandler"
+                >
+                  <template #error>
+                    <i class="i-ep:picture" />
+                  </template>
+                </el-avatar>
+                <span
+                  class="text-wrap underline"
+                  @click="
+                    $router.push({
+                      name: RouteName.PERSON_MANAGE,
+                      params: { id: clubManagerList[0].userId },
+                    })
+                  "
+                >
+                  {{ clubManagerList[0].name || '-' }}
+                </span>
+              </div>
+              <el-dropdown v-else>
+                <div class="row-center">
+                  <el-avatar
+                    v-if="clubManagerList[0].logo"
+                    fit="cover"
+                    :src="getFullFilePath(clubManagerList[0].logo)"
+                    class="mr-8 h-20 w-20 shrink-0"
+                    alt="user avatar"
+                    shape="circle"
+                    :size="20"
+                    @error="errorHandler"
+                  >
+                    <template #error>
+                      <i class="i-ep:picture" />
+                    </template>
+                  </el-avatar>
+                  <span class="text-wrap underline">
+                    {{ clubManagerList[0].name || '-' }}
+                  </span>
+                  <span>+{{ clubManagerList.length - 1 }}</span>
+                </div>
+                <template #dropdown>
+                  <el-dropdown-menu class="custom-dropdown-menu">
+                    <el-dropdown-item
+                      v-for="user in clubManagerList"
+                      :key="user.id"
+                    >
+                      <div class="clubManagerList-center">
+                        <el-avatar
+                          v-if="user.logo"
+                          fit="cover"
+                          :src="getFullFilePath(user.logo)"
+                          class="mr-8 h-20 w-20 shrink-0"
+                          alt="user avatar"
+                          shape="circle"
+                          :size="20"
+                          @error="errorHandler"
+                        >
+                          <template #error>
+                            <i class="i-ep:picture" />
+                          </template>
+                        </el-avatar>
+                        <span class="text-wrap">
+                          {{ user.name || '-' }}
+                        </span>
+                      </div>
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </template>
+            <span v-else>-</span>
           </div>
         </div>
-        <div class="row-center gap-8">
+        <div class="row-center gap-8" v-if="clubInfo.state !== 'Rejected'">
+          <span
+            class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
+          >
+            Description
+          </span>
+          <p class="heading-body-body-12px-regular text-neutrals-off-black">
+            {{ clubInfo.description || '-' }}
+          </p>
+        </div>
+        <div class="row-center gap-8" v-else>
           <span
             class="w-112 heading-body-body-12px-medium text-neutrals-grey-3"
           >
             Reject Reason
           </span>
           <p class="heading-body-body-12px-regular text-neutrals-off-black">
-            One morning, when Gregor Samsa woke from troubled dreams, he found
-            himself transformed in his bed in One morning, when Gregor Samsa
-            woke from troubled dreams, he found himself transformed in his bed
-            in
+            {{ clubInfo.reason || '-' }}
           </p>
         </div>
       </div>

@@ -1,6 +1,6 @@
 <script setup>
 import { ElMessage } from 'element-plus'
-import { useCloned, useDebounceFn } from '@vueuse/core'
+import { useCloned, useDebounceFn, useSessionStorage } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
@@ -96,6 +96,10 @@ const statusFilterParams = ref([
 
 // 禁止俱乐部创建的弹窗
 const dialogRejectGroupVisible = ref(false)
+
+// 所选中的俱乐部管理者列表
+const selectedClubManagerList = useSessionStorage('selectedClubManagerList', [])
+
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
@@ -215,6 +219,8 @@ const handleOpenClubInfoDialog = async (row, column) => {
     }
     return
   }
+  // 记录当前的俱乐部所属的管理者列表
+  selectedClubManagerList.value = row.usersDto
 
   router.push({ name: RouteName.GROUP_DETAILS, params: { id: row.id } })
 }
