@@ -135,7 +135,10 @@ watch(searchKeys, () => {
               v-for="section in sectionList"
               :key="section.label"
               :value="section.value"
-              v-show="!keywords || section.label.includes(keywords)"
+              v-show="
+                !keywords ||
+                section.label.toLowerCase().includes(keywords.toLowerCase())
+              "
             >
               <span
                 :class="[
