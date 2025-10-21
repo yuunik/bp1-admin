@@ -8,7 +8,14 @@ import GreetingIcon from '@/assets/images/Waving Hand.png'
 import { useUserStore } from '@/store/index.js'
 import { storeToRefs } from 'pinia'
 import { getTodayWithWeekday } from '@/utils/dateUtil.js'
-import { getDashboardDataApi } from '@/apis/dahboardApi.js'
+import {
+  getAllUserExpenseSumApi,
+  getDashboardDataApi,
+} from '@/apis/dahboardApi.js'
+import DashboardCard from '@/views/Dashboard/components/DashboardCard.vue'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import { RouteName } from '@/utils/constantsUtil.js'
+import { useSort } from '@/composables/useSort.js'
 
 const chartData = ref({
   labels: [
@@ -86,916 +93,247 @@ const { username } = storeToRefs(userStore)
 
 const dashboardData = ref({})
 
+// expense user list
+const expenseUserList = ref([])
+
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
+// expense 用户总花费
+const expenseUserListTotalAmount = ref(0)
+
+// 总用户数
+const userCount = ref(0)
+
+// 新增用户数
+const newUserCount = ref(0)
+
+// obd用户数
+const obdUserCount = ref(0)
+
 // 获取数据
 const getDashboardData = async () => {
   // 获取数据
-  const { data } = await getDashboardDataApi()
-  dashboardData.value = data
+  const {
+    data: { totalUserCount, todayUserCount, obdUserCount },
+  } = await getDashboardDataApi()
+  userCount.value = totalUserCount
+  newUserCount.value = todayUserCount
+  obdUserCount.value = obdUserCount
 }
 
-onMounted(() => {
-  // 获取数据
-  getDashboardData()
-})
+// 获取expense user list数据
+const getExpenseUserList = async () => {
+  const {
+    data: { users, allAmount },
+  } = await getAllUserExpenseSumApi(sortParams)
+  // 设置数据
+  expenseUserList.value = users
+  expenseUserListTotalAmount.value = `$${allAmount}`
+}
 
-// 获取数据
-// getDashboardData()
+// 排序函数
+const sort = useSort(sortParams, getExpenseUserList)
+
+onMounted(async () => {
+  // 获取数据
+  await Promise.all([getDashboardData(), getExpenseUserList()])
+})
 </script>
 
 <template>
-  <div class="dashboard-container">
-    <div class="container-left">
-      <div class="greeting">
-        <div class="greeting-left">
-          <p class="greeting-left_welcome">Welcome back!</p>
-          <div class="greeting-left_name">
-            <h2 class="greeting-left_name_text">{{ username }}</h2>
-            <div class="h-24 w-24">
-              <img :src="GreetingIcon" alt="Waving Hand" />
-            </div>
+  <section class="h-full! flex overflow-auto">
+    <div class="box-border flex h-full w-[67%] flex-col gap-24 p-32">
+      <!-- greeting -->
+      <div class="flex-between h-42">
+        <div class="flex flex-col gap-8">
+          <strong
+            class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"
+          >
+            Welcome back!
+          </strong>
+          <div class="flex h-24 gap-4">
+            <!-- user name -->
+            <em
+              class="heading-h2-20px-medium text-neutrals-off-black leading-30 not-italic"
+            >
+              Jonathan Wong
+            </em>
+            <el-image
+              class="inline-block h-24 w-24 rounded-full"
+              :src="GreetingIcon"
+            />
           </div>
         </div>
-        <p class="greeting-right">{{ getTodayWithWeekday() }}</p>
+        <p class="heading-body-large-body-14px-regular text-neutrals-grey-4">
+          Tuesday, 20 Aug
+        </p>
       </div>
-      <div class="order">
-        <div class="order_1">
-          <div class="order_1_left">
-            <div class="order_1_left-text">Order</div>
-          </div>
-          <div class="order_1_right-vector">
-            <i class="icon-typesarrow-right"></i>
-          </div>
+      <!-- order info -->
+      <div class="flex flex-col gap-8">
+        <!-- title -->
+        <div class="flex-between h-32">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
+          >
+            Order
+          </h3>
+          <i class="icon-typesarrow-right text-16" />
         </div>
-        <div class="order_2">
-          <div class="order_2_box1">
-            <div class="order_2_allorders">All Orders</div>
-            <div class="order_2_allorders-data">-</div>
+        <!-- card container -->
+        <div class="flex flex-col gap-8">
+          <div class="flex gap-16">
+            <dashboard-card
+              class="flex-1"
+              metric-label="All Orders"
+              metric-value="0"
+            />
+            <dashboard-card
+              class="flex-1"
+              metric-label="New Additions"
+              metric-value="20"
+            />
           </div>
-          <div class="order_2_box1">
-            <div class="order_2_new text-nowrap">Add New</div>
-            <div class="order_2_new-data">-</div>
-          </div>
-        </div>
-        <div class="order_3">
-          <div class="order_3_box3">
-            <div class="order_3_pending">Pending</div>
-            <div class="order_3_pending-data">-</div>
-          </div>
-          <div class="order_3_box3">
-            <div class="order_3_shipped">Shipped</div>
-            <div class="order_3_shipped-data">-</div>
-          </div>
-          <div class="order_3_box3">
-            <div class="order_3_refund">Refund</div>
-            <div class="order_3_refund-data">-</div>
-          </div>
-        </div>
-      </div>
-      <div class="obd">
-        <div class="layout-1">
-          <div class="layout-1-text">OBD</div>
-          <div class="layout-1-vector">
-            <i class="icon-typesarrow-right"></i>
-          </div>
-        </div>
-        <div class="obd_content">
-          <div class="obd_box_1">
-            <div class="type-1">In Stock</div>
-            <div class="obd_box-data1">-</div>
-          </div>
-          <div class="obd_box_2">
-            <div class="type-1">In Use</div>
-            <div class="obd_box-data2">-</div>
+          <div class="flex gap-16">
+            <dashboard-card
+              class="flex-1"
+              metric-label="Pending"
+              metric-value="20"
+              metric-value-text-color="text-status-colours-yellow"
+            />
+            <dashboard-card
+              class="flex-1"
+              metric-label="Shipped"
+              metric-value="20"
+              metric-value-text-color="text-status-colours-orange"
+            />
+            <dashboard-card
+              class="flex-1"
+              metric-label="Refund"
+              metric-value="10"
+              metric-value-text-color="text-status-colours-purple"
+            />
           </div>
         </div>
       </div>
-      <div class="user">
-        <div class="layout-1">
-          <div class="layout-1-text">User</div>
-          <div class="layout-1-vector">
-            <i class="icon-typesarrow-right"></i>
-          </div>
+      <!-- OBD info -->
+      <div class="flex flex-col gap-8">
+        <!-- title -->
+        <div class="flex-between h-32">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
+          >
+            OBD
+          </h3>
+          <i class="icon-typesarrow-right text-16" />
         </div>
-        <div class="user_content">
-          <div class="user_box">
-            <div class="type-1">All User</div>
-            <div class="type-2">{{ dashboardData.totalUserCount }}</div>
-          </div>
-          <div class="user_box">
-            <div class="type-1">New Users</div>
-            <div class="type-2">{{ dashboardData.todayUserCount }}</div>
-          </div>
-          <div class="user_box">
-            <div class="type-1">OBD Users</div>
-            <div class="type-2">{{ dashboardData.obdUserCount }}</div>
-          </div>
+        <!-- card container -->
+        <div class="flex gap-24">
+          <dashboard-card
+            class="flex-1"
+            metric-label="In Stock"
+            metric-value="500"
+            bg-color="bg-status-colours-light-green"
+            metric-value-text-color="text-status-colours-green"
+          />
+          <dashboard-card
+            class="flex-1"
+            metric-label="In Use"
+            metric-value="500"
+            bg-color="bg-status-colours-light-blue"
+            metric-value-text-color="text-status-colours-blue"
+          />
+        </div>
+      </div>
+      <!-- User list info -->
+      <div class="flex flex-col gap-8">
+        <!-- title -->
+        <div class="flex-between h-32">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
+          >
+            User
+          </h3>
+          <i class="icon-typesarrow-right text-16" />
+        </div>
+        <!-- card container -->
+        <div class="flex gap-16">
+          <dashboard-card
+            class="flex-1"
+            metric-label="All User"
+            :metric-value="userCount"
+          />
+          <dashboard-card
+            class="flex-1"
+            metric-label="New Users"
+            :metric-value="newUserCount"
+          />
+          <dashboard-card
+            class="flex-1"
+            metric-label="OBD Users"
+            :metric-value="obdUserCount"
+          />
+          <dashboard-card
+            class="flex-1"
+            metric-label="Total Expense"
+            :metric-value="expenseUserListTotalAmount"
+          />
+        </div>
+        <div>
+          <el-table :data="expenseUserList" @sort-change="sort">
+            <el-table-column
+              prop="name"
+              label="User"
+              min-width="69%"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                <el-avatar
+                  v-if="row.logo"
+                  fit="cover"
+                  :src="getFullFilePath(row.logo)"
+                  class="mr-8 h-20 w-20 shrink-0"
+                  alt="brand icon"
+                  shape="circle"
+                  :size="20"
+                  @error="errorHandler"
+                >
+                  <template #error>
+                    <i class="i-ep:picture" />
+                  </template>
+                </el-avatar>
+                <span
+                  class="cursor-pointer text-wrap underline"
+                  @click="
+                    $router.push({
+                      name: RouteName.PERSON_MANAGE,
+                      params: { id: row.userId },
+                    })
+                  "
+                >
+                  {{ row.name || '-' }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="totalAmount"
+              label="Total Expense"
+              min-width="31%"
+            >
+              <template v-slot="{ row }">
+                <span>${{ row.totalAmount }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </div>
     </div>
-
-    <div class="container-right">
-      <div class="container-right_1">
-        <div class="container-card1">
-          <div class="container-card1-left">
-            <div class="type-1">Subcription</div>
-            <div class="type-2">-</div>
-          </div>
-          <div class="container-card1-right">
-            <div class="type-1 text-nowrap">Rate</div>
-            <div class="type-2">- %</div>
-            Subscription
-          </div>
-        </div>
-        <div class="container-card2 w-full">
-          <div class="container-card2-left">
-            <div class="card2-left_1">New Subscription</div>
-            <div class="card2-left_2">
-              <div class="card2-left_2-1">-</div>
-              <div class="card2-left_2-2-1">
-                <div class="card2-left_2-2-2 text-nowrap">- %</div>
-              </div>
-            </div>
-            <div class="card2-left_3">Compared to last month</div>
-          </div>
-          <div class="container-card2-right">
-            <!--<Line :data="chartData" :options="chartOptions" />-->
-          </div>
-        </div>
-        <div class="container-card3">
-          <div class="container-card3-left"></div>
-          <div class="container-card3-right">
-            <div class="card3-right_1">Order from</div>
-            <div class="card3-right_2">
-              <div class="card3-right_2-left">
-                <div class="card3-right_2-icon"></div>
-                <div class="card3-right_2-text">App</div>
-              </div>
-              <div class="card3-right_2-num">-</div>
-            </div>
-            <div class="card3-right_3">
-              <div class="card3-right_3-left">
-                <div class="card3-right_3-icon"></div>
-                <div class="card3-right_3-text">Web</div>
-              </div>
-              <div class="card3-right_3-num">-</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container-right_2">
-        <div class="notification-title">
-          <div class="notification-title-left">Notifications</div>
-          <div class="notification-title-right">
-            <i class="icon-typesarrow-right"></i>
-          </div>
-        </div>
-        <div class="notification-content">
-          <ContentItem
-            v-for="item in 100"
-            :key="item"
-            avatarName="JW"
-            title="Title"
-            description="Description"
-            time="1 mins ago"
-          ></ContentItem>
-        </div>
-      </div>
-    </div>
-  </div>
+    <el-divider direction="vertical" />
+    <div class="box-border h-full w-[33%] p-16">B</div>
+  </section>
 </template>
 
-<style scoped lang="scss">
-.dashboard-container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  padding: 8px;
-  gap: 8px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.container-left {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  height: 100%;
-  flex: 0 0 76%;
-  padding: 32px;
-  gap: 32px;
-  overflow: hidden;
-}
-
-.greeting {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: none;
-  gap: 32px;
-  min-height: 60px;
-}
-
-.greeting-left {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 100%;
-  max-width: none;
-  gap: 8px;
-}
-
-.greeting-right {
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  width: 100%;
-  max-width: none;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  color: #6f7788;
-}
-
-.greeting-left_welcome {
-  width: 100%;
-  max-width: none;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  color: #6f7788;
-}
-
-.greeting-left_name {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: none;
-  gap: 4px;
-}
-
-.greeting-left_name_text {
-  width: fit-content;
-  height: 15px;
-  content: 'Jonathan Wong';
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 30px;
-  letter-spacing: 0;
-  color: #1b1a1e;
-}
-
-.order {
-  display: flex;
-  flex-direction: column;
-  flex: 2;
-  width: 100%;
-  max-width: none;
-  border-radius: 8px;
-  gap: 8px;
-}
-
-.order_1 {
-  display: flex;
-  width: 100%;
-  max-width: none;
-  justify-content: space-between;
-  padding-top: 8px;
-  padding-bottom: 16px;
-}
-
-.order_2 {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  width: 100%;
-  max-width: none;
-  gap: 16px;
-}
-
-.order_3 {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  width: 100%;
-  max-width: none;
-  padding-top: 8px;
-  gap: 16px;
-}
-
-.order_1_left {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: none;
-  max-width: 72px;
-  max-height: 10px;
-  gap: 8px;
-}
-
-.order_1_left-text {
-  width: 100%;
-  max-width: none;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  color: #1b1a1e;
-}
-
-.order_1_right-vector {
-  width: 6.11px;
-  height: 10px;
-  fill: #99a0ae;
-}
-
-.order_2_box1 {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  height: 100%;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 16px;
-  background-color: #eaeff4;
-}
-
-.order_2_allorders {
-  width: 66px;
-  height: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6f7788;
-}
-
-.order_2_allorders-data {
-  width: 220px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #1b1a1e;
-}
-
-.order_2_new {
-  width: 28px;
-  height: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6f7788;
-}
-
-.order_2_new-data {
-  width: 220px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #1b1a1e;
-}
-
-.order_3_box3 {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 16px;
-  background-color: #eaeff4;
-}
-
-.order_3_pending {
-  width: 54px;
-  height: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6f7788;
-}
-
-.order_3_pending-data {
-  width: 130.67px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #f6b51e;
-}
-
-.order_3_shipped {
-  width: 55px;
-  height: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6f7788;
-}
-
-.order_3_shipped-data {
-  width: 130.67px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #ff6d1a;
-}
-
-.order_3_refund {
-  width: 48px;
-  height: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6f7788;
-}
-
-.order_3_refund-data {
-  width: 130.67px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6b07ec;
-}
-
-.obd {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  width: 100%;
-  max-width: none;
-  border-radius: 8px;
-  gap: 8px;
-}
-
-.layout-1 {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  max-width: none;
-  justify-content: space-between;
-  padding-top: 8px;
-  padding-bottom: 16px;
-}
-
-.layout-1-text {
-  display: flex;
-  flex-direction: row;
-  max-width: 64px;
-  max-height: 10px;
-  gap: 8px;
-}
-
-.layout-1-vector {
-  width: 6.11px;
-  height: 10px;
-  fill: #99a0ae;
-}
-
-.obd_content {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  width: 100%;
-  max-width: none;
-  gap: 24px;
-}
-
-.obd_box_1 {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 16px;
-  background-color: #e6f7f5;
-}
-
-.obd_box_2 {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 16px;
-  background-color: #ebf0f8;
-}
-
-.type-1 {
-  width: 86px;
-  height: 10px;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #6f7788;
-}
-
-.obd_box-data1 {
-  width: 216px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  vertical-align: middle;
-  color: #05ad9d;
-}
-
-.obd_box-data2 {
-  width: 216px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  vertical-align: middle;
-  color: #3288f8;
-}
-
-.user {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  border-radius: 8px;
-  gap: 8px;
-}
-
-.user_content {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  justify-content: space-between;
-  width: 100%;
-  max-width: none;
-  gap: 8px;
-}
-
-.user_box {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  border-radius: 8px;
-  padding: 16px;
-  gap: 16px;
-  background-color: #eaeff4;
-}
-
-.type-2 {
-  width: 130.67px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  letter-spacing: 0;
-  vertical-align: middle;
-  color: #1b1a1e;
-}
-
-.container-right {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  flex: 1;
-  width: auto;
-  height: 100%;
-  max-width: none;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  border-left: 1px solid #eaeff4;
-  padding-top: 16px;
-  padding-bottom: 16px;
-  gap: 32px;
-  background-color: #fcfcfc;
-  overflow: hidden;
-}
-
-.container-right_1 {
-  display: flex;
-  flex-direction: column;
-  flex: 1.3;
-  width: 100%;
-  max-width: none;
-  box-sizing: border-box;
-  padding-right: 16px;
-  padding-left: 16px;
-  gap: 16px;
-}
-
-.container-right_2 {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  width: 100%;
-  max-width: none;
-  border-radius: 8px;
-  padding-right: 16px;
-  padding-left: 16px;
-  flex: 1;
-  min-height: 0;
-}
-
-.container-card1 {
-  display: flex;
-  flex: 1;
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  border: 1px solid #eaeff4;
-  padding: 16px;
-  gap: 16px;
-  box-shadow: 0 1px 2px 0 rgba(10, 173, 212, 0.03);
-}
-
-.container-card2 {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  box-sizing: border-box;
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
-  padding: 24px 16px;
-  gap: 24px;
-  background: radial-gradient(#0a1c34, #1b1a1e);
-  box-shadow: 0 1px 2px 0 rgba(10, 173, 212, 0.03);
-}
-
-.container-card3 {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 8px;
-  border: 1px solid #eaeff4;
-  padding: 16px;
-  gap: 16px;
-  box-shadow: 0 1px 2px 0 rgba(10, 173, 212, 0.03);
-}
-
-.container-card1-left {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-  height: fit-content;
-  max-height: 45px;
-  gap: 16px;
-}
-
-.container-card1-right {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-  height: fit-content;
-  max-height: 45px;
-  gap: 16px;
-}
-
-.container-card2-left {
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  flex: 1;
-  gap: 16px;
-}
-
-.card2-left_1 {
-  width: 101px;
-  height: 9px;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0;
-  color: #cacfdb;
-}
-
-.card2-left_2 {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: fit-content;
-  gap: 8px;
-}
-
-.card2-left_2-1 {
-  width: 17px;
-  height: 19px;
-  font-weight: 500;
-  font-size: 26px;
-  line-height: 34px;
-  color: #fcfcfc;
-}
-
-.card2-left_2-2-1 {
-  width: 23px;
-  height: 9px;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  color: #ef3c30;
-}
-
-.card2-left_2-2-2 {
-  display: flex;
-  flex-direction: row;
-  width: fit-content;
-  height: fit-content;
-  border-radius: 100px;
-  padding: 4px;
-  gap: 8px;
-  background-color: rgba(239, 60, 48, 0.2);
-}
-
-.card2-left_3 {
-  width: 157px;
-  height: 7px;
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 15px;
-  letter-spacing: 0;
-  color: #99aaae;
-  vertical-align: middle;
-}
-
-.container-card3-left {
-  width: 96px;
-  height: 96px;
-  border: 2px solid #fcfcfc;
-  background-color: $branding-colours-primary;
-  border-radius: 50%;
-}
-
-.container-card3-right {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  height: fit-content;
-  max-height: 59px;
-  gap: 16px;
-}
-
-.card3-right_1 {
-  font-weight: 400;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0;
-  color: #6f7788;
-}
-
-.card3-right_2 {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: fit-content;
-  justify-content: space-between;
-}
-
-.card3-right_2-left {
-  display: flex;
-  flex-direction: row;
-  width: fit-content;
-  height: fit-content;
-  gap: 8px;
-  min-height: 8px;
-}
-
-.card3-right_2-icon {
-  width: 8px;
-  height: 8px;
-  border-radius: 4px;
-  background: radial-gradient(circle, #0a1c34, #1b1a1e);
-}
-
-.card3-right_2-text {
-  font-weight: 400;
-  font-size: 10px;
-  line-height: 15px;
-  letter-spacing: 0;
-  color: #6f7788;
-}
-
-.card3-right_2-num {
-  font-weight: 500;
-  font-style: normal;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0;
-  color: #1b1a1e;
-}
-
-.card3-right_3 {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: fit-content;
-  justify-content: space-between;
-}
-
-.card3-right_3-left {
-  display: flex;
-  flex-direction: row;
-  width: fit-content;
-  height: fit-content;
-  gap: 8px;
-  min-height: 8px;
-}
-
-.card3-right_3-icon {
-  width: 8px;
-  height: 8px;
-  border-radius: 4px;
-  background-color: #006bf7;
-}
-
-.card3-right_3-text {
-  font-weight: 400;
-  font-style: normal;
-  font-size: 10px;
-  line-height: 15px;
-  letter-spacing: 0;
-  color: #6f7788;
-}
-
-.card3-right_3-num {
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 16px;
-  letter-spacing: 0;
-  color: #1b1a1e;
-}
-
-.notification-content {
-  width: 100%;
-  flex: 1;
-  overflow: hidden;
-  overflow-y: auto;
-  padding-right: 4px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  box-sizing: border-box;
-}
-
-.notification-content::-webkit-scrollbar {
-  display: none;
-}
-
-.notification-title {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 32px;
-  justify-content: space-between;
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-.notification-title-left {
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
-  color: #1b1a1e;
-}
-
-.notification-title-right {
-  width: 6.11px;
-  height: 10px;
-}
-</style>
+<style scoped lang="scss"></style>

@@ -9,6 +9,8 @@ import { useAuthToken } from '@/composables/useAuthToken.js'
 const AppApi = Object.freeze({
   // 获取dashboard面板数据
   GET_DASHBOARD_DATA: '/manager/dashboard/dashboards',
+  // 获取所有用户的expense总额
+  GET_ALL_USER_EXPENSE_SUM: '/manager/getusertotal',
 })
 
 // 获取 token
@@ -24,6 +26,28 @@ export const getDashboardDataApi = () => {
 
   return request({
     url: AppApi.GET_DASHBOARD_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取所有用户的expense总额
+ *
+ * @param params
+ * @param {string} params.sortBy 排序字段
+ * @param {string} params.sort 排序方式
+ *
+ * @returns {Promise}
+ */
+export const getAllUserExpenseSumApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('sortBy', params.sortBy)
+  data.append('sort', params.sort)
+
+  return request({
+    url: AppApi.GET_ALL_USER_EXPENSE_SUM,
     method: 'POST',
     data,
   })
