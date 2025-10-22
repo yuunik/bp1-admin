@@ -280,13 +280,14 @@ const handleDownDTCReport = async () => {
   try {
     downloading.value = true
     const {
-      data: { dtcShareUrl },
+      data: { dtcShareUrl, id },
     } = await addDtcReportApi({
       vehicleId: dtcInfo.value.vehicleId,
       dtcId: dtcInfo.value.id,
     })
+    console.log('!!!!!!!!!!!!', id)
     dtcShareUrl &&
-      router.push({ name: 'Vehicle DTCs Report', id: dtcInfo.value.id })
+      router.push({ name: 'Vehicle DTCs Report', params: { id: id } })
   } finally {
     downloading.value = false
   }
