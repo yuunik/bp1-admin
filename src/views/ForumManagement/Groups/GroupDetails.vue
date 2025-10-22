@@ -707,6 +707,7 @@ onUnmounted(() => {
             class="w-fit"
             size="small"
             @click="openAddMemberDialog"
+            v-show="clubInfo.state === 'Active'"
           >
             <template #icon>
               <i class="icon-typesadd text-neutrals-blue" />
