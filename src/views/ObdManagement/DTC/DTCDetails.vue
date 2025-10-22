@@ -285,7 +285,8 @@ const handleDownDTCReport = async () => {
       vehicleId: dtcInfo.value.vehicleId,
       dtcId: dtcInfo.value.id,
     })
-    dtcShareUrl && router.push(dtcShareUrl)
+    dtcShareUrl &&
+      router.push({ name: 'Vehicle DTCs Report', id: dtcInfo.value.id })
   } finally {
     downloading.value = false
   }
