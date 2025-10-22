@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
-import { useCloned, useSessionStorage } from '@vueuse/core'
+import { useCloned, useDebounceFn, useSessionStorage } from '@vueuse/core'
 
 import {
   addClubMemberApi,
@@ -30,7 +30,7 @@ import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { getUserListApi } from '@/apis/userApi.js'
 import { useSort } from '@/composables/useSort.js'
-import { RouteName } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
@@ -276,20 +276,26 @@ const handleTabChange = (val) => {
 }
 
 // 获取用户列表
-const getUserList = async () => {
+const getUserList = async (queryCondition) => {
   const { data } = await getUserListApi({
     page: 0,
     pageSize: 9999,
     sort: '',
     sortBy: '',
     statusKey: '',
-    searchKey: '',
+    searchKey: queryCondition || '',
   })
   newUserList.value = data.map((item) => ({
     label: item.name,
     value: item.id,
   }))
 }
+
+// 过滤用户列表
+const filterUserList = useDebounceFn(
+  (query) => getUserList(query),
+  TimingPreset.DEBOUNCE,
+)
 
 // 打开新增用户的弹窗
 const openAddMemberDialog = async () => {
@@ -954,25 +960,20 @@ onUnmounted(() => {
         >
           User
         </span>
-        <!--<el-select-->
-        <!--  class="select-container h-32"-->
-        <!--  v-model="selectedUserId"-->
-        <!--  placeholder="Select a user"-->
-        <!--&gt;-->
-        <!--  <el-option-->
-        <!--    v-for="userInfo in newUserList"-->
-        <!--    :key="userInfo.value"-->
-        <!--    :label="userInfo.label"-->
-        <!--    :value="userInfo.value"-->
-        <!--  />-->
-        <!--</el-select>-->
-        <el-autocomplete
-          v-model="selectedUserId"
+        <el-select
           class="select-container h-32"
-          :fetch-suggestions="getAutoCompleteDataList"
-          clearable
-          placeholder="Please Input"
-        />
+          v-model="selectedUserId"
+          placeholder="Select a user"
+          filterable
+          :filter-method="filterUserList"
+        >
+          <el-option
+            v-for="userInfo in newUserList"
+            :key="userInfo.value"
+            :label="userInfo.label"
+            :value="userInfo.value"
+          />
+        </el-select>
       </div>
     </template>
   </base-dialog>
