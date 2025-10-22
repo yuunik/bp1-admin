@@ -1,12 +1,12 @@
 <script setup>
-import { Line } from 'vue-chartjs'
+import { Line, Pie } from 'vue-chartjs'
+import { storeToRefs } from 'pinia'
 
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
 // 静态资源
 import GreetingIcon from '@/assets/images/Waving Hand.png'
 import { useUserStore } from '@/store/index.js'
-import { storeToRefs } from 'pinia'
 import { getTodayWithWeekday } from '@/utils/dateUtil.js'
 import {
   getAllUserExpenseSumApi,
@@ -86,6 +86,53 @@ const chartOptions = ref({
   },
 })
 
+const orderFormData = {
+  labels: ['App', 'Web'],
+  datasets: [
+    {
+      data: [20, 80],
+      backgroundColor: ['#000000', '#3B82F6'], // 黑色 + 蓝色
+      borderWidth: 0,
+      cutout: '70%', // 控制环的粗细
+    },
+  ],
+}
+
+// 自定义插件：在中心绘制文字
+const centerTextPlugin = {
+  id: 'centerText',
+  afterDraw(chart) {
+    const { ctx, width, height } = chart
+    ctx.save()
+
+    const text1 = 'Web'
+    const text2 = '80%'
+
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    // 第一行
+    ctx.fillStyle = '#6F7788'
+    ctx.font = '14px sans-serif'
+    ctx.fillText(text1, width / 2, height / 2 - 10)
+
+    // 第二行
+    ctx.font = 'bold 16px sans-serif'
+    ctx.fillText(text2, width / 2, height / 2 + 15)
+
+    ctx.restore()
+  },
+}
+
+const orderFormOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      display: false, // 右侧图例可关掉，自己写 legend
+    },
+  },
+}
+
 const userStore = useUserStore()
 
 // 获取用户相关信息
@@ -145,7 +192,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="h-full! flex overflow-auto">
+  <section class="h-full! border-box flex overflow-auto overflow-x-hidden">
     <div class="box-border flex h-full w-[67%] flex-col gap-24 p-32">
       <!-- greeting -->
       <div class="flex-between h-42">
@@ -160,7 +207,7 @@ onMounted(async () => {
             <em
               class="heading-h2-20px-medium text-neutrals-off-black leading-30 not-italic"
             >
-              Jonathan Wong
+              {{ username }}
             </em>
             <el-image
               class="inline-block h-24 w-24 rounded-full"
@@ -169,7 +216,7 @@ onMounted(async () => {
           </div>
         </div>
         <p class="heading-body-large-body-14px-regular text-neutrals-grey-4">
-          Tuesday, 20 Aug
+          {{ getTodayWithWeekday() }}
         </p>
       </div>
       <!-- order info -->
@@ -332,8 +379,197 @@ onMounted(async () => {
       </div>
     </div>
     <el-divider direction="vertical" />
-    <div class="box-border h-full w-[33%] p-16">B</div>
+    <div class="box-border flex h-full w-[33%] flex-col gap-32 p-16">
+      <div class="flex flex-col gap-16">
+        <!-- Subscription info -->
+        <div class="rounded-8 border-container row-center px-16 py-36">
+          <div class="flex flex-1 flex-col gap-16">
+            <span
+              class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"
+            >
+              Subscription
+            </span>
+            <p
+              class="heading-h1-26px-medium leading-34 text-neutrals-off-black leading-34"
+            >
+              50
+            </p>
+          </div>
+          <div class="flex flex-1 flex-col gap-16">
+            <span
+              class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"
+            >
+              Subscription Rate
+            </span>
+            <p
+              class="heading-h1-26px-medium leading-34 text-neutrals-off-black leading-34"
+            >
+              40%
+            </p>
+          </div>
+        </div>
+        <!-- New Subscription -->
+        <div class="new-subscription-container">
+          <div class="flex flex-1 flex-col gap-16">
+            <h4
+              class="heading-body-body-12px-regular leading-16 text-neutrals-grey-2"
+            >
+              New Subscription
+            </h4>
+            <div class="flex flex-col gap-16">
+              <div class="h-19 flex gap-8">
+                <em
+                  class="heading-h1-26px-medium text-neutrals-off-white leading-34"
+                >
+                  5
+                </em>
+                <i class="rounded-100 flex bg-[#EF3C3033] p-4">
+                  <em
+                    class="heading-body-body-12px-regular text-status-colours-red leading-16 m-auto not-italic"
+                  >
+                    -2%
+                  </em>
+                </i>
+              </div>
+              <span
+                class="heading-caption-caption-10px-regular text-neutrals-grey-3 leading-15 h-7"
+              >
+                Compared to last month
+              </span>
+            </div>
+          </div>
+          <Line
+            class="min-w-0 flex-1"
+            :data="chartData"
+            :options="chartOptions"
+          />
+        </div>
+        <!-- Order Form -->
+        <div
+          class="h-116 rounded-8 border-container row-center box-border flex gap-16 px-16 py-36"
+        >
+          <div class="h-96 flex-1">
+            <Pie
+              class="h-full w-full"
+              :data="orderFormData"
+              :options="orderFormOptions"
+              :plugins="[centerTextPlugin]"
+            />
+          </div>
+          <div class="flex flex-1 flex-col gap-16">
+            <h4
+              class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16 tracking-0"
+            >
+              Order From
+            </h4>
+            <div class="flex flex-col gap-16">
+              <div class="flex-between">
+                <div class="row-center h-9 gap-8">
+                  <i
+                    class="custom-radial-gradient block h-8 w-8 rounded-full"
+                  />
+                  <span
+                    class="heading-caption-caption-10px-regular text-neutrals-grey-4 leading-15"
+                  >
+                    App
+                  </span>
+                </div>
+                <span
+                  class="heading-body-body-12px-medium text-neutrals-off-black leading-16"
+                >
+                  20
+                </span>
+              </div>
+              <div class="flex-between">
+                <div class="row-center h-9 gap-8">
+                  <i
+                    class="bg-branding-colours-primary block h-8 w-8 rounded-full"
+                  />
+                  <span
+                    class="heading-caption-caption-10px-regular text-neutrals-grey-4 leading-15"
+                  >
+                    Web
+                  </span>
+                </div>
+                <span
+                  class="heading-body-body-12px-medium text-neutrals-off-black leading-16"
+                >
+                  80
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <!-- title -->
+        <div class="flex-between h-32">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
+          >
+            Order
+          </h3>
+          <i class="icon-typesarrow-right text-16" />
+        </div>
+        <!-- notifications-->
+        <div
+          class="h-55 border-tb-container row-center gap-12 py-8"
+          v-for="item in 10"
+          :key="item"
+        >
+          <!-- 头像 -->
+          <div class="relative h-32 w-32">
+            <!-- 头像 -->
+            <i
+              class="bg-neutrals-grey-1 m-auto block flex h-32 w-32 rounded-full"
+            >
+              <span class="leading-32 h-32">JW</span>
+            </i>
+            <!-- 消息通知点 -->
+            <i
+              class="bg-status-colours-green absolute right-0 top-0 block h-8 w-8 rounded-full"
+            />
+          </div>
+          <!-- 内容 -->
+          <div class="flex flex-col gap-8">
+            <p class="heading-body-body-12px-medium text-neutrals-off-black">
+              Title
+            </p>
+            <span
+              class="heading-caption-caption-10px-regular text-neutrals-grey-4"
+            >
+              Description
+            </span>
+            <span
+              class="heading-caption-caption-10px-regular text-neutrals-grey-3"
+            >
+              1 mins ago
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.border-container {
+  border: 1px solid #eaeef4;
+}
+
+// 新增订阅率的容器
+.new-subscription-container {
+  @apply rounded-8 h-116 flex px-16 py-24;
+  background-image: radial-gradient(circle, #0a1c34 0%, #1b1a1e 100%);
+  box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
+}
+
+.custom-radial-gradient {
+  background-image: radial-gradient(circle, #0a1c34 0%, #1b1a1e 100%);
+}
+
+.border-tb-container {
+  border-top: 1px solid #eff4f9;
+  border-bottom: 1px solid #eff4f9;
+}
+</style>
