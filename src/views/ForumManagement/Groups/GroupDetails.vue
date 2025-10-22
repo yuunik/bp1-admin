@@ -823,7 +823,7 @@ onUnmounted(() => {
                       </el-dropdown-item>
                     </el-dropdown-menu>
                     <el-dropdown-menu class="custom-dropdown-menu" v-else>
-                      <el-dropdown-item @click="handleApproveUser(row.id)">
+                      <el-dropdown-item @click="handleApproveUser(row.userId)">
                         Approve
                       </el-dropdown-item>
                       <el-dropdown-item @click="openRejectUserDialog(row)">
