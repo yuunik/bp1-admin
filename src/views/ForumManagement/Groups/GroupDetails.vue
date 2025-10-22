@@ -447,7 +447,8 @@ const handleDeleteClub = async () => {
   dialogDeleteClubItemVisible.value = false
   // 提示
   ElMessage.success('Delete successfully')
-  init()
+  // 路由跳转
+  router.push({ name: RouteName.GROUPS })
 }
 
 // 获取俱乐部日志
