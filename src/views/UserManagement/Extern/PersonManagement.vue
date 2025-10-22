@@ -24,6 +24,7 @@ import { RouteName } from '@/utils/constantsUtil.js'
 import EmptyOBD from '@/assets/specialIcons/empty-obd.svg'
 import EmptyCar from '@/assets/specialIcons/empty-car.svg'
 import { unbindOBDApi } from '@/apis/obdApi.js'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
 const logAndNoteDataList = ref([
   {
@@ -92,6 +93,66 @@ const logsAndNoteRef = ref(null)
 const unbindOBDDialogVisible = ref(false)
 
 const unbindOBDId = ref('')
+
+const expenseRecordList = ref([
+  { workshop: 'BMW', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
+  {
+    workshop: 'Sint-Lievenspoort',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'OLO-Rotonde',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'SamenPlan',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'Zorgbedrijf Antwerpen',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'Zonnestraal',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'De Elisbabeth',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'Groep Ubuntu',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  { workshop: 'Koca', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
+  { workshop: 'Zewopa', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
+  {
+    workshop: 'Hagewinde',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'Gielsbos',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  {
+    workshop: 'Cocon-Vilvoorde',
+    totalAmount: '$1,200.00',
+    date: '03 Apr 2026 10:00am',
+  },
+  { workshop: 'Zewopa', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
+])
+
+// 输入搜索关键字
+const searchKeywords = ref('')
 
 // 复制 handleCopyTransactionID
 const handleCopyTransactionID = async () => {
@@ -203,25 +264,7 @@ const sectionMap = [
 const scrollbarRef = ref()
 
 const handleScroll = () => {
-  // const scrollTop = scrollbarRef.value?.wrapRef?.scrollTop ?? 0
-  //
-  // let closestSection = sectionMap[0]
-  // let minDistance = Infinity
-  //
-  // for (const section of sectionMap) {
-  //   const el = section.ref.value
-  //   if (!el) continue
-  //
-  //   const offset = el.offsetTop
-  //   const distance = Math.abs(scrollTop - offset)
-  //
-  //   if (distance < minDistance) {
-  //     minDistance = distance
-  //     closestSection = section
-  //   }
-  // }
-  //
-  // activeTab.value = closestSection.key
+  // const scrollTop = scrollbarRef.value?.wrapRef
 }
 
 // 打开解绑 OBD 对话框
@@ -240,6 +283,8 @@ const handleUnbindOBD = async () => {
     unbindOBDDialogVisible.value = false
   }
 }
+
+const refresh = () => {}
 
 // 组件创建后, 发起请求
 const {
@@ -286,12 +331,9 @@ onMounted(async () => {
     <el-divider />
     <el-tabs v-model="activeTab">
       <el-tab-pane label="Customer Details" name="Customer Details" />
-      <el-tab-pane
-        label="OBD Devices"
-        name="OBD Devices"
-        v-if="obdDeviceList.length"
-      />
-      <el-tab-pane label="Vehicles" name="Vehicles" v-if="vehicleList.length" />
+      <el-tab-pane label="Expense Records" name="Expense Records" />
+      <el-tab-pane label="OBD Devices" name="OBD Devices" />
+      <el-tab-pane label="Vehicles" name="Vehicles" />
       <el-tab-pane
         label="Logs & Note"
         name="Logs & Note"
@@ -322,6 +364,8 @@ onMounted(async () => {
         <dd>{{ userInfo.subscription || '-' }}</dd>
         <dt>Last Login</dt>
         <dd>{{ getLastUsedDate(userInfo.updateTime) }}</dd>
+        <dt>Token Usage</dt>
+        <dd>-</dd>
         <dt>Status</dt>
         <dd>
           <base-tag
@@ -330,6 +374,52 @@ onMounted(async () => {
           />
         </dd>
       </dl>
+      <!-- Expense Records -->
+      <div class="flex flex-col gap-8">
+        <!-- header -->
+        <div
+          class="row-center heading-body-large-body-14px-medium mx-32 h-24 gap-8"
+        >
+          <h4 class="text-neutrals-off-black">Expense Records</h4>
+          <span class="text-neutrals-grey-3">
+            {{ expenseRecordList.length }}
+          </span>
+        </div>
+        <el-divider />
+        <!-- info -->
+        <dl
+          class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[122px_1fr] items-center gap-4 [&>dd]:h-32 [&>dt]:h-32"
+        >
+          <dt>Total Cost</dt>
+          <dd>$20,000.00</dd>
+          <dt>AI Insights</dt>
+          <dd>
+            Repair cost increased due to brake replacement. Fuel cost efficiency
+            improved 12% this month. You spent 18% more on Engine system vs last
+            period.
+          </dd>
+        </dl>
+        <!-- table -->
+        <div class="mx-32">
+          <el-divider />
+          <!-- 输入搜索 -->
+          <base-filter-input
+            class="h-32"
+            v-model="searchKeywords"
+            @inputChange="refresh"
+          />
+          <el-divider />
+          <el-table :data="expenseRecordList">
+            <el-table-column prop="workshop" label="Workshop" />
+            <el-table-column
+              prop="totalAmount"
+              label="Total Amount"
+              align="center"
+            />
+            <el-table-column prop="date" label="Date" />
+          </el-table>
+        </div>
+      </div>
       <!-- OBD Devices -->
       <div class="flex flex-col gap-8" ref="obdDevicesRef">
         <!-- header -->
