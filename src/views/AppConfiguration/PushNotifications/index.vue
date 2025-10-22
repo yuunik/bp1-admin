@@ -418,13 +418,6 @@ const getUserList = async () => {
     logo: item.logo,
     name: item.name,
   }))
-  userStatusFilterParams.value.unshift({
-    id: '-1',
-    label: 'All users',
-    value: '-1',
-    logo: '',
-    name: 'All users',
-  })
 }
 
 const getOBDVersionList = async () => {
