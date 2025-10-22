@@ -73,13 +73,14 @@ const handleViewPostDetails = (row, column) => {
 
 // 获取帖子列表
 const getPostList = async () => {
-  const { data } = await getForumListApi({
+  const { data, count } = await getForumListApi({
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     searchKey: conditionSearchParams.searchText,
     type: typeKeys.value,
   })
   postList.value = data
+  pagination.total = count
 }
 
 // 错误处理
