@@ -471,7 +471,7 @@ const handleCellMouseLeave = (row) => (row.isHover = false)
 // 查看详情
 const handleViewDetails = (row, column) => {
   const { no } = column
-  if (no === 0 || no === 11) {
+  if (no === 0 || no === 10) {
     return
   }
   // 设置表单数据
@@ -656,14 +656,14 @@ initData()
           @search="refresh"
         />
         <!-- 用户账号状态筛选 -->
-        <base-filter-panel
-          v-model="userStatusList"
-          v-model:keywords="userSearchText"
-          :section-list="userStatusFilterParams"
-          condition-text="User status"
-          :is-need-input="true"
-          @search="refresh"
-        />
+        <!--<base-filter-panel-->
+        <!--  v-model="userStatusList"-->
+        <!--  v-model:keywords="userSearchText"-->
+        <!--  :section-list="userStatusFilterParams"-->
+        <!--  condition-text="User status"-->
+        <!--  :is-need-input="true"-->
+        <!--  @search="refresh"-->
+        <!--/>-->
         <!-- 应用平台筛选 -->
         <base-filter-panel
           v-model="applicationTypeList"
@@ -757,20 +757,20 @@ initData()
               />
             </template>
           </el-table-column>
-          <el-table-column
-            prop="isGlobal"
-            label="User status"
-            min-width="12%"
-            sortable="custom"
-          >
-            <template #default="{ row }">
-              <span v-if="row.isGlobal === 1">All Users</span>
-              <span v-else>
-                {{ row.userDto?.id ? row.userDto.name : 'Unknown' }}
-                + {{ row.userCount - 1 }}
-              </span>
-            </template>
-          </el-table-column>
+          <!--<el-table-column-->
+          <!--  prop="isGlobal"-->
+          <!--  label="User status"-->
+          <!--  min-width="12%"-->
+          <!--  sortable="custom"-->
+          <!--&gt;-->
+          <!--  <template #default="{ row }">-->
+          <!--    <span v-if="row.isGlobal === 1">All Users</span>-->
+          <!--    <span v-else>-->
+          <!--      {{ row.userDto?.id ? row.userDto.name : 'Unknown' }}-->
+          <!--      + {{ row.userCount - 1 }}-->
+          <!--    </span>-->
+          <!--  </template>-->
+          <!--</el-table-column>-->
           <el-table-column
             prop="updateTime"
             label="Edited At"
