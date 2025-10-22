@@ -307,7 +307,16 @@ const handleAddMember = async () => {
     init()
   } finally {
     dialogAddUserVisible.value = false
+    // 重置用户id
+    selectedUserId.value = ''
   }
+}
+
+// 关闭新增用户的弹窗
+const closeAddMemberDialog = () => {
+  // 重置用户id
+  selectedUserId.value = ''
+  dialogAddUserVisible.value = false
 }
 
 // 管理员批准用户加入俱乐部
@@ -923,7 +932,7 @@ onUnmounted(() => {
     v-model="dialogAddUserVisible"
     title="Add Member"
     confirm-text="Add Member"
-    @cancel="dialogAddUserVisible = false"
+    @cancel="closeAddMemberDialog"
     @confirm="handleAddMember"
     class="add-member-container"
   >
