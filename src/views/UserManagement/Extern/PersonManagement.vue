@@ -365,6 +365,7 @@ onMounted(async () => {
         <dt>Last Login</dt>
         <dd>{{ getLastUsedDate(userInfo.updateTime) }}</dd>
         <dt>Token Usage</dt>
+        <!-- TODO token usage 数据回显 -->
         <dd>-</dd>
         <dt>Status</dt>
         <dd>
@@ -374,6 +375,7 @@ onMounted(async () => {
           />
         </dd>
       </dl>
+      <!-- TODO Expense Records 数据回显 -->
       <!-- Expense Records -->
       <div class="flex flex-col gap-8">
         <!-- header -->
@@ -409,7 +411,16 @@ onMounted(async () => {
             @inputChange="refresh"
           />
           <el-divider />
-          <el-table :data="expenseRecordList">
+          <el-table
+            :data="expenseRecordList"
+            class="clickable-row"
+            @click="
+              $router.push({
+                name: RouteName.EXPENSE_RECORD_DETAILS,
+                params: { id: '12131' },
+              })
+            "
+          >
             <el-table-column prop="workshop" label="Workshop" />
             <el-table-column
               prop="totalAmount"
