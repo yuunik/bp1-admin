@@ -1,9 +1,11 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { useCloned, useSessionStorage } from '@vueuse/core'
+import { useCloned } from '@vueuse/core'
 
-import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
-import { getVehicleScanRecordDetailApi } from '@/apis/obdApi.js'
+import {
+  addDtcReportApi,
+  getVehicleScanRecordDetailApi,
+} from '@/apis/obdApi.js'
 import { RouteName, VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
 // 展开图标
@@ -12,6 +14,7 @@ import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import CodeDetailsDrawer from '@/views/ObdManagement/DTC/components/CodeDetailsDrawer.vue'
+import { getPdfApi } from '@/apis/shareApi.js'
 
 const route = useRoute()
 
@@ -221,6 +224,9 @@ const selectedFaultData = ref({
   dtcName: '',
 })
 
+// 下载报告的加载状态
+const downloading = ref(false)
+
 // 打开OEM 子项
 const handleOpenOEMItem = (oem) => {
   // 没有子项校验
@@ -251,6 +257,40 @@ const handleViewDtcDetail = (dtc, dtcName) => {
   drawerCodeInfoVisible.value = true
 }
 
+const generatePdf = async () => {
+  try {
+    const { data } = await getPdfApi({
+      id: dtcInfo.value.vehicleId,
+      url: `${window.location.origin}/obd-management/dtc-list/dtc-details/${dtcInfo.value.id}?type=print`,
+    })
+    const link = document.createElement('a')
+    link.href = getFullFilePath(data)
+    link.download = 'report.pdf'
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } finally {
+    downloading.value = false
+  }
+}
+
+// 下载 DTC 报告
+const handleDownDTCReport = async () => {
+  try {
+    downloading.value = true
+    const {
+      data: { dtcShareUrl },
+    } = await addDtcReportApi({
+      vehicleId: dtcInfo.value.vehicleId,
+      dtcId: dtcInfo.value.id,
+    })
+    dtcShareUrl && router.push(dtcShareUrl)
+  } finally {
+    downloading.value = false
+  }
+}
+
 const {
   params: { id },
 } = route
@@ -260,11 +300,25 @@ if (id) {
 </script>
 
 <template>
-  <section class="flex h-full flex-col gap-16">
+  <section
+    class="flex h-full flex-col gap-16 overflow-auto"
+    v-loading="downloading"
+  >
     <!-- header -->
-    <h3 class="heading-h2-20px-medium text-neutrals-off-black px-32">
-      {{ vehicleName }}
-    </h3>
+    <div class="flex-between mx-32 h-32">
+      <h3 class="heading-h2-20px-medium text-neutrals-off-black">
+        {{ vehicleName }}
+      </h3>
+      <el-tooltip
+        content="You will be redirected to the report generation page"
+        placement="top"
+      >
+        <i
+          class="i-ep:document text-16 cursor-pointer"
+          @click="handleDownDTCReport"
+        />
+      </el-tooltip>
+    </div>
     <!-- divider -->
     <el-divider />
     <!-- vehicle info -->

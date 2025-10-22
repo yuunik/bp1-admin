@@ -41,7 +41,7 @@ const ObdApi = Object.freeze({
   // 修改AI故障信息
   EDIT_AI_FAULT_INFO: '/manager/dtc/editfaultcode',
   // 添加一个 DTC 报告
-  ADD_DTC_REPORT: '/dtc/adddtcreport',
+  ADD_DTC_REPORT: '/manager/dtc/adddtcreport',
 })
 
 // 获取 token
@@ -416,12 +416,17 @@ export const editFaultCodeInfoApi = (param) => {
 
 /**
  * 添加一个DTC报告
- * @param vehicleId 车辆 id
+ * @param param
+ * @param param.vehicleId 车辆 id
+ * @param param.dtcId DTC id
+ *
+ * @returns {Promise<ApiResponse<any>>}
  */
-export const addDtcReportApi = (vehicleId) => {
+export const addDtcReportApi = (param) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('vehicleId', vehicleId)
+  data.append('vehicleId', param.vehicleId)
+  data.append('dtcId', param.dtcId)
 
   return request({
     url: ObdApi.ADD_DTC_REPORT,
