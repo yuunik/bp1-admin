@@ -365,6 +365,8 @@ const editNotification = async () => {
     return
   }
 
+  console.log('%%%%%%%%%%%%%%%%', params)
+
   try {
     // 编辑
     await editPushTaskApi(params)
@@ -560,7 +562,7 @@ const handleDeleteNotification = async () => {
 // 获取目标推送任务所需要的推送用户列表
 const getPushTaskUserList = async (pushTaskId) => {
   const { data } = await getPushTaskUserListApi(pushTaskId)
-  userStatusList.value = data.map((item) => item.userId)
+  addUserStatusList.value = data.map((item) => item.id)
 }
 
 // 打开编辑弹窗
@@ -574,7 +576,7 @@ const openEditNotificationDialog = async (notification) => {
     cloned.value.isGlobal === 1 ? 'all' : 'selected'
   if (cloned.value.isGlobal !== 1) {
     // 则不是推送所有用户，则需要获取推送用户列表
-    await getPushTaskUserList()
+    await getPushTaskUserList(notificationForm.value.id)
   }
   // 回显推送任务的推送时间
   notificationForm.value.sendTime =
@@ -984,6 +986,7 @@ initData()
     "
     :confirm-text="notificationForm.id ? 'Save' : 'Create'"
     dialog-width="850"
+    footer-style="grid grid-cols-3 gap-16"
     @cancel="handleClose"
     @confirm="handleManageNotification"
   >
@@ -1173,16 +1176,18 @@ initData()
       </el-form>
     </template>
     <template #descriptionFooter>
-      <p class="heading-body-body-12px-regular text-neutrals-off-black">
+      <p
+        class="heading-body-body-12px-regular text-neutrals-off-black row-center"
+      >
         Estimated reach:
         <span class="text-neutrals-blue">
-          {{
+          &nbsp;{{
             notificationForm.userStatus === 'all'
               ? 'All'
               : selectedUserList.length
-          }}
+          }}&nbsp;
         </span>
-        users.
+        user{{ notificationForm.userStatus === 'all' ? 's' : '' }}.
       </p>
     </template>
   </base-dialog>
