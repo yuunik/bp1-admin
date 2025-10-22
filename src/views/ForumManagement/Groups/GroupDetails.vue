@@ -356,20 +356,20 @@ const openRejectUserDialog = async (row) => {
   // 创建一个副本
   const { cloned } = useCloned(row)
   // 设置表单数据
-  rejectUserForm.value = cloned
+  rejectUserForm.value = cloned.value
   dialogRejectUserVisible.value = true
 }
 
 // 拒绝用户加入俱乐部
 const handleRejectUser = async () => {
-  if (!rejectUserForm.value.reason) {
-    ElMessage.error('Please enter a reason')
-    return
+  try {
+    await rejectUserApi(rejectUserForm.value)
+    // 提示
+    ElMessage.success('Rejected successfully')
+    init()
+  } finally {
+    dialogRejectUserVisible.value = false
   }
-  await rejectUserApi(rejectUserForm.value)
-  // 提示
-  ElMessage.success('Rejected successfully')
-  init()
 }
 
 const sort = useSort(sortParams, getClubMemberList)
@@ -810,6 +810,7 @@ onUnmounted(() => {
                   type="primary"
                   @click="handleApproveUser(row.userId)"
                   class="ml-16! rounded-full!"
+                  size="small"
                 >
                   Approve
                 </el-button>
@@ -953,6 +954,7 @@ onUnmounted(() => {
     v-model="dialogRejectUserVisible"
     title="Reject Member"
     confirm-text="Reject Member"
+    button-type="danger"
     @cancel="dialogRejectUserVisible = false"
     @confirm="handleRejectUser"
   >
@@ -988,9 +990,10 @@ onUnmounted(() => {
         <span
           class="w-112 leading-32 heading-body-body-12px-medium text-neutrals-grey-3 h-32"
         >
-          Reason*
+          Reason
         </span>
         <el-input
+          v-model="rejectUserForm.reason"
           placeholder="Enter"
           class="reason-container"
           rows="3"
