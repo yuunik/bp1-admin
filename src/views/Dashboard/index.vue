@@ -193,7 +193,7 @@ onMounted(async () => {
 
 <template>
   <section class="h-full! border-box flex overflow-auto overflow-x-hidden">
-    <div class="box-border flex h-full w-[67%] flex-col gap-24 p-32">
+    <div class="box-border flex h-full w-[67%] w-full flex-col gap-24 p-32">
       <!-- greeting -->
       <div class="flex-between h-42">
         <div class="flex flex-col gap-8">
@@ -220,7 +220,7 @@ onMounted(async () => {
         </p>
       </div>
       <!-- order info -->
-      <div class="flex flex-col gap-8">
+      <div class="get-gray flex flex-col gap-8">
         <!-- title -->
         <div class="flex-between h-32">
           <h3
@@ -236,38 +236,38 @@ onMounted(async () => {
             <dashboard-card
               class="flex-1"
               metric-label="All Orders"
-              metric-value="0"
+              metric-value="-"
             />
             <dashboard-card
               class="flex-1"
               metric-label="New Additions"
-              metric-value="20"
+              metric-value="-"
             />
           </div>
           <div class="flex gap-16">
             <dashboard-card
               class="flex-1"
               metric-label="Pending"
-              metric-value="20"
+              metric-value="-"
               metric-value-text-color="text-status-colours-yellow"
             />
             <dashboard-card
               class="flex-1"
               metric-label="Shipped"
-              metric-value="20"
+              metric-value="-"
               metric-value-text-color="text-status-colours-orange"
             />
             <dashboard-card
               class="flex-1"
               metric-label="Refund"
-              metric-value="10"
+              metric-value="-"
               metric-value-text-color="text-status-colours-purple"
             />
           </div>
         </div>
       </div>
       <!-- OBD info -->
-      <div class="flex flex-col gap-8">
+      <div class="get-gray flex flex-col gap-8">
         <!-- title -->
         <div class="flex-between h-32">
           <h3
@@ -282,14 +282,14 @@ onMounted(async () => {
           <dashboard-card
             class="flex-1"
             metric-label="In Stock"
-            metric-value="500"
+            metric-value="-"
             bg-color="bg-status-colours-light-green"
             metric-value-text-color="text-status-colours-green"
           />
           <dashboard-card
             class="flex-1"
             metric-label="In Use"
-            metric-value="500"
+            metric-value="-"
             bg-color="bg-status-colours-light-blue"
             metric-value-text-color="text-status-colours-blue"
           />
@@ -378,177 +378,177 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <el-divider direction="vertical" />
-    <div class="box-border flex h-full w-[33%] flex-col gap-32 p-16">
-      <div class="flex flex-col gap-16">
-        <!-- Subscription info -->
-        <div class="rounded-8 border-container row-center px-16 py-36">
-          <div class="flex flex-1 flex-col gap-16">
-            <span
-              class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"
-            >
-              Subscription
-            </span>
-            <p
-              class="heading-h1-26px-medium leading-34 text-neutrals-off-black leading-34"
-            >
-              50
-            </p>
-          </div>
-          <div class="flex flex-1 flex-col gap-16">
-            <span
-              class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"
-            >
-              Subscription Rate
-            </span>
-            <p
-              class="heading-h1-26px-medium leading-34 text-neutrals-off-black leading-34"
-            >
-              40%
-            </p>
-          </div>
-        </div>
-        <!-- New Subscription -->
-        <div class="new-subscription-container">
-          <div class="flex flex-1 flex-col gap-16">
-            <h4
-              class="heading-body-body-12px-regular leading-16 text-neutrals-grey-2"
-            >
-              New Subscription
-            </h4>
-            <div class="flex flex-col gap-16">
-              <div class="h-19 flex gap-8">
-                <em
-                  class="heading-h1-26px-medium text-neutrals-off-white leading-34"
-                >
-                  5
-                </em>
-                <i class="rounded-100 flex bg-[#EF3C3033] p-4">
-                  <em
-                    class="heading-body-body-12px-regular text-status-colours-red leading-16 m-auto not-italic"
-                  >
-                    -2%
-                  </em>
-                </i>
-              </div>
-              <span
-                class="heading-caption-caption-10px-regular text-neutrals-grey-3 leading-15 h-7"
-              >
-                Compared to last month
-              </span>
-            </div>
-          </div>
-          <Line
-            class="min-w-0 flex-1"
-            :data="chartData"
-            :options="chartOptions"
-          />
-        </div>
-        <!-- Order Form -->
-        <div
-          class="h-116 rounded-8 border-container row-center box-border flex gap-16 px-16 py-36"
-        >
-          <div class="h-96 flex-1">
-            <Pie
-              class="h-full w-full"
-              :data="orderFormData"
-              :options="orderFormOptions"
-              :plugins="[centerTextPlugin]"
-            />
-          </div>
-          <div class="flex flex-1 flex-col gap-16">
-            <h4
-              class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16 tracking-0"
-            >
-              Order From
-            </h4>
-            <div class="flex flex-col gap-16">
-              <div class="flex-between">
-                <div class="row-center h-9 gap-8">
-                  <i
-                    class="custom-radial-gradient block h-8 w-8 rounded-full"
-                  />
-                  <span
-                    class="heading-caption-caption-10px-regular text-neutrals-grey-4 leading-15"
-                  >
-                    App
-                  </span>
-                </div>
-                <span
-                  class="heading-body-body-12px-medium text-neutrals-off-black leading-16"
-                >
-                  20
-                </span>
-              </div>
-              <div class="flex-between">
-                <div class="row-center h-9 gap-8">
-                  <i
-                    class="bg-branding-colours-primary block h-8 w-8 rounded-full"
-                  />
-                  <span
-                    class="heading-caption-caption-10px-regular text-neutrals-grey-4 leading-15"
-                  >
-                    Web
-                  </span>
-                </div>
-                <span
-                  class="heading-body-body-12px-medium text-neutrals-off-black leading-16"
-                >
-                  80
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <!-- title -->
-        <div class="flex-between h-32">
-          <h3
-            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
-          >
-            Order
-          </h3>
-          <i class="icon-typesarrow-right text-16" />
-        </div>
-        <!-- notifications-->
-        <div
-          class="h-55 border-tb-container row-center gap-12 py-8"
-          v-for="item in 10"
-          :key="item"
-        >
-          <!-- 头像 -->
-          <div class="relative h-32 w-32">
-            <!-- 头像 -->
-            <i
-              class="bg-neutrals-grey-1 m-auto block flex h-32 w-32 rounded-full"
-            >
-              <span class="leading-32 h-32">JW</span>
-            </i>
-            <!-- 消息通知点 -->
-            <i
-              class="bg-status-colours-green absolute right-0 top-0 block h-8 w-8 rounded-full"
-            />
-          </div>
-          <!-- 内容 -->
-          <div class="flex flex-col gap-8">
-            <p class="heading-body-body-12px-medium text-neutrals-off-black">
-              Title
-            </p>
-            <span
-              class="heading-caption-caption-10px-regular text-neutrals-grey-4"
-            >
-              Description
-            </span>
-            <span
-              class="heading-caption-caption-10px-regular text-neutrals-grey-3"
-            >
-              1 mins ago
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!--<el-divider direction="vertical" />-->
+    <!--<div class="get-gray box-border flex h-full w-[33%] flex-col gap-32 p-16">-->
+    <!--  <div class="flex flex-col gap-16">-->
+    <!--    &lt;!&ndash; Subscription info &ndash;&gt;-->
+    <!--    <div class="rounded-8 border-container row-center px-16 py-36">-->
+    <!--      <div class="flex flex-1 flex-col gap-16">-->
+    <!--        <span-->
+    <!--          class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"-->
+    <!--        >-->
+    <!--          Subscription-->
+    <!--        </span>-->
+    <!--        <p-->
+    <!--          class="heading-h1-26px-medium leading-34 text-neutrals-off-black leading-34"-->
+    <!--        >-->
+    <!--          50-->
+    <!--        </p>-->
+    <!--      </div>-->
+    <!--      <div class="flex flex-1 flex-col gap-16">-->
+    <!--        <span-->
+    <!--          class="heading-body-large-body-14px-regular text-neutrals-grey-4 leading-20"-->
+    <!--        >-->
+    <!--          Subscription Rate-->
+    <!--        </span>-->
+    <!--        <p-->
+    <!--          class="heading-h1-26px-medium leading-34 text-neutrals-off-black leading-34"-->
+    <!--        >-->
+    <!--          40%-->
+    <!--        </p>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--    &lt;!&ndash; New Subscription &ndash;&gt;-->
+    <!--    <div class="new-subscription-container">-->
+    <!--      <div class="flex flex-1 flex-col gap-16">-->
+    <!--        <h4-->
+    <!--          class="heading-body-body-12px-regular leading-16 text-neutrals-grey-2"-->
+    <!--        >-->
+    <!--          New Subscription-->
+    <!--        </h4>-->
+    <!--        <div class="flex flex-col gap-16">-->
+    <!--          <div class="h-19 flex gap-8">-->
+    <!--            <em-->
+    <!--              class="heading-h1-26px-medium text-neutrals-off-white leading-34"-->
+    <!--            >-->
+    <!--              5-->
+    <!--            </em>-->
+    <!--            <i class="rounded-100 flex bg-[#EF3C3033] p-4">-->
+    <!--              <em-->
+    <!--                class="heading-body-body-12px-regular text-status-colours-red leading-16 m-auto not-italic"-->
+    <!--              >-->
+    <!--                -2%-->
+    <!--              </em>-->
+    <!--            </i>-->
+    <!--          </div>-->
+    <!--          <span-->
+    <!--            class="heading-caption-caption-10px-regular text-neutrals-grey-3 leading-15 h-7"-->
+    <!--          >-->
+    <!--            Compared to last month-->
+    <!--          </span>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--      <Line-->
+    <!--        class="min-w-0 flex-1"-->
+    <!--        :data="chartData"-->
+    <!--        :options="chartOptions"-->
+    <!--      />-->
+    <!--    </div>-->
+    <!--    &lt;!&ndash; Order Form &ndash;&gt;-->
+    <!--    <div-->
+    <!--      class="h-116 rounded-8 border-container row-center box-border flex gap-16 px-16 py-36"-->
+    <!--    >-->
+    <!--      <div class="h-96 flex-1">-->
+    <!--        <Pie-->
+    <!--          class="h-full w-full"-->
+    <!--          :data="orderFormData"-->
+    <!--          :options="orderFormOptions"-->
+    <!--          :plugins="[centerTextPlugin]"-->
+    <!--        />-->
+    <!--      </div>-->
+    <!--      <div class="flex flex-1 flex-col gap-16">-->
+    <!--        <h4-->
+    <!--          class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16 tracking-0"-->
+    <!--        >-->
+    <!--          Order From-->
+    <!--        </h4>-->
+    <!--        <div class="flex flex-col gap-16">-->
+    <!--          <div class="flex-between">-->
+    <!--            <div class="row-center h-9 gap-8">-->
+    <!--              <i-->
+    <!--                class="custom-radial-gradient block h-8 w-8 rounded-full"-->
+    <!--              />-->
+    <!--              <span-->
+    <!--                class="heading-caption-caption-10px-regular text-neutrals-grey-4 leading-15"-->
+    <!--              >-->
+    <!--                App-->
+    <!--              </span>-->
+    <!--            </div>-->
+    <!--            <span-->
+    <!--              class="heading-body-body-12px-medium text-neutrals-off-black leading-16"-->
+    <!--            >-->
+    <!--              20-->
+    <!--            </span>-->
+    <!--          </div>-->
+    <!--          <div class="flex-between">-->
+    <!--            <div class="row-center h-9 gap-8">-->
+    <!--              <i-->
+    <!--                class="bg-branding-colours-primary block h-8 w-8 rounded-full"-->
+    <!--              />-->
+    <!--              <span-->
+    <!--                class="heading-caption-caption-10px-regular text-neutrals-grey-4 leading-15"-->
+    <!--              >-->
+    <!--                Web-->
+    <!--              </span>-->
+    <!--            </div>-->
+    <!--            <span-->
+    <!--              class="heading-body-body-12px-medium text-neutrals-off-black leading-16"-->
+    <!--            >-->
+    <!--              80-->
+    <!--            </span>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--  </div>-->
+    <!--  <div>-->
+    <!--    &lt;!&ndash; title &ndash;&gt;-->
+    <!--    <div class="flex-between h-32">-->
+    <!--      <h3-->
+    <!--        class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"-->
+    <!--      >-->
+    <!--        Order-->
+    <!--      </h3>-->
+    <!--      <i class="icon-typesarrow-right text-16" />-->
+    <!--    </div>-->
+    <!--    &lt;!&ndash; notifications&ndash;&gt;-->
+    <!--    <div-->
+    <!--      class="h-55 border-tb-container row-center gap-12 py-8"-->
+    <!--      v-for="item in 10"-->
+    <!--      :key="item"-->
+    <!--    >-->
+    <!--      &lt;!&ndash; 头像 &ndash;&gt;-->
+    <!--      <div class="relative h-32 w-32">-->
+    <!--        &lt;!&ndash; 头像 &ndash;&gt;-->
+    <!--        <i-->
+    <!--          class="bg-neutrals-grey-1 m-auto block flex h-32 w-32 rounded-full"-->
+    <!--        >-->
+    <!--          <span class="leading-32 h-32">JW</span>-->
+    <!--        </i>-->
+    <!--        &lt;!&ndash; 消息通知点 &ndash;&gt;-->
+    <!--        <i-->
+    <!--          class="bg-status-colours-green absolute right-0 top-0 block h-8 w-8 rounded-full"-->
+    <!--        />-->
+    <!--      </div>-->
+    <!--      &lt;!&ndash; 内容 &ndash;&gt;-->
+    <!--      <div class="flex flex-col gap-8">-->
+    <!--        <p class="heading-body-body-12px-medium text-neutrals-off-black">-->
+    <!--          Title-->
+    <!--        </p>-->
+    <!--        <span-->
+    <!--          class="heading-caption-caption-10px-regular text-neutrals-grey-4"-->
+    <!--        >-->
+    <!--          Description-->
+    <!--        </span>-->
+    <!--        <span-->
+    <!--          class="heading-caption-caption-10px-regular text-neutrals-grey-3"-->
+    <!--        >-->
+    <!--          1 mins ago-->
+    <!--        </span>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--  </div>-->
+    <!--</div>-->
   </section>
 </template>
 
@@ -572,4 +572,9 @@ onMounted(async () => {
   border-top: 1px solid #eff4f9;
   border-bottom: 1px solid #eff4f9;
 }
+
+//.get-gray {
+//  color: #ccc;
+//  background-color: #9e9e9e;
+//}
 </style>
