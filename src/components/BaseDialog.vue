@@ -28,6 +28,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  footerStyle: {
+    type: String,
+    default: '',
+  },
 })
 
 // 定义事件
@@ -50,9 +54,10 @@ const confirm = () => emit('confirm')
     :width="dialogWidth"
     align-center
     :showClose="showCloseButton"
+    :footer-class="footerStyle"
   >
     <slot name="content" />
-    <template #footer>
+    <template #footer class="nameasdlfkj">
       <slot name="descriptionFooter" />
       <el-button @click="cancel">{{ cancelText }}</el-button>
       <el-button :type="buttonType" @click="confirm">
