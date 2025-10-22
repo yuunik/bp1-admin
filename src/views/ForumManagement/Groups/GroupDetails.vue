@@ -803,6 +803,14 @@ onUnmounted(() => {
             <el-table-column prop="state" label="Status">
               <template #default="{ row }">
                 <base-tag :text="row.state" :color="stateColorMap[row.state]" />
+                <el-button
+                  v-show="row.state === 'Pending'"
+                  type="primary"
+                  @click="handleApproveUser(row.userId)"
+                  class="ml-16! rounded-full!"
+                >
+                  Approve
+                </el-button>
               </template>
             </el-table-column>
             <el-table-column min-width="6%">
