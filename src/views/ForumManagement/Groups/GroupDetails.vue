@@ -1,5 +1,5 @@
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { storeToRefs } from 'pinia'
 import { useCloned, useSessionStorage } from '@vueuse/core'
@@ -36,6 +36,8 @@ import BaseUpload from '@/components/BaseUpload.vue'
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
 const route = useRoute()
+
+const router = useRouter()
 
 const stateColorMap = {
   Pending: 'orange',
@@ -486,6 +488,15 @@ const handleRejectGroup = async () => {
   } finally {
     dialogRejectGroupVisible.value = false
   }
+}
+
+// 获取自动补全数据列表
+const getAutoCompleteDataList = async (queryString, cb) => {
+  const results = queryString
+    ? newUserList.value.filter(createFilter(queryString))
+    : newUserList.value
+  // call callback function to return suggestions
+  cb(results)
 }
 
 watch(
@@ -943,18 +954,25 @@ onUnmounted(() => {
         >
           User
         </span>
-        <el-select
-          class="select-container h-32"
+        <!--<el-select-->
+        <!--  class="select-container h-32"-->
+        <!--  v-model="selectedUserId"-->
+        <!--  placeholder="Select a user"-->
+        <!--&gt;-->
+        <!--  <el-option-->
+        <!--    v-for="userInfo in newUserList"-->
+        <!--    :key="userInfo.value"-->
+        <!--    :label="userInfo.label"-->
+        <!--    :value="userInfo.value"-->
+        <!--  />-->
+        <!--</el-select>-->
+        <el-autocomplete
           v-model="selectedUserId"
-          placeholder="Select a user"
-        >
-          <el-option
-            v-for="userInfo in newUserList"
-            :key="userInfo.value"
-            :label="userInfo.label"
-            :value="userInfo.value"
-          />
-        </el-select>
+          class="select-container h-32"
+          :fetch-suggestions="getAutoCompleteDataList"
+          clearable
+          placeholder="Please Input"
+        />
       </div>
     </template>
   </base-dialog>
