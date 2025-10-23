@@ -19,6 +19,9 @@ const orderForm = reactive({
 // 订单成功弹窗
 const dialogSuccessPageVisible = ref(false)
 
+// 加载状态
+const loading = ref(false)
+
 // 订单表单校验规则
 const orderRules = reactive({
   username: [
@@ -92,6 +95,8 @@ const submitOrder = async () => {
   try {
     // 校验
     await orderFormRef.value.validate()
+    // 加载中
+    loading.value = true
     await postOrderApi({
       contactName: orderForm.username,
       contactEmail: orderForm.email,
@@ -105,6 +110,9 @@ const submitOrder = async () => {
   } catch {
     // 网络错误, 请稍后再试
     ElMessage.fail('Network error, please try again later')
+  } finally {
+    // 加载完成
+    loading.value = false
   }
 }
 
@@ -211,7 +219,7 @@ const handleOrderAgain = () => {
       <el-button
         type="primary"
         class="w-full! h-48! text-16!"
-        @click="submitOrder"
+        @click="dialogSuccessPageVisible = true"
       >
         Submit Order
       </el-button>
@@ -219,7 +227,7 @@ const handleOrderAgain = () => {
   </div>
   <div v-else class="flex-center h-full px-20 py-40">
     <div class="flex flex-col items-center gap-16">
-      <el-image :src="SuccessIcon" class="h-40 w-40" fit="cover" />
+      <el-image :src="SuccessIcon" class="h-80 w-80" fit="cover" />
       <h1 class="h1-24px-semibold text-neutrals-off-black mt-16">
         Thank You for Your Order
       </h1>
@@ -230,6 +238,7 @@ const handleOrderAgain = () => {
       <el-button
         type="primary"
         class="mt-84! h-48! py-16! px-32! text-16! w-180!"
+        :loading="loading"
         @click="handleOrderAgain"
       >
         Order again
@@ -238,4 +247,34 @@ const handleOrderAgain = () => {
   </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(.el-button) {
+  /* 基础背景和边框 */
+  --el-button-bg-color: #202834;
+  --el-button-border-color: #202834;
+  --el-button-text-color: #ffffff; /* 显式设置文字颜色 */
+
+  /* 轮廓按钮的边框颜色（用于 plain 或 outline 按钮）*/
+  --el-button-outline-color: #3a4252; /* 稍亮一点的灰色 */
+
+  /* 按钮激活（按下）时的颜色 */
+  --el-button-active-color: #ffffff;
+  --el-button-active-bg-color: #181e28; /* 稍暗 */
+  --el-button-active-border-color: #181e28;
+
+  /* Hover 状态 */
+  --el-button-hover-text-color: #ffffff;
+  --el-button-hover-bg-color: #2a3240; /* 稍亮 */
+  --el-button-hover-border-color: #2a3240;
+
+  /* 链接按钮 hover 文字色（如果适用）*/
+  --el-button-hover-link-text-color: #6b7d9a; /* 可选，若使用 link 类型 */
+
+  /* Disabled 状态 */
+  --el-button-disabled-text-color: #5a6270;
+  --el-button-disabled-bg-color: #2c3442;
+  --el-button-disabled-border-color: #2c3442;
+
+  border-radius: 12px !important;
+}
+</style>
