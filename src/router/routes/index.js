@@ -736,10 +736,10 @@ const constantRoutes = [
       // 活动订单填写页
       {
         path: '/share/activity-order',
-        name: 'Activity Order',
+        name: 'Activity Order Management',
         component: () => import('@/share/ActivityOrderManagement.vue'),
         meta: {
-          title: 'Activity Order',
+          title: 'Activity Order Management',
           showInMenu: false,
           showInBreadcrumb: false,
         },
