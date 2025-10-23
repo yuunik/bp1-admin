@@ -5,6 +5,8 @@ import { useDebounceFn } from '@vueuse/core'
 import BasePagination from '@/components/BasePagination.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { postOrderApi } from '@/apis/shareApi.js'
+import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const onRowClick = (_, column) => {
@@ -185,8 +187,13 @@ const orderForm = reactive({
   username: '',
   email: '',
   phoneNumber: '',
-  deviceNumber: '',
+  deviceNumber: '1',
+  notes: '',
+  phoneCountry: '+65',
 })
+
+// 订单表单实例
+const orderFormRef = ref(null)
 
 const refresh = async () => {}
 
@@ -194,7 +201,40 @@ const refresh = async () => {}
 const handleSearch = useDebounceFn(async () => refresh(), 500)
 
 // 新增订单
-const handleAddOrder = async () => {}
+const handleAddOrder = async () => {
+  try {
+    // 校验
+    await orderFormRef.value.validate()
+    await postOrderApi({
+      contactName: orderForm.username,
+      contactEmail: orderForm.email,
+      phoneCountry: orderForm.phoneCountry,
+      phoneNumber: orderForm.phoneNumber,
+      quantity: orderForm.deviceNumber,
+      description: orderForm.notes,
+    })
+    // 提示
+    ElMessage.success('Order created successfully')
+  } catch {
+    // 网络错误, 请稍后再试
+    ElMessage.fail('Network error, please try again later')
+  } finally {
+    // 关闭新增订单弹窗
+    dialogAddOrderVisible.value = false
+  }
+}
+
+// 关闭新增订单弹窗
+const handleCloseAddOrder = () => {
+  // 重置表单
+  orderForm.username = ''
+  orderForm.email = ''
+  orderForm.phoneCountry = '+65'
+  orderForm.phoneNumber = ''
+  orderForm.deviceNumber = '1'
+  orderForm.notes = ''
+  dialogAddOrderVisible.value = false
+}
 </script>
 
 <template>
@@ -305,31 +345,74 @@ const handleAddOrder = async () => {}
   <base-dialog
     v-model="dialogAddOrderVisible"
     title="Add Order"
-    @cancel="dialogAddOrderVisible = false"
+    @cancel="handleCloseAddOrder"
     @confirm="handleAddOrder"
   >
     <template #content>
       <el-form
         :model="orderForm"
+        :rules="orderRules"
+        ref="orderFormRef"
         label-width="140px"
-        label-position="left"
-        class="input--underline"
+        label-position="top"
+        class="el-form-item--h5"
+        hide-required-asterisk
       >
-        <el-form-item label="Name">
+        <el-form-item label="Full Name" prop="username" class="label-required">
           <el-input
-            type="password"
             v-model="orderForm.username"
-            placeholder="Enter"
+            placeholder="Please enter your full name"
+            clearable
           />
         </el-form-item>
-        <el-form-item label="Email">
-          <el-input placeholder="example@email.com" v-model="orderForm.email" />
+        <el-form-item label="Email Address" class="label-required" prop="email">
+          <el-input
+            placeholder="example@email.com"
+            v-model="orderForm.email"
+            type="email"
+            clearable
+          />
         </el-form-item>
-        <el-form-item label="Phone No.">
-          <el-input placeholder="+65" v-model="orderForm.phoneNumber" />
+        <el-form-item
+          label="Phone No."
+          class="label-required"
+          prop="phoneNumber"
+        >
+          <el-select v-model="orderForm.phoneCountry" class="w-100! mr-8!">
+            <el-option label="+65" value="+65" />
+            <el-option label="+60" value="+60" />
+            <el-option label="+62" value="+62" />
+            <el-option label="+66" value="+66" />
+            <el-option label="+86" value="+86" />
+          </el-select>
+          <el-input
+            placeholder="Enter your phone number"
+            v-model="orderForm.phoneNumber"
+            clearable
+            type="tel"
+            class="flex-1!"
+          />
         </el-form-item>
-        <el-form-item label="No. of Devices">
-          <el-input v-model="orderForm.username" placeholder="e.g.1" />
+        <el-form-item
+          label="No. of Devices"
+          class="label-required"
+          prop="deviceNumber"
+        >
+          <el-input
+            placeholder="Enter device No."
+            v-model="orderForm.deviceNumber"
+            clearable
+            type="number"
+          />
+        </el-form-item>
+        <el-form-item label="Additional Notes (Optional)">
+          <el-input
+            type="textarea"
+            placeholder="Any extra information?"
+            v-model="orderForm.notes"
+            rows="5"
+            clearable
+          />
         </el-form-item>
       </el-form>
     </template>
