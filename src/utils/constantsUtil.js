@@ -72,6 +72,7 @@ export const RouteName = Object.freeze({
   ACTIVITY_ORDER: 'Activity Order',
   // 实时订单
   REAL_TIME_ORDER: 'Real Time Order',
+  EMAIL_VERIFICATION: 'Email Verification',
 })
 
 // 分享模块跳转路径

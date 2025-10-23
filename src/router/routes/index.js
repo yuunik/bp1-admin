@@ -583,6 +583,18 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      // 邮箱验证码页
+      {
+        path: '/app-configuration/email-verification',
+        name: RouteName.EMAIL_VERIFICATION,
+        component: () =>
+          import('@/views/AppConfiguration/EmailVerification/index.vue'),
+        meta: {
+          title: RouteName.EMAIL_VERIFICATION,
+          showInMenu: true,
+          showInBreadcrumb: true,
+        },
+      },
     ],
     meta: {
       title: RouteName.APP_MANAGEMENT,
