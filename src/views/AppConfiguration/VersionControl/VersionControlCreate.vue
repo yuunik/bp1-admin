@@ -63,11 +63,18 @@ watch(
       </dd>
       <dt>Latest Version</dt>
       <dd>
-        <el-input v-model="appVersionInfo.version" />
+        <el-input
+          v-model="appVersionInfo.version"
+          class="input--underline"
+          placeholder="Enter"
+        />
       </dd>
       <dt>Force Update</dt>
       <dd>
-        <el-select v-model="appVersionInfo.state" class="w-200!">
+        <el-select
+          v-model="appVersionInfo.state"
+          class="w-200! select--underline"
+        >
           <el-option label="No prompt" :value="0" />
           <el-option label="Prompt to update" :value="1" />
           <el-option label="Force update" :value="2" />
@@ -76,32 +83,28 @@ watch(
       </dd>
       <dt>Update URL</dt>
       <dd>
-        <el-input v-model="appVersionInfo.url" />
+        <el-input
+          v-model="appVersionInfo.url"
+          class="input--underline"
+          placeholder="Enter"
+        />
       </dd>
       <dt>Update Prompt</dt>
       <dd>
-        <el-input v-model="appVersionInfo.content" type="textarea" :rows="15" />
+        <el-input
+          v-model="appVersionInfo.content"
+          type="textarea"
+          :rows="15"
+          placeholder="Enter"
+        />
       </dd>
     </dl>
   </section>
 </template>
 
 <style scoped lang="scss">
-:deep(.el-input__wrapper) {
-  background-color: transparent !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
-}
-
-:deep(.el-input__wrapper::after) {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1px;
-  background-color: var(--el-input-border-color, var(--el-border-color));
-  pointer-events: none;
+// 重置文本框样式
+:deep(.el-textarea__inner) {
+  background-color: $neutrals-off-white;
 }
 </style>
