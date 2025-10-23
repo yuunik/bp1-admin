@@ -237,38 +237,34 @@ const handleOrderAgain = () => {
             />
           </el-form-item>
 
-          <el-row :gutter="16">
-            <el-col :span="8">
-              <el-form-item
-                label="Code"
-                class="label-required"
-                prop="phoneCountry"
-              >
-                <el-select v-model="orderForm.phoneCountry">
-                  <el-option label="+65" value="+65" />
-                  <el-option label="+60" value="+60" />
-                  <el-option label="+62" value="+62" />
-                  <el-option label="+66" value="+66" />
-                  <el-option label="+86" value="+86" />
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="16">
-              <el-form-item
-                label="Phone No."
-                class="label-required"
-                prop="phoneNumber"
-              >
-                <el-input
-                  placeholder="Enter your phone number"
-                  v-model="orderForm.phoneNumber"
-                  clearable
-                  type="tel"
-                  class="flex-1!"
-                />
-              </el-form-item>
-            </el-col>
-          </el-row>
+          <div class="flex gap-8">
+            <el-form-item
+              label="Code"
+              class="label-required"
+              prop="phoneCountry"
+            >
+              <el-select v-model="orderForm.phoneCountry">
+                <el-option label="+65" value="+65" />
+                <el-option label="+60" value="+60" />
+                <el-option label="+62" value="+62" />
+                <el-option label="+66" value="+66" />
+                <el-option label="+86" value="+86" />
+              </el-select>
+            </el-form-item>
+            <el-form-item
+              label="Phone No."
+              class="label-required flex-1!"
+              prop="phoneNumber"
+            >
+              <el-input
+                placeholder="Enter your phone number"
+                v-model="orderForm.phoneNumber"
+                clearable
+                type="tel"
+                class="flex-1!"
+              />
+            </el-form-item>
+          </div>
           <el-form-item
             label="No. of Devices"
             class="label-required"
