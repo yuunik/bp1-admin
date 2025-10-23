@@ -332,16 +332,16 @@ onMounted(async () => {
         <div>
           <el-table :data="expenseUserList" @sort-change="sort">
             <el-table-column
-              prop="name"
+              prop="Name"
               label="User"
               min-width="69%"
               sortable="custom"
             >
               <template #default="{ row }">
                 <el-avatar
-                  v-if="row.logo"
+                  v-if="row.Logo"
                   fit="cover"
-                  :src="getFullFilePath(row.logo)"
+                  :src="getFullFilePath(row.Logo)"
                   class="mr-8 h-20 w-20 shrink-0"
                   alt="brand icon"
                   shape="circle"
@@ -356,22 +356,22 @@ onMounted(async () => {
                   class="cursor-pointer text-wrap underline"
                   @click="
                     $router.push({
-                      name: RouteName.PERSON_MANAGE,
-                      params: { id: row.userId },
+                      Name: RouteName.PERSON_MANAGE,
+                      params: { id: row.UserId },
                     })
                   "
                 >
-                  {{ row.name || '-' }}
+                  {{ row.Name || '-' }}
                 </span>
               </template>
             </el-table-column>
             <el-table-column
-              prop="totalAmount"
+              prop="TotalAmount"
               label="Total Expense"
               min-width="31%"
             >
               <template v-slot="{ row }">
-                <span>${{ row.totalAmount }}</span>
+                <span>${{ row.TotalAmount }}</span>
               </template>
             </el-table-column>
           </el-table>
