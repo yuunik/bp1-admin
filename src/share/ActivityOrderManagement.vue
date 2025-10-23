@@ -129,7 +129,7 @@ const handleOrderAgain = () => {
         <strong class="h2-20px-semibold">Order Information</strong>
       </h1>
     </header>
-    <main class="flex-1 p-20">
+    <main class="pb-68 flex-1 px-20 pt-20">
       <el-scrollbar>
         <el-form
           :model="orderForm"
@@ -207,7 +207,7 @@ const handleOrderAgain = () => {
         </el-form>
       </el-scrollbar>
     </main>
-    <footer class="px-20 py-8">
+    <footer class="fixed inset-x-0 bottom-20 mx-20 py-8">
       <el-button
         type="primary"
         class="w-full! h-48! text-16!"
