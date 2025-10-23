@@ -13,10 +13,28 @@ import PDFIcon from '@/assets/specialIcons/icon_pdf.svg'
 const activeTab = ref('Expense Details')
 
 const engineItemIsExpand = ref(false)
+
+// 操作日志列表
+const logList = ref([
+  {
+    date: '15 May 2023',
+    time: '9:30 am',
+    user: 'Kristin Watson',
+    action: 'Login',
+    detail: { ip: '123.45.6', device: 'iPhone 14' },
+  },
+  {
+    date: '15 May 2023',
+    time: '9:00 am',
+    user: 'Kristin Watson',
+    action: 'Create Order',
+    detail: { orderNo: 'ORD-00020' },
+  },
+])
 </script>
 
 <template>
-  <section class="h-full">
+  <section class="h-full overflow-auto pb-32">
     <div class="flex-between mx-32 mb-16">
       <!-- header -->
       <h2
@@ -251,6 +269,105 @@ const engineItemIsExpand = ref(false)
             <base-svg-icon name="delete-2" color="#6F7788" size="16" />
           </div>
         </div>
+      </div>
+    </div>
+    <!-- Attachments -->
+    <div class="mb-24">
+      <!-- header -->
+      <div class="flex-between mx-32 h-24">
+        <div class="row-center flex gap-8">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+          >
+            Attachments
+          </h3>
+          <span
+            class="heading-body-large-body-14px-medium text-neutrals-grey-3"
+          >
+            2
+          </span>
+        </div>
+        <!-- 上传按钮 -->
+        <el-button type="primary" text>
+          <template #icon>
+            <i class="icon-upload-2-line text-neutrals-blue text-16" />
+          </template>
+          <template #default>Upload</template>
+        </el-button>
+      </div>
+      <!-- divider -->
+      <el-divider class="mt-8! mb-12!" />
+      <!-- attachment grid view -->
+      <div class="mx-32 grid grid-cols-2 gap-12">
+        <div
+          v-for="item in 2"
+          :key="item"
+          class="rounded-12 border-[1px]-[#EAEEF4] row-center h-64 gap-8 p-12"
+        >
+          <el-image :src="PDFIcon" class="h-40 w-40" fit="cover" />
+          <div class="text-neutrals-grey-4 flex flex-col gap-8">
+            <p class="heading-body-body-12px-regular text-neutrals-off-black">
+              document 1.pdf
+            </p>
+            <div class="row-center gap-4">
+              <el-avatar
+                :size="20"
+                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+              />
+              <span class="heading-caption-caption-10px-regular">
+                Bessie Cooper
+              </span>
+              <span class="heading-caption-caption-10px-regular">∙</span>
+              <span class="heading-caption-caption-10px-regular">120 KB</span>
+              <span class="heading-caption-caption-10px-regular">∙</span>
+              <span class="heading-caption-caption-10px-regular">
+                28/04/2024 3:30pm
+              </span>
+            </div>
+          </div>
+          <div class="flex gap-8">
+            <base-svg-icon name="down_line" color="#6F7788" size="16" />
+            <base-svg-icon name="delete-2" color="#6F7788" size="16" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Logs & Note -->
+    <div class="flex flex-col gap-8">
+      <!-- header -->
+      <h3
+        class="heading-body-large-body-14px-medium text-neutrals-off-black row-center mx-32 h-24"
+      >
+        Logs & Note
+      </h3>
+      <!-- divider -->
+      <el-divider />
+      <!-- table -->
+      <div class="mx-32">
+        <el-table :data="logList">
+          <el-table-column prop="date" label="Date" min-width="160" />
+          <el-table-column prop="time" label="Time" min-width="120" />
+          <el-table-column prop="user" label="User" min-width="160" />
+          <el-table-column prop="action" label="Action" min-width="140" />
+          <el-table-column label="Detail" min-width="220">
+            <template #default="{ row }">
+              <div v-if="row.action === 'Login'">
+                <span class="text-neutrals-off-black">IP:</span>
+                {{ row.detail.ip }}
+                <span class="mx-8">|</span>
+                <span class="text-neutrals-off-black">Device:</span>
+                {{ row.detail.device }}
+              </div>
+              <div v-else-if="row.action === 'Create Order'">
+                <span class="text-neutrals-off-black">Order No.</span>
+                {{ row.detail.orderNo }}
+              </div>
+              <div v-else>
+                {{ row.detailText ?? '' }}
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
   </section>
