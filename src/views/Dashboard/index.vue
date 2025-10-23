@@ -560,12 +560,12 @@ onMounted(async () => {
 // 新增订阅率的容器
 .new-subscription-container {
   @apply rounded-8 h-116 flex px-16 py-24;
-  background-image: radial-gradient(circle, #0a1c34 0%, #1b1a1e 100%);
+  background-image: $default-background-image;
   box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
 }
 
 .custom-radial-gradient {
-  background-image: radial-gradient(circle, #0a1c34 0%, #1b1a1e 100%);
+  background-image: $default-background-image;
 }
 
 .border-tb-container {

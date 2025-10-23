@@ -30,12 +30,17 @@ $status-colours-light-green: #E6F7F5;
 $status-colours-20-green: #E6F7F533;
 $status-colours-purple: #6B07EC;
 $status-colours-light-purple: #F5EAFB;
+
+// 渐变效果
 $app-transitions: all 200ms cubic-bezier(0.645, 0.045, 0.355, 1);
+
+// 默认渐变的背景样式
+$default-background-image: radial-gradient(circle, #0a1c34 0%, #1b1a1e 100%);
 
 // 公共背景样式
 %common-bg-style {
   @apply w-full h-full box-border flex p-8  gap-8;
-  background-image: linear-gradient(to bottom, $branding-colours-gradient-b, $branding-colours-gradient-e);
+  background-image: $default-background-image;
 }
 
 // 只有下划线的 el-input 的样式
