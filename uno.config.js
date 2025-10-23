@@ -44,6 +44,13 @@ export default defineConfig({
         flexBasis: `${basis}px`,
       }),
     ],
+    // 匹配 border-[粗细]-[颜色]
+    [
+      /^border-\[(.+?)\]-\[(.+?)\]$/,
+      ([, width, color]) => ({
+        border: `${width} solid ${color}`,
+      }),
+    ],
   ],
   // 自定义属性 一个属性可以对应多个 unocss 类值
   shortcuts: [
