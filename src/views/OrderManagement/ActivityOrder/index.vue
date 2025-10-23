@@ -7,8 +7,12 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { postOrderApi } from '@/apis/shareApi.js'
 import { ElMessage } from 'element-plus'
+import { getActiveOrderListApi } from '@/apis/orderApi.js'
+import { useSort } from '@/composables/useSort.js'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 const router = useRouter()
+
 const onRowClick = (_, column) => {
   const { no } = column
   if (no === 0 || no === 5) {
@@ -17,159 +21,10 @@ const onRowClick = (_, column) => {
   router.push({ name: 'Internal Manage', params: { id: '12432314231' } })
 }
 
-const orderDataList = ref([
-  {
-    id: 1,
-    orderNo: 'ORD-00014',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Request Return',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 2,
-    orderNo: 'ORD-00013',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Request Replace',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 3,
-    orderNo: 'ORD-00020',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'To Ship',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:30 am',
-  },
-  {
-    id: 4,
-    orderNo: 'ORD-00019',
-    customer: 'Rhode',
-    source: 'App',
-    obd: 2,
-    status: 'Shipped',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 5,
-    orderNo: 'ORD-00018',
-    customer: 'Rhode',
-    source: 'App',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 6,
-    orderNo: 'ORD-00017',
-    customer: 'Rhode',
-    source: 'App',
-    obd: 2,
-    status: 'Refunded',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 7,
-    orderNo: 'ORD-00016',
-    customer: 'Rhode',
-    source: 'App',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 8,
-    orderNo: 'ORD-00015',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Cancelled',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 9,
-    orderNo: 'ORD-00012',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 10,
-    orderNo: 'ORD-00011',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 11,
-    orderNo: 'ORD-00010',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 12,
-    orderNo: 'ORD-00009',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 9:00 am',
-  },
-  {
-    id: 13,
-    orderNo: 'ORD-00008',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 8:30 am',
-  },
-  {
-    id: 14,
-    orderNo: 'ORD-00007',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 8:30 am',
-  },
-  {
-    id: 15,
-    orderNo: 'ORD-00006',
-    customer: 'Rhode',
-    source: 'Web',
-    obd: 2,
-    status: 'Completed',
-    amount: 1000.0,
-    orderDate: '15 May 2025 8:30 am',
-  },
-])
+// 订单数据
+const orderDataList = ref([])
 
+// 分页参数
 const pageQueryParams = ref({
   currentPage: 0,
   total: 0,
@@ -180,7 +35,7 @@ const pageQueryParams = ref({
 const searchText = ref('')
 
 // 新增订单弹窗
-const dialogAddOrderVisible = ref(true)
+const dialogAddOrderVisible = ref(false)
 
 // 订单表单
 const orderForm = reactive({
@@ -192,8 +47,17 @@ const orderForm = reactive({
   phoneCountry: '+65',
 })
 
+// 订单列表
+const orderList = ref([])
+
 // 订单表单实例
 const orderFormRef = ref(null)
+
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
 
 const refresh = async () => {}
 
@@ -235,6 +99,29 @@ const handleCloseAddOrder = () => {
   orderForm.notes = ''
   dialogAddOrderVisible.value = false
 }
+
+// 获取订单列表
+const getOrderList = async () => {
+  await getActiveOrderListApi({
+    searchKey: searchText.value,
+    page: pageQueryParams.value.currentPage,
+    pageSize: pageQueryParams.value.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+  })
+}
+
+// 排序查询
+const sort = useSort(sortParams, () => getOrderList())
+
+// 当单元格 hover 进入时会触发该事件
+const handleCellMouseEnter = (row) => (row.isHover = true)
+
+// 当单元格 hover 离开时会触发该事件
+const handleCellMouseLeave = (row) => (row.isHover = false)
+
+// 获取订单列表
+getOrderList()
 </script>
 
 <template>
@@ -244,7 +131,9 @@ const handleCloseAddOrder = () => {
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         Activity Order
       </h3>
-      <el-button type="primary">Create</el-button>
+      <el-button type="primary" @click="dialogAddOrderVisible = true">
+        Create
+      </el-button>
     </div>
     <!-- Search -->
     <div class="flex-between mx-32 flex h-24 gap-20">
@@ -300,41 +189,45 @@ const handleCloseAddOrder = () => {
     <el-divider />
     <!-- Table -->
     <div class="mx-32 flex flex-1 flex-col overflow-hidden pb-32">
-      <el-table :data="orderDataList" class="flex-1">
+      <el-table
+        :data="orderDataList"
+        class="flex-1"
+        @sort-change="sort"
+        @cell-mouse-enter="handleCellMouseEnter"
+        @cell-mouse-leave="handleCellMouseLeave"
+      >
         <!-- 复选框列 -->
-        <el-table-column type="selection" />
+        <el-table-column type="selection" width="50" />
 
         <!-- 订单号 -->
         <el-table-column prop="orderNo" label="Order No." sortable />
 
         <!-- 客户 -->
-        <el-table-column prop="customer" label="Customer" />
+        <el-table-column prop="contactName" label="Customer" />
 
-        <!-- 来源 -->
-        <el-table-column prop="source" label="Source" />
+        <!-- 联系电话 -->
+        <el-table-column prop="phoneNumber" label="Phone No." />
 
         <!-- OBD -->
-        <el-table-column prop="obd" label="OBD" sortable />
+        <el-table-column prop="quantity" label="Order Quantity" sortable />
 
-        <!-- 订单状态 -->
-        <el-table-column prop="status" label="Order Status" />
+        <!-- 客户备注 -->
+        <el-table-column prop="description" label="Notes" />
 
-        <!-- 金额 -->
-        <el-table-column prop="amount" label="Amount (SGD)" sortable>
+        <!-- 订单日期 -->
+        <el-table-column prop="createTime" label="Order Date" sortable>
           <template #default="{ row }">
-            {{
-              row.amount.toLocaleString('en-SG', { minimumFractionDigits: 2 })
-            }}
+            getDateWithDDMMMYYYYhhmma(row.createTime)
           </template>
         </el-table-column>
 
-        <!-- 订单日期 -->
-        <el-table-column prop="orderDate" label="Order Date" sortable />
-
         <!-- 操作 -->
-        <el-table-column align="center">
+        <el-table-column align="center" width="100">
           <template #default>
-            <i class="icon-more-2-line cursor-pointer" />
+            <i
+              class="icon-delete-bin-line text-16 cursor-pointer"
+              v-show="row.isHover"
+            />
           </template>
         </el-table-column>
       </el-table>
