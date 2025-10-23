@@ -410,7 +410,7 @@ watch(dialogForgetPasswordVisible, (val) => {
 <style scoped lang="scss">
 .bg-container {
   @extend %common-bg-style;
-  @apply justify-between;
+  @apply min-w-1080 min-h-750 justify-between;
 }
 
 // 重置输入框样式
