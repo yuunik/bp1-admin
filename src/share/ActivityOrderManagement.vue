@@ -219,7 +219,7 @@ const handleOrderAgain = () => {
       <el-button
         type="primary"
         class="w-full! h-48! text-16!"
-        @click="dialogSuccessPageVisible = true"
+        @click="submitOrder"
       >
         Submit Order
       </el-button>
