@@ -1,11 +1,11 @@
 <script setup>
 import { ref, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
 
 import { postOrderApi } from '@/apis/shareApi.js'
 
 import PD1 from '@/assets/images/pd1_logo.png'
 import SuccessIcon from '@/assets/specialIcons/check_one.svg'
-import { ElMessage } from 'element-plus'
 
 const orderForm = reactive({
   username: '',
@@ -33,7 +33,6 @@ const orderRules = reactive({
       message: 'Please enter your email address',
       trigger: 'blur',
     },
-
     {
       validator: (rule, value, callback) => {
         // 邮箱格式
@@ -53,18 +52,84 @@ const orderRules = reactive({
     },
     {
       validator: (rule, value, callback) => {
-        // 第一位数字必须为8或者9
-        if (!/^[8-9]\d{7}$/.test(value)) {
-          // 总共 8 位
-          if (!/^\d{8}$/.test(value)) {
-            callback(new Error('Please enter a valid phone number'))
-            return
-          }
-          callback(new Error('The first digit must be 8 or 9'))
+        const country = orderForm.phoneCountry // 获取国家区号
+
+        // 先检查是否为纯数字（不含 + 或空格等）
+        if (!/^\d+$/.test(value)) {
+          callback(new Error('Phone number must contain only digits'))
           return
         }
 
-        callback()
+        // 根据国家区号进行校验
+        switch (country) {
+          case '+65': // Singapore
+            // 8位，以8或9开头
+            if (!/^[8-9]\d{7}$/.test(value)) {
+              callback(
+                new Error(
+                  'Singapore number must be 8 digits and start with 8 or 9',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+60': // Malaysia
+            // 常见格式：10-11位，以01开头（如 012-3456789）
+            // 用户通常输入本地格式（带0），如 0123456789（10位）或 01112345678（11位）
+            if (!/^01\d{8,9}$/.test(value)) {
+              callback(
+                new Error(
+                  'Malaysia number must start with 01 and be 10-11 digits',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+62': // Indonesia
+            // 本地格式通常以 08 开头，总长 10-12 位（如 081234567890）
+            // 国际格式去掉 0，但这里假设用户输入的是本地号码（带0）
+            if (!/^08\d{8,10}$/.test(value)) {
+              callback(
+                new Error(
+                  'Indonesia number must start with 08 and be 10-12 digits',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+66': // Thailand
+            // 本地格式通常以 0 开头，总长 10 位（如 0812345678）
+            // 常见前缀：06, 08, 09
+            if (!/^0[689]\d{8}$/.test(value)) {
+              callback(
+                new Error(
+                  'Thailand number must be 10 digits and start with 06, 08 or 09',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+86': // China
+            // 11位，以1开头（移动/联通/电信）
+            if (!/^1[3-9]\d{9}$/.test(value)) {
+              callback(
+                new Error('China number must be 11 digits and start with 1'),
+              )
+              return
+            }
+            break
+
+          default:
+            // 如果未指定支持的国家，可选择跳过校验或提示
+            // 这里选择允许通过（或你也可以要求必须是支持的国家）
+            break
+        }
+
+        callback() // 校验通过
       },
     },
   ],
@@ -171,26 +236,39 @@ const handleOrderAgain = () => {
               clearable
             />
           </el-form-item>
-          <el-form-item
-            label="Phone No."
-            class="label-required"
-            prop="phoneNumber"
-          >
-            <el-select v-model="orderForm.phoneCountry" class="w-100! mr-8!">
-              <el-option label="+65" value="+65" />
-              <el-option label="+60" value="+60" />
-              <el-option label="+62" value="+62" />
-              <el-option label="+66" value="+66" />
-              <el-option label="+86" value="+86" />
-            </el-select>
-            <el-input
-              placeholder="Enter your phone number"
-              v-model="orderForm.phoneNumber"
-              clearable
-              type="tel"
-              class="flex-1!"
-            />
-          </el-form-item>
+
+          <el-row :gutter="16">
+            <el-col :span="8">
+              <el-form-item
+                label="Code"
+                class="label-required"
+                prop="phoneCountry"
+              >
+                <el-select v-model="orderForm.phoneCountry">
+                  <el-option label="+65" value="+65" />
+                  <el-option label="+60" value="+60" />
+                  <el-option label="+62" value="+62" />
+                  <el-option label="+66" value="+66" />
+                  <el-option label="+86" value="+86" />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="16">
+              <el-form-item
+                label="Phone No."
+                class="label-required"
+                prop="phoneNumber"
+              >
+                <el-input
+                  placeholder="Enter your phone number"
+                  v-model="orderForm.phoneNumber"
+                  clearable
+                  type="tel"
+                  class="flex-1!"
+                />
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-form-item
             label="No. of Devices"
             class="label-required"
