@@ -9,6 +9,9 @@ import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import UpIcon from '@/assets/specialIcons/fi_trending-up.svg'
 import DownIcon from '@/assets/specialIcons/fi_trending-down.svg'
 import PDFIcon from '@/assets/specialIcons/icon_pdf.svg'
+import { getFirstLetter, getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
+import BaseDialog from '@/components/BaseDialog.vue'
 
 const activeTab = ref('Expense Details')
 
@@ -31,6 +34,19 @@ const logList = ref([
     detail: { orderNo: 'ORD-00020' },
   },
 ])
+
+//  编辑预估成本的弹窗
+const dialogEditEstimatedCostVisible = ref(false)
+
+// 预估成本表单
+const editEstimatedCostForm = reactive({
+  cost: '',
+  description: '',
+})
+
+const handleCloseEditEstimatedCostDialog = () => {}
+
+const handleEditEstimatedCostForm = () => {}
 </script>
 
 <template>
@@ -371,6 +387,39 @@ const logList = ref([
       </div>
     </div>
   </section>
+  <!-- 编辑预估成本的弹窗  -->
+  <base-dialog
+    v-model="dialogEditEstimatedCostVisible"
+    title="Edit Cost Analysis"
+    confirm-text="Save"
+    @cancel="handleCloseEditEstimatedCostDialog"
+    @confirm="handleEditEstimatedCostForm"
+    :show-close-button="true"
+  >
+    <template #content>
+      <el-form
+        :model="editEstimatedCostForm"
+        label-position="top"
+        class="input--underline el-form-item--inline"
+      >
+        <!-- Title -->
+        <el-form-item label="Market Average ($)" prop="cost">
+          <el-input
+            v-model="editEstimatedCostForm.cost"
+            placeholder="Enter title"
+          />
+        </el-form-item>
+
+        <!-- Content -->
+        <el-form-item label="Description" prop="description">
+          <el-input
+            v-model="editEstimatedCostForm.description"
+            placeholder="Enter content"
+          />
+        </el-form-item>
+      </el-form>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
