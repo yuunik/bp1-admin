@@ -22,6 +22,8 @@ const ShareApi = Object.freeze({
   GET_VERIFY_CODE: '/code/codes',
   // 获取相册详情
   GET_PHOTO_INFO: '/album/info',
+  // 下订单
+  POST_ORDER: '/activityorder/add',
 })
 
 /**
@@ -151,6 +153,34 @@ export const getPhotoInfoApi = (id) => {
 
   return request({
     url: ShareApi.GET_PHOTO_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 下订单
+ * @param params
+ * @param params.contactName 联系人名称
+ * @param params.contactEmail 联系人邮箱
+ * @param params.phoneCountry 联系人手机国家代码
+ * @param params.phoneNumber 联系人手机号码
+ * @param params.quantity 商品数量
+ * @param params.description 描述
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const postOrderApi = (params) => {
+  const data = new FormData()
+  data.append('contactName', params.contactName)
+  data.append('contactEmail', params.contactEmail)
+  data.append('phoneCountry', params.phoneCountry)
+  data.append('phoneNumber', params.phoneNumber)
+  data.append('quantity', params.quantity)
+  data.append('description', params.description)
+
+  return request({
+    url: ShareApi.POST_ORDER,
     method: 'POST',
     data,
   })
