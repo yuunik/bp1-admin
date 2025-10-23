@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 
+import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
+
 // 静态资源
 import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import UpIcon from '@/assets/specialIcons/fi_trending-up.svg'
 import DownIcon from '@/assets/specialIcons/fi_trending-down.svg'
+import PDFIcon from '@/assets/specialIcons/icon_pdf.svg'
 
 const activeTab = ref('Expense Details')
 
@@ -197,12 +200,12 @@ const engineItemIsExpand = ref(false)
           <h3
             class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
           >
-            Items
+            Bills
           </h3>
           <span
             class="heading-body-large-body-14px-medium text-neutrals-grey-3"
           >
-            3
+            6
           </span>
         </div>
         <!-- 上传按钮 -->
@@ -216,8 +219,38 @@ const engineItemIsExpand = ref(false)
       <!-- divider -->
       <el-divider class="mt-8! mb-12!" />
       <!-- attachment grid view -->
-      <div>
-        <div class="rounded-12 w-398 bo border-[1px]-[#EAEEF4] h-64 p-12"></div>
+      <div class="mx-32 grid grid-cols-2 gap-12">
+        <div
+          v-for="item in 6"
+          :key="item"
+          class="rounded-12 border-[1px]-[#EAEEF4] row-center h-64 gap-8 p-12"
+        >
+          <el-image :src="PDFIcon" class="h-40 w-40" fit="cover" />
+          <div class="text-neutrals-grey-4 flex flex-col gap-8">
+            <p class="heading-body-body-12px-regular text-neutrals-off-black">
+              document 1.pdf
+            </p>
+            <div class="row-center gap-4">
+              <el-avatar
+                :size="20"
+                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+              />
+              <span class="heading-caption-caption-10px-regular">
+                Bessie Cooper
+              </span>
+              <span class="heading-caption-caption-10px-regular">∙</span>
+              <span class="heading-caption-caption-10px-regular">120 KB</span>
+              <span class="heading-caption-caption-10px-regular">∙</span>
+              <span class="heading-caption-caption-10px-regular">
+                28/04/2024 3:30pm
+              </span>
+            </div>
+          </div>
+          <div class="flex gap-8">
+            <base-svg-icon name="down_line" color="#6F7788" size="16" />
+            <base-svg-icon name="delete-2" color="#6F7788" size="16" />
+          </div>
+        </div>
       </div>
     </div>
   </section>
