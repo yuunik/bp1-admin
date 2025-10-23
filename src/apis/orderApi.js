@@ -9,6 +9,8 @@ import { useAuthToken } from '@/composables/useAuthToken.js'
 const OrderApi = Object.freeze({
   // 获取活动当天的订单列表
   GET_ACTIVITY_ORDER_LIST: '/manager/activityorder/activityorders',
+  // 删除活动当天的订单
+  DELETE_ACTIVITY_ORDER: '/manager/activityorder/delete',
 })
 
 // 获取 token
@@ -36,6 +38,24 @@ export const getActiveOrderListApi = (params) => {
 
   return request({
     url: OrderApi.GET_ACTIVITY_ORDER_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除活动当天的订单
+ * @param {Number} orderId 订单ID
+ *
+ * @returns {Promise}
+ */
+export const deleteActiveOrderApi = (orderId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('orderId', orderId)
+
+  return request({
+    url: OrderApi.DELETE_ACTIVITY_ORDER,
     method: 'POST',
     data,
   })

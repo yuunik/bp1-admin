@@ -7,7 +7,7 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { postOrderApi } from '@/apis/shareApi.js'
 import { ElMessage } from 'element-plus'
-import { getActiveOrderListApi } from '@/apis/orderApi.js'
+import { deleteActiveOrderApi, getActiveOrderListApi } from '@/apis/orderApi.js'
 import { useSort } from '@/composables/useSort.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
@@ -24,11 +24,11 @@ const onRowClick = (_, column) => {
 // 订单数据
 const orderDataList = ref([])
 
-// 分页参数
-const pageQueryParams = ref({
+// 分页查询条件
+const pagination = reactive({
   currentPage: 0,
-  total: 0,
   pageSize: 15,
+  total: 0,
 })
 
 // 搜索文本
@@ -59,7 +59,14 @@ const sortParams = reactive({
   sortBy: '',
 })
 
-const refresh = async () => {}
+// 删除弹窗
+const dialogConfirmDeleteVisible = ref(false)
+
+// 所选中的订单信息
+const selectedRow = ref({})
+
+// 删除提示信息
+const deleteContent = ref('')
 
 // 搜索
 const handleSearch = useDebounceFn(async () => refresh(), 500)
@@ -104,8 +111,8 @@ const handleCloseAddOrder = () => {
 const getOrderList = async () => {
   await getActiveOrderListApi({
     searchKey: searchText.value,
-    page: pageQueryParams.value.currentPage,
-    pageSize: pageQueryParams.value.pageSize,
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
   })
@@ -119,6 +126,41 @@ const handleCellMouseEnter = (row) => (row.isHover = true)
 
 // 当单元格 hover 离开时会触发该事件
 const handleCellMouseLeave = (row) => (row.isHover = false)
+
+// 刷新页面
+const refresh = () => {
+  if (pagination.currentPage === 0) {
+    return getOrderList()
+  }
+  pagination.currentPage = 0
+}
+
+// 打开删除确认弹窗
+const openConfirmDeleteDialog = (row) => {
+  selectedRow.value = row
+  // 记录删除信息
+  deleteContent.value = `Are you sure you want to delete the ${selectedRow.value.orderNo} order? Once deleted, it cannot be recovered.`
+  dialogConfirmDeleteVisible.value = true
+}
+
+// 删除订单
+const handleDeleteVersionControl = async () => {
+  try {
+    await deleteActiveOrderApi(selectedRow.value.id)
+    // 提示
+    ElMessage.success('Delete successfully')
+    refresh()
+  } finally {
+    // 关闭删除确认弹窗
+    dialogConfirmDeleteVisible.value = false
+  }
+}
+
+// 监听 pagination.currentPage, 自动发起查询
+watch(
+  () => pagination.currentPage,
+  () => getOrderList,
+)
 
 // 获取订单列表
 getOrderList()
@@ -183,7 +225,7 @@ getOrderList()
         </el-dropdown>
       </div>
       <!-- 输入搜索栏 -->
-      <base-filter-input v-model="searchText" @input-change="handleSearch" />
+      <base-filter-input v-model="searchText" @input-change="refresh" />
     </div>
     <!-- Divider -->
     <el-divider />
@@ -227,11 +269,12 @@ getOrderList()
             <i
               class="icon-delete-bin-line text-16 cursor-pointer"
               v-show="row.isHover"
+              @click="openConfirmDeleteDialog(row)"
             />
           </template>
         </el-table-column>
       </el-table>
-      <base-pagination v-model="pageQueryParams" />
+      <base-pagination v-model="pagination" />
     </div>
   </section>
   <!-- 新增订单的弹窗 -->
@@ -308,6 +351,20 @@ getOrderList()
           />
         </el-form-item>
       </el-form>
+    </template>
+  </base-dialog>
+  <!-- 删除确认弹窗 -->
+  <base-dialog
+    v-model="dialogConfirmDeleteVisible"
+    title="Delete order ?"
+    button-type="danger"
+    @cancel="dialogConfirmDeleteVisible = false"
+    @confirm="handleDeleteVersionControl"
+  >
+    <template #content>
+      <p class="heading-body-body-12px-medium text-neutrals-grey-3">
+        {{ deleteContent }}
+      </p>
     </template>
   </base-dialog>
 </template>
