@@ -268,6 +268,18 @@ const constantRoutes = [
           showInBreadcrumb: true,
         },
       },
+      // expense 记录详情
+      {
+        path: '/user-management/expense/:id',
+        name: RouteName.EXPENSE_RECORD_DETAILS,
+        component: () =>
+          import('@/views/UserManagement/ExpenseRecordDetails/index.vue'),
+        meta: {
+          title: RouteName.EXPENSE_RECORD_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
       // 创建商家
       {
         path: '/user-management/extern/workshop/create',
