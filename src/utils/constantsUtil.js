@@ -34,7 +34,6 @@ export const RouteName = Object.freeze({
   LOGIN: 'Login',
   LAYOUT: 'Layout',
   DASHBOARD: 'Dashboard',
-  ORDER_MANAGEMENT_INDEX: 'Order Management Index',
   ORDER_MANAGEMENT: 'Order Management',
   OBD_MANAGEMENT: 'OBD Management',
   OBD_LIST: 'OBD List',
@@ -70,6 +69,9 @@ export const RouteName = Object.freeze({
   ERROR_CODE_DETAILS: 'Error Code Details',
   PERSON_MANAGE: 'Person Manage',
   EXPENSE_RECORD_DETAILS: 'Expense Record Details',
+  ACTIVITY_ORDER: 'Activity Order',
+  // 实时订单
+  REAL_TIME_ORDER: 'Real Time Order',
 })
 
 // 分享模块跳转路径

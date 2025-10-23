@@ -45,30 +45,48 @@ const constantRoutes = [
   },
   // 订单模块
   {
-    path: '/orderManagement',
-    redirect: '/order-management',
-    name: RouteName.ORDER_MANAGEMENT_INDEX,
+    path: '/order-management',
+    redirect: '/order-management/rt-order-list',
+    name: RouteName.ORDER_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
+      /**
+       * 实时订单模块
+       */
       {
-        path: '/order-management',
-        name: RouteName.ORDER_MANAGEMENT,
-        component: () => import('@/views/OrderManagement/index.vue'),
+        path: '/order-management/rt-order-list',
+        name: RouteName.REAL_TIME_ORDER,
+        component: () =>
+          import('@/views/OrderManagement/RealTimeOrder/index.vue'),
         meta: {
-          title: RouteName.ORDER_MANAGEMENT,
+          title: RouteName.REAL_TIME_ORDER,
           showInMenu: true,
           showInBreadcrumb: true,
-          icon: 'icon-typesOrderManagement',
-          selectedIcon: 'icon-typelist',
+        },
+      },
+      /**
+       * 活动订单模块
+       */
+      {
+        path: '/order-management/activity-order-list',
+        name: RouteName.ACTIVITY_ORDER,
+        component: () =>
+          import('@/views/OrderManagement/ActivityOrder/index.vue'),
+        meta: {
+          title: RouteName.ACTIVITY_ORDER,
+          showInMenu: true,
+          showInBreadcrumb: true,
         },
       },
     ],
     meta: {
-      title: RouteName.ORDER_MANAGEMENT_INDEX,
-      showInMenu: false,
-      showInBreadcrumb: false,
+      title: RouteName.ORDER_MANAGEMENT,
+      showInMenu: true,
+      showInBreadcrumb: true,
       // 是否为一级路由
       isTopLevelRoute: true,
+      icon: 'icon-typesOrderManagement',
+      selectedIcon: 'icon-typelist',
     },
   },
   {
@@ -711,6 +729,17 @@ const constantRoutes = [
         component: () => import('@/share/VehicleProfileInfo.vue'),
         meta: {
           title: 'Vehicle Profile',
+          showInMenu: false,
+          showInBreadcrumb: false,
+        },
+      },
+      // 活动订单填写页
+      {
+        path: '/share/activity-order',
+        name: 'Activity Order',
+        component: () => import('@/share/ActivityOrderManagement.vue'),
+        meta: {
+          title: 'Activity Order',
           showInMenu: false,
           showInBreadcrumb: false,
         },
