@@ -86,6 +86,8 @@ const handleAddOrder = async () => {
     })
     // 提示
     ElMessage.success('Order created successfully')
+    // 刷新页面
+    refresh()
   } catch {
     // 网络错误, 请稍后再试
     ElMessage.fail('Network error, please try again later')
@@ -109,23 +111,30 @@ const handleCloseAddOrder = () => {
 
 // 获取订单列表
 const getOrderList = async () => {
-  await getActiveOrderListApi({
+  const { data, count } = await getActiveOrderListApi({
     searchKey: searchText.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
   })
+  orderDataList.value = data.map((item) => ({
+    ...item,
+    isHover: false,
+    // orderNo: item.orderNo.slice(0, 8),
+    // createdAt: getDateWithDDMMMYYYYhhmma(item.createdAt),
+  }))
+  pagination.total = count
 }
 
 // 排序查询
 const sort = useSort(sortParams, () => getOrderList())
 
 // 当单元格 hover 进入时会触发该事件
-const handleCellMouseEnter = (row) => (row.isHover = true)
+// const handleCellMouseEnter = (row) => (row.isHover = true)
 
 // 当单元格 hover 离开时会触发该事件
-const handleCellMouseLeave = (row) => (row.isHover = false)
+// const handleCellMouseLeave = (row) => (row.isHover = false)
 
 // 刷新页面
 const refresh = () => {
@@ -178,77 +187,78 @@ getOrderList()
       </el-button>
     </div>
     <!-- Search -->
-    <div class="flex-between mx-32 flex h-24 gap-20">
-      <div class="flex gap-8">
-        <!-- 状态搜索 -->
-        <el-dropdown>
-          <span
-            class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
-          >
-            Source
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
-              <div class="flex-between">
-                <span>Status</span>
-                <el-button text>Clear</el-button>
-              </div>
-              <el-checkbox-group>
-                <el-checkbox value="1">Active</el-checkbox>
-                <el-checkbox value="2">Disabled</el-checkbox>
-              </el-checkbox-group>
-            </div>
-          </template>
-        </el-dropdown>
-        <!-- 状态搜索 -->
-        <el-dropdown>
-          <span
-            class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"
-          >
-            Status
-            <i class="icon-typesdropdown" />
-          </span>
-          <template #dropdown>
-            <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">
-              <div class="flex-between">
-                <span>Role</span>
-                <el-button text>Clear</el-button>
-              </div>
-              <el-checkbox-group>
-                <el-checkbox value="1">Admin</el-checkbox>
-                <el-checkbox value="2">Support</el-checkbox>
-                <el-checkbox value="2">Technician</el-checkbox>
-              </el-checkbox-group>
-            </div>
-          </template>
-        </el-dropdown>
-      </div>
-      <!-- 输入搜索栏 -->
-      <base-filter-input v-model="searchText" @input-change="refresh" />
-    </div>
+    <!--<div class="flex-between mx-32 flex h-24 gap-20">-->
+    <!--  <div class="flex gap-8">-->
+    <!--    &lt;!&ndash; 状态搜索 &ndash;&gt;-->
+    <!--    <el-dropdown>-->
+    <!--      <span-->
+    <!--        class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"-->
+    <!--      >-->
+    <!--        Source-->
+    <!--        <i class="icon-typesdropdown" />-->
+    <!--      </span>-->
+    <!--      <template #dropdown>-->
+    <!--        <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">-->
+    <!--          <div class="flex-between">-->
+    <!--            <span>Status</span>-->
+    <!--            <el-button text>Clear</el-button>-->
+    <!--          </div>-->
+    <!--          <el-checkbox-group>-->
+    <!--            <el-checkbox value="1">Active</el-checkbox>-->
+    <!--            <el-checkbox value="2">Disabled</el-checkbox>-->
+    <!--          </el-checkbox-group>-->
+    <!--        </div>-->
+    <!--      </template>-->
+    <!--    </el-dropdown>-->
+    <!--    &lt;!&ndash; 状态搜索 &ndash;&gt;-->
+    <!--    <el-dropdown>-->
+    <!--      <span-->
+    <!--        class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"-->
+    <!--      >-->
+    <!--        Status-->
+    <!--        <i class="icon-typesdropdown" />-->
+    <!--      </span>-->
+    <!--      <template #dropdown>-->
+    <!--        <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">-->
+    <!--          <div class="flex-between">-->
+    <!--            <span>Role</span>-->
+    <!--            <el-button text>Clear</el-button>-->
+    <!--          </div>-->
+    <!--          <el-checkbox-group>-->
+    <!--            <el-checkbox value="1">Admin</el-checkbox>-->
+    <!--            <el-checkbox value="2">Support</el-checkbox>-->
+    <!--            <el-checkbox value="2">Technician</el-checkbox>-->
+    <!--          </el-checkbox-group>-->
+    <!--        </div>-->
+    <!--      </template>-->
+    <!--    </el-dropdown>-->
+    <!--  </div>-->
+    <!--  &lt;!&ndash; 输入搜索栏 &ndash;&gt;-->
+    <!--  <base-filter-input v-model="searchText" @input-change="refresh" />-->
+    <!--</div>-->
     <!-- Divider -->
     <el-divider />
     <!-- Table -->
     <div class="mx-32 flex flex-1 flex-col overflow-hidden pb-32">
-      <el-table
-        :data="orderDataList"
-        class="flex-1"
-        @sort-change="sort"
-        @cell-mouse-enter="handleCellMouseEnter"
-        @cell-mouse-leave="handleCellMouseLeave"
-      >
-        <!-- 复选框列 -->
-        <el-table-column type="selection" width="50" />
-
+      <el-table :data="orderDataList" class="flex-1" @sort-change="sort">
         <!-- 订单号 -->
         <el-table-column prop="orderNo" label="Order No." sortable />
 
+        <!-- 活动id -->
+        <el-table-column prop="activityNo" label="Activity No." sortable />
+
         <!-- 客户 -->
-        <el-table-column prop="contactName" label="Customer" />
+        <el-table-column prop="contactName" label="Customer" sortable />
+
+        <!-- 用户邮箱 -->
+        <el-table-column prop="contactEmail" label="Email" sortable />
 
         <!-- 联系电话 -->
-        <el-table-column prop="phoneNumber" label="Phone No." />
+        <el-table-column prop="phoneNumber" label="Phone No.">
+          <template #default="{ row }">
+            <span>({{ row.phoneCountry }}) {{ row.phoneNumber }}</span>
+          </template>
+        </el-table-column>
 
         <!-- OBD -->
         <el-table-column prop="quantity" label="Order Quantity" sortable />
@@ -259,16 +269,15 @@ getOrderList()
         <!-- 订单日期 -->
         <el-table-column prop="createTime" label="Order Date" sortable>
           <template #default="{ row }">
-            getDateWithDDMMMYYYYhhmma(row.createTime)
+            {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
           </template>
         </el-table-column>
 
         <!-- 操作 -->
         <el-table-column align="center" width="100">
-          <template #default>
+          <template #default="{ row }">
             <i
               class="icon-delete-bin-line text-16 cursor-pointer"
-              v-show="row.isHover"
               @click="openConfirmDeleteDialog(row)"
             />
           </template>
