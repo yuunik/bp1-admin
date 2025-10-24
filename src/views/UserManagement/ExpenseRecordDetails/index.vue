@@ -380,7 +380,7 @@ getRepairRecordInfo(id)
       </div>
       <!-- divider -->
       <el-divider class="mt-8! mb-12!" />
-      <!-- attachment grid view -->
+      <!-- bills grid view -->
       <div
         class="mx-32 grid grid-cols-2 gap-12"
         v-if="repairRecordDetail.ticketDtos?.length"
@@ -406,7 +406,7 @@ getRepairRecordInfo(id)
           <span
             class="heading-body-large-body-14px-medium text-neutrals-grey-3"
           >
-            2
+            {{ repairRecordDetail.attachmentDtos?.length || 0 }}
           </span>
         </div>
         <!-- 上传按钮 -->
@@ -420,39 +420,22 @@ getRepairRecordInfo(id)
       <!-- divider -->
       <el-divider class="mt-8! mb-12!" />
       <!-- attachment grid view -->
-      <div class="mx-32 grid grid-cols-2 gap-12">
+      <div
+        class="mx-32 grid grid-cols-2 gap-12"
+        v-if="repairRecordDetail.attachmentDtos?.length"
+      >
         <div
-          v-for="item in 2"
-          :key="item"
-          class="rounded-12 border-[1px]-[#EAEEF4] row-center h-64 gap-8 p-12"
+          class="mx-32 grid grid-cols-2 gap-12"
+          v-if="repairRecordDetail.attachmentDtos?.length"
         >
-          <el-image :src="PDFIcon" class="h-40 w-40" fit="cover" />
-          <div class="text-neutrals-grey-4 flex flex-col gap-8">
-            <p class="heading-body-body-12px-regular text-neutrals-off-black">
-              document 1.pdf
-            </p>
-            <div class="row-center gap-4">
-              <el-avatar
-                :size="20"
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-              />
-              <span class="heading-caption-caption-10px-regular">
-                Bessie Cooper
-              </span>
-              <span class="heading-caption-caption-10px-regular">∙</span>
-              <span class="heading-caption-caption-10px-regular">120 KB</span>
-              <span class="heading-caption-caption-10px-regular">∙</span>
-              <span class="heading-caption-caption-10px-regular">
-                28/04/2024 3:30pm
-              </span>
-            </div>
-          </div>
-          <div class="flex gap-8">
-            <base-svg-icon name="down_line" color="#6F7788" size="16" />
-            <base-svg-icon name="delete-2" color="#6F7788" size="16" />
-          </div>
+          <file-info-card
+            v-for="item in repairRecordDetail.attachmentDtos"
+            :key="item.id"
+            :info="item"
+          />
         </div>
       </div>
+      <el-empty v-else description="No attachment data" />
     </div>
     <!-- Logs & Note -->
     <div class="flex flex-col gap-8">
@@ -466,7 +449,7 @@ getRepairRecordInfo(id)
       <el-divider />
       <!-- table -->
       <div class="mx-32">
-        <el-table :data="logList">
+        <el-table :data="logList" class="log-table-container">
           <el-table-column prop="date" label="Date" min-width="160" />
           <el-table-column prop="time" label="Time" min-width="120" />
           <el-table-column prop="user" label="User" min-width="160" />
@@ -474,14 +457,14 @@ getRepairRecordInfo(id)
           <el-table-column label="Detail" min-width="220">
             <template #default="{ row }">
               <div v-if="row.action === 'Login'">
-                <span class="text-neutrals-off-black">IP:</span>
+                <span>IP:</span>
                 {{ row.detail.ip }}
                 <span class="mx-8">|</span>
-                <span class="text-neutrals-off-black">Device:</span>
+                <span>Device:</span>
                 {{ row.detail.device }}
               </div>
               <div v-else-if="row.action === 'Create Order'">
-                <span class="text-neutrals-off-black">Order No.</span>
+                <span>Order No.</span>
                 {{ row.detail.orderNo }}
               </div>
               <div v-else>
@@ -580,6 +563,13 @@ getRepairRecordInfo(id)
         @apply flex flex-col items-start justify-start pr-0;
       }
     }
+  }
+}
+
+/* TODO 无日志数据, 文字暂时置灰 */
+.log-table-container {
+  :deep(.el-table__row) {
+    @apply text-neutrals-grey-2;
   }
 }
 </style>
