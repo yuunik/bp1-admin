@@ -202,13 +202,16 @@ export const addClubMemberApi = (params) => {
 
 /**
  * 管理员批准用户
- * @param userId
+ * @param params
+ * @param params.userId 用户ID
+ * @param params.clubId 俱乐部ID
  * @returns
  */
-export const approveUserApi = (userId) => {
+export const approveUserApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('userId', userId)
+  data.append('clubId', params.clubId)
+  data.append('userId', params.userId)
 
   return request({
     url: ClubApi.APPROVE_USER,
@@ -220,6 +223,7 @@ export const approveUserApi = (userId) => {
 /**
  * 管理员拒绝用户
  * @param params
+ * @param params.clubId 俱乐部ID
  * @param params.userId 用户ID
  * @param params.reason 拒绝理由
  * @returns
@@ -227,6 +231,7 @@ export const approveUserApi = (userId) => {
 export const rejectUserApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
+  data.append('clubId', params.clubId)
   data.append('userId', params.userId)
   data.append('reason', params.reason)
 
@@ -239,13 +244,16 @@ export const rejectUserApi = (params) => {
 
 /**
  * 管理员设置或移除管理员
- * @param userId
+ * @param params
+ * @param params.clubId 俱乐部ID
+ * @param params.userId 用户ID
  * @returns
  */
-export const manageClubAdminApi = (userId) => {
+export const manageClubAdminApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('userId', userId)
+  data.append('clubId', params.clubId)
+  data.append('userId', params.userId)
 
   return request({
     url: ClubApi.MANAGE_CLUB_ADMIN,
@@ -256,13 +264,16 @@ export const manageClubAdminApi = (userId) => {
 
 /**
  * 管理员删除用户
- * @param userId
+ * @param params
+ * @param params.userId 用户ID
+ * @param params.clubId 俱乐部ID
  * @returns
  */
-export const deleteClubMemberApi = (userId) => {
+export const deleteClubMemberApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('userId', userId)
+  data.append('userId', params.userId)
+  data.append('clubId', params.clubId)
 
   return request({
     url: ClubApi.DELETE_CLUB_MEMBER,

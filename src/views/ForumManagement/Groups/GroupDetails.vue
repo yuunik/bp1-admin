@@ -329,7 +329,10 @@ const closeAddMemberDialog = () => {
 
 // 管理员批准用户加入俱乐部
 const handleApproveUser = async (userId) => {
-  await approveUserApi(userId)
+  await approveUserApi({
+    clubId: clubId.value,
+    userId,
+  })
   // 提示
   ElMessage.success('Approved successfully')
   init()
@@ -337,7 +340,10 @@ const handleApproveUser = async (userId) => {
 
 // 管理员设置或移除管理员
 const handleSetOrRemoveAdmin = async (userId) => {
-  await manageClubAdminApi(userId)
+  await manageClubAdminApi({
+    clubId: clubId.value,
+    userId,
+  })
   // 提示
   ElMessage.success('Updated successfully')
   init()
@@ -345,7 +351,10 @@ const handleSetOrRemoveAdmin = async (userId) => {
 
 // 管理员删除用户
 const handleRemoveUser = async (userId) => {
-  await deleteClubMemberApi(userId)
+  await deleteClubMemberApi({
+    clubId: clubId.value,
+    userId,
+  })
   // 提示
   ElMessage.success('Removed successfully')
   init()
@@ -380,7 +389,7 @@ const openRejectUserDialog = async (row) => {
 // 拒绝用户加入俱乐部
 const handleRejectUser = async () => {
   try {
-    await rejectUserApi(rejectUserForm.value)
+    await rejectUserApi({ ...rejectUserForm.value, clubId: clubId.value })
     // 提示
     ElMessage.success('Rejected successfully')
     init()
@@ -494,15 +503,6 @@ const handleRejectGroup = async () => {
   } finally {
     dialogRejectGroupVisible.value = false
   }
-}
-
-// 获取自动补全数据列表
-const getAutoCompleteDataList = async (queryString, cb) => {
-  const results = queryString
-    ? newUserList.value.filter(createFilter(queryString))
-    : newUserList.value
-  // call callback function to return suggestions
-  cb(results)
 }
 
 watch(
