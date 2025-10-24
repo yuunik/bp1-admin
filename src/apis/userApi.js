@@ -38,6 +38,8 @@ const UserApi = Object.freeze({
   GET_USER_REPAIR_AMOUNT: '/expense/total',
   // 获取维修记录详情
   GET_REPAIR_RECORD_INFO: '/expense/info',
+  // 管理员编辑Expense Item Cost Analysis
+  EDIT_EXPENSE_ITEM_COST_ANALYSIS: '/manager/edit/itemairepair',
 })
 
 // 获取 token
@@ -336,6 +338,31 @@ export const getRepairRecordDetailApi = (expenseId) => {
 
   return request({
     url: UserApi.GET_REPAIR_RECORD_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ *
+ * 管理员编辑Expense Item Cost Analysis
+ *
+ * @param params
+ * @param params.id
+ * @param params.avg 市场均价
+ * @param params.remark 备注
+ *
+ * @returns {Promise}
+ */
+export const updateExpenseItemCostAnalysisApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', params.id)
+  data.append('avg', params.avg)
+  data.append('remark', params.remark)
+
+  return request({
+    url: UserApi.EDIT_EXPENSE_ITEM_COST_ANALYSIS,
     method: 'POST',
     data,
   })

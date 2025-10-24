@@ -12,13 +12,17 @@ import UpIcon from '@/assets/specialIcons/fi_trending-up.svg'
 import DownIcon from '@/assets/specialIcons/fi_trending-down.svg'
 import PDFIcon from '@/assets/specialIcons/icon_pdf.svg'
 import BaseDialog from '@/components/BaseDialog.vue'
-import { getRepairRecordDetailApi } from '@/apis/userApi.js'
+import {
+  getRepairRecordDetailApi,
+  updateExpenseItemCostAnalysisApi,
+} from '@/apis/userApi.js'
 import BaseInfoCard from '@/components/BaseInfoCard.vue'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useCloned } from '@vueuse/core'
 import { getFormatNumberString } from '@/utils/dataFormattedUtil.js'
 import { AI_COST_LEVEL } from '@/utils/constantsUtil.js'
 import FileInfoCard from '@/views/UserManagement/ExpenseRecordDetails/components/FileInfoCard.vue'
+import { ElMessage } from 'element-plus'
 
 const activeTab = ref('Expense Details')
 
@@ -56,6 +60,18 @@ const editEstimatedCostForm = reactive({
   description: '',
 })
 
+// 表单校验规则
+const editEstimatedCostFormRules = reactive({
+  cost: [{ required: true, message: '请输入预估成本', trigger: 'blur' }],
+  description: [{ required: true, message: '请输入描述', trigger: 'blur' }],
+})
+
+// 预估成本表单引用
+const editEstimatedCostFormRef = ref(null)
+
+// 选择的预估成本
+const selectedEstimatedCost = ref({})
+
 // 税前小计
 const subtotal = computed(() => {
   const totalCost = Big(repairRecordDetail.value.totalCost || 0)
@@ -83,9 +99,31 @@ const totalCostWithExchangeRate = computed(() => {
   return (totalCost * rate).toFixed(2)
 })
 
-const handleCloseEditEstimatedCostDialog = () => {}
+// 关闭编辑预估成本的弹窗
+const handleCloseEditEstimatedCostDialog = () => {
+  editEstimatedCostForm.cost = ''
+  editEstimatedCostForm.description = ''
+  dialogEditEstimatedCostVisible.value = false
+}
 
-const handleEditEstimatedCostForm = () => {}
+// 提交编辑预估成本表单
+const handleEditEstimatedCostForm = async () => {
+  try {
+    // 验证表单
+    await editEstimatedCostFormRef.value.validate()
+    await updateExpenseItemCostAnalysisApi({
+      id: selectedEstimatedCost.value.id,
+      avg: editEstimatedCostForm.cost,
+      remark: editEstimatedCostForm.description,
+    })
+    // 提示
+    ElMessage.success('Edit success')
+    // 刷新
+    getRepairRecordInfo(route.params.id)
+  } finally {
+    dialogEditEstimatedCostVisible.value = false
+  }
+}
 
 // 获取维修记录详情
 const getRepairRecordInfo = async (id) => {
@@ -100,6 +138,12 @@ const getRepairRecordInfo = async (id) => {
     }))
   }
   repairRecordDetail.value = cloned.value
+}
+
+const handleOpenEditEstimatedCostDialog = (record) => {
+  const { cloned } = useCloned(record)
+  selectedEstimatedCost.value = cloned.value
+  dialogEditEstimatedCostVisible.value = true
 }
 
 // 组件创建后, 发起请求
@@ -238,7 +282,10 @@ getRepairRecordInfo(id)
                   >
                     Cost Analysis
                   </h4>
-                  <i class="icon-edit-line text-16 text-neutrals-grey-3" />
+                  <i
+                    class="icon-edit-line text-16 text-neutrals-grey-3"
+                    @click="handleOpenEditEstimatedCostDialog(record)"
+                  />
                 </div>
                 <div>
                   <el-image
@@ -488,8 +535,11 @@ getRepairRecordInfo(id)
     <template #content>
       <el-form
         :model="editEstimatedCostForm"
+        ref="editEstimatedCostFormRef"
+        :rules="editEstimatedCostFormRules"
         label-position="top"
         class="input--underline el-form-item--inline"
+        hide-required-asterisk
       >
         <!-- Title -->
         <el-form-item label="Market Average ($)" prop="cost">
