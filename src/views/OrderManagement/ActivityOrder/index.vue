@@ -377,7 +377,7 @@ getOrderList()
       <!--  </el-dropdown>-->
       <!--</div></>-->
       <!-- 输入搜索栏 -->
-      <base-filter-input v-model="searchText" @input-change="refresh" />
+      <base-filter-input v-model="searchText" @input-change="handleSearch" />
     </div>
     <!-- Divider -->
     <el-divider />
