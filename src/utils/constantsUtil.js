@@ -146,3 +146,10 @@ export const ForumManagementTab = Object.freeze({
   POSTS: 'Posts',
   COMMENTS: 'Comments',
 })
+
+// ai 预估成本等级
+export const AI_COST_LEVEL = Object.freeze({
+  LOW: 'Low',
+  FAIR: 'Fair',
+  HIGH: 'High',
+})
