@@ -437,11 +437,11 @@ getOrderList()
         </el-table-column>
 
         <!-- 客户备注 -->
-        <el-table-column
-          prop="description"
-          label="Notes"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="description" label="Notes" show-overflow-tooltip>
+          <template #default="{ row }">
+            <span class="text-truncate w-full">{{ row.description }}</span>
+          </template>
+        </el-table-column>
 
         <!-- 订单日期 -->
         <el-table-column prop="createTime" label="Order Date" sortable>
