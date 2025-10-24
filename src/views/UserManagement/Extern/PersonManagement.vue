@@ -254,9 +254,6 @@ const handleUnbindOBD = async () => {
     unbindOBDDialogVisible.value = false
   }
 }
-
-const refresh = () => {}
-
 // 获取用户的维修记录
 const getUserRepairRecordList = async () => {
   const { data, count } = await getRecordListApi({
@@ -274,6 +271,14 @@ const getUserRepairRecordList = async () => {
   })
   expenseRecordList.value = data
   expenseRecordPagination.total = count
+}
+
+// 刷新页面
+const refresh = () => {
+  if (!expenseRecordPagination.currentPage) {
+    return getUserRepairRecordList()
+  }
+  expenseRecordPagination.currentPage === 0
 }
 
 //  获取用户维修总价
@@ -300,6 +305,12 @@ const handleViewExpenseRecord = (row) =>
 const {
   params: { id },
 } = route
+
+// 监听分页页码改变
+watch(
+  () => expenseRecordPagination.current,
+  () => getUserRepairRecordList(),
+)
 
 onMounted(async () => {
   userId.value = id
