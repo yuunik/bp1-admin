@@ -68,6 +68,136 @@ const selectedRow = ref({})
 // 删除提示信息
 const deleteContent = ref('')
 
+// 订单表单校验规则
+const orderRules = reactive({
+  username: [
+    { required: true, message: 'Please enter your full name', trigger: 'blur' },
+  ],
+  email: [
+    {
+      required: true,
+      message: 'Please enter your email address',
+      trigger: 'blur',
+    },
+    {
+      validator: (rule, value, callback) => {
+        // 邮箱格式
+        if (!/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(value)) {
+          callback(new Error('Please enter a valid email address'))
+          return
+        }
+        callback()
+      },
+    },
+  ],
+  phoneNumber: [
+    {
+      required: true,
+      message: 'Please enter your phone number',
+      trigger: 'blur',
+    },
+    {
+      validator: (rule, value, callback) => {
+        const country = orderForm.phoneCountry // 获取国家区号
+
+        // 先检查是否为纯数字（不含 + 或空格等）
+        if (!/^\d+$/.test(value)) {
+          callback(new Error('Phone number must contain only digits'))
+          return
+        }
+
+        // 根据国家区号进行校验
+        switch (country) {
+          case '+65': // Singapore
+            // 8位，以8或9开头
+            if (!/^[8-9]\d{7}$/.test(value)) {
+              callback(
+                new Error(
+                  'Singapore number must be 8 digits and start with 8 or 9',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+60': // Malaysia
+            // 常见格式：10-11位，以01开头（如 012-3456789）
+            // 用户通常输入本地格式（带0），如 0123456789（10位）或 01112345678（11位）
+            if (!/^01\d{8,9}$/.test(value)) {
+              callback(
+                new Error(
+                  'Malaysia number must start with 01 and be 10-11 digits',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+62': // Indonesia
+            // 本地格式通常以 08 开头，总长 10-12 位（如 081234567890）
+            // 国际格式去掉 0，但这里假设用户输入的是本地号码（带0）
+            if (!/^08\d{8,10}$/.test(value)) {
+              callback(
+                new Error(
+                  'Indonesia number must start with 08 and be 10-12 digits',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+66': // Thailand
+            // 本地格式通常以 0 开头，总长 10 位（如 0812345678）
+            // 常见前缀：06, 08, 09
+            if (!/^0[689]\d{8}$/.test(value)) {
+              callback(
+                new Error(
+                  'Thailand number must be 10 digits and start with 06, 08 or 09',
+                ),
+              )
+              return
+            }
+            break
+
+          case '+86': // China
+            // 11位，以1开头（移动/联通/电信）
+            if (!/^1[3-9]\d{9}$/.test(value)) {
+              callback(
+                new Error('China number must be 11 digits and start with 1'),
+              )
+              return
+            }
+            break
+
+          default:
+            // 如果未指定支持的国家，可选择跳过校验或提示
+            // 这里选择允许通过（或你也可以要求必须是支持的国家）
+            break
+        }
+
+        callback() // 校验通过
+      },
+    },
+  ],
+  deviceNumber: [
+    {
+      required: true,
+      message: 'Please enter the number of devices',
+      trigger: 'blur',
+    },
+    // 只能输入数字
+    {
+      validator: (rule, value, callback) => {
+        if (!/^\d+$/.test(value)) {
+          callback(new Error('Please enter a valid number'))
+          return
+        }
+        callback()
+      },
+    },
+  ],
+})
+
 // 搜索
 const handleSearch = useDebounceFn(async () => refresh(), 500)
 
