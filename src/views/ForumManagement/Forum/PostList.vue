@@ -206,13 +206,13 @@ watch(
       </el-table-column>
       <!-- 内容 -->
       <el-table-column
-        prop="content"
-        label="Content"
-        column-key="content"
+        prop="title"
+        label="Title"
+        column-key="title"
         min-width="15%"
       >
         <template #default="{ row }">
-          <span class="h-41 text-truncate">{{ row.content || '-' }}</span>
+          <span class="h-41 text-truncate">{{ row.title || '-' }}</span>
         </template>
       </el-table-column>
       <!-- 被举报次数 -->
