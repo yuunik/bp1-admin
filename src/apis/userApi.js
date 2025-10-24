@@ -32,6 +32,8 @@ const UserApi = Object.freeze({
   DISABLE_MERCHANT: '/manager/merchant/disable',
   // 获取记录详情
   GET_EXPENSE_RECORD_INFO: '/expense/info',
+  // 获取维修记录列表
+  GET_REPAIR_RECORD_LIST: '/expense/expenses',
 })
 
 // 获取 token
@@ -254,6 +256,46 @@ export const getExpenseInfoApi = (expenseId) => {
 
   return request({
     url: UserApi.GET_EXPENSE_RECORD_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取记录列表
+ * @param params
+ * @param params.userId 用户id
+ * @param params.page 页码
+ * @param params.pageSize  每页数量
+ * @param params.beginTime 开始时间
+ * @param params.endTime 结束时间
+ * @param params.minPrice 最小金额
+ * @param params.maxPrice 最大金额
+ * @param params.sortBy 排序字段
+ * @param params.sort 排序方式
+ * @param params.vehicleId 车辆id
+ * @param params.searchKey 搜索关键字
+ *
+ *
+ * @returns {Promise<ApiResponse<any>>} Promise
+ */
+export const getRecordListApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('page', params.page)
+  data.append('userId', params.userId)
+  data.append('pageSize', params.pageSize)
+  data.append('beginTime', params.beginTime)
+  data.append('endTime', params.endTime)
+  data.append('minPrice', params.minPrice)
+  data.append('maxPrice', params.maxPrice)
+  data.append('sortBy', params.sortBy)
+  data.append('sort', params.sort)
+  data.append('vehicleId', params.vehicleId)
+  data.append('searchKey', params.searchKey)
+
+  return request({
+    url: UserApi.GET_REPAIR_RECORD_LIST,
     method: 'POST',
     data,
   })

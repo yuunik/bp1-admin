@@ -7,6 +7,7 @@ import { onMounted, reactive, ref } from 'vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
   adminUserStatusApi,
+  getRecordListApi,
   getUserInfoApi,
   getUserOBDListApi,
   getUserVehicleListApi,
@@ -25,6 +26,8 @@ import EmptyOBD from '@/assets/specialIcons/empty-obd.svg'
 import EmptyCar from '@/assets/specialIcons/empty-car.svg'
 import { unbindOBDApi } from '@/apis/obdApi.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import BasePagination from '@/components/BasePagination.vue'
+import { useSort } from '@/composables/useSort.js'
 
 const logAndNoteDataList = ref([
   {
@@ -94,62 +97,8 @@ const unbindOBDDialogVisible = ref(false)
 
 const unbindOBDId = ref('')
 
-const expenseRecordList = ref([
-  { workshop: 'BMW', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
-  {
-    workshop: 'Sint-Lievenspoort',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'OLO-Rotonde',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'SamenPlan',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'Zorgbedrijf Antwerpen',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'Zonnestraal',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'De Elisbabeth',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'Groep Ubuntu',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  { workshop: 'Koca', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
-  { workshop: 'Zewopa', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
-  {
-    workshop: 'Hagewinde',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'Gielsbos',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  {
-    workshop: 'Cocon-Vilvoorde',
-    totalAmount: '$1,200.00',
-    date: '03 Apr 2026 10:00am',
-  },
-  { workshop: 'Zewopa', totalAmount: '$1,200.00', date: '03 Apr 2026 10:00am' },
-])
+// 维修记录列表
+const expenseRecordList = ref([])
 
 // 输入搜索关键字
 const searchKeywords = ref('')
@@ -204,6 +153,7 @@ const handleUserStatus = async () => {
 // 刷新页面
 const initData = async () => {
   await Promise.all([getUserInfo(), getUserOBDList(), getUserVehicleList()])
+  await getUserRepairRecordList()
 }
 
 // 重置用户密码
@@ -263,6 +213,19 @@ const sectionMap = [
 
 const scrollbarRef = ref()
 
+// 排序参数
+const conditionParams = reactive({
+  sortBy: '',
+  sort: '',
+})
+
+// 分页查询条件
+const expenseRecordPagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
 const handleScroll = () => {
   // const scrollTop = scrollbarRef.value?.wrapRef
 }
@@ -285,6 +248,30 @@ const handleUnbindOBD = async () => {
 }
 
 const refresh = () => {}
+
+// 获取用户的维修记录
+const getUserRepairRecordList = async () => {
+  const { data, count } = await getRecordListApi({
+    userId: userId.value,
+    page: expenseRecordPagination.currentPage,
+    pageSize: expenseRecordPagination.pageSize,
+    beginTime: '',
+    endTime: '',
+    minPrice: '',
+    maxPrice: '',
+    sortBy: conditionParams.sortBy,
+    sort: conditionParams.sort,
+    vehicleId: '',
+    searchKey: searchKeywords.value,
+  })
+  expenseRecordList.value = data
+  expenseRecordPagination.total = count
+}
+
+// 排序
+const handleSearchBySort = useSort(conditionParams, () =>
+  getUserRepairRecordList(),
+)
 
 // 组件创建后, 发起请求
 const {
@@ -420,15 +407,54 @@ onMounted(async () => {
                 params: { id: '12131' },
               })
             "
+            @sort-change="handleSearchBySort"
           >
-            <el-table-column prop="workshop" label="Workshop" />
+            <el-table-column prop="workshop" label="Workshop" min-width="50%">
+              <template #default="{ row }">
+                <el-avatar
+                  v-if="row.merchantDto?.logo"
+                  fit="cover"
+                  :src="getFullFilePath(row.merchantDto?.logo)"
+                  class="mr-8 h-20 w-20"
+                  alt="brand icon"
+                  shape="circle"
+                  :size="20"
+                  @error="() => true"
+                >
+                  <template #error>
+                    <i class="i-ep:picture" />
+                  </template>
+                </el-avatar>
+                <el-text>{{ row.merchantDto?.name || '-' }}</el-text>
+              </template>
+            </el-table-column>
             <el-table-column
-              prop="totalAmount"
+              prop="totalCost"
               label="Total Amount"
               align="center"
-            />
-            <el-table-column prop="date" label="Date" />
+              min-width="25%"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                <el-text>
+                  {{ row.totalCost ? `$${row.totalCost}` : '-' }}
+                </el-text>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="createTime"
+              label="Date"
+              min-width="25%"
+              sortable="custom"
+            >
+              <template #default="{ row }">
+                <el-text>
+                  {{ getDateWithDDMMMYYYYhhmma(row.createTime) }}
+                </el-text>
+              </template>
+            </el-table-column>
           </el-table>
+          <base-pagination v-model="expenseRecordPagination" />
         </div>
       </div>
       <!-- OBD Devices -->
