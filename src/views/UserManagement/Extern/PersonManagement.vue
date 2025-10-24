@@ -8,6 +8,7 @@ import BaseDialog from '@/components/BaseDialog.vue'
 import {
   adminUserStatusApi,
   getRecordListApi,
+  getRepairTotalPriceApi,
   getUserInfoApi,
   getUserOBDListApi,
   getUserVehicleListApi,
@@ -151,10 +152,14 @@ const handleUserStatus = async () => {
 }
 
 // 刷新页面
-const initData = async () => {
-  await Promise.all([getUserInfo(), getUserOBDList(), getUserVehicleList()])
-  await getUserRepairRecordList()
-}
+const initData = async () =>
+  await Promise.all([
+    getUserInfo(),
+    getUserOBDList(),
+    getUserVehicleList(),
+    getUserRepairRecordList(),
+    getUserExpenseTotalPrice(),
+  ])
 
 // 重置用户密码
 const handleResetPassword = async () => {
@@ -226,6 +231,9 @@ const expenseRecordPagination = reactive({
   total: 0,
 })
 
+// 用户维修总价
+const repairTotalPrice = ref(0)
+
 const handleScroll = () => {
   // const scrollTop = scrollbarRef.value?.wrapRef
 }
@@ -268,10 +276,25 @@ const getUserRepairRecordList = async () => {
   expenseRecordPagination.total = count
 }
 
+//  获取用户维修总价
+const getUserExpenseTotalPrice = async () => {
+  const {
+    data: { total },
+  } = await getRepairTotalPriceApi(userId.value)
+  repairTotalPrice.value = total
+}
+
 // 排序
 const handleSearchBySort = useSort(conditionParams, () =>
   getUserRepairRecordList(),
 )
+
+// 查看维修记录的详情
+const handleViewExpenseRecord = (row) =>
+  router.push({
+    name: RouteName.EXPENSE_RECORD_DETAILS,
+    params: { id: row.id },
+  })
 
 // 组件创建后, 发起请求
 const {
@@ -362,7 +385,6 @@ onMounted(async () => {
           />
         </dd>
       </dl>
-      <!-- TODO Expense Records 数据回显 -->
       <!-- Expense Records -->
       <div class="flex flex-col gap-8">
         <!-- header -->
@@ -380,13 +402,9 @@ onMounted(async () => {
           class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[122px_1fr] items-center gap-4 [&>dd]:h-32 [&>dt]:h-32"
         >
           <dt>Total Cost</dt>
-          <dd>$20,000.00</dd>
+          <dd>{{ repairTotalPrice ? `$ ${repairTotalPrice}` : '-' }}</dd>
           <dt>AI Insights</dt>
-          <dd>
-            Repair cost increased due to brake replacement. Fuel cost efficiency
-            improved 12% this month. You spent 18% more on Engine system vs last
-            period.
-          </dd>
+          <dd>-</dd>
         </dl>
         <!-- table -->
         <div class="mx-32">
@@ -401,12 +419,7 @@ onMounted(async () => {
           <el-table
             :data="expenseRecordList"
             class="clickable-row"
-            @click="
-              $router.push({
-                name: RouteName.EXPENSE_RECORD_DETAILS,
-                params: { id: '12131' },
-              })
-            "
+            @row-click="handleViewExpenseRecord"
             @sort-change="handleSearchBySort"
           >
             <el-table-column prop="workshop" label="Workshop" min-width="50%">
@@ -453,6 +466,9 @@ onMounted(async () => {
                 </el-text>
               </template>
             </el-table-column>
+            <template #empty>
+              <el-empty description="No expense record data" />
+            </template>
           </el-table>
           <base-pagination v-model="expenseRecordPagination" />
         </div>

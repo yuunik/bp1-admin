@@ -34,6 +34,8 @@ const UserApi = Object.freeze({
   GET_EXPENSE_RECORD_INFO: '/expense/info',
   // 获取维修记录列表
   GET_REPAIR_RECORD_LIST: '/expense/expenses',
+  // 获取用户总的维修金额
+  GET_USER_REPAIR_AMOUNT: '/expense/total',
 })
 
 // 获取 token
@@ -296,6 +298,24 @@ export const getRecordListApi = (params) => {
 
   return request({
     url: UserApi.GET_REPAIR_RECORD_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取用户报修总价
+ *
+ * @param userId 用户id
+ *
+ */
+export const getRepairTotalPriceApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+
+  return request({
+    url: UserApi.GET_USER_REPAIR_AMOUNT,
     method: 'POST',
     data,
   })
