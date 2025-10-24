@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import Big from 'big.js'
 
 import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
 
@@ -9,13 +11,23 @@ import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import UpIcon from '@/assets/specialIcons/fi_trending-up.svg'
 import DownIcon from '@/assets/specialIcons/fi_trending-down.svg'
 import PDFIcon from '@/assets/specialIcons/icon_pdf.svg'
-import { getFirstLetter, getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { getRepairRecordDetailApi } from '@/apis/userApi.js'
+import BaseInfoCard from '@/components/BaseInfoCard.vue'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import { useCloned } from '@vueuse/core'
+import { getFormatNumberString } from '@/utils/dataFormattedUtil.js'
+import { AI_COST_LEVEL } from '@/utils/constantsUtil.js'
+import FileInfoCard from '@/views/UserManagement/ExpenseRecordDetails/components/FileInfoCard.vue'
 
 const activeTab = ref('Expense Details')
 
 const engineItemIsExpand = ref(false)
+
+const route = useRoute()
+
+// 维修记录详情
+const repairRecordDetail = ref({})
 
 // 操作日志列表
 const logList = ref([
@@ -44,9 +56,58 @@ const editEstimatedCostForm = reactive({
   description: '',
 })
 
+// 税前小计
+const subtotal = computed(() => {
+  const totalCost = Big(repairRecordDetail.value.totalCost || 0)
+  const gst = Big(repairRecordDetail.value.gst || 0)
+  const discount = Big(repairRecordDetail.value.discount || 0)
+
+  // 使用 minus / plus 保证精度
+  return totalCost.minus(gst).plus(discount).toFixed(2)
+})
+
+// 税前小计(含折扣)
+const subtotalWithDiscount = computed(() => {
+  const totalCost = Big(repairRecordDetail.value.totalCost || 0)
+  const gst = Big(repairRecordDetail.value.gst || 0)
+
+  // 使用 minus / plus 保证精度
+  return totalCost.minus(gst).toFixed(2)
+})
+
+// 转换汇率后的总价
+const totalCostWithExchangeRate = computed(() => {
+  const totalCost = Big(repairRecordDetail.value.totalCost || 0)
+  const rate = Big(repairRecordDetail.value.rate || 0)
+
+  return (totalCost * rate).toFixed(2)
+})
+
 const handleCloseEditEstimatedCostDialog = () => {}
 
 const handleEditEstimatedCostForm = () => {}
+
+// 获取维修记录详情
+const getRepairRecordInfo = async (id) => {
+  const { data } = await getRepairRecordDetailApi(id)
+  // 深拷贝一份，避免直接改接口原始对象
+  const { cloned } = useCloned(data)
+  // 给每个 expenseItemDtos 元素加上 isExpand
+  if (cloned.expenseItemDtos && cloned.expenseItemDtos.length) {
+    cloned.expenseItemDtos = cloned.expenseItemDtos.map((item) => ({
+      ...item,
+      isExpand: false,
+    }))
+  }
+  repairRecordDetail.value = cloned.value
+}
+
+// 组件创建后, 发起请求
+const {
+  params: { id },
+} = route
+
+getRepairRecordInfo(id)
 </script>
 
 <template>
@@ -72,13 +133,18 @@ const handleEditEstimatedCostForm = () => {}
       class="[&>dt]:leading-32 [&>dd]:leading-32 mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:h-32 [&>dt]:h-32"
     >
       <dt>Workshop</dt>
-      <dd>BMW</dd>
+      <dd>
+        <base-info-card
+          :logo="repairRecordDetail.merchantDto?.logo"
+          :name="repairRecordDetail.merchantDto?.name"
+        />
+      </dd>
       <dt>Mileage</dt>
-      <dd>11,000 km</dd>
+      <dd>{{ repairRecordDetail.mileage }} km</dd>
       <dt>Date</dt>
-      <dd>04 Apr 2025 4:23pm</dd>
+      <dd>{{ getDateWithDDMMMYYYYhhmma(repairRecordDetail.date) }}</dd>
       <dt>Note</dt>
-      <dd>xxxxx</dd>
+      <dd>{{ repairRecordDetail.note || '-' }}</dd>
     </dl>
     <!-- items table -->
     <div class="mb-24">
@@ -92,7 +158,7 @@ const handleEditEstimatedCostForm = () => {}
         <span
           class="heading-body-large-body-14px-medium text-neutrals-grey-3 ml-8"
         >
-          3
+          {{ repairRecordDetail.expenseItemDtos?.length || '0' }}
         </span>
       </div>
       <!-- divider -->
@@ -110,120 +176,182 @@ const handleEditEstimatedCostForm = () => {}
           <el-col :span="3">Tax Rate</el-col>
           <el-col :span="3">Total Amount</el-col>
         </el-row>
-        <!-- body -->
-        <el-row :class="{ 'bg-status-colours-light-blue': engineItemIsExpand }">
-          <el-col :span="1">
-            <el-image
-              :src="engineItemIsExpand ? ExpandIcon : CollapseIcon"
-              class="h-16 w-16 cursor-pointer"
-              fit="cover"
-              @click.stop="engineItemIsExpand = !engineItemIsExpand"
-            />
-          </el-col>
-          <el-col :span="6">General Maintenance Check</el-col>
-          <el-col :span="3">Maintenance</el-col>
-          <el-col :span="3">500.00</el-col>
-          <el-col :span="2">2</el-col>
-          <el-col :span="3">10.00</el-col>
-          <el-col :span="3">10.00</el-col>
-          <el-col :span="3" class="row-center">
-            <el-image :src="UpIcon" class="mr-8 h-16 w-16" fit="cover" />
-            <span>$1,000.00</span>
-          </el-col>
-        </el-row>
-        <!-- expand row -->
-        <el-row
-          v-if="engineItemIsExpand"
-          :class="[
-            'is-expand',
-            { 'bg-neutrals-off-white': engineItemIsExpand },
-          ]"
-        >
-          <el-col :span="1" />
-          <el-col :span="23">
-            <!-- cost analysis header -->
-            <div class="row-center flex gap-8">
-              <h4
-                class="heading-body-body-12px-medium text-neutrals-grey-4 leading-16"
-              >
-                Cost Analysis
-              </h4>
-              <i class="icon-edit-line text-16 text-neutrals-grey-3" />
-            </div>
-            <div>
-              <el-image :src="UpIcon" class="mr-8 h-16 w-16" fit="cover" />
-              <span class="text-status-colours-red">30 %</span>
-              <p class="heading-body-body-12px-medium text-neutrals-off-black">
-                Market Average: $350 · Your Price: $500 Price is slightly
-                higher, consider checking alternative workshops.
-              </p>
-            </div>
-          </el-col>
-        </el-row>
-        <!-- billing summary row -->
-        <el-row class="billing-summary">
-          <el-col :span="12" />
-          <el-col :span="12">
-            <div class="mb-12 flex w-full flex-col gap-16">
-              <!-- item -->
-              <dl class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12">
-                <dt>Subtotal (Excluding Tax)</dt>
-                <dd>
-                  <span class="text-neutrals-off-black">3,000.00</span>
-                </dd>
-                <dt>Discount Amount</dt>
-                <dd>
-                  <span class="text-neutrals-off-black">30.00</span>
-                </dd>
-                <dt>Subtotal with Discount Applied</dt>
-                <dd>
-                  <span class="text-neutrals-off-black">2,970.00</span>
-                </dd>
-                <dt>Tax</dt>
-                <dd>
-                  <span class="text-neutrals-off-black">30.00</span>
-                </dd>
-              </dl>
-              <el-divider />
-              <!-- Total Amount (SGD) -->
-              <div class="flex-between text-neutrals-off-black px-8">
-                <p class="heading-body-large-body-14px-medium">
-                  Total Amount (SGD)
-                </p>
-                <span class="heading-body-large-body-14px-medium">
-                  $2,990.00
-                </span>
-              </div>
-              <!-- total amount convert -->
-              <div class="rounded-8 flex flex-col gap-16 bg-[#EAEEF480] p-8">
-                <!-- Currency Rate -->
-                <div class="flex-between text-neutrals-off-black">
-                  <p
-                    class="heading-body-large-body-14px-medium text-neutrals-grey-4"
+        <template v-if="repairRecordDetail.expenseItemDtos?.length">
+          <template
+            v-for="record in repairRecordDetail.expenseItemDtos"
+            :key="record.id"
+          >
+            <!-- body -->
+            <el-row
+              :class="{ 'bg-status-colours-light-blue': record.isExpand }"
+              @click.stop="record.isExpand = !record.isExpand"
+            >
+              <el-col :span="1">
+                <el-image
+                  v-if="record.aiRepairItemDto.id"
+                  :src="record.isExpand ? ExpandIcon : CollapseIcon"
+                  class="h-16 w-16 cursor-pointer"
+                  fit="cover"
+                  @click.stop="record.isExpand = !record.isExpand"
+                />
+              </el-col>
+              <el-col :span="6">{{ record.name }}</el-col>
+              <el-col :span="3">{{ record.category }}</el-col>
+              <el-col :span="3">
+                {{ getFormatNumberString(record.unitPrice) }}
+              </el-col>
+              <el-col :span="2">{{ record.quantity }}</el-col>
+              <el-col :span="3">
+                {{ getFormatNumberString(record.discount) }}
+              </el-col>
+              <el-col :span="3">{{ getFormatNumberString(record.gst) }}</el-col>
+              <el-col :span="3" class="row-center">
+                <el-image
+                  v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
+                  :src="UpIcon"
+                  class="mr-8 h-16 w-16"
+                  fit="cover"
+                />
+                <el-image
+                  v-else-if="record.aiRepairItemDto.level === AI_COST_LEVEL.LOW"
+                  :src="DownIcon"
+                  class="mr-8 h-16 w-16"
+                  fit="cover"
+                />
+                <span>${{ getFormatNumberString(record.totalAmount) }}</span>
+              </el-col>
+            </el-row>
+            <!-- expand row -->
+            <el-row
+              v-if="record.aiRepairItemDto.id && record.isExpand"
+              :class="[
+                'is-expand',
+                { 'bg-neutrals-off-white': record.isExpand },
+              ]"
+            >
+              <el-col :span="1" />
+              <el-col :span="23">
+                <!-- cost analysis header -->
+                <div class="row-center flex gap-8">
+                  <h4
+                    class="heading-body-body-12px-medium text-neutrals-grey-4 leading-16"
                   >
-                    Currency Rate
-                  </p>
-                  <div class="row-center gap-4">
-                    <span
-                      class="heading-body-body-12px-medium text-neutrals-off-black"
-                    >
-                      1 SGD = 3.3049 MYR
-                    </span>
-                    <i class="icon-edit-line text-16 text-neutrals-grey-3" />
-                  </div>
+                    Cost Analysis
+                  </h4>
+                  <i class="icon-edit-line text-16 text-neutrals-grey-3" />
                 </div>
-                <div class="flex-between text-neutrals-off-black">
+                <div>
+                  <el-image
+                    v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
+                    :src="UpIcon"
+                    class="mr-8 h-16 w-16"
+                    fit="cover"
+                  />
+                  <el-image
+                    v-else-if="
+                      record.aiRepairItemDto.level === AI_COST_LEVEL.LOW
+                    "
+                    :src="DownIcon"
+                    class="mr-8 h-16 w-16"
+                    fit="cover"
+                  />
+                  <span
+                    :class="{
+                      'text-status-colours-red':
+                        record.aiRepairItemDto.level === -1,
+                      'text-status-colours-green':
+                        record.aiRepairItemDto.level === 2,
+                    }"
+                  >
+                    {{ record.aiRepairItemDto.ratio }} %
+                  </span>
+                  <p
+                    class="heading-body-body-12px-medium text-neutrals-off-black"
+                  >
+                    {{ record.aiRepairItemDto.remark }}
+                  </p>
+                </div>
+              </el-col>
+            </el-row>
+          </template>
+          <!-- billing summary row -->
+          <el-row class="billing-summary">
+            <el-col :span="12" />
+            <el-col :span="12">
+              <div class="mb-12 flex w-full flex-col gap-16">
+                <!-- item -->
+                <dl
+                  class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12"
+                >
+                  <dt>Subtotal (Excluding Tax)</dt>
+                  <dd>
+                    <span class="text-neutrals-off-black">
+                      {{ getFormatNumberString(subtotal) }}
+                    </span>
+                  </dd>
+                  <dt>Discount Amount</dt>
+                  <dd>
+                    <span class="text-neutrals-off-black">
+                      {{ getFormatNumberString(repairRecordDetail.discount) }}
+                    </span>
+                  </dd>
+                  <dt>Subtotal with Discount Applied</dt>
+                  <dd>
+                    <span class="text-neutrals-off-black">
+                      {{ subtotalWithDiscount }}
+                    </span>
+                  </dd>
+                  <dt>Tax</dt>
+                  <dd>
+                    <span class="text-neutrals-off-black">
+                      {{ getFormatNumberString(repairRecordDetail.gst) }}
+                    </span>
+                  </dd>
+                </dl>
+                <el-divider />
+                <!-- Total Amount (SGD) -->
+                <div class="flex-between text-neutrals-off-black px-8">
                   <p class="heading-body-large-body-14px-medium">
                     Total Amount (SGD)
                   </p>
                   <span class="heading-body-large-body-14px-medium">
-                    $2,990.00
+                    ${{ getFormatNumberString(repairRecordDetail.totalCost) }}
                   </span>
                 </div>
+                <!-- total amount convert -->
+                <div class="rounded-8 flex flex-col gap-16 bg-[#EAEEF480] p-8">
+                  <!-- Currency Rate -->
+                  <div class="flex-between text-neutrals-off-black">
+                    <p
+                      class="heading-body-large-body-14px-medium text-neutrals-grey-4"
+                    >
+                      Currency Rate
+                    </p>
+                    <div class="row-center gap-4">
+                      <span
+                        class="heading-body-body-12px-medium text-neutrals-off-black"
+                      >
+                        1 SGD = {{ repairRecordDetail.rate }}
+                        {{ repairRecordDetail.currency }}
+                      </span>
+                      <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
+                      <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
+                    </div>
+                  </div>
+                  <div class="flex-between text-neutrals-off-black">
+                    <p class="heading-body-large-body-14px-medium">
+                      Total Amount ({{ repairRecordDetail.currency }})
+                    </p>
+                    <span class="heading-body-large-body-14px-medium">
+                      ${{ totalCostWithExchangeRate }}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </el-col>
-        </el-row>
+            </el-col>
+          </el-row>
+        </template>
+        <el-empty v-else description="No expense record data" />
       </div>
     </div>
     <!-- bills -->
@@ -239,7 +367,7 @@ const handleEditEstimatedCostForm = () => {}
           <span
             class="heading-body-large-body-14px-medium text-neutrals-grey-3"
           >
-            6
+            {{ repairRecordDetail.ticketDtos?.length || '-' }}
           </span>
         </div>
         <!-- 上传按钮 -->
@@ -253,39 +381,17 @@ const handleEditEstimatedCostForm = () => {}
       <!-- divider -->
       <el-divider class="mt-8! mb-12!" />
       <!-- attachment grid view -->
-      <div class="mx-32 grid grid-cols-2 gap-12">
-        <div
-          v-for="item in 6"
-          :key="item"
-          class="rounded-12 border-[1px]-[#EAEEF4] row-center h-64 gap-8 p-12"
-        >
-          <el-image :src="PDFIcon" class="h-40 w-40" fit="cover" />
-          <div class="text-neutrals-grey-4 flex flex-col gap-8">
-            <p class="heading-body-body-12px-regular text-neutrals-off-black">
-              document 1.pdf
-            </p>
-            <div class="row-center gap-4">
-              <el-avatar
-                :size="20"
-                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-              />
-              <span class="heading-caption-caption-10px-regular">
-                Bessie Cooper
-              </span>
-              <span class="heading-caption-caption-10px-regular">∙</span>
-              <span class="heading-caption-caption-10px-regular">120 KB</span>
-              <span class="heading-caption-caption-10px-regular">∙</span>
-              <span class="heading-caption-caption-10px-regular">
-                28/04/2024 3:30pm
-              </span>
-            </div>
-          </div>
-          <div class="flex gap-8">
-            <base-svg-icon name="down_line" color="#6F7788" size="16" />
-            <base-svg-icon name="delete-2" color="#6F7788" size="16" />
-          </div>
-        </div>
+      <div
+        class="mx-32 grid grid-cols-2 gap-12"
+        v-if="repairRecordDetail.ticketDtos?.length"
+      >
+        <file-info-card
+          v-for="item in repairRecordDetail.ticketDtos"
+          :key="item.id"
+          :info="item"
+        />
       </div>
+      <el-empty v-else description="No bill data" />
     </div>
     <!-- Attachments -->
     <div class="mb-24">
