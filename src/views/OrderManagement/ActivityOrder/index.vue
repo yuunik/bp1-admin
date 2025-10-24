@@ -9,6 +9,7 @@ import { postOrderApi } from '@/apis/shareApi.js'
 import { deleteActiveOrderApi, getActiveOrderListApi } from '@/apis/orderApi.js'
 import { useSort } from '@/composables/useSort.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
 
 const router = useRouter()
 
@@ -247,12 +248,7 @@ const getOrderList = async () => {
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
   })
-  orderDataList.value = data.map((item) => ({
-    ...item,
-    isHover: false,
-    // orderNo: item.orderNo.slice(0, 8),
-    // createdAt: getDateWithDDMMMYYYYhhmma(item.createdAt),
-  }))
+  orderDataList.value = data
   pagination.total = count
 }
 
@@ -316,55 +312,55 @@ getOrderList()
       </el-button>
     </div>
     <!-- Search -->
-    <!--<div class="flex-between mx-32 flex h-24 gap-20">-->
-    <!--  <div class="flex gap-8">-->
-    <!--    &lt;!&ndash; 状态搜索 &ndash;&gt;-->
-    <!--    <el-dropdown>-->
-    <!--      <span-->
-    <!--        class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"-->
-    <!--      >-->
-    <!--        Source-->
-    <!--        <i class="icon-typesdropdown" />-->
-    <!--      </span>-->
-    <!--      <template #dropdown>-->
-    <!--        <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">-->
-    <!--          <div class="flex-between">-->
-    <!--            <span>Status</span>-->
-    <!--            <el-button text>Clear</el-button>-->
-    <!--          </div>-->
-    <!--          <el-checkbox-group>-->
-    <!--            <el-checkbox value="1">Active</el-checkbox>-->
-    <!--            <el-checkbox value="2">Disabled</el-checkbox>-->
-    <!--          </el-checkbox-group>-->
-    <!--        </div>-->
-    <!--      </template>-->
-    <!--    </el-dropdown>-->
-    <!--    &lt;!&ndash; 状态搜索 &ndash;&gt;-->
-    <!--    <el-dropdown>-->
-    <!--      <span-->
-    <!--        class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"-->
-    <!--      >-->
-    <!--        Status-->
-    <!--        <i class="icon-typesdropdown" />-->
-    <!--      </span>-->
-    <!--      <template #dropdown>-->
-    <!--        <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">-->
-    <!--          <div class="flex-between">-->
-    <!--            <span>Role</span>-->
-    <!--            <el-button text>Clear</el-button>-->
-    <!--          </div>-->
-    <!--          <el-checkbox-group>-->
-    <!--            <el-checkbox value="1">Admin</el-checkbox>-->
-    <!--            <el-checkbox value="2">Support</el-checkbox>-->
-    <!--            <el-checkbox value="2">Technician</el-checkbox>-->
-    <!--          </el-checkbox-group>-->
-    <!--        </div>-->
-    <!--      </template>-->
-    <!--    </el-dropdown>-->
-    <!--  </div>-->
-    <!--  &lt;!&ndash; 输入搜索栏 &ndash;&gt;-->
-    <!--  <base-filter-input v-model="searchText" @input-change="refresh" />-->
-    <!--</div>-->
+    <div class="flex-end mx-32 flex h-24 gap-20">
+      <!--<><div class="flex gap-8">-->
+      <!--  &lt;!&ndash; 状态搜索 &ndash;&gt;-->
+      <!--  <el-dropdown>-->
+      <!--    <span-->
+      <!--      class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"-->
+      <!--    >-->
+      <!--      Source-->
+      <!--      <i class="icon-typesdropdown" />-->
+      <!--    </span>-->
+      <!--    <template #dropdown>-->
+      <!--      <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">-->
+      <!--        <div class="flex-between">-->
+      <!--          <span>Status</span>-->
+      <!--          <el-button text>Clear</el-button>-->
+      <!--        </div>-->
+      <!--        <el-checkbox-group>-->
+      <!--          <el-checkbox value="1">Active</el-checkbox>-->
+      <!--          <el-checkbox value="2">Disabled</el-checkbox>-->
+      <!--        </el-checkbox-group>-->
+      <!--      </div>-->
+      <!--    </template>-->
+      <!--  </el-dropdown>-->
+      <!--  &lt;!&ndash; 状态搜索 &ndash;&gt;-->
+      <!--  <el-dropdown>-->
+      <!--    <span-->
+      <!--      class="border-1 neutrals-grey-3 default-transition flex cursor-pointer gap-5 rounded-full border-solid px-8 py-4"-->
+      <!--    >-->
+      <!--      Status-->
+      <!--      <i class="icon-typesdropdown" />-->
+      <!--    </span>-->
+      <!--    <template #dropdown>-->
+      <!--      <div class="w-190 h-93 flex flex-col gap-8 px-6 py-12">-->
+      <!--        <div class="flex-between">-->
+      <!--          <span>Role</span>-->
+      <!--          <el-button text>Clear</el-button>-->
+      <!--        </div>-->
+      <!--        <el-checkbox-group>-->
+      <!--          <el-checkbox value="1">Admin</el-checkbox>-->
+      <!--          <el-checkbox value="2">Support</el-checkbox>-->
+      <!--          <el-checkbox value="2">Technician</el-checkbox>-->
+      <!--        </el-checkbox-group>-->
+      <!--      </div>-->
+      <!--    </template>-->
+      <!--  </el-dropdown>-->
+      <!--</div></>-->
+      <!-- 输入搜索栏 -->
+      <base-filter-input v-model="searchText" @input-change="refresh" />
+    </div>
     <!-- Divider -->
     <el-divider />
     <!-- Table -->
