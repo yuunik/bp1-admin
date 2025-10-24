@@ -453,7 +453,7 @@ onMounted(async () => {
               </template>
             </el-table-column>
             <el-table-column
-              prop="Amount"
+              prop="amount"
               label="Total Amount"
               align="center"
               min-width="25%"
