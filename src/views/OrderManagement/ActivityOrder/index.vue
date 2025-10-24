@@ -1,12 +1,11 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 
 import BasePagination from '@/components/BasePagination.vue'
-import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { postOrderApi } from '@/apis/shareApi.js'
-import { ElMessage } from 'element-plus'
 import { deleteActiveOrderApi, getActiveOrderListApi } from '@/apis/orderApi.js'
 import { useSort } from '@/composables/useSort.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
@@ -220,7 +219,7 @@ const handleAddOrder = async () => {
     refresh()
   } catch {
     // 网络错误, 请稍后再试
-    ElMessage.fail('Network error, please try again later')
+    ElMessage.error('Network error, please try again later')
   } finally {
     // 关闭新增订单弹窗
     handleCloseAddOrder()
@@ -418,6 +417,7 @@ getOrderList()
   </section>
   <!-- 新增订单的弹窗 -->
   <base-dialog
+    v-if="dialogAddOrderVisible"
     v-model="dialogAddOrderVisible"
     title="Add Order"
     @cancel="handleCloseAddOrder"

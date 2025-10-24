@@ -174,7 +174,7 @@ const submitOrder = async () => {
     dialogSuccessPageVisible.value = true
   } catch {
     // 网络错误, 请稍后再试
-    ElMessage.fail('Network error, please try again later')
+    ElMessage.error('Network error, please try again later')
   } finally {
     // 加载完成
     loading.value = false
