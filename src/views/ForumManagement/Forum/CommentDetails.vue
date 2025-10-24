@@ -6,6 +6,7 @@ import {
   Picture as IconPicture,
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import Quill from 'quill'
 
 import {
   deleteCommentApi,
@@ -82,6 +83,21 @@ const isHasMoreComments = ref(true)
 // 是否正在加载中
 const isLoading = ref(false)
 
+// 内容是否为 json 字符串
+const isJson = computed(() => {
+  if (!postInfo.content) return false
+
+  try {
+    const parsed = JSON.parse(postInfo.content)
+    return typeof parsed === 'object' && parsed != null
+  } catch {
+    return false
+  }
+})
+
+// 富文本容器
+const quillContainer = ref(null)
+
 const handleTabChange = (val) => {
   if (val === 'Post') {
     detailsRef.value.setScrollTop(postRef.value.offsetTop)
@@ -96,6 +112,19 @@ const handleTabChange = (val) => {
 const getForumDetail = async () => {
   const { data } = await getForumInfoApi(currentPostId.value)
   Object.assign(postInfo, data)
+  // 如果是富文本 则解析
+  if (!isJson.value) return
+  const deltaOps = JSON.parse(postInfo.content)
+  const quill = new Quill(quillContainer.value, {
+    theme: 'snow',
+    readOnly: true, // 只读模式
+    modules: {
+      toolbar: false, // 隐藏工具栏
+    },
+  })
+  nextTick(() => {
+    quill.setContents({ ops: deltaOps })
+  })
 }
 
 // 获取评论详情
@@ -299,10 +328,11 @@ onMounted(async () => {
           </h5>
           <p
             class="text-neutrals-off-black heading-body-large-body-14px-regular"
-            v-if="postInfo.content"
+            v-if="!isJson && postInfo?.content"
           >
             {{ postInfo.content }}
           </p>
+          <p v-else ref="quillContainer" class="forum-content" />
           <!-- 图片 -->
           <ul
             class="[&>li]:h-168 attachment-container grid grid-cols-3 gap-8"
@@ -570,5 +600,14 @@ onMounted(async () => {
 // 滚动条样式覆盖
 .post-container :deep(.el-scrollbar__view) {
   @apply flex flex-col gap-16;
+}
+
+// 重置富文本编辑器的默认样式
+:deep(.ql-container) {
+  @apply border-none;
+
+  .ql-editor {
+    @apply text-16 font-400 text-neutrals-off-black p-0;
+  }
 }
 </style>
