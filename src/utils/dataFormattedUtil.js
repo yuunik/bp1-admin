@@ -33,3 +33,14 @@ export const getFirstLetter = (str) => {
   }
   return str.charAt(0).toUpperCase()
 }
+
+/**
+ * @description 获取数字格式化字符串, 如 10 -> 10.00, 5.3 -> 5.30
+ * @param number
+ * @returns {string}
+ */
+export const getFormatNumberString = (number) =>
+  new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(number)
