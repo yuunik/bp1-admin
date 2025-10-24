@@ -331,12 +331,7 @@ onMounted(async () => {
         </div>
         <div>
           <el-table :data="expenseUserList" @sort-change="sort">
-            <el-table-column
-              prop="Name"
-              label="User"
-              min-width="69%"
-              sortable="custom"
-            >
+            <el-table-column prop="Name" label="User" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
                   v-if="row.Logo"
@@ -346,7 +341,7 @@ onMounted(async () => {
                   alt="brand icon"
                   shape="circle"
                   :size="20"
-                  @error="errorHandler"
+                  @error="() => true"
                 >
                   <template #error>
                     <i class="i-ep:picture" />
