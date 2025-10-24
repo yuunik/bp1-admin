@@ -165,11 +165,11 @@ const obdUserCount = ref(0)
 const getDashboardData = async () => {
   // 获取数据
   const {
-    data: { totalUserCount, todayUserCount, obdUserCount },
+    data: { totalUserCount, todayUserCount, obdUserCount: odbUserData },
   } = await getDashboardDataApi()
   userCount.value = totalUserCount
   newUserCount.value = todayUserCount
-  obdUserCount.value = obdUserCount
+  obdUserCount.value = odbUserData
 }
 
 // 获取expense user list数据
@@ -351,7 +351,7 @@ onMounted(async () => {
                   class="cursor-pointer text-wrap underline"
                   @click="
                     $router.push({
-                      Name: RouteName.PERSON_MANAGE,
+                      name: RouteName.PERSON_MANAGE,
                       params: { id: row.UserId },
                     })
                   "
