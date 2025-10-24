@@ -36,7 +36,7 @@ const orderRules = reactive({
     {
       validator: (rule, value, callback) => {
         // 邮箱格式
-        if (!/^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/.test(value)) {
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
           callback(new Error('Please enter a valid email address'))
           return
         }
