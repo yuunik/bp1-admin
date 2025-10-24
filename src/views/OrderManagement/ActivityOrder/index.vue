@@ -223,7 +223,7 @@ const handleAddOrder = async () => {
     ElMessage.fail('Network error, please try again later')
   } finally {
     // 关闭新增订单弹窗
-    dialogAddOrderVisible.value = false
+    handleCloseAddOrder()
   }
 }
 
