@@ -11,6 +11,8 @@ const OrderApi = Object.freeze({
   GET_ACTIVITY_ORDER_LIST: '/manager/activityorder/activityorders',
   // 删除活动当天的订单
   DELETE_ACTIVITY_ORDER: '/manager/activityorder/delete',
+  // 订单发货
+  ORDER_DELIVERY: '/manager/activityorder/deliver',
 })
 
 // 获取 token
@@ -56,6 +58,25 @@ export const deleteActiveOrderApi = (orderId) => {
 
   return request({
     url: OrderApi.DELETE_ACTIVITY_ORDER,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 订单发货
+ * @param params
+ * @param params.status
+ * @param params.orderIds
+ */
+export const orderDeliveryApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('status', params.status)
+  data.append('orderIds', params.orderIds)
+
+  return request({
+    url: OrderApi.ORDER_DELIVERY,
     method: 'POST',
     data,
   })

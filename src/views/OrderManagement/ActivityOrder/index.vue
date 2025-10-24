@@ -2,14 +2,20 @@
 import { useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
+import { nextTick } from 'vue'
 
 import BasePagination from '@/components/BasePagination.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { postOrderApi } from '@/apis/shareApi.js'
-import { deleteActiveOrderApi, getActiveOrderListApi } from '@/apis/orderApi.js'
+import {
+  deleteActiveOrderApi,
+  getActiveOrderListApi,
+  orderDeliveryApi,
+} from '@/apis/orderApi.js'
 import { useSort } from '@/composables/useSort.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import BaseTag from '@/components/BaseTag.vue'
 
 const router = useRouter()
 
@@ -290,6 +296,18 @@ const handleDeleteVersionControl = async () => {
   }
 }
 
+// 修改订单状态
+const handleChangeOrderStatus = async (val, orderId) => {
+  // 订单发货
+  await orderDeliveryApi({
+    status: val,
+    orderIds: orderId,
+  })
+  // 提示
+  ElMessage.success('Change order status successfully')
+  refresh()
+}
+
 // 监听 pagination.currentPage, 自动发起查询
 watch(
   () => pagination.currentPage,
@@ -385,11 +403,45 @@ getOrderList()
           </template>
         </el-table-column>
 
-        <!-- OBD -->
+        <!-- OBD 数量 -->
         <el-table-column prop="quantity" label="Order Quantity" sortable />
 
+        <!-- 订单发货状态 -->
+        <el-table-column prop="status" label="Order Status">
+          <template #default="{ row }">
+            <el-dropdown>
+              <base-tag
+                :text="row.status === 0 ? 'Unfulfilled' : 'Fulfilled'"
+                :color="row.status === 0 ? 'orange' : 'green'"
+                class="cursor-pointer"
+              />
+              <template #dropdown>
+                <div class="w-200! flex flex-col gap-4 p-8">
+                  <span>Status</span>
+                  <el-radio-group
+                    class="items-start! flex-col"
+                    v-model="row.status"
+                    @change="(val) => handleChangeOrderStatus(val, row.id)"
+                  >
+                    <el-radio :value="0" size="large" class="reverse-radio">
+                      <base-tag text="Unfulfilled" color="orange" />
+                    </el-radio>
+                    <el-radio :value="1" size="large" class="reverse-radio">
+                      <base-tag text="Fulfilled" color="green" />
+                    </el-radio>
+                  </el-radio-group>
+                </div>
+              </template>
+            </el-dropdown>
+          </template>
+        </el-table-column>
+
         <!-- 客户备注 -->
-        <el-table-column prop="description" label="Notes" />
+        <el-table-column
+          prop="description"
+          label="Notes"
+          show-overflow-tooltip
+        />
 
         <!-- 订单日期 -->
         <el-table-column prop="createTime" label="Order Date" sortable>
@@ -504,4 +556,16 @@ getOrderList()
   </base-dialog>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.reverse-radio {
+  display: flex;
+  flex-direction: row-reverse; /* 让圆点在右边 */
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  :deep(.el-radio__label) {
+    @apply pl-0!;
+  }
+}
+</style>
