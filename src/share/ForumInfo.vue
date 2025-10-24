@@ -2,8 +2,6 @@
 import { reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import Quill from 'quill'
-import 'quill/dist/quill.snow.css'
-// import 'quill/dist/quill.core.css'
 
 import AppScaffold from '@/components/AppScaffold.vue'
 import { getForumInfoApi } from '@/apis/shareApi.js'
@@ -41,6 +39,7 @@ const isJson = computed(() => {
 
 // 贴文详情
 const forumInfo = reactive({})
+
 // 获取贴文详情
 const getForumInfo = async (forumId) => {
   const { data } = await getForumInfoApi(forumId)

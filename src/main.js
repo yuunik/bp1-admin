@@ -7,6 +7,7 @@ import debounce from '@/directives/debounce/index.js'
 // 路由鉴权
 import '@/permission.js'
 import SvgIconPlugin from '@/plugins/svg-icon-plugin.js'
+import 'quill/dist/quill.snow.css'
 
 // 统一重置样式
 import 'normalize.css'
