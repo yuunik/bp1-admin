@@ -144,6 +144,8 @@ export default defineConfig({
       'divider-bottom-grey-4-1px': 'border-b-[#EAEEF4] border-b border-b-1',
       'divider-bottom-neutral-off-white-1px':
         'border-b-[#FCFCFC] border-b border-b-1',
+      // 边框
+      'border-neutral-grey-1-1px': 'border-solid border border-[#EAEEF4]',
       // 默认过渡效果
       'default-transition': 'transition-all duration-250 ease-linear',
       // 菜单栏未折叠宽度

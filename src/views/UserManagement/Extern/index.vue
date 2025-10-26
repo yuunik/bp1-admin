@@ -81,6 +81,15 @@ const statusFilterParams = ref([
   },
 ])
 
+// 勾选的 workshop id
+const selectedWorkshopIdList = ref([])
+
+// 合并修理厂弹窗
+const dialogMergeWorkshopVisible = ref(false)
+
+// 合并的修理厂id列表
+const selectedMergeWorkshopIdList = ref([])
+
 const router = useRouter()
 
 // 获取用户列表
@@ -291,6 +300,12 @@ const onMerchantListRefresh = () => {
   pagination.value.currentPage = 0
 }
 
+const handleMergeWorkshop = () => {}
+
+// 勾选框勾选
+const handleWorkshopSelectionChange = (val) =>
+  (selectedWorkshopIdList.value = val.map((item) => item.id))
+
 // 监听tab变化，获取对应列表
 watch(
   () => activeTab.value,
@@ -328,7 +343,7 @@ watch(
 </script>
 
 <template>
-  <section class="flex h-full flex-col gap-16">
+  <section class="flex h-full flex-col">
     <!-- Extern Header -->
     <div class="flex-between mx-32 h-32">
       <!-- 标题栏 -->
@@ -344,7 +359,7 @@ watch(
       </el-button>
     </div>
     <!-- tab 栏 -->
-    <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+    <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="my-16">
       <el-tab-pane
         :label="UserManagementTab.PERSON"
         :name="UserManagementTab.PERSON"
@@ -355,7 +370,7 @@ watch(
       />
     </el-tabs>
     <!-- 搜索栏 -->
-    <div class="flex-between mx-32 h-24">
+    <div class="flex-between mx-32 mb-16 h-24">
       <div class="row-center h-24 gap-8">
         <!-- 账号状态筛选 -->
         <base-filter-panel
@@ -385,6 +400,20 @@ watch(
       <div
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
       >
+        <!-- 批量选择栏 -->
+        <div class="h-42 flex-between w-full py-4 pl-16">
+          <span
+            class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
+          >
+            3 selected
+          </span>
+          <div>
+            <el-button>Disable</el-button>
+            <el-button>Merge Workshop</el-button>
+            <el-button>Up</el-button>
+            <el-button>Down</el-button>
+          </div>
+        </div>
         <!-- 用户列表 -->
         <el-table
           :data="userList"
@@ -523,12 +552,30 @@ watch(
       <div
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
       >
+        <!-- 批量选择栏 -->
+        <div
+          class="h-42 flex-between w-full py-4 pl-16"
+          v-show="selectedWorkshopIdList.length"
+        >
+          <span
+            class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
+          >
+            {{ selectedWorkshopIdList.length }} selected
+          </span>
+          <div>
+            <el-button>Disable</el-button>
+            <el-button>Merge Workshop</el-button>
+            <el-button>Up</el-button>
+            <el-button>Down</el-button>
+          </div>
+        </div>
         <!-- 修理厂列表 -->
         <el-table
           :data="merchantList"
           class="flex-1"
           @sort-change="handleMerchantSortChange"
           @row-click="handleMerchantRowClick"
+          @selection-change="handleWorkshopSelectionChange"
           row-class-name="clickable-row"
         >
           <!-- 勾选框 -->
@@ -631,6 +678,67 @@ watch(
       </dl>
     </template>
   </base-dialog>
+  <!-- 合并修理厂弹窗 -->
+  <base-dialog
+    v-model="dialogMergeWorkshopVisible"
+    title="Merge Workshop"
+    @cancel="dialogMergeWorkshopVisible = false"
+    @confirm="handleMergeWorkshop"
+    class="merge-workshop-dialog"
+    dialog-width="50%"
+  >
+    <template #content>
+      <p
+        class="heading-body-body-12px-regular text-neutrals-grey-4 mt-16 whitespace-pre"
+      >
+        The selected workshops seem to belong to the same brand.
+        <br />
+        Choose which details to keep after merging.
+      </p>
+      <!-- selected card -->
+      <div
+        class="workshops-card-container max-h-520 mt-16 grid grid-cols-2 gap-8 overflow-auto"
+      >
+        <div
+          v-for="item in 20"
+          :key="item"
+          class="rounded-9 border-neutral-grey-1-1px relative box-border flex flex-col gap-12 p-12"
+        >
+          <!-- absolute position -->
+          <el-checkbox :value="item" />
+          <!-- workshop name -->
+          <div class="row-center h-32 gap-8">
+            <el-avatar
+              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+              :size="32"
+            />
+            <span
+              class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
+            >
+              BMW
+            </span>
+          </div>
+          <span
+            class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
+          >
+            09:00am-10:00pm
+          </span>
+          <span
+            class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
+          >
+            +65 98761234
+          </span>
+          <span
+            class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
+          >
+            No. 25, Jalan Keris 1
+            <br />
+            Industrial Park, Klang, Selangor
+          </span>
+        </div>
+      </div>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -654,5 +762,16 @@ watch(
 // 重置 tab 的下划线
 :deep(.el-tabs__header) {
   border: none;
+}
+
+// 重置chekcbox
+.workshops-card-container {
+  :deep(.el-checkbox) {
+    @apply absolute right-4 top-4 h-20 w-20;
+
+    .el-checkbox__inner {
+      @apply rounded-full!;
+    }
+  }
 }
 </style>
