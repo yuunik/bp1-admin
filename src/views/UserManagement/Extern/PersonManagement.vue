@@ -649,7 +649,7 @@ onMounted(async () => {
         <el-divider />
         <!-- table -->
         <div class="mx-32">
-          <el-table :data="logAndNoteDataList">
+          <el-table :data="logAndNoteDataList" class="log-table-container">
             <el-table-column prop="date" label="Date" />
             <el-table-column prop="user" label="User" />
             <el-table-column prop="action" label="Action" />
@@ -668,7 +668,7 @@ onMounted(async () => {
         <!-- table -->
         <div class="mx-32">
           <dl
-            class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[112px_1fr_112px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
+            class="[&>dd]:leading-32 [&>dt]:leading-32 [&>dd]:text-gray gray-container mx-32 grid grid-cols-[132px_1fr_132px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
           >
             <dt>Plan</dt>
             <dd>Monthly</dd>
@@ -899,5 +899,18 @@ onMounted(async () => {
 // 滚动条内部的样式
 :deep(.el-scrollbar__view) {
   @apply flex flex-col gap-16;
+}
+
+/* TODO 无日志数据, 文字暂时置灰 */
+.log-table-container {
+  :deep(.el-table__row) {
+    @apply text-neutrals-grey-2;
+  }
+}
+
+.gray-container {
+  & > * {
+    @apply text-neutrals-grey-2;
+  }
 }
 </style>
