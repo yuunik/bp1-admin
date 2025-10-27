@@ -1,32 +1,34 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import Big from 'big.js'
+import { ElMessage } from 'element-plus'
+import { useCloned, useDebounceFn } from '@vueuse/core'
 
-import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
+import {
+  getExpenseListByGroupApi,
+  getMerchantListApi,
+  getRepairRecordDetailApi,
+  updateExpenseItemCostAnalysisApi,
+  updateRepairRecordApi,
+} from '@/apis/userApi.js'
+import BaseInfoCard from '@/components/BaseInfoCard.vue'
+import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
+import { getFormatNumberString } from '@/utils/dataFormattedUtil.js'
+import { AI_COST_LEVEL } from '@/utils/constantsUtil.js'
+import FileInfoCard from '@/views/UserManagement/ExpenseRecordDetails/components/FileInfoCard.vue'
+import { getExpenseGroupListApi, getExpenseListApi } from '@/apis/appApi.js'
+import BaseDialog from '@/components/BaseDialog.vue'
 
 // 静态资源
 import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import UpIcon from '@/assets/specialIcons/fi_trending-up.svg'
 import DownIcon from '@/assets/specialIcons/fi_trending-down.svg'
-import PDFIcon from '@/assets/specialIcons/icon_pdf.svg'
-import BaseDialog from '@/components/BaseDialog.vue'
-import {
-  getRepairRecordDetailApi,
-  updateExpenseItemCostAnalysisApi,
-} from '@/apis/userApi.js'
-import BaseInfoCard from '@/components/BaseInfoCard.vue'
-import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
-import { useCloned } from '@vueuse/core'
-import { getFormatNumberString } from '@/utils/dataFormattedUtil.js'
-import { AI_COST_LEVEL } from '@/utils/constantsUtil.js'
-import FileInfoCard from '@/views/UserManagement/ExpenseRecordDetails/components/FileInfoCard.vue'
-import { ElMessage } from 'element-plus'
 
 const activeTab = ref('Expense Details')
 
-const engineItemIsExpand = ref(false)
+const expenseItemActiveTab = ref('all')
 
 const route = useRoute()
 
@@ -55,7 +57,7 @@ const logList = ref([
 const dialogEditEstimatedCostVisible = ref(false)
 
 // 预估成本表单
-const editEstimatedCostForm = reactive({
+const editEstimatedCostForm = ref({
   cost: '',
   description: '',
 })
@@ -99,10 +101,91 @@ const totalCostWithExchangeRate = computed(() => {
   return (totalCost * rate).toFixed(2)
 })
 
+// 编辑模式
+const isEditMode = ref(false)
+
+// 编辑表单
+const estimatedCostForm = reactive({
+  name: '',
+  mileage: '',
+  date: '',
+  note: '',
+})
+
+// 修理厂搜索关键字
+const workshopSearchKey = ref('')
+
+// 修理厂列表
+const merchantList = ref([])
+
+// 修理厂分页参数
+const workshopPagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
+// 是否还有更多数据
+const hasMoreWorkshopData = ref(true)
+
+// expense 搜索关键字
+const expenseSearchKey = ref('')
+
+// expense 分页参数
+const expensePagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
+// expense 列表数据
+const expenseList = ref([])
+
+// 是否还有更多数据
+const hasMoreExpenseData = ref(true)
+
+// 分类参数
+const categoryFilterParams = ref([])
+
+// 加载状态
+const loading = ref(false)
+
+// 是否展开额外信息
+const isShowExtraData = ref(true)
+
+// 批量选择的expenseitem id list
+const selectedExpenseItemIdList = computed(
+  () =>
+    (editEstimatedCostForm.value.expenseItemDtos &&
+      editEstimatedCostForm.value.expenseItemDtos
+        .filter((item) => item.isChecked)
+        .map((item) => item.id)) ||
+    [],
+)
+
+// 是否全选
+const isSelectAll = computed(
+  () =>
+    editEstimatedCostForm.value.expenseItemDtos &&
+    editEstimatedCostForm.value.expenseItemDtos.every((item) => item.isChecked),
+)
+
+// 分组形式的expense
+const expenseListByGroup = ref([])
+
+// 新增的 expense name 数组
+const selectedAddExpenseItemNameList = ref([])
+
+// 新增expense 触发框实例
+const addExpenseItemDropdownRef = ref(null)
+
+// 记录时间
+const recordTime = ref(-1)
+
 // 关闭编辑预估成本的弹窗
 const handleCloseEditEstimatedCostDialog = () => {
-  editEstimatedCostForm.cost = ''
-  editEstimatedCostForm.description = ''
+  editEstimatedCostForm.value.cost = ''
+  editEstimatedCostForm.value.description = ''
   dialogEditEstimatedCostVisible.value = false
 }
 
@@ -113,8 +196,8 @@ const handleEditEstimatedCostForm = async () => {
     await editEstimatedCostFormRef.value.validate()
     await updateExpenseItemCostAnalysisApi({
       id: selectedEstimatedCost.value.id,
-      avg: editEstimatedCostForm.cost,
-      remark: editEstimatedCostForm.description,
+      avg: editEstimatedCostForm.value.cost,
+      remark: editEstimatedCostForm.value.description,
     })
     // 提示
     ElMessage.success('Edit success')
@@ -131,19 +214,209 @@ const getRepairRecordInfo = async (id) => {
   // 深拷贝一份，避免直接改接口原始对象
   const { cloned } = useCloned(data)
   // 给每个 expenseItemDtos 元素加上 isExpand
-  if (cloned.expenseItemDtos && cloned.expenseItemDtos.length) {
-    cloned.expenseItemDtos = cloned.expenseItemDtos.map((item) => ({
+  if (cloned.value.expenseItemDtos && cloned.value.expenseItemDtos.length) {
+    cloned.value.expenseItemDtos = cloned.value.expenseItemDtos.map((item) => ({
       ...item,
       isExpand: false,
+      isChecked: false,
     }))
   }
   repairRecordDetail.value = cloned.value
 }
 
+// 编辑预估成本
 const handleOpenEditEstimatedCostDialog = (record) => {
   const { cloned } = useCloned(record)
   selectedEstimatedCost.value = cloned.value
   dialogEditEstimatedCostVisible.value = true
+}
+
+// 获取修理厂列表数据
+const getMerchantList = useDebounceFn(async () => {
+  if (!hasMoreWorkshopData.value) {
+    return
+  }
+  const { data, count } = await getMerchantListApi({
+    searchKey: workshopSearchKey.value,
+    page: workshopPagination.currentPage++,
+    pageSize: workshopPagination.pageSize,
+    sort: '',
+    sortBy: '',
+    statusKey: '',
+  })
+  if (!data.length) {
+    ElMessage.warning('No more data')
+    hasMoreWorkshopData.value = false
+    return
+  }
+  // 记录总数
+  workshopPagination.total = count
+  // 记录修理厂列表
+  merchantList.value.push(...data)
+}, 500)
+
+// 切换为编辑模式
+const handleSwitchToEditMode = async () => {
+  try {
+    loading.value = true
+    await Promise.all([
+      getMerchantList(),
+      getExpenseList(),
+      getGroupList(),
+      getExpenseListByGroup(),
+    ])
+    // 复制副本
+    const { cloned } = useCloned(repairRecordDetail.value)
+    editEstimatedCostForm.value = cloned.value
+    // 回显日期
+    recordTime.value = cloned.value.date
+    // 切换为编辑模式
+    isEditMode.value = true
+  } finally {
+    loading.value = false
+  }
+}
+
+// 切换为正常模式
+const handleSwitchToNormalMode = () => {
+  // 重置修理厂相关数据
+  workshopSearchKey.value = ''
+  merchantList.value = []
+  workshopPagination.currentPage = 0
+  workshopPagination.pageSize = 15
+  workshopPagination.total = 0
+  hasMoreWorkshopData.value = true
+  // 切换为正常模式
+  isEditMode.value = false
+}
+
+// 获取expense列表
+const getExpenseList = async () => {
+  if (!hasMoreExpenseData.value) {
+    return
+  }
+
+  const { data, count } = await getExpenseListApi({
+    groups: '',
+    categorys: '',
+    modules: '',
+    userIds: '',
+
+    searchKey: expenseSearchKey.value,
+
+    sort: '',
+    sortBy: '',
+
+    page: expensePagination.currentPage,
+    pageSize: expensePagination.pageSize,
+  })
+
+  if (!data.length) {
+    ElMessage.warning('No more data')
+    hasMoreExpenseData.value = false
+    return
+  }
+
+  // 保存 expense
+  expenseList.value = data
+  // 记录总条数
+  expensePagination.total = count
+}
+
+// 获取分组信息
+const getGroupList = async () => {
+  const {
+    data: { categories },
+  } = await getExpenseGroupListApi()
+  categoryFilterParams.value = categories.map((item) => ({
+    label: item,
+    value: item,
+  }))
+}
+
+// 新增一行
+const handleAddNewRow = () => {
+  for (const expenseName of selectedAddExpenseItemNameList.value) {
+    editEstimatedCostForm.value.expenseItemDtos.push({
+      id: '',
+      name: expenseName,
+      amount: '',
+      date: '',
+      note: '',
+      group: '',
+      category: '',
+      module: '',
+      isExpand: false,
+      isChecked: false,
+    })
+  }
+  nextTick(() => {
+    // 关闭dropdown
+    addExpenseItemDropdownRef.value?.handleClose()
+  })
+}
+
+// 清除额外的折扣,税率, 总计
+const clearExtraData = () => {
+  editEstimatedCostForm.value.discount = '0'
+  editEstimatedCostForm.value.gst = '0'
+  editEstimatedCostForm.value.totalCost = '0'
+  // 隐藏额外数据信息
+  isShowExtraData.value = false
+}
+
+// 获取额外数据
+const handleGetExtraData = () => {
+  editEstimatedCostForm.value.discount = repairRecordDetail.value.discount
+  editEstimatedCostForm.value.gst = repairRecordDetail.value.gst
+  editEstimatedCostForm.value.totalCost = repairRecordDetail.value.totalCost
+  // 隐藏额外数据信息
+  isShowExtraData.value = false
+}
+
+// 编辑维修记录
+const handleEditRepairRecord = async () => {
+  try {
+    await updateRepairRecordApi(editEstimatedCostForm.value)
+    ElMessage.success('Edit success')
+    // 刷新
+    getRepairRecordInfo(route.params.id)
+  } finally {
+    isEditMode.value = false
+  }
+}
+
+// 全选维修记录子项
+const handleCheckAll = (val) => {
+  for (const expenseItem of editEstimatedCostForm.value.expenseItemDtos) {
+    expenseItem.isChecked = val
+  }
+}
+
+// 批量删除所选中的 expense item
+const handleBatchDeleteSelectedExpenseItem = () => {
+  editEstimatedCostForm.value.expenseItemDtos =
+    editEstimatedCostForm.value.expenseItemDtos.filter(
+      (expenseItem) =>
+        !selectedExpenseItemIdList.value.includes(expenseItem.id),
+    )
+}
+
+// 删除所选中的 expense item
+const handleDeleteSelectedExpenseItem = (selectedExpenseItemId) => {
+  editEstimatedCostForm.value.expenseItemDtos =
+    editEstimatedCostForm.value.expenseItemDtos.filter(
+      (expenseItem) => expenseItem.id !== selectedExpenseItemId,
+    )
+}
+
+// 以group进行分组的形式获取所有的expense
+const getExpenseListByGroup = async () => {
+  const { data } = await getExpenseListByGroupApi({
+    userId: repairRecordDetail.value.userId,
+    searchKey: expenseSearchKey.value,
+  })
+  expenseListByGroup.value = data
 }
 
 // 组件创建后, 发起请求
@@ -151,11 +424,15 @@ const {
   params: { id },
 } = route
 
+// 获取数据
 getRepairRecordInfo(id)
 </script>
 
 <template>
-  <section class="h-full overflow-auto pb-32">
+  <section
+    class="h-full overflow-auto pb-32"
+    v-loading.fullscreen.lock="loading"
+  >
     <div class="flex-between mx-32 mb-16">
       <!-- header -->
       <h2
@@ -163,7 +440,19 @@ getRepairRecordInfo(id)
       >
         Expense Records Details
       </h2>
-      <el-button type="primary">Edit</el-button>
+      <el-button
+        v-show="!isEditMode"
+        type="primary"
+        @click="handleSwitchToEditMode"
+      >
+        Edit
+      </el-button>
+      <div v-show="isEditMode">
+        <el-button @click="handleSwitchToNormalMode">Cancel</el-button>
+        <el-button type="primary" @click="handleEditRepairRecord">
+          Save
+        </el-button>
+      </div>
     </div>
     <!-- tabs -->
     <el-tabs v-model="activeTab" class="has-top mb-16">
@@ -174,124 +463,181 @@ getRepairRecordInfo(id)
     </el-tabs>
     <!-- details -->
     <dl
-      class="[&>dt]:leading-32 [&>dd]:leading-32 mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:h-32 [&>dt]:h-32"
+      class="[&>dt]:leading-32 [&>dd]:leading-32 input--underline mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:h-32 [&>dt]:h-32"
     >
       <dt>Workshop</dt>
       <dd>
         <base-info-card
           :logo="repairRecordDetail.merchantDto?.logo"
           :name="repairRecordDetail.merchantDto?.name"
+          v-if="!isEditMode"
         />
+        <el-select
+          v-model="editEstimatedCostForm.merchantDto.name"
+          class="select--underline"
+          placeholder="Select"
+          @popup-scroll="getMerchantList"
+          v-else
+        >
+          <el-option
+            v-for="item in merchantList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
+        </el-select>
       </dd>
       <dt>Mileage</dt>
-      <dd>{{ repairRecordDetail.mileage }} km</dd>
+      <dd>
+        <span v-if="!isEditMode">{{ repairRecordDetail.mileage }} km</span>
+        <el-input
+          v-model="estimatedCostForm.mileage"
+          placeholder="Enter"
+          v-else
+        >
+          <template #suffix>
+            <span>km</span>
+          </template>
+        </el-input>
+      </dd>
       <dt>Date</dt>
-      <dd>{{ getDateWithDDMMMYYYYhhmma(repairRecordDetail.date) }}</dd>
+      <dd class="date-container">
+        <span v-if="!isEditMode">
+          {{ getDateWithDDMMMYYYYhhmma(repairRecordDetail.date) }}
+        </span>
+        <el-date-picker
+          v-model="recordTime"
+          type="date"
+          placeholder="Select"
+          format="DD MMM YYYY"
+          value-format="x"
+          v-else
+        />
+      </dd>
       <dt>Note</dt>
-      <dd>{{ repairRecordDetail.note || '-' }}</dd>
+      <dd>
+        <span v-show="!isEditMode">{{ repairRecordDetail.note || '-' }}</span>
+        <el-input
+          v-model="estimatedCostForm.note"
+          placeholder="Enter"
+          v-show="isEditMode"
+        />
+      </dd>
     </dl>
     <!-- items table -->
     <div class="mb-24">
       <!-- header -->
-      <div class="row-center mx-32 h-24">
-        <h3
-          class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+      <div class="flex-between mx-32 h-24">
+        <div class="row-center h-24">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+          >
+            Items
+          </h3>
+          <span
+            class="heading-body-large-body-14px-medium text-neutrals-grey-3 ml-8"
+          >
+            {{ repairRecordDetail.expenseItemDtos?.length || '0' }}
+          </span>
+        </div>
+        <el-button
+          text
+          type="primary"
+          v-show="isEditMode"
+          @click="clearExtraData"
         >
-          Items
-        </h3>
-        <span
-          class="heading-body-large-body-14px-medium text-neutrals-grey-3 ml-8"
+          <template #icon>
+            <i class="icon-typesclose text-neutrals-blue" />
+          </template>
+          <template #default>
+            <span>Clear Extra Discount & Tax</span>
+          </template>
+        </el-button>
+        <el-button
+          text
+          type="primary"
+          v-show="!isShowExtraData && isEditMode"
+          @click="handleGetExtraData"
         >
-          {{ repairRecordDetail.expenseItemDtos?.length || '0' }}
-        </span>
+          <template #icon>
+            <i class="icon-typesadd text-neutrals-blue" />
+          </template>
+          <template #default>
+            <span>Extra Discount & Tax</span>
+          </template>
+        </el-button>
       </div>
       <!-- divider -->
       <el-divider class="mt-8!" />
       <!-- table -->
       <div class="items-table-container mx-32">
+        <!-- Batch delete -->
+        <div
+          class="flex-between h-42"
+          v-show="selectedExpenseItemIdList.length"
+        >
+          <span class="text-neutrals-off-black heading-body-body-12px-regular">
+            {{ selectedExpenseItemIdList.length }} selected
+          </span>
+          <el-button @click="handleBatchDeleteSelectedExpenseItem">
+            Delete
+          </el-button>
+        </div>
         <!-- header -->
         <el-row>
-          <el-col :span="1" />
-          <el-col :span="6">Item</el-col>
-          <el-col :span="3">Category</el-col>
-          <el-col :span="3">Unit Price</el-col>
-          <el-col :span="2">Qty</el-col>
-          <el-col :span="3">Discount</el-col>
-          <el-col :span="3">Tax Rate</el-col>
-          <el-col :span="3">Total Amount</el-col>
+          <el-col :span="isEditMode ? 1 : 1">
+            <el-checkbox
+              v-show="isEditMode"
+              @change="handleCheckAll"
+              v-model="isSelectAll"
+            />
+          </el-col>
+          <el-col :span="isEditMode ? 6 : 6">Item</el-col>
+          <el-col :span="isEditMode ? 4 : 3">Category</el-col>
+          <el-col :span="isEditMode ? 2 : 3">Unit Price</el-col>
+          <el-col :span="isEditMode ? 2 : 2">Qty</el-col>
+          <el-col :span="isEditMode ? 2 : 3">Discount</el-col>
+          <el-col :span="isEditMode ? 2 : 3">Tax Rate</el-col>
+          <el-col :span="isEditMode ? 4 : 3">Total Amount</el-col>
+          <el-col v-show="isEditMode" :span="isEditMode ? 1 : 0" />
         </el-row>
         <template v-if="repairRecordDetail.expenseItemDtos?.length">
-          <template
-            v-for="record in repairRecordDetail.expenseItemDtos"
-            :key="record.id"
-          >
-            <!-- body -->
-            <el-row
-              :class="{
-                'bg-status-colours-light-blue': record.isExpand,
-                'no-hover-cursor': !record.aiRepairItemDto.id,
-              }"
-              @click.stop="record.isExpand = !record.isExpand"
+          <!-- 非编辑模式: 显示明细行 -->
+          <template v-if="!isEditMode">
+            <template
+              v-for="record in repairRecordDetail.expenseItemDtos"
+              :key="record.id"
             >
-              <el-col :span="1">
-                <el-image
-                  v-if="record.aiRepairItemDto.id"
-                  :src="record.isExpand ? ExpandIcon : CollapseIcon"
-                  class="h-16 w-16 cursor-pointer"
-                  fit="cover"
-                  @click.stop="record.isExpand = !record.isExpand"
-                />
-              </el-col>
-              <el-col :span="6">{{ record.name }}</el-col>
-              <el-col :span="3">{{ record.category }}</el-col>
-              <el-col :span="3">
-                {{ getFormatNumberString(record.unitPrice) }}
-              </el-col>
-              <el-col :span="2">{{ record.quantity }}</el-col>
-              <el-col :span="3">
-                {{ getFormatNumberString(record.discount) }}
-              </el-col>
-              <el-col :span="3">{{ getFormatNumberString(record.gst) }}</el-col>
-              <el-col :span="3" class="row-center">
-                <el-image
-                  v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
-                  :src="UpIcon"
-                  class="mr-8 h-16 w-16"
-                  fit="cover"
-                />
-                <el-image
-                  v-else-if="record.aiRepairItemDto.level === AI_COST_LEVEL.LOW"
-                  :src="DownIcon"
-                  class="mr-8 h-16 w-16"
-                  fit="cover"
-                />
-                <span>${{ getFormatNumberString(record.totalAmount) }}</span>
-              </el-col>
-            </el-row>
-            <!-- expand row -->
-            <el-row
-              v-if="record.aiRepairItemDto.id && record.isExpand"
-              :class="[
-                'is-expand',
-                'no-hover-cursor',
-                { 'bg-neutrals-off-white': record.isExpand },
-              ]"
-            >
-              <el-col :span="1" />
-              <el-col :span="23">
-                <!-- cost analysis header -->
-                <div class="row-center flex gap-8">
-                  <h4
-                    class="heading-body-body-12px-medium text-neutrals-grey-4 leading-16"
-                  >
-                    Cost Analysis
-                  </h4>
-                  <i
-                    class="icon-edit-line text-16 text-neutrals-grey-3 cursor-pointer"
-                    @click="handleOpenEditEstimatedCostDialog(record)"
+              <!-- body -->
+              <el-row
+                :class="{
+                  'bg-status-colours-light-blue': record.isExpand,
+                  'no-hover-cursor': !record.aiRepairItemDto.id,
+                }"
+                @click.stop="record.isExpand = !record.isExpand"
+              >
+                <el-col :span="1">
+                  <el-image
+                    v-if="record.aiRepairItemDto.id"
+                    :src="record.isExpand ? ExpandIcon : CollapseIcon"
+                    class="h-16 w-16 cursor-pointer"
+                    fit="cover"
+                    @click.stop="record.isExpand = !record.isExpand"
                   />
-                </div>
-                <div>
+                </el-col>
+                <el-col :span="6">{{ record.name }}</el-col>
+                <el-col :span="3">{{ record.category }}</el-col>
+                <el-col :span="3">
+                  {{ getFormatNumberString(record.unitPrice) }}
+                </el-col>
+                <el-col :span="2">{{ record.quantity }}</el-col>
+                <el-col :span="3">
+                  {{ getFormatNumberString(record.discount) }}
+                </el-col>
+                <el-col :span="3">
+                  {{ getFormatNumberString(record.gst) }}
+                </el-col>
+                <el-col :span="3" class="row-center">
                   <el-image
                     v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
                     :src="UpIcon"
@@ -306,34 +652,291 @@ getRepairRecordInfo(id)
                     class="mr-8 h-16 w-16"
                     fit="cover"
                   />
-                  <span
-                    :class="{
-                      'text-status-colours-red':
-                        record.aiRepairItemDto.level === -1,
-                      'text-status-colours-green':
-                        record.aiRepairItemDto.level === 2,
-                    }"
-                  >
-                    {{ record.aiRepairItemDto.ratio }} %
+                  <span class="add-prefix-dollar-sign">
+                    {{ getFormatNumberString(record.totalAmount) }}
                   </span>
-                  <p
+                </el-col>
+              </el-row>
+              <!-- expand row -->
+              <el-row
+                v-if="record.aiRepairItemDto.id && record.isExpand"
+                :class="[
+                  'is-expand',
+                  'no-hover-cursor',
+                  { 'bg-neutrals-off-white': record.isExpand },
+                ]"
+              >
+                <el-col :span="1" />
+                <el-col :span="23">
+                  <!-- cost analysis header -->
+                  <div class="row-center flex gap-8">
+                    <h4
+                      class="heading-body-body-12px-medium text-neutrals-grey-4 leading-16"
+                    >
+                      Cost Analysis
+                    </h4>
+                    <i
+                      class="icon-edit-line text-16 text-neutrals-grey-3 cursor-pointer"
+                      @click="handleOpenEditEstimatedCostDialog(record)"
+                    />
+                  </div>
+                  <div>
+                    <el-image
+                      v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
+                      :src="UpIcon"
+                      class="mr-8 h-16 w-16"
+                      fit="cover"
+                    />
+                    <el-image
+                      v-else-if="
+                        record.aiRepairItemDto.level === AI_COST_LEVEL.LOW
+                      "
+                      :src="DownIcon"
+                      class="mr-8 h-16 w-16"
+                      fit="cover"
+                    />
+                    <span
+                      :class="{
+                        'text-status-colours-red':
+                          record.aiRepairItemDto.level === -1,
+                        'text-status-colours-green':
+                          record.aiRepairItemDto.level === 2,
+                      }"
+                    >
+                      {{ record.aiRepairItemDto.ratio }} %
+                    </span>
+                    <p
+                      class="heading-body-body-12px-medium text-neutrals-off-black"
+                    >
+                      Market Average: ${{ record.aiRepairItemDto.avg }} · Your
+                      Price: ${{ record.unitPrice }}
+                    </p>
+                    <p
+                      class="heading-body-body-12px-medium text-neutrals-off-black"
+                    >
+                      {{ record.aiRepairItemDto.remark }}
+                    </p>
+                  </div>
+                </el-col>
+              </el-row>
+            </template>
+          </template>
+          <!-- 编辑模式: 显示编辑表格 -->
+          <template v-else>
+            <template
+              v-for="(record, index) in editEstimatedCostForm.expenseItemDtos"
+              :key="record.id"
+            >
+              <el-row
+                class="edit-row no-hover-cursor input--bg-neutrals-grey-1 select--bg-neutrals-grey-1"
+              >
+                <el-col :span="1">
+                  <el-checkbox v-model="record.isChecked" />
+                </el-col>
+                <el-col :span="6">
+                  <el-select v-model="record.name">
+                    <el-option
+                      v-for="expense in expenseList"
+                      :key="expense.id"
+                      :label="expense.name"
+                      :value="expense.name"
+                    />
+                  </el-select>
+                </el-col>
+                <el-col :span="4">
+                  <el-select v-model="record.category">
+                    <el-option
+                      v-for="(category, index) in categoryFilterParams"
+                      :key="`${index}${category}${index}`"
+                      :label="category.label"
+                      :value="category.value"
+                    />
+                  </el-select>
+                </el-col>
+                <el-col :span="2">
+                  <el-input type="number" v-model.number="record.unitPrice" />
+                </el-col>
+                <el-col :span="2">
+                  <el-input type="number" v-model.number="record.quantity" />
+                </el-col>
+                <el-col :span="2">
+                  <el-input type="number" v-model.number="record.discount" />
+                </el-col>
+                <el-col :span="2">
+                  <el-input type="number" v-model.number="record.gst" />
+                </el-col>
+                <el-col :span="4">
+                  <el-input type="number" v-model.number="record.totalAmount" />
+                </el-col>
+                <el-col :span="1" class="justify-center!">
+                  <i
+                    class="icon-delete-bin-line cursor-pointer"
+                    @click="handleDeleteSelectedExpenseItem(record.id)"
+                  />
+                </el-col>
+              </el-row>
+              <!-- Extra Discount & Tax -->
+              <el-row
+                class="edit-row no-hover-cursor input--bg-neutrals-grey-1"
+                v-show="
+                  isShowExtraData &&
+                  index === editEstimatedCostForm.expenseItemDtos.length - 1
+                "
+              >
+                <el-col :span="1" />
+                <el-col :span="6" />
+                <el-col :span="4" />
+                <el-col :span="4">
+                  <span
                     class="heading-body-body-12px-medium text-neutrals-off-black"
                   >
-                    Market Average: ${{ record.aiRepairItemDto.avg }} · Your
-                    Price: ${{ record.unitPrice }}
-                  </p>
-                  <p
-                    class="heading-body-body-12px-medium text-neutrals-off-black"
-                  >
-                    {{ record.aiRepairItemDto.remark }}
-                  </p>
-                </div>
-              </el-col>
-            </el-row>
+                    Extra Discount & Tax
+                  </span>
+                </el-col>
+                <el-col :span="2">
+                  <el-input
+                    placeholder="0.00"
+                    v-model="editEstimatedCostForm.discount"
+                  />
+                </el-col>
+                <el-col :span="2">
+                  <el-input
+                    placeholder="0.00"
+                    v-model="editEstimatedCostForm.gst"
+                  />
+                </el-col>
+                <el-col :span="4" />
+                <el-col :span="1" class="justify-center!">
+                  <i
+                    class="icon-delete-bin-line cursor-pointer"
+                    @click="clearExtraData"
+                  />
+                </el-col>
+              </el-row>
+            </template>
           </template>
           <!-- billing summary row -->
           <el-row class="billing-summary no-hover-cursor">
-            <el-col :span="12" />
+            <el-col :span="12" class="items-start! justify-start!">
+              <el-dropdown
+                trigger="click"
+                placement="bottom-start"
+                v-show="isEditMode"
+                ref="addExpenseItemDropdownRef"
+              >
+                <el-button text type="primary">
+                  <template #default>
+                    <span>New Item</span>
+                  </template>
+                  <template #icon>
+                    <i class="icon-typesadd text-neutrals-blue" />
+                  </template>
+                </el-button>
+                <template #dropdown>
+                  <div class="h-344 rounded-12">
+                    <el-input
+                      class="input--without-border h-39"
+                      placeholder="Enter"
+                      v-model="expenseSearchKey"
+                    >
+                      <template #prefix>
+                        <i class="icon-mail-send-line-1" />
+                      </template>
+                    </el-input>
+                    <el-divider />
+                    <div class="px-16 py-8">
+                      <el-tabs
+                        v-model="expenseItemActiveTab"
+                        class="no-bottom tabs-container"
+                      >
+                        <el-tab-pane label="All" name="all" />
+                        <el-tab-pane
+                          v-for="(category, index) in categoryFilterParams"
+                          :key="`${index}${category}${index}`"
+                          :label="category.label"
+                          :name="category.value"
+                        />
+                      </el-tabs>
+                      <!-- batch select -->
+                      <div
+                        class="flex-between h-32"
+                        v-show="selectedAddExpenseItemNameList.length"
+                      >
+                        <span
+                          class="heading-body-body-12px-regular text-neutrals-off-black"
+                        >
+                          {{ selectedAddExpenseItemNameList.length }} selected
+                        </span>
+                        <div>
+                          <el-button
+                            size="small"
+                            @click.stop="selectedAddExpenseItemNameList = []"
+                          >
+                            Clear
+                          </el-button>
+                          <el-button
+                            size="small"
+                            type="primary"
+                            @click.stop="handleAddNewRow"
+                          >
+                            Add
+                          </el-button>
+                        </div>
+                      </div>
+                      <el-checkbox-group
+                        v-model="selectedAddExpenseItemNameList"
+                      >
+                        <div
+                          class="py-8"
+                          v-for="(category, index) in categoryFilterParams"
+                          :key="`${index}${category}${index}`"
+                          v-show="
+                            expenseItemActiveTab === 'all' ||
+                            expenseItemActiveTab === category.value
+                          "
+                        >
+                          <h4
+                            class="heading-body-body-12px-medium text-neutrals-grey-3 leading-16 h-17 row-center"
+                          >
+                            {{ category.label }}
+                          </h4>
+                          <div
+                            class="gap gap-x-107 mt-4 grid grid-cols-2 gap-y-4"
+                          >
+                            <template
+                              v-for="(item, index) in expenseListByGroup"
+                              :key="`${index}${item.group}${index}`"
+                            >
+                              <template v-if="item.group === category.value">
+                                <!-- expense item 搜索时, 忽略大小写 -->
+                                <template
+                                  v-for="listItem in expenseSearchKey
+                                    ? item.list.filter((x) =>
+                                        x.name
+                                          .toLowerCase()
+                                          .includes(
+                                            expenseSearchKey.toLowerCase(),
+                                          ),
+                                      )
+                                    : item.list"
+                                  :key="listItem.id"
+                                >
+                                  <el-checkbox
+                                    :label="listItem.name"
+                                    :value="listItem.name"
+                                    size="small"
+                                  />
+                                </template>
+                              </template>
+                            </template>
+                          </div>
+                        </div>
+                      </el-checkbox-group>
+                    </div>
+                  </div>
+                </template>
+              </el-dropdown>
+            </el-col>
             <el-col :span="12">
               <div class="mb-12 flex w-full flex-col gap-16">
                 <!-- item -->
@@ -372,7 +975,7 @@ getRepairRecordInfo(id)
                     Total Amount (SGD)
                   </p>
                   <span class="heading-body-large-body-14px-medium">
-                    ${{ getFormatNumberString(repairRecordDetail.totalCost) }}
+                    {{ getFormatNumberString(repairRecordDetail.totalCost) }}
                   </span>
                 </div>
                 <!-- total amount convert -->
@@ -414,26 +1017,15 @@ getRepairRecordInfo(id)
     <!-- bills -->
     <div class="mb-24">
       <!-- header -->
-      <div class="flex-between mx-32 h-24">
-        <div class="row-center flex gap-8">
-          <h3
-            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
-          >
-            Bills
-          </h3>
-          <span
-            class="heading-body-large-body-14px-medium text-neutrals-grey-3"
-          >
-            {{ repairRecordDetail.ticketDtos?.length || '-' }}
-          </span>
-        </div>
-        <!-- 上传按钮 -->
-        <el-button type="primary" text>
-          <template #icon>
-            <i class="icon-upload-2-line text-neutrals-blue text-16" />
-          </template>
-          <template #default>Upload</template>
-        </el-button>
+      <div class="row-center mx-32 flex h-24 gap-8">
+        <h3
+          class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+        >
+          Bills
+        </h3>
+        <span class="heading-body-large-body-14px-medium text-neutrals-grey-3">
+          {{ repairRecordDetail.ticketDtos?.length || '-' }}
+        </span>
       </div>
       <!-- divider -->
       <el-divider class="mt-8! mb-12!" />
@@ -453,26 +1045,15 @@ getRepairRecordInfo(id)
     <!-- Attachments -->
     <div class="mb-24">
       <!-- header -->
-      <div class="flex-between mx-32 h-24">
-        <div class="row-center flex gap-8">
-          <h3
-            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
-          >
-            Attachments
-          </h3>
-          <span
-            class="heading-body-large-body-14px-medium text-neutrals-grey-3"
-          >
-            {{ repairRecordDetail.attachmentDtos?.length || 0 }}
-          </span>
-        </div>
-        <!-- 上传按钮 -->
-        <el-button type="primary" text>
-          <template #icon>
-            <i class="icon-upload-2-line text-neutrals-blue text-16" />
-          </template>
-          <template #default>Upload</template>
-        </el-button>
+      <div class="row-center mx-32 flex h-24 gap-8">
+        <h3
+          class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+        >
+          Attachments
+        </h3>
+        <span class="heading-body-large-body-14px-medium text-neutrals-grey-3">
+          {{ repairRecordDetail.attachmentDtos?.length || 0 }}
+        </span>
       </div>
       <!-- divider -->
       <el-divider class="mt-8! mb-12!" />
@@ -573,7 +1154,7 @@ getRepairRecordInfo(id)
 
 <style scoped lang="scss">
 .items-table-container :deep(.el-row) {
-  @apply text-14 leading-16 text-neutrals-grey-4 default-transition h-32 font-medium;
+  @apply text-14 leading-16 text-neutrals-grey-4 default-transition min-h-32 font-medium;
   border-bottom: 1px solid $neutrals-grey-1;
 
   // columns 样式
@@ -624,12 +1205,70 @@ getRepairRecordInfo(id)
       }
     }
   }
+
+  // 编辑行的样式
+  &.edit-row {
+    @apply h-48;
+
+    // columns 样式
+    .el-col {
+      // 最后一列的样式
+      &:last-child {
+        @apply justify-start pl-8 pr-0;
+      }
+    }
+  }
 }
 
 /* TODO 无日志数据, 文字暂时置灰 */
 .log-table-container {
   :deep(.el-table__row) {
     @apply text-neutrals-grey-2;
+  }
+}
+
+// 日期选择容器
+.date-container {
+  :deep(.el-date-editor--date) {
+    @apply border-1! box-border w-full border-solid border-none border-[#CACFD8] bg-transparent;
+
+    .el-input__prefix {
+      @apply hidden;
+    }
+
+    .el-input__inner {
+      @apply h-32;
+    }
+
+    // 自定义后置图标
+    .el-input__suffix {
+      @apply row-center relative;
+
+      &::after {
+        margin-left: 4px;
+        content: '';
+        display: block;
+        width: 16px;
+        height: 16px;
+        background-color: currentColor; // 用文字颜色填充
+        -webkit-mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat
+          center;
+        mask: url('@/assets/specialIcons/calendar-icon.svg') no-repeat center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+      }
+    }
+  }
+}
+
+// tabs 样式重置
+.tabs-container {
+  :deep(.el-tabs__nav-wrap) {
+    @apply ml-0;
+  }
+
+  :deep(.el-tabs__item) {
+    @apply h-29!;
   }
 }
 </style>

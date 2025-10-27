@@ -40,6 +40,10 @@ const UserApi = Object.freeze({
   GET_REPAIR_RECORD_INFO: '/expense/info',
   // 管理员编辑Expense Item Cost Analysis
   EDIT_EXPENSE_ITEM_COST_ANALYSIS: '/manager/edit/itemairepair',
+  // 编辑维修记录
+  EDIT_REPAIR_RECORD: '/expense/edit',
+  // 以group进行分组的形式获取所有的expense
+  GET_EXPENSE_GROUP_LIST: '/expenditure/expendituresbyapp',
 })
 
 // 获取 token
@@ -363,6 +367,74 @@ export const updateExpenseItemCostAnalysisApi = (params) => {
 
   return request({
     url: UserApi.EDIT_EXPENSE_ITEM_COST_ANALYSIS,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 编辑用户报修记录列表
+ * @param params
+ * @param params.expenseId 报修记录id
+ * @param params.userId 用户id
+ * @param params.merchantId 修理厂id
+ * @param params.merchantName 修理厂名称
+ * @param params.vehicleId 车辆id
+ * @param params.mileage 行驶里程
+ * @param params.date 报修时间
+ * @param params.note 备注
+ * @param params.fileIds 图片id
+ * @param params.ticketIds 工单id
+ * @param params.gst 税
+ * @param params.discount 优惠
+ * @param params.r_cur 币种
+ * @param params.itemDtos 报修项目列表
+ *
+ * @returns {Promise}
+ *
+ */
+export const updateRepairRecordApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('expenseId', params.id)
+  data.append('userId', params.userId)
+  data.append('merchantId', params.merchantDto.id)
+  data.append('merchantName', params.merchantDto.name)
+  data.append('vehicleId', params.vehicleId)
+  data.append('mileage', params.mileage)
+  data.append('date', params.date)
+  data.append('note', params.note)
+  data.append('fileIds', params.attachmentDtos.map((item) => item.id).join(','))
+  data.append('ticketIds', params.ticketDtos.map((item) => item.id).join(','))
+  data.append('gst', params.gst)
+  data.append('discount', params.discount)
+  // 币种符号
+  // data.append('r_cur', params.r_cur)
+  data.append('itemDtos', JSON.stringify(params.expenseItemDtos))
+
+  return request({
+    url: UserApi.EDIT_REPAIR_RECORD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 以group进行分组的形式获取所有的expense
+ * @param params
+ * @param params.userId 用户id
+ * @param params.searchKey 搜索关键字
+ *
+ * @returns {Promise}
+ */
+export const getExpenseListByGroupApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', params.userId)
+  data.append('searchKey', params.searchKey)
+
+  return request({
+    url: UserApi.GET_EXPENSE_GROUP_LIST,
     method: 'POST',
     data,
   })
