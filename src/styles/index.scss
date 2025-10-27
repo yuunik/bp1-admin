@@ -263,14 +263,13 @@ i {
       }
     }
   }
+}
 
-  // 聚焦时改变颜色
-  //&:focus-within  {
-  //
-  //  .el-input__wrapper::after {
-  //    background-color: $branding-colours-primary;
-  //  }
-  //}
+// 背景色为 #EAEEF480 的输入框
+.input--bg-neutrals-grey-1 {
+  .el-input__wrapper {
+    @apply rounded-8 bg-neutrals-grey-1-with-50 shadow-none border-none;
+  }
 }
 
 // 只有下边框的el-select
@@ -298,6 +297,13 @@ i {
       pointer-events: none;
       transition: $app-transitions;
     }
+  }
+}
+
+// 背景色为 #EAEEF480 的 el-select
+.select--bg-neutrals-grey-1 {
+  .el-select__wrapper {
+    @apply rounded-8 bg-neutrals-grey-1-with-50 shadow-none border-none;
   }
 }
 
@@ -373,5 +379,12 @@ i {
         }
       }
     }
+  }
+}
+
+// 在内容前添加一个 $ 符号
+.add-prefix-dollar-sign {
+  &::before {
+    content: '$';
   }
 }
