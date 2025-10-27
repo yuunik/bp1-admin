@@ -227,7 +227,10 @@ getRepairRecordInfo(id)
           >
             <!-- body -->
             <el-row
-              :class="{ 'bg-status-colours-light-blue': record.isExpand }"
+              :class="{
+                'bg-status-colours-light-blue': record.isExpand,
+                'no-hover-cursor': !record.aiRepairItemDto.id,
+              }"
               @click.stop="record.isExpand = !record.isExpand"
             >
               <el-col :span="1">
@@ -270,6 +273,7 @@ getRepairRecordInfo(id)
               v-if="record.aiRepairItemDto.id && record.isExpand"
               :class="[
                 'is-expand',
+                'no-hover-cursor',
                 { 'bg-neutrals-off-white': record.isExpand },
               ]"
             >
@@ -283,7 +287,7 @@ getRepairRecordInfo(id)
                     Cost Analysis
                   </h4>
                   <i
-                    class="icon-edit-line text-16 text-neutrals-grey-3"
+                    class="icon-edit-line text-16 text-neutrals-grey-3 cursor-pointer"
                     @click="handleOpenEditEstimatedCostDialog(record)"
                   />
                 </div>
@@ -315,6 +319,12 @@ getRepairRecordInfo(id)
                   <p
                     class="heading-body-body-12px-medium text-neutrals-off-black"
                   >
+                    Market Average: ${{ record.aiRepairItemDto.avg }} · Your
+                    Price: ${{ record.unitPrice }}
+                  </p>
+                  <p
+                    class="heading-body-body-12px-medium text-neutrals-off-black"
+                  >
                     {{ record.aiRepairItemDto.remark }}
                   </p>
                 </div>
@@ -322,7 +332,7 @@ getRepairRecordInfo(id)
             </el-row>
           </template>
           <!-- billing summary row -->
-          <el-row class="billing-summary">
+          <el-row class="billing-summary no-hover-cursor">
             <el-col :span="12" />
             <el-col :span="12">
               <div class="mb-12 flex w-full flex-col gap-16">
@@ -587,7 +597,7 @@ getRepairRecordInfo(id)
   }
 
   // 非首行的样式
-  &:not(:first-child) {
+  &:not(.no-hover-cursor):not(:first-child) {
     @apply hover:bg-status-colours-light-blue cursor-pointer;
   }
 
