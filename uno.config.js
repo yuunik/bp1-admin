@@ -103,6 +103,7 @@ export default defineConfig({
       'bg-neutrals-card-filling': 'bg-[#FBFCFD]',
       'bg-default-light-blue': 'bg-[#F2F6FC]',
       'bg-neutrals/off-white': 'bg-[#FCFCFC]',
+      'bg-neutrals-grey-1-with-50': 'bg-[#EAEEF480]',
       /* 文字颜色样式 */
       'text-status-colours-green': 'text-[#05AD9D]',
       'text-status-colours-orange': 'text-[#FF6D1A]',
