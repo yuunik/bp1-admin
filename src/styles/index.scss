@@ -265,6 +265,21 @@ i {
   }
 }
 
+// 无边框的 el-input
+.input--without-border {
+  .el-input__wrapper {
+    @apply shadow-none hover:shadow-none;
+
+    &.is-focus {
+      @apply shadow-none;
+
+      .icon-mail-send-line-1 {
+        @apply text-neutrals-blue;
+      }
+    }
+  }
+}
+
 // 背景色为 #EAEEF480 的输入框
 .input--bg-neutrals-grey-1 {
   .el-input__wrapper {

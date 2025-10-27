@@ -92,6 +92,12 @@
       }
     }
   }
+
+  &.no-bottom {
+    .el-tabs__header {
+      @apply border-none;
+    }
+  }
 }
 
 // 重置 el-button 的样式
