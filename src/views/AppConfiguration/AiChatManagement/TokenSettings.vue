@@ -62,7 +62,11 @@ getDefaultTokenCount()
         >
           {{ defaultTokenCount }} / Month
         </span>
-        <el-input placeholder="Type Here" v-model="defaultTokenCount" v-else>
+        <el-input
+          placeholder="Type Here"
+          v-model.number="defaultTokenCount"
+          v-else
+        >
           <template #suffix>
             <span class="heading-body-body-12px-regular text-neutrals-grey-3">
               / Month
