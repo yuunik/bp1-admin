@@ -118,7 +118,7 @@ getDtcList()
 </script>
 
 <template>
-  <section class="flex h-full flex-col gap-16">
+  <section class="flex h-full flex-col gap-16 overflow-auto">
     <!-- Header -->
     <h3 class="heading-h2-20px-medium mx-32 h-32">DTC</h3>
     <!-- Search -->

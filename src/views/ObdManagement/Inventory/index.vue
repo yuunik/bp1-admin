@@ -148,7 +148,9 @@ const handleViewInventoryDetails = (row, column) => {
 </script>
 
 <template>
-  <section class="box-border flex h-full flex-col gap-16 px-32 pb-32">
+  <section
+    class="box-border flex h-full flex-col gap-16 overflow-auto px-32 pb-32"
+  >
     <div class="flex-between h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">Inventory</h3>
       <el-dropdown trigger="click" @command="handleCreateStockOrder">
