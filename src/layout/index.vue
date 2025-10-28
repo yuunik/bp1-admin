@@ -243,10 +243,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
         </li>
       </ul>
       <!-- expand button -->
-      <div
-        class="expand-btn z-9999"
-        @click="isMenuCollapsed = !isMenuCollapsed"
-      >
+      <div class="expand-btn z-99" @click="isMenuCollapsed = !isMenuCollapsed">
         <!-- 折叠图标 -->
         <i class="text-16 icon-typescollapsable" v-show="!isMenuCollapsed" />
         <!-- 展开图标 -->
