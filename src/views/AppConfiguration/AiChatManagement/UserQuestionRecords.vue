@@ -6,7 +6,8 @@ import {
   SortDown,
   SortUp,
 } from '@element-plus/icons-vue'
-import { useDebounceFn } from '@vueuse/core'
+import { useCloned, useDebounceFn } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { getAiChatRecordList, modifyAiAnswerApi } from '@/apis/appApi.js'
@@ -27,6 +28,12 @@ const aiChatRecordList = ref([])
 
 // 是否有更多的记录
 const isHasMore = ref(true)
+
+// 输入框内容
+const editContent = ref('')
+
+//  loading
+const loading = ref(false)
 
 // 获取提问记录
 const getQuestionListByScroll = async () => {
@@ -73,10 +80,11 @@ const handleEditAIAnswer = async (record) => {
   try {
     await modifyAiAnswerApi({
       id: record.id,
-      answer: record.answer,
+      answer: editContent.value,
     })
     ElMessage.success('AI answer updated successfully.')
   } finally {
+    editContent.value = ''
     getQuestionList()
   }
 }
@@ -85,6 +93,20 @@ const handleEditAIAnswer = async (record) => {
 const handleManageExpandRow = (record) => {
   record.isEditable && (record.isEditable = false)
   record.isExpand = !record.isExpand
+}
+
+// 切换编辑模式
+const handleManageEditMode = (record) => {
+  try {
+    loading.value = true
+    console.log('record', record)
+    const { cloned } = useCloned(record)
+    console.log('cloned', cloned.value.answer)
+    editContent.value = cloned.value.answer
+    record.isEditable = !record.isEditable
+  } finally {
+    loading.value = false
+  }
 }
 
 watch(isExpand, (val) => {
@@ -222,7 +244,7 @@ getQuestionList()
             <i
               class="icon-edit-line ml-8 cursor-pointer"
               v-if="!record.isEditable"
-              @click.stop="record.isEditable = true"
+              @click.stop="handleManageEditMode(record)"
             />
             <div class="row-center ml-8 gap-8" v-else>
               <i
@@ -240,12 +262,13 @@ getQuestionList()
             :source="record?.answer || ''"
             class="heading-body-body-12px-medium text-neutrals-off-black"
             v-if="!record.isEditable"
+            v-loading="loading"
           />
           <el-input
             type="textarea"
             class="mt-4! answer-container"
             rows="10"
-            v-model="record.answer"
+            v-model="editContent"
             v-else
           />
         </el-col>
