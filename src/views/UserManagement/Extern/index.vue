@@ -12,6 +12,8 @@ import {
   adminUserStatusApi,
   resetUserPasswordApi,
   approveMerchantApi,
+  mergeMerchantApi,
+  rejectMerchantApi,
 } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
@@ -89,7 +91,10 @@ const selectedWorkshopIdList = ref([])
 const dialogMergeWorkshopVisible = ref(false)
 
 // 合并的修理厂id列表
-const selectedMergeWorkshopIdList = ref([])
+const selectedMergeWorkshopList = ref([])
+
+// 需要合并的修理厂的id
+const selectedMergeWorkshopId = ref('')
 
 const router = useRouter()
 
@@ -301,11 +306,28 @@ const onMerchantListRefresh = () => {
   pagination.value.currentPage = 0
 }
 
-const handleMergeWorkshop = () => {}
+// 合并修理厂
+const handleMergeWorkshop = async () => {
+  try {
+    await mergeMerchantApi({
+      currentId: selectedMergeWorkshopId.value,
+      deleteIds: selectedMergeWorkshopList.value
+        .filter((item) => item.id !== selectedMergeWorkshopId.value)
+        .map((x) => x.id)
+        .join(','),
+    })
+    ElMessage.success('Repair shop merge successfully.')
+    getMerchantList()
+  } finally {
+    dialogMergeWorkshopVisible.value = false
+    // 重置勾选
+    selectedMergeWorkshopId.value = ''
+  }
+}
 
 // 勾选框勾选
 const handleWorkshopSelectionChange = (val) =>
-  (selectedWorkshopIdList.value = val.map((item) => item.id))
+  (selectedMergeWorkshopList.value = val)
 
 // 状态到颜色的映射
 const stateColor = (state) => {
@@ -335,6 +357,15 @@ const handleRejectWorkshop = async (workshopId) => {
   await rejectMerchantApi(workshopId)
   ElMessage.success('Repair shop approval rejected successfully.')
   getMerchantList()
+}
+
+// 关闭合并修理厂的弹窗
+const handleCloseMergeWorkshop = () => {
+  // 重置
+  selectedMergeWorkshopId.value = ''
+  selectedMergeWorkshopList.value = []
+  // 关闭弹窗
+  dialogMergeWorkshopVisible.value = false
 }
 
 // 监听tab变化，获取对应列表
@@ -432,7 +463,7 @@ watch(
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
       >
         <!-- 批量选择栏 -->
-        <div class="h-42 flex-between w-full py-4 pl-16">
+        <div class="h-42 flex-between hidden w-full py-4 pl-16">
           <span
             class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
           >
@@ -440,7 +471,6 @@ watch(
           </span>
           <div>
             <el-button>Disable</el-button>
-            <el-button>Merge Workshop</el-button>
             <el-button>Up</el-button>
             <el-button>Down</el-button>
           </div>
@@ -586,16 +616,18 @@ watch(
         <!-- 批量选择栏 -->
         <div
           class="h-42 flex-between w-full py-4 pl-16"
-          v-show="selectedWorkshopIdList.length"
+          v-show="selectedMergeWorkshopList.length"
         >
           <span
             class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
           >
-            {{ selectedWorkshopIdList.length }} selected
+            {{ selectedMergeWorkshopList.length }} selected
           </span>
           <div>
             <el-button>Disable</el-button>
-            <el-button>Merge Workshop</el-button>
+            <el-button @click="dialogMergeWorkshopVisible = true">
+              Merge Workshop
+            </el-button>
             <el-button>Up</el-button>
             <el-button>Down</el-button>
           </div>
@@ -727,7 +759,7 @@ watch(
   <base-dialog
     v-model="dialogMergeWorkshopVisible"
     title="Merge Workshop"
-    @cancel="dialogMergeWorkshopVisible = false"
+    @cancel="handleCloseMergeWorkshop"
     @confirm="handleMergeWorkshop"
     class="merge-workshop-dialog"
     dialog-width="50%"
@@ -741,47 +773,57 @@ watch(
         Choose which details to keep after merging.
       </p>
       <!-- selected card -->
-      <div
-        class="workshops-card-container max-h-520 mt-16 grid grid-cols-2 gap-8 overflow-auto"
-      >
+      <el-radio-group class="w-full!" v-model="selectedMergeWorkshopId">
         <div
-          v-for="item in 20"
-          :key="item"
-          class="rounded-9 border-neutral-grey-1-1px relative box-border flex flex-col gap-12 p-12"
+          class="workshops-card-container max-h-520 mt-16 grid w-full grid-cols-2 gap-8 overflow-auto"
         >
-          <!-- absolute position -->
-          <el-checkbox :value="item" />
-          <!-- workshop name -->
-          <div class="row-center h-32 gap-8">
-            <el-avatar
-              src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-              :size="32"
-            />
+          <div
+            v-for="workshop in selectedMergeWorkshopList"
+            :key="workshop.id"
+            :class="[
+              'rounded-9',
+              'relative',
+              'box-border',
+              'flex',
+              'flex-col',
+              'gap-12',
+              'p-12',
+              'default-transition',
+              selectedMergeWorkshopId !== workshop.id
+                ? 'border-neutral-grey-1-1px'
+                : 'border-branding-colours-primary-1px',
+            ]"
+          >
+            <!-- absolute position -->
+            <el-radio :value="workshop.id" />
+            <!-- workshop name -->
+            <div class="row-center h-32 gap-8">
+              <el-avatar :src="getFullFilePath(workshop.logo)" :size="32" />
+              <span
+                class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
+              >
+                {{ workshop.name }}
+              </span>
+            </div>
             <span
-              class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
+              class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
             >
-              BMW
+              {{ workshop.businessHours }}
+            </span>
+            <span
+              class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
+            >
+              {{ workshop.phoneCountry ? `+${workshop.phoneCountry}` : '' }}
+              {{ workshop.phoneNumber || '-' }}
+            </span>
+            <span
+              class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
+            >
+              {{ workshop.shopAddress || '-' }}
             </span>
           </div>
-          <span
-            class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
-          >
-            09:00am-10:00pm
-          </span>
-          <span
-            class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
-          >
-            +65 98761234
-          </span>
-          <span
-            class="heading-body-body-12px-regular text-neutrals-grey-4 leading-16"
-          >
-            No. 25, Jalan Keris 1
-            <br />
-            Industrial Park, Klang, Selangor
-          </span>
         </div>
-      </div>
+      </el-radio-group>
     </template>
   </base-dialog>
 </template>
@@ -811,12 +853,8 @@ watch(
 
 // 重置chekcbox
 .workshops-card-container {
-  :deep(.el-checkbox) {
-    @apply absolute right-4 top-4 h-20 w-20;
-
-    .el-checkbox__inner {
-      @apply rounded-full!;
-    }
+  :deep(.el-radio) {
+    @apply absolute right-4 top-4 mr-0 h-20 w-20;
   }
 }
 </style>

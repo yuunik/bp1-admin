@@ -48,6 +48,8 @@ const UserApi = Object.freeze({
   APPROVE_MERCHANT: '/manager/merchant/approve',
   // 管理员拒绝修理厂
   REJECT_MERCHANT: '/manager/merchant/reject',
+  // 管理员合并修理厂
+  MERGE_MERCHANT: '/manager/merchant/merge',
 })
 
 // 获取 token
@@ -458,6 +460,43 @@ export const approveMerchantApi = (merchantId) => {
 
   return request({
     url: UserApi.APPROVE_MERCHANT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 管理员拒绝修理厂
+ * @param merchantId 修理厂id
+ *
+ * @returns {Promise}
+ */
+export const rejectMerchantApi = (merchantId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('merchantId', merchantId)
+
+  return request({
+    url: UserApi.REJECT_MERCHANT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 管理员合并修理厂
+ * @param params
+ * @param params.currentId 当前修理厂id
+ * @param params.deleteIds 删除修理厂ids
+ */
+export const mergeMerchantApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('currentId', params.currentId)
+  data.append('deleteIds', params.deleteIds)
+
+  return request({
+    url: UserApi.MERGE_MERCHANT,
     method: 'POST',
     data,
   })
