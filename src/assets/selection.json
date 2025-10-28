@@ -4,6 +4,30 @@
     {
       "icon": {
         "paths": [
+          "M435.19 633.824l352.97-353.011 54.336 54.298-407.306 407.309-244.378-244.378 54.298-54.298 190.080 190.080z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "grid": 0,
+        "tags": ["check-line"],
+        "colorPermutations": {}
+      },
+      "attrs": [],
+      "properties": {
+        "order": 51,
+        "id": 7,
+        "name": "check-line",
+        "prevSize": 32,
+        "code": 59691
+      },
+      "setIdx": 0,
+      "setId": 6,
+      "iconIdx": 0
+    },
+    {
+      "icon": {
+        "paths": [
           "M204.8 780.806h614.4v-268.8h76.8v307.2c0 10.182-4.045 19.949-11.245 27.155-7.206 7.2-16.973 11.245-27.155 11.245h-691.2c-10.184 0-19.951-4.045-27.153-11.245-7.202-7.206-11.247-16.973-11.247-27.155v-307.2h76.8v268.8zM550.4 396.806v268.8h-76.8v-268.8h-192l230.4-230.4 230.4 230.4h-192z"
         ],
         "attrs": [],
@@ -11,7 +35,9 @@
         "isMulticolor2": false,
         "grid": 0,
         "tags": ["upload-2-line"],
-        "colorPermutations": {}
+        "colorPermutations": {
+          "1072471111119136115316017412272342431272630151731571": []
+        }
       },
       "attrs": [],
       "properties": {
@@ -23,7 +49,7 @@
       },
       "setIdx": 0,
       "setId": 6,
-      "iconIdx": 0
+      "iconIdx": 3
     },
     {
       "icon": {
@@ -49,7 +75,7 @@
       },
       "setIdx": 0,
       "setId": 6,
-      "iconIdx": 2
+      "iconIdx": 5
     },
     {
       "icon": {
