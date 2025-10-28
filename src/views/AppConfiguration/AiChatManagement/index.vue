@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { AIChatManagementTab } from '@/utils/constantsUtil.js'
 
 import PresetQuestions from './PresetQuestions.vue'
-import UsageLimit from './UsageLimit.vue'
+import TokenSettings from './TokenSettings.vue'
 import UserQuestionRecords from './UserQuestionRecords.vue'
 
 // 当前的tab
@@ -15,8 +15,8 @@ const handleTabChange = (tab) => (activeTab.value = tab)
 // tab 内容区
 const tabMap = Object.freeze({
   [AIChatManagementTab.PRESET_QUESTIONS]: PresetQuestions,
-  [AIChatManagementTab.USAGE_LIMIT]: UsageLimit,
   [AIChatManagementTab.USER_QUESTION_RECORDS]: UserQuestionRecords,
+  [AIChatManagementTab.TOKEN_SETTINGS]: TokenSettings,
 })
 </script>
 
@@ -29,20 +29,20 @@ const tabMap = Object.freeze({
     <!-- tabs 栏 -->
     <el-tabs
       v-model="activeTab"
-      @tab-change="handleTabChange"
+      @tab-click="handleTabChange"
       class="tabs-container"
     >
       <el-tab-pane
         :label="AIChatManagementTab.PRESET_QUESTIONS"
         :name="AIChatManagementTab.PRESET_QUESTIONS"
       />
-      <!--<el-tab-pane-->
-      <!--  :label="AIChatManagementTab.USAGE_LIMIT"-->
-      <!--  :name="AIChatManagementTab.USAGE_LIMIT"-->
-      <!--/>-->
       <el-tab-pane
         :label="AIChatManagementTab.USER_QUESTION_RECORDS"
         :name="AIChatManagementTab.USER_QUESTION_RECORDS"
+      />
+      <el-tab-pane
+        :label="AIChatManagementTab.TOKEN_SETTINGS"
+        :name="AIChatManagementTab.TOKEN_SETTINGS"
       />
     </el-tabs>
     <!-- tab 内容区 -->

@@ -3,8 +3,8 @@ import dayjs from 'dayjs'
 
 export const AIChatManagementTab = Object.freeze({
   PRESET_QUESTIONS: 'Preset Questions',
-  USAGE_LIMIT: 'Usage Limit',
   USER_QUESTION_RECORDS: 'User Question Records',
+  TOKEN_SETTINGS: 'Token Settings',
 })
 
 // Interval & Warning 模块的常量定义

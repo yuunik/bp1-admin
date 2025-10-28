@@ -91,6 +91,8 @@ const AppApi = Object.freeze({
   GET_PUSH_TASK_USER_LIST: '/manager/pushtask/users',
   // 修改 ai 的回答文本
   MODIFY_AI_ANSWER_TEXT: '/manager/aichatrecord/edit',
+  // 获取ai使用次数
+  GET_USER_AI_USE_COUNT: '/manager/user/aicount',
 })
 
 // 获取 token
@@ -882,6 +884,24 @@ export const modifyAiAnswerApi = (params) => {
 
   return request({
     url: AppApi.MODIFY_AI_ANSWER_TEXT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ *  管理员获取用户ai使用次数
+ *  @param userId (不传则默认获取所有用户的默认次数)
+ *
+ *  @returns {Promise<ApiResponse<any>>}
+ */
+export const getUserAiUseCountApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  userId && data.append('userId', userId)
+
+  return request({
+    url: AppApi.GET_USER_AI_USE_COUNT,
     method: 'POST',
     data,
   })
