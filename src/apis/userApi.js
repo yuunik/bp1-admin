@@ -44,6 +44,10 @@ const UserApi = Object.freeze({
   EDIT_REPAIR_RECORD: '/expense/edit',
   // 以group进行分组的形式获取所有的expense
   GET_EXPENSE_GROUP_LIST: '/expenditure/expendituresbyapp',
+  // 管理员批准修理厂
+  APPROVE_MERCHANT: '/manager/merchant/approve',
+  // 管理员拒绝修理厂
+  REJECT_MERCHANT: '/manager/merchant/reject',
 })
 
 // 获取 token
@@ -435,6 +439,25 @@ export const getExpenseListByGroupApi = (params) => {
 
   return request({
     url: UserApi.GET_EXPENSE_GROUP_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ *
+ * 管理员批准修理厂
+ * @param merchantId 修理厂id
+ *
+ * @returns {Promise}
+ */
+export const approveMerchantApi = (merchantId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('merchantId', merchantId)
+
+  return request({
+    url: UserApi.APPROVE_MERCHANT,
     method: 'POST',
     data,
   })

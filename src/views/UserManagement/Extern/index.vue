@@ -11,6 +11,7 @@ import {
   getUserListApi,
   adminUserStatusApi,
   resetUserPasswordApi,
+  approveMerchantApi,
 } from '@/apis/userApi.js'
 import { UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
@@ -305,6 +306,36 @@ const handleMergeWorkshop = () => {}
 // 勾选框勾选
 const handleWorkshopSelectionChange = (val) =>
   (selectedWorkshopIdList.value = val.map((item) => item.id))
+
+// 状态到颜色的映射
+const stateColor = (state) => {
+  switch (state) {
+    case 'Pending':
+      return 'orange'
+    case 'Active':
+      return 'green'
+    case 'Disable':
+      return 'gray'
+    case 'Rejected':
+      return 'red'
+    default:
+      return 'blue' // 默认颜色
+  }
+}
+
+// 批准修理厂
+const handleApproveWorkshop = async (workshopId) => {
+  await approveMerchantApi(workshopId)
+  ElMessage.success('Repair shop approved successfully.')
+  getMerchantList()
+}
+
+// 拒绝修理厂
+const handleRejectWorkshop = async (workshopId) => {
+  await rejectMerchantApi(workshopId)
+  ElMessage.success('Repair shop approval rejected successfully.')
+  getMerchantList()
+}
 
 // 监听tab变化，获取对应列表
 watch(
@@ -633,18 +664,32 @@ watch(
           <!-- 修理厂状态 -->
           <el-table-column prop="status" label="Status" min-width="18%">
             <template #default="{ row }">
-              <el-tag :type="row.isDelete === 0 ? 'success' : 'info'">
-                {{ row.isDelete === 0 ? 'Active' : 'Disabled' }}
-              </el-tag>
+              <base-tag :text="row.state" :color="stateColor(row.state)" />
             </template>
           </el-table-column>
           <!-- 操作栏 -->
           <el-table-column min-width="6%" align="center">
-            <template #default>
+            <template #default="{ row }">
               <el-dropdown trigger="click">
                 <i class="icon-more-2-line cursor-pointer" />
                 <template #dropdown>
-                  <el-dropdown-menu>
+                  <el-dropdown-menu v-if="row.state === 'Pending'">
+                    <el-dropdown-item @click="handleApproveWorkshop(row.id)">
+                      Approve
+                    </el-dropdown-item>
+                    <el-dropdown-item @click="handleRejectWorkshop(row.id)">
+                      Reject
+                    </el-dropdown-item>
+                  </el-dropdown-menu>
+                  <el-dropdown-menu v-else-if="row.state === 'Active'">
+                    <el-dropdown-item>Reset Password</el-dropdown-item>
+                    <el-dropdown-item>Disable</el-dropdown-item>
+                  </el-dropdown-menu>
+                  <el-dropdown-menu v-else-if="row.state === 'Disable'">
+                    <el-dropdown-item>Reset Password</el-dropdown-item>
+                    <el-dropdown-item>Disable</el-dropdown-item>
+                  </el-dropdown-menu>
+                  <el-dropdown-menu v-else-if="row.state === 'Rejected'">
                     <el-dropdown-item>Reset Password</el-dropdown-item>
                     <el-dropdown-item>Disable</el-dropdown-item>
                   </el-dropdown-menu>
