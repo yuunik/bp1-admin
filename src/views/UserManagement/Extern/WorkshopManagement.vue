@@ -215,7 +215,7 @@ onMounted(async () => {
         </span>
       </div>
       <dl
-        class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[112px_1fr_112px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
+        class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[122px_1fr_122px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
       >
         <dt>Email</dt>
         <dd>{{ workshop.userDto?.email || '-' }}</dd>
@@ -249,7 +249,7 @@ onMounted(async () => {
         <el-divider />
         <!-- INFO -->
         <dl
-          class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[112px_1fr_112px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
+          class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[122px_1fr_122px_1fr] items-center gap-x-8 gap-y-4 [&>dd]:h-32 [&>dt]:h-32"
         >
           <dt>Operating Hours</dt>
           <dd>{{ workshop.businessHours || '-' }}</dd>
