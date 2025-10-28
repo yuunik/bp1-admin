@@ -9,7 +9,7 @@ import {
 import { useDebounceFn } from '@vueuse/core'
 
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { getAiChatRecordList } from '@/apis/appApi.js'
+import { getAiChatRecordList, modifyAiAnswerApi } from '@/apis/appApi.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 // 搜索参数
@@ -51,7 +51,11 @@ const getQuestionList = async () => {
     page: paginationParams.currentPage,
     pageSize: paginationParams.pageSize,
   })
-  aiChatRecordList.value = data.map((item) => ({ ...item, isExpand: false }))
+  aiChatRecordList.value = data.map((item) => ({
+    ...item,
+    isExpand: false,
+    isEditable: false,
+  }))
   isHasMore.value = data.length === 0
 }
 
@@ -63,6 +67,25 @@ const handleSearchByInput = useDebounceFn(() => {
 const sort = ref('')
 
 const isExpand = ref(false)
+
+// 修改ai的回答文本
+const handleEditAIAnswer = async (record) => {
+  try {
+    await modifyAiAnswerApi({
+      id: record.id,
+      answer: record.answer,
+    })
+    ElMessage.success('AI answer updated successfully.')
+  } finally {
+    getQuestionList()
+  }
+}
+
+// 展开行与折叠
+const handleManageExpandRow = (record) => {
+  record.isEditable && (record.isEditable = false)
+  record.isExpand = !record.isExpand
+}
 
 watch(isExpand, (val) => {
   for (const item of aiChatRecordList.value) {
@@ -141,7 +164,7 @@ getQuestionList()
       <el-row
         class="row-center default-transition hover:bg-neutrals-grey-1 w-full! box-border cursor-pointer py-8"
         :class="{ 'bg-[#E3EAF3]': record.isExpand }"
-        @click.stop="record.isExpand = !record.isExpand"
+        @click.stop="handleManageExpandRow(record)"
       >
         <el-col :span="2" class="text-align-center h-16">
           <el-icon
@@ -192,13 +215,38 @@ getQuestionList()
       >
         <el-col :span="2" />
         <el-col :span="22" class="flex flex-col gap-8">
-          <p class="heading-body-body-12px-medium text-neutrals-grey-4">
-            Answer
-          </p>
+          <div class="row-center">
+            <p class="heading-body-body-12px-medium text-neutrals-grey-4">
+              Answer
+            </p>
+            <i
+              class="icon-edit-line ml-8 cursor-pointer"
+              v-if="!record.isEditable"
+              @click.stop="record.isEditable = true"
+            />
+            <div class="row-center ml-8 gap-8" v-else>
+              <i
+                class="icon-typesclose cursor-pointer"
+                @click.stop="record.isEditable = false"
+              />
+              <i
+                class="icon-check-line text-neutrals-blue ml-8 cursor-pointer"
+                @click="handleEditAIAnswer(record)"
+              />
+            </div>
+          </div>
           <!-- markdown 文本-->
           <vue-markdown
             :source="record?.answer || ''"
             class="heading-body-body-12px-medium text-neutrals-off-black"
+            v-if="!record.isEditable"
+          />
+          <el-input
+            type="textarea"
+            class="mt-4! answer-container"
+            rows="10"
+            v-model="record.answer"
+            v-else
           />
         </el-col>
       </el-row>
@@ -213,4 +261,10 @@ getQuestionList()
   />
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.answer-container {
+  :deep(.el-textarea__inner) {
+    @apply rounded-12;
+  }
+}
+</style>

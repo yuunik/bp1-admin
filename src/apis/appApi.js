@@ -89,6 +89,8 @@ const AppApi = Object.freeze({
   GET_PUSH_TASK_LIST: '/manager/pushtask/pushtasks',
   // 获取推送任务所推送的用户列表
   GET_PUSH_TASK_USER_LIST: '/manager/pushtask/users',
+  // 修改 ai 的回答文本
+  MODIFY_AI_ANSWER_TEXT: '/manager/aichatrecord/edit',
 })
 
 // 获取 token
@@ -860,6 +862,26 @@ export const getPushTaskUserListApi = (pushTaskId) => {
 
   return request({
     url: AppApi.GET_PUSH_TASK_USER_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 修改 ai 的回答文本
+ *
+ * @param params
+ * @param params.recordId 记录的id
+ * @param params.answer 回复内容
+ */
+export const modifyAiAnswerApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('recordId', params.id)
+  data.append('answer', params.answer)
+
+  return request({
+    url: AppApi.MODIFY_AI_ANSWER_TEXT,
     method: 'POST',
     data,
   })
