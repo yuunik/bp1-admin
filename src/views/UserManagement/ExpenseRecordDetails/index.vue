@@ -208,18 +208,40 @@ const handleEditEstimatedCostForm = async () => {
   }
 }
 
+// 类型转换, String -> Number
+const stringToNumber = (obj) => {
+  if (obj && typeof obj === 'object') {
+    Object.keys(obj).forEach((key) => {
+      obj[key] = Number(obj[key])
+    })
+  }
+}
+
 // 获取维修记录详情
 const getRepairRecordInfo = async (id) => {
   const { data } = await getRepairRecordDetailApi(id)
   // 深拷贝一份，避免直接改接口原始对象
   const { cloned } = useCloned(data)
+  // 类型转换, String -> Number
+  cloned.value.totalCost = Number(cloned.value.totalCost)
+  cloned.value.gst = Number(cloned.value.gst)
+  cloned.value.discount = Number(cloned.value.discount)
+  cloned.value.rate = Number(cloned.value.rate)
   // 给每个 expenseItemDtos 元素加上 isExpand
   if (cloned.value.expenseItemDtos && cloned.value.expenseItemDtos.length) {
-    cloned.value.expenseItemDtos = cloned.value.expenseItemDtos.map((item) => ({
-      ...item,
-      isExpand: false,
-      isChecked: false,
-    }))
+    cloned.value.expenseItemDtos = cloned.value.expenseItemDtos.map((item) => {
+      item.totalCost = Number(item.totalCost)
+      item.gst = Number(item.gst)
+      item.discount = Number(item.discount)
+      item.rate = Number(item.rate)
+      item.totalAmount = Number(item.totalAmount)
+      item.unitPrice = Number(item.unitPrice)
+      return {
+        ...item,
+        isExpand: false,
+        isChecked: false,
+      }
+    })
   }
   repairRecordDetail.value = cloned.value
 }
@@ -432,6 +454,7 @@ getRepairRecordInfo(id)
   <section
     class="h-full overflow-auto pb-32"
     v-loading.fullscreen.lock="loading"
+    element-loading-background="rgba(0, 0, 0, 0.7)"
   >
     <div class="flex-between mx-32 mb-16">
       <!-- header -->
@@ -493,6 +516,7 @@ getRepairRecordInfo(id)
         <el-input
           v-model="estimatedCostForm.mileage"
           placeholder="Enter"
+          type="number"
           v-else
         >
           <template #suffix>
@@ -766,6 +790,7 @@ getRepairRecordInfo(id)
                   <el-input type="number" v-model.number="record.gst" />
                 </el-col>
                 <el-col :span="4">
+                  <!--  record.unitPrice *  record.quantity - record.discount + record.gst  -->
                   <el-input type="number" v-model.number="record.totalAmount" />
                 </el-col>
                 <el-col :span="1" class="justify-center!">
