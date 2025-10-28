@@ -147,6 +147,8 @@ export default defineConfig({
         'border-b-[#FCFCFC] border-b border-b-1',
       // 边框
       'border-neutral-grey-1-1px': 'border-solid border border-[#EAEEF4]',
+      'border-branding-colours-primary-1px':
+        'border-solid border border-[#006BF7]',
       // 默认过渡效果
       'default-transition': 'transition-all duration-250 ease-linear',
       // 菜单栏未折叠宽度
