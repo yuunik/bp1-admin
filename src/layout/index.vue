@@ -258,9 +258,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
       <!-- breadcrumb -->
       <breadcrumb class="shrink-0" />
       <!-- router view -->
-      <div class="flex-1 overflow-auto">
-        <router-view />
-      </div>
+      <router-view />
       <!-- 设置中心 -->
       <aside
         class="z-999 w-150 rounded-8 shadow-default bg-neutrals-white text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
