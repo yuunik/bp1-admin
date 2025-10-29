@@ -146,7 +146,7 @@ watch(
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
+  <section class="flex h-full flex-col overflow-auto">
     <!-- Brand Model Header -->
     <div class="flex flex-col gap-16 px-32 pb-16">
       <!-- 标题栏 -->

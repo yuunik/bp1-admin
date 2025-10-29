@@ -156,7 +156,10 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <section class="flex flex-col gap-16" v-loading="loading">
+  <section
+    class="flex h-full flex-col gap-16 overflow-auto"
+    v-loading="loading"
+  >
     <h2
       class="row-center heading-h2-20px-medium text-neutrals-off-black mx-32 h-32"
     >

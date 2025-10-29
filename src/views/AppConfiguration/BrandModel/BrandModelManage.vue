@@ -135,7 +135,7 @@ const handleDisabledBrand = async () => {
 </script>
 
 <template>
-  <section class="h-full">
+  <section class="h-full overflow-auto">
     <!-- header -->
     <div class="flex-between px-32 py-16">
       <h3 class="heading-h2-20px-medium neutrals-off-black">

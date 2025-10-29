@@ -45,7 +45,7 @@ emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, [])
     v-else-if="$route.name === RouteName.COMMENT_DETAILS"
     @changeTabName="goToCommentList"
   />
-  <section class="flex h-full flex-col gap-16" v-else>
+  <section class="flex h-full flex-col gap-16 overflow-auto" v-else>
     <!-- Forum Management Header -->
     <div class="px-32">
       <!-- 标题 -->

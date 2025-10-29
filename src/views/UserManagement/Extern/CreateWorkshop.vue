@@ -140,7 +140,9 @@ const showRealPassword = () => {
 </script>
 
 <template>
-  <section class="create-workshop-container flex flex-col gap-16">
+  <section
+    class="create-workshop-container flex h-full flex-col gap-16 overflow-auto"
+  >
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium">Create Workshop</h3>
       <div class="flex h-32 gap-8">

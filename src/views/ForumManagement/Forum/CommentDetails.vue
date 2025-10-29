@@ -215,7 +215,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex flex-col overflow-auto" v-loading="isLoading">
+  <div class="flex h-full flex-col overflow-auto" v-loading="isLoading">
     <div
       class="heading-h2-20px-medium text-neutrals-off-black flex-between mx-32 mb-16 h-32"
     >

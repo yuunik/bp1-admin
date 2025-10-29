@@ -405,7 +405,7 @@ watch(
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
+  <section class="flex h-full flex-col overflow-auto">
     <!-- Extern Header -->
     <div class="flex-between mx-32 h-32">
       <!-- 标题栏 -->

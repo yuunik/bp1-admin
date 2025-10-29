@@ -105,7 +105,7 @@ const handleBrandInputBlur = () => {
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
+  <section class="flex h-full flex-col overflow-auto">
     <!-- header -->
     <div class="flex-between px-32 py-16">
       <h3 class="heading-h2-20px-medium neutrals-off-black">Create Brand</h3>

@@ -185,7 +185,7 @@ onMounted(async () => {
 
 <template>
   <!-- isDelete 为0, 则正常状态 , 为 1 , 则为删除状态-->
-  <section class="box-border flex flex-col gap-16 overflow-auto pb-32">
+  <section class="box-border flex h-full flex-col gap-16 overflow-auto pb-32">
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         {{ workshop.name || '-' }}

@@ -59,7 +59,7 @@ const handleModifyAdminInfo = async () => {
 </script>
 
 <template>
-  <section class="flex h-full flex-col gap-16">
+  <section class="flex h-full flex-col gap-16 overflow-auto">
     <!-- Forum Management Header -->
     <div class="px-32">
       <!-- 标题 -->

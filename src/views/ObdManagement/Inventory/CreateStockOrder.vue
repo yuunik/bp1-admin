@@ -162,7 +162,7 @@ const snList = ref([
 </script>
 
 <template>
-  <section class="flex flex-col gap-16">
+  <section class="flex h-full flex-col gap-16 overflow-auto">
     <div class="flex-between mx-32 h-32">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         Create Stock Order

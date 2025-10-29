@@ -218,7 +218,7 @@ watch(
     @openResetPasswordDialog="handleResetPassword"
   />
   <router-view v-else-if="$route.name === 'Create Internal User'" />
-  <section class="flex h-full flex-col gap-16" v-else>
+  <section class="flex h-full flex-col gap-16 overflow-auto" v-else>
     <!-- Header -->
     <div class="flex-between mx-32 h-32">
       <h3>Internal</h3>

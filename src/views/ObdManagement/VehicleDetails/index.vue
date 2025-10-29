@@ -231,7 +231,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="flex h-full flex-col">
+  <section class="flex h-full flex-col overflow-auto">
     <!-- header -->
     <div class="flex-between mx-32 mb-16">
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
