@@ -1011,13 +1011,13 @@ getRepairRecordInfo(id)
                   <el-col :span="2">
                     <el-input
                       placeholder="0.00"
-                      v-model="editEstimatedCostForm.discount"
+                      v-model.number="editEstimatedCostForm.discount"
                     />
                   </el-col>
                   <el-col :span="2">
                     <el-input
                       placeholder="0.00"
-                      v-model="editEstimatedCostForm.gst"
+                      v-model.number="editEstimatedCostForm.gst"
                     />
                   </el-col>
                   <el-col :span="4" />
