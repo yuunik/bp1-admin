@@ -493,7 +493,7 @@ getRepairRecordInfo(id)
     </el-tabs>
     <!-- details -->
     <dl
-      class="[&>dt]:leading-32 [&>dd]:leading-32 input--underline mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:h-32 [&>dt]:h-32"
+      class="[&>dt]:leading-32 [&>dd]:leading-32 input--underline [&>dt]:flex-center mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:min-h-32 [&>dt]:min-h-32"
     >
       <dt>Workshop</dt>
       <dd>
@@ -547,11 +547,13 @@ getRepairRecordInfo(id)
         />
       </dd>
       <dt>Note</dt>
-      <dd>
+      <dd class="note-container">
         <span v-show="!isEditMode">{{ repairRecordDetail.note || '-' }}</span>
         <el-input
           v-model="estimatedCostForm.note"
           placeholder="Enter"
+          type="textarea"
+          :row="4"
           v-show="isEditMode"
         />
       </dd>
@@ -1302,6 +1304,13 @@ getRepairRecordInfo(id)
 
   :deep(.el-tabs__item) {
     @apply h-29!;
+  }
+}
+
+// 重置note文本框样式
+.note-container {
+  :deep(.el-textarea__inner) {
+    @apply bg-transparent;
   }
 }
 </style>
