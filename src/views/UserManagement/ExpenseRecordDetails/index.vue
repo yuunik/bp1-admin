@@ -445,6 +445,9 @@ const getExpenseListByGroup = async () => {
   expenseListByGroup.value = data
 }
 
+// 限制日期的选择范围
+const disableDate = (time) => time.getTime() > Date.now()
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -539,6 +542,7 @@ getRepairRecordInfo(id)
           placeholder="Select"
           format="DD MMM YYYY"
           value-format="x"
+          :disabled-date="disableDate"
           v-else
         />
       </dd>
