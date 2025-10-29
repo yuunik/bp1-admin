@@ -174,6 +174,18 @@ const addExpenseItemDropdownRef = ref(null)
 // 记录时间
 const recordTime = ref(-1)
 
+// 详情实例
+const expenseDetailsRef = ref(null)
+
+// 账单实例
+const billRef = ref(null)
+
+// 附件实例
+const attachmentRef = ref(null)
+
+// 日志实例
+const logRef = ref(null)
+
 // 关闭编辑预估成本的弹窗
 const handleCloseEditEstimatedCostDialog = () => {
   editEstimatedCostForm.value.cost = ''
@@ -442,6 +454,19 @@ const getExpenseListByGroup = async () => {
 // 限制日期的选择范围
 const disableDate = (time) => time.getTime() > Date.now()
 
+// 切换标签, 滚动至指定位置
+const handleTabChange = (val) => {
+  if (val === 'Expense Details') {
+    expenseDetailsRef.value.setScrollTop(0)
+  } else if (val === 'Bills') {
+    billRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Attachments') {
+    attachmentRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Logs & Note') {
+    logRef.value.scrollIntoView({ behavior: 'smooth' })
+  }
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -453,7 +478,7 @@ getRepairRecordInfo(id)
 
 <template>
   <section
-    class="h-full overflow-auto pb-32"
+    class="flex h-full flex-col overflow-auto pb-32"
     v-loading.fullscreen.lock="loading"
     element-loading-background="rgba(0, 0, 0, 0.7)"
   >
@@ -479,235 +504,199 @@ getRepairRecordInfo(id)
       </div>
     </div>
     <!-- tabs -->
-    <el-tabs v-model="activeTab" class="has-top mb-16">
+    <el-tabs
+      v-model="activeTab"
+      class="has-top mb-16"
+      @tab-change="handleTabChange"
+    >
       <el-tab-pane label="Expense Details" name="Expense Details" />
-      <el-tab-pane label="Bills" name="Bills " />
+      <el-tab-pane label="Bills" name="Bills" />
       <el-tab-pane label="Attachments" name="Attachments" />
       <el-tab-pane label="Logs & Note" name="Logs & Note" />
     </el-tabs>
-    <!-- details -->
-    <dl
-      class="[&>dt]:leading-32 [&>dd]:leading-32 input--underline [&>dt]:flex-center mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:min-h-32 [&>dt]:min-h-32"
-    >
-      <dt>Workshop</dt>
-      <dd>
-        <base-info-card
-          :logo="repairRecordDetail.merchantDto?.logo"
-          :name="repairRecordDetail.merchantDto?.name"
-          v-if="!isEditMode"
-        />
-        <el-select
-          v-model="editEstimatedCostForm.merchantDto.name"
-          class="select--underline"
-          placeholder="Select"
-          @popup-scroll="getMerchantList"
-          v-else
-        >
-          <el-option
-            v-for="item in merchantList"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
+    <el-scrollbar ref="expenseDetailsRef">
+      <!-- details -->
+      <dl
+        class="[&>dt]:leading-32 [&>dd]:leading-32 input--underline [&>dt]:flex-center mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:min-h-32 [&>dt]:min-h-32"
+      >
+        <dt>Workshop</dt>
+        <dd>
+          <base-info-card
+            :logo="repairRecordDetail.merchantDto?.logo"
+            :name="repairRecordDetail.merchantDto?.name"
+            v-if="!isEditMode"
           />
-        </el-select>
-      </dd>
-      <dt>Mileage</dt>
-      <dd>
-        <span v-if="!isEditMode">{{ repairRecordDetail.mileage }} km</span>
-        <el-input
-          v-model.number="editEstimatedCostForm.mileage"
-          placeholder="Enter"
-          v-else
-        >
-          <template #suffix>
-            <span>km</span>
-          </template>
-        </el-input>
-      </dd>
-      <dt>Date</dt>
-      <dd class="date-container">
-        <span v-if="!isEditMode">
-          {{ getDateWithDDMMMYYYYhhmma(repairRecordDetail.date) }}
-        </span>
-        <el-date-picker
-          v-model="recordTime"
-          type="date"
-          placeholder="Select"
-          format="DD MMM YYYY"
-          value-format="x"
-          :disabled-date="disableDate"
-          v-else
-        />
-      </dd>
-      <dt>Note</dt>
-      <dd class="note-container">
-        <span v-show="!isEditMode">{{ repairRecordDetail.note || '-' }}</span>
-        <el-input
-          v-model="editEstimatedCostForm.note"
-          placeholder="Enter"
-          type="textarea"
-          :row="4"
-          v-show="isEditMode"
-        />
-      </dd>
-    </dl>
-    <!-- items table -->
-    <div class="mb-24">
-      <!-- header -->
-      <div class="flex-between mx-32 h-24">
-        <div class="row-center h-24">
-          <h3
-            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+          <el-select
+            v-model="editEstimatedCostForm.merchantDto.name"
+            class="select--underline"
+            placeholder="Select"
+            @popup-scroll="getMerchantList"
+            v-else
           >
-            Items
-          </h3>
-          <span
-            class="heading-body-large-body-14px-medium text-neutrals-grey-3 ml-8"
+            <el-option
+              v-for="item in merchantList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
+          </el-select>
+        </dd>
+        <dt>Mileage</dt>
+        <dd>
+          <span v-if="!isEditMode">{{ repairRecordDetail.mileage }} km</span>
+          <el-input
+            v-model.number="editEstimatedCostForm.mileage"
+            placeholder="Enter"
+            v-else
           >
-            {{ repairRecordDetail.expenseItemDtos?.length || '0' }}
+            <template #suffix>
+              <span>km</span>
+            </template>
+          </el-input>
+        </dd>
+        <dt>Date</dt>
+        <dd class="date-container">
+          <span v-if="!isEditMode">
+            {{ getDateWithDDMMMYYYYhhmma(repairRecordDetail.date) }}
           </span>
-        </div>
-        <el-button
-          text
-          type="primary"
-          v-show="isShowExtraData && isEditMode"
-          @click="clearExtraData"
-        >
-          <template #icon>
-            <i class="icon-typesclose text-neutrals-blue" />
-          </template>
-          <template #default>
-            <span>Clear Extra Discount & Tax</span>
-          </template>
-        </el-button>
-        <el-button
-          text
-          type="primary"
-          v-show="!isShowExtraData && isEditMode"
-          @click="handleGetExtraData"
-        >
-          <template #icon>
-            <i class="icon-typesadd text-neutrals-blue" />
-          </template>
-          <template #default>
-            <span>Extra Discount & Tax</span>
-          </template>
-        </el-button>
-      </div>
-      <!-- divider -->
-      <el-divider class="mt-8!" />
-      <!-- table -->
-      <div class="items-table-container mx-32">
-        <!-- Batch delete -->
-        <div
-          class="flex-between h-42"
-          v-show="selectedExpenseItemIdList.length"
-        >
-          <span class="text-neutrals-off-black heading-body-body-12px-regular">
-            {{ selectedExpenseItemIdList.length }} selected
-          </span>
-          <el-button @click="handleBatchDeleteSelectedExpenseItem">
-            Delete
+          <el-date-picker
+            v-model="recordTime"
+            type="date"
+            placeholder="Select"
+            format="DD MMM YYYY"
+            value-format="x"
+            :disabled-date="disableDate"
+            v-else
+          />
+        </dd>
+        <dt>Note</dt>
+        <dd class="note-container">
+          <span v-show="!isEditMode">{{ repairRecordDetail.note || '-' }}</span>
+          <el-input
+            v-model="editEstimatedCostForm.note"
+            placeholder="Enter"
+            type="textarea"
+            :row="4"
+            v-show="isEditMode"
+          />
+        </dd>
+      </dl>
+      <!-- items table -->
+      <div class="mb-24">
+        <!-- header -->
+        <div class="flex-between mx-32 h-24">
+          <div class="row-center h-24">
+            <h3
+              class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+            >
+              Items
+            </h3>
+            <span
+              class="heading-body-large-body-14px-medium text-neutrals-grey-3 ml-8"
+            >
+              {{ repairRecordDetail.expenseItemDtos?.length || '0' }}
+            </span>
+          </div>
+          <el-button
+            text
+            type="primary"
+            v-show="isShowExtraData && isEditMode"
+            @click="clearExtraData"
+          >
+            <template #icon>
+              <i class="icon-typesclose text-neutrals-blue" />
+            </template>
+            <template #default>
+              <span>Clear Extra Discount & Tax</span>
+            </template>
+          </el-button>
+          <el-button
+            text
+            type="primary"
+            v-show="!isShowExtraData && isEditMode"
+            @click="handleGetExtraData"
+          >
+            <template #icon>
+              <i class="icon-typesadd text-neutrals-blue" />
+            </template>
+            <template #default>
+              <span>Extra Discount & Tax</span>
+            </template>
           </el-button>
         </div>
-        <!-- header -->
-        <el-row>
-          <el-col :span="isEditMode ? 1 : 1">
-            <el-checkbox
-              v-show="isEditMode"
-              @change="handleCheckAll"
-              v-model="isSelectAll"
-            />
-          </el-col>
-          <el-col :span="isEditMode ? 6 : 6">Item</el-col>
-          <el-col :span="isEditMode ? 4 : 3">Category</el-col>
-          <el-col :span="isEditMode ? 2 : 3">Unit Price</el-col>
-          <el-col :span="isEditMode ? 2 : 2">Qty</el-col>
-          <el-col :span="isEditMode ? 2 : 3">Discount</el-col>
-          <el-col :span="isEditMode ? 2 : 3">Tax Rate</el-col>
-          <el-col :span="isEditMode ? 4 : 3">Total Amount</el-col>
-          <el-col v-show="isEditMode" :span="isEditMode ? 1 : 0" />
-        </el-row>
-        <template v-if="repairRecordDetail.expenseItemDtos?.length">
-          <!-- 非编辑模式: 显示明细行 -->
-          <template v-if="!isEditMode">
-            <template
-              v-for="record in repairRecordDetail.expenseItemDtos"
-              :key="record.id"
+        <!-- divider -->
+        <el-divider class="mt-8!" />
+        <!-- table -->
+        <div class="items-table-container mx-32">
+          <!-- Batch delete -->
+          <div
+            class="flex-between h-42"
+            v-show="selectedExpenseItemIdList.length"
+          >
+            <span
+              class="text-neutrals-off-black heading-body-body-12px-regular"
             >
-              <!-- body -->
-              <el-row
-                :class="{
-                  'bg-status-colours-light-blue': record.isExpand,
-                  'no-hover-cursor': !record.aiRepairItemDto.id,
-                }"
-                @click.stop="record.isExpand = !record.isExpand"
+              {{ selectedExpenseItemIdList.length }} selected
+            </span>
+            <el-button @click="handleBatchDeleteSelectedExpenseItem">
+              Delete
+            </el-button>
+          </div>
+          <!-- header -->
+          <el-row>
+            <el-col :span="isEditMode ? 1 : 1">
+              <el-checkbox
+                v-show="isEditMode"
+                @change="handleCheckAll"
+                v-model="isSelectAll"
+              />
+            </el-col>
+            <el-col :span="isEditMode ? 6 : 6">Item</el-col>
+            <el-col :span="isEditMode ? 4 : 3">Category</el-col>
+            <el-col :span="isEditMode ? 2 : 3">Unit Price</el-col>
+            <el-col :span="isEditMode ? 2 : 2">Qty</el-col>
+            <el-col :span="isEditMode ? 2 : 3">Discount</el-col>
+            <el-col :span="isEditMode ? 2 : 3">Tax Rate</el-col>
+            <el-col :span="isEditMode ? 4 : 3">Total Amount</el-col>
+            <el-col v-show="isEditMode" :span="isEditMode ? 1 : 0" />
+          </el-row>
+          <template v-if="repairRecordDetail.expenseItemDtos?.length">
+            <!-- 非编辑模式: 显示明细行 -->
+            <template v-if="!isEditMode">
+              <template
+                v-for="record in repairRecordDetail.expenseItemDtos"
+                :key="record.id"
               >
-                <el-col :span="1">
-                  <el-image
-                    v-if="record.aiRepairItemDto.id"
-                    :src="record.isExpand ? ExpandIcon : CollapseIcon"
-                    class="h-16 w-16 cursor-pointer"
-                    fit="cover"
-                    @click.stop="record.isExpand = !record.isExpand"
-                  />
-                </el-col>
-                <el-col :span="6">{{ record.name }}</el-col>
-                <el-col :span="3">{{ record.category }}</el-col>
-                <el-col :span="3">
-                  {{ getFormatNumberString(record.unitPrice) }}
-                </el-col>
-                <el-col :span="2">{{ record.quantity }}</el-col>
-                <el-col :span="3">
-                  {{ getFormatNumberString(record.discount) }}
-                </el-col>
-                <el-col :span="3">
-                  {{ getFormatNumberString(record.gst) }}
-                </el-col>
-                <el-col :span="3" class="row-center">
-                  <el-image
-                    v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
-                    :src="UpIcon"
-                    class="mr-8 h-16 w-16"
-                    fit="cover"
-                  />
-                  <el-image
-                    v-else-if="
-                      record.aiRepairItemDto.level === AI_COST_LEVEL.LOW
-                    "
-                    :src="DownIcon"
-                    class="mr-8 h-16 w-16"
-                    fit="cover"
-                  />
-                  <span class="add-prefix-dollar-sign">
-                    {{ getFormatNumberString(record.totalAmount) }}
-                  </span>
-                </el-col>
-              </el-row>
-              <!-- expand row -->
-              <el-row
-                v-if="record.aiRepairItemDto.id && record.isExpand"
-                :class="[
-                  'is-expand',
-                  'no-hover-cursor',
-                  { 'bg-neutrals-off-white': record.isExpand },
-                ]"
-              >
-                <el-col :span="1" />
-                <el-col :span="23">
-                  <!-- cost analysis header -->
-                  <div class="row-center flex gap-8">
-                    <h4
-                      class="heading-body-body-12px-medium text-neutrals-grey-4 leading-16"
-                    >
-                      Cost Analysis
-                    </h4>
-                    <i
-                      class="icon-edit-line text-16 text-neutrals-grey-3 cursor-pointer"
-                      @click="handleOpenEditEstimatedCostDialog(record)"
+                <!-- body -->
+                <el-row
+                  :class="{
+                    'bg-status-colours-light-blue': record.isExpand,
+                    'no-hover-cursor': !record.aiRepairItemDto.id,
+                  }"
+                  @click.stop="record.isExpand = !record.isExpand"
+                >
+                  <el-col :span="1">
+                    <el-image
+                      v-if="record.aiRepairItemDto.id"
+                      :src="record.isExpand ? ExpandIcon : CollapseIcon"
+                      class="h-16 w-16 cursor-pointer"
+                      fit="cover"
+                      @click.stop="record.isExpand = !record.isExpand"
                     />
-                  </div>
-                  <div>
+                  </el-col>
+                  <el-col :span="6">{{ record.name }}</el-col>
+                  <el-col :span="3">{{ record.category }}</el-col>
+                  <el-col :span="3">
+                    {{ getFormatNumberString(record.unitPrice) }}
+                  </el-col>
+                  <el-col :span="2">{{ record.quantity }}</el-col>
+                  <el-col :span="3">
+                    {{ getFormatNumberString(record.discount) }}
+                  </el-col>
+                  <el-col :span="3">
+                    {{ getFormatNumberString(record.gst) }}
+                  </el-col>
+                  <el-col :span="3" class="row-center">
                     <el-image
                       v-if="record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH"
                       :src="UpIcon"
@@ -722,425 +711,480 @@ getRepairRecordInfo(id)
                       class="mr-8 h-16 w-16"
                       fit="cover"
                     />
-                    <span
-                      :class="{
-                        'text-status-colours-red':
-                          record.aiRepairItemDto.level === -1,
-                        'text-status-colours-green':
-                          record.aiRepairItemDto.level === 2,
-                      }"
-                    >
-                      {{ record.aiRepairItemDto.ratio }} %
+                    <span class="add-prefix-dollar-sign">
+                      {{ getFormatNumberString(record.totalAmount) }}
                     </span>
-                    <p
-                      class="heading-body-body-12px-medium text-neutrals-off-black"
-                    >
-                      Market Average: ${{ record.aiRepairItemDto.avg }} · Your
-                      Price: ${{ record.unitPrice }}
-                    </p>
-                    <p
-                      class="heading-body-body-12px-medium text-neutrals-off-black"
-                    >
-                      {{ record.aiRepairItemDto.remark }}
-                    </p>
-                  </div>
-                </el-col>
-              </el-row>
-            </template>
-          </template>
-          <!-- 编辑模式: 显示编辑表格 -->
-          <template v-else>
-            <template
-              v-for="(record, index) in editEstimatedCostForm.expenseItemDtos"
-              :key="record.id"
-            >
-              <el-row
-                class="edit-row no-hover-cursor input--bg-neutrals-grey-1 select--bg-neutrals-grey-1"
-              >
-                <el-col :span="1">
-                  <el-checkbox v-model="record.isChecked" />
-                </el-col>
-                <el-col :span="6">
-                  <el-select v-model="record.name">
-                    <el-option
-                      v-for="expense in expenseList"
-                      :key="expense.id"
-                      :label="expense.name"
-                      :value="expense.name"
-                    />
-                  </el-select>
-                </el-col>
-                <el-col :span="4">
-                  <el-select v-model="record.category">
-                    <el-option
-                      v-for="(category, index) in categoryFilterParams"
-                      :key="`${index}${category}${index}`"
-                      :label="category.label"
-                      :value="category.value"
-                    />
-                  </el-select>
-                </el-col>
-                <el-col :span="2">
-                  <el-input type="number" v-model.number="record.unitPrice" />
-                </el-col>
-                <el-col :span="2">
-                  <el-input type="number" v-model.number="record.quantity" />
-                </el-col>
-                <el-col :span="2">
-                  <el-input type="number" v-model.number="record.discount" />
-                </el-col>
-                <el-col :span="2">
-                  <el-input type="number" v-model.number="record.gst" />
-                </el-col>
-                <el-col :span="4">
-                  <!--  record.unitPrice *  record.quantity - record.discount + record.gst  -->
-                  <el-input type="number" v-model.number="record.totalAmount" />
-                </el-col>
-                <el-col :span="1" class="justify-center!">
-                  <i
-                    class="icon-delete-bin-line cursor-pointer"
-                    @click="handleDeleteSelectedExpenseItem(record.id)"
-                  />
-                </el-col>
-              </el-row>
-              <!-- Extra Discount & Tax -->
-              <el-row
-                class="edit-row no-hover-cursor input--bg-neutrals-grey-1"
-                v-show="
-                  isShowExtraData &&
-                  index === editEstimatedCostForm.expenseItemDtos.length - 1
-                "
-              >
-                <el-col :span="1" />
-                <el-col :span="6" />
-                <el-col :span="4" />
-                <el-col :span="4">
-                  <span
-                    class="heading-body-body-12px-medium text-neutrals-off-black"
-                  >
-                    Extra Discount & Tax
-                  </span>
-                </el-col>
-                <el-col :span="2">
-                  <el-input
-                    placeholder="0.00"
-                    v-model="editEstimatedCostForm.discount"
-                  />
-                </el-col>
-                <el-col :span="2">
-                  <el-input
-                    placeholder="0.00"
-                    v-model="editEstimatedCostForm.gst"
-                  />
-                </el-col>
-                <el-col :span="4" />
-                <el-col :span="1" class="justify-center!">
-                  <i
-                    class="icon-delete-bin-line cursor-pointer"
-                    @click="clearExtraData"
-                  />
-                </el-col>
-              </el-row>
-            </template>
-          </template>
-          <!-- billing summary row -->
-          <el-row class="billing-summary no-hover-cursor">
-            <el-col :span="12" class="items-start! justify-start!">
-              <el-dropdown
-                trigger="click"
-                placement="bottom-start"
-                v-show="isEditMode"
-                ref="addExpenseItemDropdownRef"
-              >
-                <el-button text type="primary">
-                  <template #default>
-                    <span>New Item</span>
-                  </template>
-                  <template #icon>
-                    <i class="icon-typesadd text-neutrals-blue" />
-                  </template>
-                </el-button>
-                <template #dropdown>
-                  <div class="h-344 rounded-12">
-                    <el-input
-                      class="input--without-border h-39"
-                      placeholder="Enter"
-                      v-model="expenseSearchKey"
-                    >
-                      <template #prefix>
-                        <i class="icon-mail-send-line-1" />
-                      </template>
-                    </el-input>
-                    <el-divider />
-                    <div class="px-16 py-8">
-                      <el-tabs
-                        v-model="expenseItemActiveTab"
-                        class="no-bottom tabs-container"
-                      >
-                        <el-tab-pane label="All" name="all" />
-                        <el-tab-pane
-                          v-for="(category, index) in categoryFilterParams"
-                          :key="`${index}${category}${index}`"
-                          :label="category.label"
-                          :name="category.value"
-                        />
-                      </el-tabs>
-                      <!-- batch select -->
-                      <div
-                        class="flex-between h-32"
-                        v-show="selectedAddExpenseItemNameList.length"
-                      >
-                        <span
-                          class="heading-body-body-12px-regular text-neutrals-off-black"
-                        >
-                          {{ selectedAddExpenseItemNameList.length }} selected
-                        </span>
-                        <div>
-                          <el-button
-                            size="small"
-                            @click.stop="selectedAddExpenseItemNameList = []"
-                          >
-                            Clear
-                          </el-button>
-                          <el-button
-                            size="small"
-                            type="primary"
-                            @click.stop="handleAddNewRow"
-                          >
-                            Add
-                          </el-button>
-                        </div>
-                      </div>
-                      <el-checkbox-group
-                        v-model="selectedAddExpenseItemNameList"
-                      >
-                        <div
-                          class="py-8"
-                          v-for="(category, index) in categoryFilterParams"
-                          :key="`${index}${category}${index}`"
-                          v-show="
-                            expenseItemActiveTab === 'all' ||
-                            expenseItemActiveTab === category.value
-                          "
-                        >
-                          <h4
-                            class="heading-body-body-12px-medium text-neutrals-grey-3 leading-16 h-17 row-center"
-                          >
-                            {{ category.label }}
-                          </h4>
-                          <div
-                            class="gap gap-x-107 mt-4 grid grid-cols-2 gap-y-4"
-                          >
-                            <template
-                              v-for="(item, index) in expenseListByGroup"
-                              :key="`${index}${item.group}${index}`"
-                            >
-                              <template v-if="item.group === category.value">
-                                <!-- expense item 搜索时, 忽略大小写 -->
-                                <template
-                                  v-for="listItem in expenseSearchKey
-                                    ? item.list.filter((x) =>
-                                        x.name
-                                          .toLowerCase()
-                                          .includes(
-                                            expenseSearchKey.toLowerCase(),
-                                          ),
-                                      )
-                                    : item.list"
-                                  :key="listItem.id"
-                                >
-                                  <el-checkbox
-                                    :label="listItem.name"
-                                    :value="listItem.name"
-                                    size="small"
-                                  />
-                                </template>
-                              </template>
-                            </template>
-                          </div>
-                        </div>
-                      </el-checkbox-group>
-                    </div>
-                  </div>
-                </template>
-              </el-dropdown>
-            </el-col>
-            <el-col :span="12">
-              <div class="mb-12 flex w-full flex-col gap-16">
-                <!-- item -->
-                <dl
-                  class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12"
+                  </el-col>
+                </el-row>
+                <!-- expand row -->
+                <el-row
+                  v-if="record.aiRepairItemDto.id && record.isExpand"
+                  :class="[
+                    'is-expand',
+                    'no-hover-cursor',
+                    { 'bg-neutrals-off-white': record.isExpand },
+                  ]"
                 >
-                  <dt>Subtotal (Excluding Tax)</dt>
-                  <dd>
-                    <span class="text-neutrals-off-black">
-                      {{ getFormatNumberString(subtotal) }}
-                    </span>
-                  </dd>
-                  <dt>Discount Amount</dt>
-                  <dd>
-                    <span class="text-neutrals-off-black">
-                      {{ getFormatNumberString(repairRecordDetail.discount) }}
-                    </span>
-                  </dd>
-                  <dt>Subtotal with Discount Applied</dt>
-                  <dd>
-                    <span class="text-neutrals-off-black">
-                      {{ subtotalWithDiscount }}
-                    </span>
-                  </dd>
-                  <dt>Tax</dt>
-                  <dd>
-                    <span class="text-neutrals-off-black">
-                      {{ getFormatNumberString(repairRecordDetail.gst) }}
-                    </span>
-                  </dd>
-                </dl>
-                <el-divider />
-                <!-- Total Amount (SGD) -->
-                <div class="flex-between text-neutrals-off-black px-8">
-                  <p class="heading-body-large-body-14px-medium">
-                    Total Amount (SGD)
-                  </p>
-                  <span class="heading-body-large-body-14px-medium">
-                    {{ getFormatNumberString(repairRecordDetail.totalCost) }}
-                  </span>
-                </div>
-                <!-- total amount convert -->
-                <div class="rounded-8 flex flex-col gap-16 bg-[#EAEEF480] p-8">
-                  <!-- Currency Rate -->
-                  <div class="flex-between text-neutrals-off-black">
-                    <p
-                      class="heading-body-large-body-14px-medium text-neutrals-grey-4"
-                    >
-                      Currency Rate
-                    </p>
-                    <div class="row-center gap-4">
+                  <el-col :span="1" />
+                  <el-col :span="23">
+                    <!-- cost analysis header -->
+                    <div class="row-center flex gap-8">
+                      <h4
+                        class="heading-body-body-12px-medium text-neutrals-grey-4 leading-16"
+                      >
+                        Cost Analysis
+                      </h4>
+                      <i
+                        class="icon-edit-line text-16 text-neutrals-grey-3 cursor-pointer"
+                        @click="handleOpenEditEstimatedCostDialog(record)"
+                      />
+                    </div>
+                    <div>
+                      <el-image
+                        v-if="
+                          record.aiRepairItemDto.level === AI_COST_LEVEL.HIGH
+                        "
+                        :src="UpIcon"
+                        class="mr-8 h-16 w-16"
+                        fit="cover"
+                      />
+                      <el-image
+                        v-else-if="
+                          record.aiRepairItemDto.level === AI_COST_LEVEL.LOW
+                        "
+                        :src="DownIcon"
+                        class="mr-8 h-16 w-16"
+                        fit="cover"
+                      />
                       <span
+                        :class="{
+                          'text-status-colours-red':
+                            record.aiRepairItemDto.level === -1,
+                          'text-status-colours-green':
+                            record.aiRepairItemDto.level === 2,
+                        }"
+                      >
+                        {{ record.aiRepairItemDto.ratio }} %
+                      </span>
+                      <p
                         class="heading-body-body-12px-medium text-neutrals-off-black"
                       >
-                        1 SGD = {{ repairRecordDetail.rate }}
-                        {{ repairRecordDetail.currency }}
-                      </span>
-                      <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
-                      <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
+                        Market Average: ${{ record.aiRepairItemDto.avg }} · Your
+                        Price: ${{ record.unitPrice }}
+                      </p>
+                      <p
+                        class="heading-body-body-12px-medium text-neutrals-off-black"
+                      >
+                        {{ record.aiRepairItemDto.remark }}
+                      </p>
                     </div>
-                  </div>
-                  <div class="flex-between text-neutrals-off-black">
+                  </el-col>
+                </el-row>
+              </template>
+            </template>
+            <!-- 编辑模式: 显示编辑表格 -->
+            <template v-else>
+              <template
+                v-for="(record, index) in editEstimatedCostForm.expenseItemDtos"
+                :key="record.id"
+              >
+                <el-row
+                  class="edit-row no-hover-cursor input--bg-neutrals-grey-1 select--bg-neutrals-grey-1"
+                >
+                  <el-col :span="1">
+                    <el-checkbox v-model="record.isChecked" />
+                  </el-col>
+                  <el-col :span="6">
+                    <el-select v-model="record.name">
+                      <el-option
+                        v-for="expense in expenseList"
+                        :key="expense.id"
+                        :label="expense.name"
+                        :value="expense.name"
+                      />
+                    </el-select>
+                  </el-col>
+                  <el-col :span="4">
+                    <el-select v-model="record.category">
+                      <el-option
+                        v-for="(category, index) in categoryFilterParams"
+                        :key="`${index}${category}${index}`"
+                        :label="category.label"
+                        :value="category.value"
+                      />
+                    </el-select>
+                  </el-col>
+                  <el-col :span="2">
+                    <el-input type="number" v-model.number="record.unitPrice" />
+                  </el-col>
+                  <el-col :span="2">
+                    <el-input type="number" v-model.number="record.quantity" />
+                  </el-col>
+                  <el-col :span="2">
+                    <el-input type="number" v-model.number="record.discount" />
+                  </el-col>
+                  <el-col :span="2">
+                    <el-input type="number" v-model.number="record.gst" />
+                  </el-col>
+                  <el-col :span="4">
+                    <!--  record.unitPrice *  record.quantity - record.discount + record.gst  -->
+                    <el-input
+                      type="number"
+                      v-model.number="record.totalAmount"
+                    />
+                  </el-col>
+                  <el-col :span="1" class="justify-center!">
+                    <i
+                      class="icon-delete-bin-line cursor-pointer"
+                      @click="handleDeleteSelectedExpenseItem(record.id)"
+                    />
+                  </el-col>
+                </el-row>
+                <!-- Extra Discount & Tax -->
+                <el-row
+                  class="edit-row no-hover-cursor input--bg-neutrals-grey-1"
+                  v-show="
+                    isShowExtraData &&
+                    index === editEstimatedCostForm.expenseItemDtos.length - 1
+                  "
+                >
+                  <el-col :span="1" />
+                  <el-col :span="6" />
+                  <el-col :span="4" />
+                  <el-col :span="4">
+                    <span
+                      class="heading-body-body-12px-medium text-neutrals-off-black"
+                    >
+                      Extra Discount & Tax
+                    </span>
+                  </el-col>
+                  <el-col :span="2">
+                    <el-input
+                      placeholder="0.00"
+                      v-model="editEstimatedCostForm.discount"
+                    />
+                  </el-col>
+                  <el-col :span="2">
+                    <el-input
+                      placeholder="0.00"
+                      v-model="editEstimatedCostForm.gst"
+                    />
+                  </el-col>
+                  <el-col :span="4" />
+                  <el-col :span="1" class="justify-center!">
+                    <i
+                      class="icon-delete-bin-line cursor-pointer"
+                      @click="clearExtraData"
+                    />
+                  </el-col>
+                </el-row>
+              </template>
+            </template>
+            <!-- billing summary row -->
+            <el-row class="billing-summary no-hover-cursor">
+              <el-col :span="12" class="items-start! justify-start!">
+                <el-dropdown
+                  trigger="click"
+                  placement="bottom-start"
+                  v-show="isEditMode"
+                  ref="addExpenseItemDropdownRef"
+                >
+                  <el-button text type="primary">
+                    <template #default>
+                      <span>New Item</span>
+                    </template>
+                    <template #icon>
+                      <i class="icon-typesadd text-neutrals-blue" />
+                    </template>
+                  </el-button>
+                  <template #dropdown>
+                    <div class="h-344 rounded-12">
+                      <el-input
+                        class="input--without-border h-39"
+                        placeholder="Enter"
+                        v-model="expenseSearchKey"
+                      >
+                        <template #prefix>
+                          <i class="icon-mail-send-line-1" />
+                        </template>
+                      </el-input>
+                      <el-divider />
+                      <div class="px-16 py-8">
+                        <el-tabs
+                          v-model="expenseItemActiveTab"
+                          class="no-bottom tabs-container"
+                        >
+                          <el-tab-pane label="All" name="all" />
+                          <el-tab-pane
+                            v-for="(category, index) in categoryFilterParams"
+                            :key="`${index}${category}${index}`"
+                            :label="category.label"
+                            :name="category.value"
+                          />
+                        </el-tabs>
+                        <!-- batch select -->
+                        <div
+                          class="flex-between h-32"
+                          v-show="selectedAddExpenseItemNameList.length"
+                        >
+                          <span
+                            class="heading-body-body-12px-regular text-neutrals-off-black"
+                          >
+                            {{ selectedAddExpenseItemNameList.length }} selected
+                          </span>
+                          <div>
+                            <el-button
+                              size="small"
+                              @click.stop="selectedAddExpenseItemNameList = []"
+                            >
+                              Clear
+                            </el-button>
+                            <el-button
+                              size="small"
+                              type="primary"
+                              @click.stop="handleAddNewRow"
+                            >
+                              Add
+                            </el-button>
+                          </div>
+                        </div>
+                        <el-checkbox-group
+                          v-model="selectedAddExpenseItemNameList"
+                        >
+                          <div
+                            class="py-8"
+                            v-for="(category, index) in categoryFilterParams"
+                            :key="`${index}${category}${index}`"
+                            v-show="
+                              expenseItemActiveTab === 'all' ||
+                              expenseItemActiveTab === category.value
+                            "
+                          >
+                            <h4
+                              class="heading-body-body-12px-medium text-neutrals-grey-3 leading-16 h-17 row-center"
+                            >
+                              {{ category.label }}
+                            </h4>
+                            <div
+                              class="gap gap-x-107 mt-4 grid grid-cols-2 gap-y-4"
+                            >
+                              <template
+                                v-for="(item, index) in expenseListByGroup"
+                                :key="`${index}${item.group}${index}`"
+                              >
+                                <template v-if="item.group === category.value">
+                                  <!-- expense item 搜索时, 忽略大小写 -->
+                                  <template
+                                    v-for="listItem in expenseSearchKey
+                                      ? item.list.filter((x) =>
+                                          x.name
+                                            .toLowerCase()
+                                            .includes(
+                                              expenseSearchKey.toLowerCase(),
+                                            ),
+                                        )
+                                      : item.list"
+                                    :key="listItem.id"
+                                  >
+                                    <el-checkbox
+                                      :label="listItem.name"
+                                      :value="listItem.name"
+                                      size="small"
+                                    />
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                          </div>
+                        </el-checkbox-group>
+                      </div>
+                    </div>
+                  </template>
+                </el-dropdown>
+              </el-col>
+              <el-col :span="12">
+                <div class="mb-12 flex w-full flex-col gap-16">
+                  <!-- item -->
+                  <dl
+                    class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12"
+                  >
+                    <dt>Subtotal (Excluding Tax)</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ getFormatNumberString(subtotal) }}
+                      </span>
+                    </dd>
+                    <dt>Discount Amount</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ getFormatNumberString(repairRecordDetail.discount) }}
+                      </span>
+                    </dd>
+                    <dt>Subtotal with Discount Applied</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ subtotalWithDiscount }}
+                      </span>
+                    </dd>
+                    <dt>Tax</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ getFormatNumberString(repairRecordDetail.gst) }}
+                      </span>
+                    </dd>
+                  </dl>
+                  <el-divider />
+                  <!-- Total Amount (SGD) -->
+                  <div class="flex-between text-neutrals-off-black px-8">
                     <p class="heading-body-large-body-14px-medium">
-                      Total Amount ({{ repairRecordDetail.currency }})
+                      Total Amount (SGD)
                     </p>
                     <span class="heading-body-large-body-14px-medium">
-                      ${{ totalCostWithExchangeRate }}
+                      {{ getFormatNumberString(repairRecordDetail.totalCost) }}
                     </span>
                   </div>
+                  <!-- total amount convert -->
+                  <div
+                    class="rounded-8 flex flex-col gap-16 bg-[#EAEEF480] p-8"
+                  >
+                    <!-- Currency Rate -->
+                    <div class="flex-between text-neutrals-off-black">
+                      <p
+                        class="heading-body-large-body-14px-medium text-neutrals-grey-4"
+                      >
+                        Currency Rate
+                      </p>
+                      <div class="row-center gap-4">
+                        <span
+                          class="heading-body-body-12px-medium text-neutrals-off-black"
+                        >
+                          1 SGD = {{ repairRecordDetail.rate }}
+                          {{ repairRecordDetail.currency }}
+                        </span>
+                        <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
+                        <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
+                      </div>
+                    </div>
+                    <div class="flex-between text-neutrals-off-black">
+                      <p class="heading-body-large-body-14px-medium">
+                        Total Amount ({{ repairRecordDetail.currency }})
+                      </p>
+                      <span class="heading-body-large-body-14px-medium">
+                        ${{ totalCostWithExchangeRate }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </el-col>
-          </el-row>
-        </template>
-        <el-empty v-else description="No expense record data" />
+              </el-col>
+            </el-row>
+          </template>
+          <el-empty v-else description="No expense record data" />
+        </div>
       </div>
-    </div>
-    <!-- bills -->
-    <div class="mb-24">
-      <!-- header -->
-      <div class="row-center mx-32 flex h-24 gap-8">
-        <h3
-          class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
-        >
-          Bills
-        </h3>
-        <span class="heading-body-large-body-14px-medium text-neutrals-grey-3">
-          {{ repairRecordDetail.ticketDtos?.length || '-' }}
-        </span>
-      </div>
-      <!-- divider -->
-      <el-divider class="mt-8! mb-12!" />
-      <!-- bills grid view -->
-      <div
-        class="mx-32 grid grid-cols-2 gap-12"
-        v-if="repairRecordDetail.ticketDtos?.length"
-      >
-        <file-info-card
-          v-for="item in repairRecordDetail.ticketDtos"
-          :key="item.id"
-          :info="item"
-        />
-      </div>
-      <el-empty v-else description="No bill data" />
-    </div>
-    <!-- Attachments -->
-    <div class="mb-24">
-      <!-- header -->
-      <div class="row-center mx-32 flex h-24 gap-8">
-        <h3
-          class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
-        >
-          Attachments
-        </h3>
-        <span class="heading-body-large-body-14px-medium text-neutrals-grey-3">
-          {{ repairRecordDetail.attachmentDtos?.length || 0 }}
-        </span>
-      </div>
-      <!-- divider -->
-      <el-divider class="mt-8! mb-12!" />
-      <!-- attachment grid view -->
-      <div
-        class="mx-32 grid grid-cols-2 gap-12"
-        v-if="repairRecordDetail.attachmentDtos?.length"
-      >
+      <!-- bills -->
+      <div class="mb-24" ref="billRef">
+        <!-- header -->
+        <div class="row-center mx-32 flex h-24 gap-8">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+          >
+            Bills
+          </h3>
+          <span
+            class="heading-body-large-body-14px-medium text-neutrals-grey-3"
+          >
+            {{ repairRecordDetail.ticketDtos?.length || '-' }}
+          </span>
+        </div>
+        <!-- divider -->
+        <el-divider class="mt-8! mb-12!" />
+        <!-- bills grid view -->
         <div
           class="mx-32 grid grid-cols-2 gap-12"
-          v-if="repairRecordDetail.attachmentDtos?.length"
+          v-if="repairRecordDetail.ticketDtos?.length"
         >
           <file-info-card
-            v-for="item in repairRecordDetail.attachmentDtos"
+            v-for="item in repairRecordDetail.ticketDtos"
             :key="item.id"
             :info="item"
           />
         </div>
+        <el-empty v-else description="No bill data" />
       </div>
-      <el-empty v-else description="No attachment data" />
-    </div>
-    <!-- Logs & Note -->
-    <div class="flex flex-col gap-8">
-      <!-- header -->
-      <h3
-        class="heading-body-large-body-14px-medium text-neutrals-off-black row-center mx-32 h-24"
-      >
-        Logs & Note
-      </h3>
-      <!-- divider -->
-      <el-divider />
-      <!-- table -->
-      <div class="mx-32">
-        <el-table :data="logList" class="log-table-container">
-          <el-table-column prop="date" label="Date" min-width="160" />
-          <el-table-column prop="time" label="Time" min-width="120" />
-          <el-table-column prop="user" label="User" min-width="160" />
-          <el-table-column prop="action" label="Action" min-width="140" />
-          <el-table-column label="Detail" min-width="220">
-            <template #default="{ row }">
-              <div v-if="row.action === 'Login'">
-                <span>IP:</span>
-                {{ row.detail.ip }}
-                <span class="mx-8">|</span>
-                <span>Device:</span>
-                {{ row.detail.device }}
-              </div>
-              <div v-else-if="row.action === 'Create Order'">
-                <span>Order No.</span>
-                {{ row.detail.orderNo }}
-              </div>
-              <div v-else>
-                {{ row.detailText ?? '' }}
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
+      <!-- Attachments -->
+      <div class="mb-24" ref="attachmentRef">
+        <!-- header -->
+        <div class="row-center mx-32 flex h-24 gap-8">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
+          >
+            Attachments
+          </h3>
+          <span
+            class="heading-body-large-body-14px-medium text-neutrals-grey-3"
+          >
+            {{ repairRecordDetail.attachmentDtos?.length || 0 }}
+          </span>
+        </div>
+        <!-- divider -->
+        <el-divider class="mt-8! mb-12!" />
+        <!-- attachment grid view -->
+        <div
+          class="mx-32 grid grid-cols-2 gap-12"
+          v-if="repairRecordDetail.attachmentDtos?.length"
+        >
+          <div
+            class="mx-32 grid grid-cols-2 gap-12"
+            v-if="repairRecordDetail.attachmentDtos?.length"
+          >
+            <file-info-card
+              v-for="item in repairRecordDetail.attachmentDtos"
+              :key="item.id"
+              :info="item"
+            />
+          </div>
+        </div>
+        <el-empty v-else description="No attachment data" />
       </div>
-    </div>
+      <!-- Logs & Note -->
+      <div class="flex flex-col gap-8" ref="logRef">
+        <!-- header -->
+        <h3
+          class="heading-body-large-body-14px-medium text-neutrals-off-black row-center mx-32 h-24"
+        >
+          Logs & Note
+        </h3>
+        <!-- divider -->
+        <el-divider />
+        <!-- table -->
+        <div class="mx-32">
+          <el-table :data="logList" class="log-table-container">
+            <el-table-column prop="date" label="Date" min-width="160" />
+            <el-table-column prop="time" label="Time" min-width="120" />
+            <el-table-column prop="user" label="User" min-width="160" />
+            <el-table-column prop="action" label="Action" min-width="140" />
+            <el-table-column label="Detail" min-width="220">
+              <template #default="{ row }">
+                <div v-if="row.action === 'Login'">
+                  <span>IP:</span>
+                  {{ row.detail.ip }}
+                  <span class="mx-8">|</span>
+                  <span>Device:</span>
+                  {{ row.detail.device }}
+                </div>
+                <div v-else-if="row.action === 'Create Order'">
+                  <span>Order No.</span>
+                  {{ row.detail.orderNo }}
+                </div>
+                <div v-else>
+                  {{ row.detailText ?? '' }}
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+    </el-scrollbar>
   </section>
   <!-- 编辑预估成本的弹窗  -->
   <base-dialog
