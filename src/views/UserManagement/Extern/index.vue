@@ -514,9 +514,16 @@ watch(
           >
             <template #default="{ row }">
               <!-- 用户邮箱 -->
-              <el-text>
-                {{ row.email === '' ? '-' : row.email }}
-              </el-text>
+              <el-tooltip
+                class="box-item"
+                effect="dark"
+                :content="row.email"
+                placement="right"
+              >
+                <span class="wrap-text">
+                  {{ row.email === '' ? '-' : row.email }}
+                </span>
+              </el-tooltip>
             </template>
           </el-table-column>
           <!-- 用户状态 -->
