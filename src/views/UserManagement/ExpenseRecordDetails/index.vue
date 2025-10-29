@@ -15,7 +15,7 @@ import {
 import BaseInfoCard from '@/components/BaseInfoCard.vue'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { getFormatNumberString } from '@/utils/dataFormattedUtil.js'
-import { AI_COST_LEVEL } from '@/utils/constantsUtil.js'
+import { AI_COST_LEVEL, TimingPreset } from '@/utils/constantsUtil.js'
 import FileInfoCard from '@/views/UserManagement/ExpenseRecordDetails/components/FileInfoCard.vue'
 import { getExpenseGroupListApi, getExpenseListApi } from '@/apis/appApi.js'
 import BaseDialog from '@/components/BaseDialog.vue'
@@ -397,7 +397,11 @@ const handleGetExtraData = () => {
 }
 
 // 编辑维修记录
-const handleEditRepairRecord = async () => {
+const handleEditRepairRecord = useDebounceFn(async () => {
+  // 非空校验
+  if (!editEstimatedCostForm.value.expenseItemDtos.length) {
+    return ElMessage.error('Expense Item Can Not Be Empty')
+  }
   try {
     await updateRepairRecordApi(editEstimatedCostForm.value)
     ElMessage.success('Edit success')
@@ -406,7 +410,7 @@ const handleEditRepairRecord = async () => {
   } finally {
     isEditMode.value = false
   }
-}
+}, TimingPreset.DEBOUNCE)
 
 // 全选维修记录子项
 const handleCheckAll = (val) => {
