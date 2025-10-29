@@ -163,6 +163,9 @@ const hasMoreExpenseData = ref(true)
 // 分类参数
 const categoryFilterParams = ref([])
 
+// 组参数
+const groupFilterParams = ref([])
+
 // 加载状态
 const loading = ref(false)
 
@@ -280,15 +283,6 @@ const handleEditEstimatedCostForm = async () => {
     getRepairRecordInfo(route.params.id)
   } finally {
     dialogEditEstimatedCostVisible.value = false
-  }
-}
-
-// 类型转换, String -> Number
-const stringToNumber = (obj) => {
-  if (obj && typeof obj === 'object') {
-    Object.keys(obj).forEach((key) => {
-      obj[key] = Number(obj[key])
-    })
   }
 }
 
@@ -423,9 +417,13 @@ const getExpenseList = async () => {
 // 获取分组信息
 const getGroupList = async () => {
   const {
-    data: { categories },
+    data: { categories, groups },
   } = await getExpenseGroupListApi()
   categoryFilterParams.value = categories.map((item) => ({
+    label: item,
+    value: item,
+  }))
+  groupFilterParams.value = groups.map((item) => ({
     label: item,
     value: item,
   }))
@@ -1169,10 +1167,10 @@ getRepairRecordInfo(id)
                         >
                           <el-tab-pane label="All" name="all" />
                           <el-tab-pane
-                            v-for="(category, index) in categoryFilterParams"
-                            :key="`${index}${category}${index}`"
-                            :label="category.label"
-                            :name="category.value"
+                            v-for="(group, index) in groupFilterParams"
+                            :key="`${index}${group}${index}`"
+                            :label="group.label"
+                            :name="group.value"
                           />
                         </el-tabs>
                         <!-- batch select -->
@@ -1206,11 +1204,11 @@ getRepairRecordInfo(id)
                         >
                           <div
                             class="py-8"
-                            v-for="(category, index) in categoryFilterParams"
-                            :key="`${index}${category}${index}`"
+                            v-for="(group, index) in groupFilterParams"
+                            :key="`${index}${group}${index}`"
                             v-show="
                               expenseItemActiveTab === 'all' ||
-                              expenseItemActiveTab === category.value
+                              expenseItemActiveTab === group.value
                             "
                           >
                             <h4
@@ -1225,7 +1223,7 @@ getRepairRecordInfo(id)
                                 v-for="(item, index) in expenseListByGroup"
                                 :key="`${index}${item.group}${index}`"
                               >
-                                <template v-if="item.group === category.value">
+                                <template v-if="item.group === group.value">
                                   <!-- expense item 搜索时, 忽略大小写 -->
                                   <template
                                     v-for="listItem in expenseSearchKey
