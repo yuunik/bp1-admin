@@ -30,6 +30,7 @@ import IDIcon from '@/assets/specialIcons/flag_id.svg'
 import MYIcon from '@/assets/specialIcons/flag_my.svg'
 import SGIcon from '@/assets/specialIcons/flag_sg.svg'
 import THIcon from '@/assets/specialIcons/flag_th.svg'
+import ErrorImg from '@/assets/images/error-img.png'
 
 // 国旗映射表
 const countryFlagMap = Object.freeze({
@@ -1036,7 +1037,7 @@ getRepairRecordInfo(id)
                 <div class="mb-12 flex w-full flex-col gap-16">
                   <!-- item -->
                   <dl
-                    class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12"
+                    class="[&>dd]:flex-end grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12 [&>dd]:flex"
                   >
                     <dt>Subtotal (Excluding Tax)</dt>
                     <dd>
@@ -1070,7 +1071,7 @@ getRepairRecordInfo(id)
                       Total Amount (SGD)
                     </p>
                     <span class="heading-body-large-body-14px-medium">
-                      {{ getFormatNumberString(repairRecordDetail.totalCost) }}
+                      ${{ getFormatNumberString(repairRecordDetail.totalCost) }}
                     </span>
                   </div>
                   <!-- total amount convert -->
@@ -1085,12 +1086,35 @@ getRepairRecordInfo(id)
                         Currency Rate
                       </p>
                       <div class="row-center gap-4">
-                        <span
-                          class="heading-body-body-12px-medium text-neutrals-off-black"
+                        <div
+                          class="row-center heading-body-body-12px-medium text-neutrals-off-black gap-4"
                         >
-                          1 SGD = {{ repairRecordDetail.rate }}
-                          {{ repairRecordDetail.currency }}
-                        </span>
+                          <el-avatar
+                            :size="16"
+                            :src="SGIcon"
+                            @error="() => true"
+                            class="border-neutral-grey-1-1px!"
+                          >
+                            <el-image :src="ErrorImg" class="h-16" />
+                          </el-avatar>
+                          <span class="heading-body-body-12px-medium">1</span>
+                          <span class="heading-body-body-12px-medium">SGD</span>
+                          <span class="heading-body-body-12px-medium">=</span>
+                          <el-avatar
+                            :size="16"
+                            :src="countryFlagMap[repairRecordDetail.currency]"
+                            @error="() => true"
+                            class="border-neutral-grey-1-1px!"
+                          >
+                            <el-image :src="ErrorImg" class="h-16" />
+                          </el-avatar>
+                          <span class="heading-body-body-12px-medium">
+                            {{ repairRecordDetail.rate }}
+                          </span>
+                          <span class="heading-body-body-12px-medium">
+                            {{ repairRecordDetail.currency }}
+                          </span>
+                        </div>
                         <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
                         <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
                       </div>
@@ -1100,7 +1124,7 @@ getRepairRecordInfo(id)
                         Total Amount ({{ repairRecordDetail.currency }})
                       </p>
                       <span class="heading-body-large-body-14px-medium">
-                        {{ currencyMap[editEstimatedCostForm.currency]
+                        {{ currencyMap[repairRecordDetail.currency]
                         }}{{ totalCostWithExchangeRate }}
                       </span>
                     </div>
@@ -1233,7 +1257,7 @@ getRepairRecordInfo(id)
                 <div class="mb-12 flex w-full flex-col gap-16">
                   <!-- item -->
                   <dl
-                    class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12"
+                    class="[&>dd]:flex-end grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12 [&>dd]:flex"
                   >
                     <dt>Subtotal (Excluding Tax)</dt>
                     <dd>
@@ -1273,7 +1297,7 @@ getRepairRecordInfo(id)
                       Total Amount (SGD)
                     </p>
                     <span class="heading-body-large-body-14px-medium">
-                      {{
+                      ${{
                         getFormatNumberString(editingTotalAmountWithCurrency)
                       }}
                     </span>
@@ -1290,12 +1314,37 @@ getRepairRecordInfo(id)
                         Currency Rate
                       </p>
                       <div class="row-center gap-4">
-                        <span
-                          class="heading-body-body-12px-medium text-neutrals-off-black"
+                        <div
+                          class="row-center heading-body-body-12px-medium text-neutrals-off-black gap-4"
                         >
-                          1 SGD = {{ editEstimatedCostForm.rate }}
-                          {{ editEstimatedCostForm.currency }}
-                        </span>
+                          <el-avatar
+                            :size="16"
+                            :src="SGIcon"
+                            @error="() => true"
+                            class="border-neutral-grey-1-1px!"
+                          >
+                            <el-image :src="ErrorImg" class="h-16" />
+                          </el-avatar>
+                          <span class="heading-body-body-12px-medium">1</span>
+                          <span class="heading-body-body-12px-medium">SGD</span>
+                          <span class="heading-body-body-12px-medium">=</span>
+                          <el-avatar
+                            :size="16"
+                            :src="
+                              countryFlagMap[editEstimatedCostForm.currency]
+                            "
+                            @error="() => true"
+                            class="border-neutral-grey-1-1px!"
+                          >
+                            <el-image :src="ErrorImg" class="h-16" />
+                          </el-avatar>
+                          <span class="heading-body-body-12px-medium">
+                            {{ editEstimatedCostForm.rate }}
+                          </span>
+                          <span class="heading-body-body-12px-medium">
+                            {{ editEstimatedCostForm.currency }}
+                          </span>
+                        </div>
                         <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
                         <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
                       </div>
