@@ -467,6 +467,61 @@ const handleTabChange = (val) => {
   }
 }
 
+// unit price 的输入框的 change 事件
+const handleUnitPriceChange = useDebounceFn(
+  (record, val) =>
+    (record.totalAmount = Big(val)
+      .times(record.quantity || 0) // unitPrice * quantity
+      .minus(record.discount || 0) // - discount
+      .plus(record.gst || 0) // - tax rate
+      .toFixed(2)), // 保留两位小数
+  TimingPreset.DEBOUNCE,
+)
+
+// quantity 的输入框的 change 事件
+const handleQuantityChange = useDebounceFn(
+  (record, val) =>
+    (record.totalAmount = Big(record.unitPrice)
+      .times(val) // unitPrice * quantity
+      .minus(record.discount || 0) // - discount
+      .plus(record.gst || 0) // - tax rate
+      .toFixed(2)), // 保留两位小数
+  TimingPreset.DEBOUNCE,
+)
+
+// discount 的输入框的 change 事件
+const handleDiscountChange = useDebounceFn(
+  (record, val) =>
+    (record.totalAmount = Big(record.unitPrice)
+      .times(record.quantity || 0) // unitPrice * quantity
+      .minus(val) // - discount
+      .plus(record.gst || 0) // - tax rate
+      .toFixed(2)), // 保留两位小数
+  TimingPreset.DEBOUNCE,
+)
+
+// gst 的输入框的 change 事件
+const handleGstChange = useDebounceFn(
+  (record, val) =>
+    (record.totalAmount = Big(record.unitPrice)
+      .times(record.quantity || 0) // unitPrice * quantity
+      .minus(record.discount || 0) // - discount
+      .plus(val) // - tax rate
+      .toFixed(2)), // 保留两位小数
+  TimingPreset.DEBOUNCE,
+)
+
+// total amount 的输入框的 change 事件
+const handleTotalAmountChange = useDebounceFn(
+  (record, val) =>
+    (record.unitPrice = Big(val)
+      .plus(record.discount || 0) // totalAmount + discount
+      .minus(record.gst || 0) // - gst
+      .div(record.quantity) // ÷ quantity
+      .toFixed(2)), // 保留两位小数
+  TimingPreset.DEBOUNCE,
+)
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -815,22 +870,39 @@ getRepairRecordInfo(id)
                     </el-select>
                   </el-col>
                   <el-col :span="2">
-                    <el-input type="number" v-model.number="record.unitPrice" />
+                    <el-input
+                      type="number"
+                      v-model.number="record.unitPrice"
+                      @input="(val) => handleUnitPriceChange(record, val)"
+                    />
                   </el-col>
                   <el-col :span="2">
-                    <el-input type="number" v-model.number="record.quantity" />
+                    <el-input
+                      type="number"
+                      v-model.number="record.quantity"
+                      @input="(val) => handleQuantityChange(record, val)"
+                    />
                   </el-col>
                   <el-col :span="2">
-                    <el-input type="number" v-model.number="record.discount" />
+                    <el-input
+                      type="number"
+                      v-model.number="record.discount"
+                      @input="(val) => handleDiscountChange(record, val)"
+                    />
                   </el-col>
                   <el-col :span="2">
-                    <el-input type="number" v-model.number="record.gst" />
+                    <el-input
+                      type="number"
+                      v-model.number="record.gst"
+                      @input="(val) => handleGstChange(record, val)"
+                    />
                   </el-col>
                   <el-col :span="4">
                     <!--  record.unitPrice *  record.quantity - record.discount + record.gst  -->
                     <el-input
                       type="number"
                       v-model.number="record.totalAmount"
+                      @input="(val) => handleTotalAmountChange(record, val)"
                     />
                   </el-col>
                   <el-col :span="1" class="justify-center!">
