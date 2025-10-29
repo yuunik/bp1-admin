@@ -192,13 +192,22 @@ export const getUserOBDListApi = (userId) => {
 
 /**
  * 获取用户已绑定的车辆列表
- * @param userId { id: number } 用户id
+ * @param params
+ * @param params.userId 用户id
+ * @param params.page 页码
+ * @param params.pageSize 每页数量
+ *
+ *
+ *
  * @returns {Promise<ApiResponse<VehicleInfoItem[]>>} Promise
  */
-export const getUserVehicleListApi = (userId) => {
+export const getUserVehicleListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('userId', userId)
+  data.append('userId', params.userId)
+  data.append('page', params.page)
+  data.append('pageSize', params.pageSize)
+
   return request({
     url: UserApi.GET_USER_VEHICLE_LIST,
     method: 'POST',

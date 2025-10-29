@@ -107,6 +107,13 @@ const expenseRecordList = ref([])
 // 输入搜索关键字
 const searchKeywords = ref('')
 
+// 分页数据
+const userVehiclePagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
 // 复制 handleCopyTransactionID
 const handleCopyTransactionID = async () => {
   try {
@@ -131,8 +138,13 @@ const getUserOBDList = async () => {
 
 // 获取用户已绑定的车辆列表
 const getUserVehicleList = async () => {
-  const { data } = await getUserVehicleListApi(userId.value)
+  const { data, count } = await getUserVehicleListApi({
+    userId: userId.value,
+    page: userVehiclePagination.currentPage,
+    pageSize: userVehiclePagination.pageSize,
+  })
   vehicleList.value = data
+  userVehiclePagination.total = count
 }
 
 // avatar加载的错误行为
@@ -309,10 +321,18 @@ const {
   params: { id },
 } = route
 
-// 监听分页页码改变
+// 监听expense分页页码改变
 watch(
-  () => expenseRecordPagination.current,
+  () => expenseRecordPagination.currentPage,
   () => getUserRepairRecordList(),
+)
+
+// 监听车辆表格翻页
+watch(
+  () => userVehiclePagination.currentPage,
+  () => {
+    getUserVehicleList()
+  },
 )
 
 onMounted(async () => {
@@ -629,6 +649,7 @@ onMounted(async () => {
               </div>
             </template>
           </el-table>
+          <base-pagination v-model="userVehiclePagination" />
         </div>
       </div>
       <!-- logs & note -->
