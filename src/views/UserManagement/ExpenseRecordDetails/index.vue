@@ -648,7 +648,7 @@ getRepairRecordInfo(id)
     <el-scrollbar ref="expenseDetailsRef">
       <!-- details -->
       <dl
-        class="[&>dt]:leading-32 [&>dd]:leading-32 input--underline [&>dt]:flex-center mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:min-h-32 [&>dt]:min-h-32"
+        class="[&>dt]:leading-32 [&>dd]:leading-32 [&>dd]:row-center input--underline [&>dt]:row-center mx-32 mb-24 grid grid-cols-[112px_1fr_112px_1fr] gap-x-8 gap-y-20 [&>dd]:min-h-32 [&>dt]:min-h-32"
       >
         <dt>Workshop</dt>
         <dd>
@@ -702,7 +702,9 @@ getRepairRecordInfo(id)
         </dd>
         <dt>Note</dt>
         <dd class="note-container">
-          <span v-show="!isEditMode">{{ repairRecordDetail.note || '-' }}</span>
+          <p class="whitespace-pre" v-show="!isEditMode">
+            {{ repairRecordDetail.note || '-' }}
+          </p>
           <el-input
             v-model="editEstimatedCostForm.note"
             placeholder="Enter"
