@@ -1062,7 +1062,7 @@ getRepairRecordInfo(id)
                     <dt>Subtotal with Discount Applied</dt>
                     <dd>
                       <span class="text-neutrals-off-black">
-                        {{ subtotalWithDiscount }}
+                        {{ getFormatNumberString(subtotalWithDiscount) }}
                       </span>
                     </dd>
                     <dt>Tax</dt>
@@ -1133,7 +1133,7 @@ getRepairRecordInfo(id)
                       </p>
                       <span class="heading-body-large-body-14px-medium">
                         {{ currencyMap[repairRecordDetail.currency]
-                        }}{{ totalCostWithExchangeRate }}
+                        }}{{ getFormatNumberString(totalCostWithExchangeRate) }}
                       </span>
                     </div>
                   </div>
