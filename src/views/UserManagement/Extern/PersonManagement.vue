@@ -349,8 +349,7 @@ onMounted(async () => {
         <!--<el-button>View Orders</el-button>-->
       </div>
     </div>
-    <el-divider />
-    <el-tabs v-model="activeTab">
+    <el-tabs v-model="activeTab" class="has-top">
       <el-tab-pane label="Customer Details" name="Customer Details" />
       <el-tab-pane label="Expense Records" name="Expense Records" />
       <el-tab-pane label="OBD Devices" name="OBD Devices" />
@@ -386,8 +385,7 @@ onMounted(async () => {
         <dt>Last Login</dt>
         <dd>{{ getLastUsedDate(userInfo.updateTime) }}</dd>
         <dt>Token Usage</dt>
-        <!-- TODO token usage 数据回显 -->
-        <dd>-</dd>
+        <dd>{{ userInfo.haveAiCount }} / {{ userInfo.totalAiCount }}</dd>
         <dt>Status</dt>
         <dd>
           <base-tag
