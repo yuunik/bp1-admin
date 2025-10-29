@@ -519,6 +519,10 @@ const handleDeleteSelectedExpenseItem = (selectedExpenseItemId) => {
     )
 }
 
+const itemList = computed(() =>
+  expenseListByGroup.value.flatMap((item) => item.list),
+)
+
 // 以group进行分组的形式获取所有的expense
 const getExpenseListByGroup = async () => {
   const { data } = await getExpenseListByGroupApi({
@@ -936,12 +940,12 @@ getRepairRecordInfo(id)
                     <el-checkbox v-model="record.isChecked" />
                   </el-col>
                   <el-col :span="6">
-                    <el-select v-model="record.name">
+                    <el-select v-model="record.name" filterable>
                       <el-option
-                        v-for="expense in expenseList"
-                        :key="expense.id"
-                        :label="expense.name"
-                        :value="expense.name"
+                        v-for="item in itemList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.name"
                       />
                     </el-select>
                   </el-col>
