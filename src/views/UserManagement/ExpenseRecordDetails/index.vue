@@ -247,18 +247,26 @@ const editingSubtotalWithDiscountApplied = computed(() => {
 })
 
 // 编辑模式下, 计算 Total Amount (SGD)
-const editingTotalAmountWithCurrency = computed(() =>
-  Big(editingSubtotalWithDiscountApplied.value).plus(
-    editEstimatedCostForm.value.gst,
-  ),
-)
+const editingTotalAmountWithCurrency = computed(() => {
+  if (!isEditMode.value && !editEstimatedCostForm.value.expenseItemDtos) {
+    // 不计算
+    return
+  }
+  return Big(editingSubtotalWithDiscountApplied.value)
+    .plus(editEstimatedCostForm.value.gst)
+    .toNumber()
+})
 
 // 编辑模式下, 计算汇率转换后的总价
-const editingTotalAmountWithExchangeRate = computed(() =>
-  Big(editingTotalAmountWithCurrency.value)
+const editingTotalAmountWithExchangeRate = computed(() => {
+  if (!isEditMode.value && !editEstimatedCostForm.value.expenseItemDtos) {
+    // 不计算
+    return
+  }
+  return Big(editingTotalAmountWithCurrency.value)
     .times(editEstimatedCostForm.value.rate)
-    .toFixed(2),
-)
+    .toNumber()
+})
 
 // 关闭编辑预估成本的弹窗
 const handleCloseEditEstimatedCostDialog = () => {
@@ -440,7 +448,7 @@ const handleAddNewRow = () => {
       note: '',
       group: '',
       category: '',
-      module: '',
+      type: '',
       isExpand: false,
       isChecked: false,
     })
@@ -940,8 +948,8 @@ getRepairRecordInfo(id)
                   <el-col :span="4">
                     <el-select v-model="record.category">
                       <el-option
-                        v-for="(category, index) in categoryFilterParams"
-                        :key="`${index}${category}${index}`"
+                        v-for="category in categoryFilterParams"
+                        :key="category.label"
                         :label="category.label"
                         :value="category.value"
                       />
@@ -1137,7 +1145,6 @@ getRepairRecordInfo(id)
                 <el-dropdown
                   trigger="click"
                   placement="bottom-start"
-                  v-show="isEditMode"
                   ref="addExpenseItemDropdownRef"
                 >
                   <el-button text type="primary">
@@ -1161,17 +1168,21 @@ getRepairRecordInfo(id)
                       </el-input>
                       <el-divider />
                       <div class="px-16 py-8">
+                        <!-- group 分类-->
                         <el-tabs
                           v-model="expenseItemActiveTab"
                           class="no-bottom tabs-container"
                         >
                           <el-tab-pane label="All" name="all" />
+
                           <el-tab-pane
-                            v-for="(group, index) in groupFilterParams"
-                            :key="`${index}${group}${index}`"
-                            :label="group.label"
-                            :name="group.value"
+                            label="Vehicle Parts"
+                            name="Vehicle Parts"
                           />
+                          <el-tab-pane label="Maintenance" name="Maintenance" />
+                          <el-tab-pane label="Fuel" name="Fuel" />
+                          <el-tab-pane label="Services" name="Services" />
+                          <el-tab-pane label="Others" name="Others" />
                         </el-tabs>
                         <!-- batch select -->
                         <div
@@ -1205,7 +1216,7 @@ getRepairRecordInfo(id)
                           <div
                             class="py-8"
                             v-for="(group, index) in groupFilterParams"
-                            :key="`${index}${group}${index}`"
+                            :key="group.value"
                             v-show="
                               expenseItemActiveTab === 'all' ||
                               expenseItemActiveTab === group.value
@@ -1214,7 +1225,7 @@ getRepairRecordInfo(id)
                             <h4
                               class="heading-body-body-12px-medium text-neutrals-grey-3 leading-16 h-17 row-center"
                             >
-                              {{ category.label }}
+                              {{ group.label }}
                             </h4>
                             <div
                               class="gap gap-x-107 mt-4 grid grid-cols-2 gap-y-4"
@@ -1511,7 +1522,7 @@ getRepairRecordInfo(id)
 
 <style scoped lang="scss">
 .items-table-container :deep(.el-row) {
-  @apply text-14 leading-16 text-neutrals-grey-4 default-transition min-h-32 font-medium;
+  @apply text-14 leading-16 text-neutrals-grey-4 default-transition min-h-32 py-8 font-medium;
   border-bottom: 1px solid $neutrals-grey-1;
 
   // columns 样式
