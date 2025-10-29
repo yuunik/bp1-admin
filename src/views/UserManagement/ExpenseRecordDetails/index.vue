@@ -25,6 +25,29 @@ import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
 import UpIcon from '@/assets/specialIcons/fi_trending-up.svg'
 import DownIcon from '@/assets/specialIcons/fi_trending-down.svg'
+import CNIcon from '@/assets/specialIcons/flag_cn.svg'
+import IDIcon from '@/assets/specialIcons/flag_id.svg'
+import MYIcon from '@/assets/specialIcons/flag_my.svg'
+import SGIcon from '@/assets/specialIcons/flag_sg.svg'
+import THIcon from '@/assets/specialIcons/flag_th.svg'
+
+// 国旗映射表
+const countryFlagMap = Object.freeze({
+  CNY: CNIcon,
+  IDR: IDIcon,
+  MYR: MYIcon,
+  SGD: SGIcon,
+  THB: THIcon,
+})
+
+//  币种映射表
+const currencyMap = Object.freeze({
+  CNY: '¥',
+  IDR: 'Rp',
+  MYR: 'RM',
+  SGD: '$',
+  THB: '฿',
+})
 
 const activeTab = ref('Expense Details')
 
@@ -185,6 +208,53 @@ const attachmentRef = ref(null)
 
 // 日志实例
 const logRef = ref(null)
+
+// 编辑模式下, 计算 Subtotal
+const editingSubtotal = computed(() => {
+  if (!isEditMode.value && !editEstimatedCostForm.value.expenseItemDtos) {
+    // 不计算
+    return
+  }
+  return editEstimatedCostForm.value.expenseItemDtos
+    .reduce((sum, cur) => sum.plus(cur.totalAmount || 0), Big(0))
+    .toNumber()
+})
+
+// 编辑模式, 计算 Discount Amount
+const editingDiscountAmount = computed(() => {
+  if (!isEditMode.value && !editEstimatedCostForm.value.expenseItemDtos) {
+    // 不计算
+    return
+  }
+  return editEstimatedCostForm.value.expenseItemDtos
+    .reduce((sum, cur) => sum.plus(cur.discount || 0), Big(0))
+    .toNumber()
+})
+
+// 编辑模式下, 计算 Subtotal with Discount Applied
+const editingSubtotalWithDiscountApplied = computed(() => {
+  if (!isEditMode.value && !editEstimatedCostForm.value.expenseItemDtos) {
+    // 不计算
+    return
+  }
+  return Big(editingSubtotal.value)
+    .minus(editingDiscountAmount.value)
+    .toNumber()
+})
+
+// 编辑模式下, 计算 Total Amount (SGD)
+const editingTotalAmountWithCurrency = computed(() =>
+  Big(editingSubtotalWithDiscountApplied.value).plus(
+    editEstimatedCostForm.value.gst,
+  ),
+)
+
+// 编辑模式下, 计算汇率转换后的总价
+const editingTotalAmountWithExchangeRate = computed(() =>
+  Big(editingTotalAmountWithCurrency.value)
+    .times(editEstimatedCostForm.value.rate)
+    .toFixed(2),
+)
 
 // 关闭编辑预估成本的弹窗
 const handleCloseEditEstimatedCostDialog = () => {
@@ -474,7 +544,8 @@ const handleUnitPriceChange = useDebounceFn(
       .times(record.quantity || 0) // unitPrice * quantity
       .minus(record.discount || 0) // - discount
       .plus(record.gst || 0) // - tax rate
-      .toFixed(2)), // 保留两位小数
+      // .toFixed(2) // 保留两位小数
+      .toNumber()), // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
@@ -485,7 +556,8 @@ const handleQuantityChange = useDebounceFn(
       .times(val) // unitPrice * quantity
       .minus(record.discount || 0) // - discount
       .plus(record.gst || 0) // - tax rate
-      .toFixed(2)), // 保留两位小数
+      // .toFixed(2) // 保留两位小数
+      .toNumber()), // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
@@ -496,7 +568,8 @@ const handleDiscountChange = useDebounceFn(
       .times(record.quantity || 0) // unitPrice * quantity
       .minus(val) // - discount
       .plus(record.gst || 0) // - tax rate
-      .toFixed(2)), // 保留两位小数
+      // .toFixed(2) // 保留两位小数
+      .toNumber()), // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
@@ -507,7 +580,8 @@ const handleGstChange = useDebounceFn(
       .times(record.quantity || 0) // unitPrice * quantity
       .minus(record.discount || 0) // - discount
       .plus(val) // - tax rate
-      .toFixed(2)), // 保留两位小数
+      // .toFixed(2) // 保留两位小数
+      .toNumber()), // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
@@ -518,7 +592,8 @@ const handleTotalAmountChange = useDebounceFn(
       .plus(record.discount || 0) // totalAmount + discount
       .minus(record.gst || 0) // - gst
       .div(record.quantity) // ÷ quantity
-      .toFixed(2)), // 保留两位小数
+      // .toFixed(2) // 保留两位小数
+      .toNumber()), // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
@@ -712,7 +787,9 @@ getRepairRecordInfo(id)
             <el-col :span="isEditMode ? 2 : 2">Qty</el-col>
             <el-col :span="isEditMode ? 2 : 3">Discount</el-col>
             <el-col :span="isEditMode ? 2 : 3">Tax Rate</el-col>
-            <el-col :span="isEditMode ? 4 : 3">Total Amount</el-col>
+            <el-col :span="isEditMode ? 4 : 3" class="flex-end!">
+              Total Amount
+            </el-col>
             <el-col v-show="isEditMode" :span="isEditMode ? 1 : 0" />
           </el-row>
           <template v-if="repairRecordDetail.expenseItemDtos?.length">
@@ -897,7 +974,7 @@ getRepairRecordInfo(id)
                       @input="(val) => handleGstChange(record, val)"
                     />
                   </el-col>
-                  <el-col :span="4">
+                  <el-col :span="4" class="text-end">
                     <!--  record.unitPrice *  record.quantity - record.discount + record.gst  -->
                     <el-input
                       type="number"
@@ -953,7 +1030,85 @@ getRepairRecordInfo(id)
               </template>
             </template>
             <!-- billing summary row -->
-            <el-row class="billing-summary no-hover-cursor">
+            <el-row v-if="!isEditMode" class="billing-summary no-hover-cursor">
+              <el-col :span="12" />
+              <el-col :span="12">
+                <div class="mb-12 flex w-full flex-col gap-16">
+                  <!-- item -->
+                  <dl
+                    class="grid grid-cols-[1fr_auto] gap-x-8 gap-y-16 px-8 pt-12"
+                  >
+                    <dt>Subtotal (Excluding Tax)</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ getFormatNumberString(subtotal) }}
+                      </span>
+                    </dd>
+                    <dt>Discount Amount</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ getFormatNumberString(repairRecordDetail.discount) }}
+                      </span>
+                    </dd>
+                    <dt>Subtotal with Discount Applied</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ subtotalWithDiscount }}
+                      </span>
+                    </dd>
+                    <dt>Tax</dt>
+                    <dd>
+                      <span class="text-neutrals-off-black">
+                        {{ getFormatNumberString(repairRecordDetail.gst) }}
+                      </span>
+                    </dd>
+                  </dl>
+                  <el-divider />
+                  <!-- Total Amount (SGD) -->
+                  <div class="flex-between text-neutrals-off-black px-8">
+                    <p class="heading-body-large-body-14px-medium">
+                      Total Amount (SGD)
+                    </p>
+                    <span class="heading-body-large-body-14px-medium">
+                      {{ getFormatNumberString(repairRecordDetail.totalCost) }}
+                    </span>
+                  </div>
+                  <!-- total amount convert -->
+                  <div
+                    class="rounded-8 flex flex-col gap-16 bg-[#EAEEF480] p-8"
+                  >
+                    <!-- Currency Rate -->
+                    <div class="flex-between text-neutrals-off-black">
+                      <p
+                        class="heading-body-large-body-14px-medium text-neutrals-grey-4"
+                      >
+                        Currency Rate
+                      </p>
+                      <div class="row-center gap-4">
+                        <span
+                          class="heading-body-body-12px-medium text-neutrals-off-black"
+                        >
+                          1 SGD = {{ repairRecordDetail.rate }}
+                          {{ repairRecordDetail.currency }}
+                        </span>
+                        <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
+                        <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
+                      </div>
+                    </div>
+                    <div class="flex-between text-neutrals-off-black">
+                      <p class="heading-body-large-body-14px-medium">
+                        Total Amount ({{ repairRecordDetail.currency }})
+                      </p>
+                      <span class="heading-body-large-body-14px-medium">
+                        {{ currencyMap[editEstimatedCostForm.currency]
+                        }}{{ totalCostWithExchangeRate }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </el-col>
+            </el-row>
+            <el-row v-else class="billing-summary no-hover-cursor">
               <el-col :span="12" class="items-start! justify-start!">
                 <el-dropdown
                   trigger="click"
@@ -1083,25 +1238,31 @@ getRepairRecordInfo(id)
                     <dt>Subtotal (Excluding Tax)</dt>
                     <dd>
                       <span class="text-neutrals-off-black">
-                        {{ getFormatNumberString(subtotal) }}
+                        {{ getFormatNumberString(editingSubtotal) }}
                       </span>
                     </dd>
                     <dt>Discount Amount</dt>
                     <dd>
                       <span class="text-neutrals-off-black">
-                        {{ getFormatNumberString(repairRecordDetail.discount) }}
+                        {{
+                          getFormatNumberString(editEstimatedCostForm.discount)
+                        }}
                       </span>
                     </dd>
                     <dt>Subtotal with Discount Applied</dt>
                     <dd>
                       <span class="text-neutrals-off-black">
-                        {{ subtotalWithDiscount }}
+                        {{
+                          getFormatNumberString(
+                            editingSubtotalWithDiscountApplied,
+                          )
+                        }}
                       </span>
                     </dd>
                     <dt>Tax</dt>
                     <dd>
                       <span class="text-neutrals-off-black">
-                        {{ getFormatNumberString(repairRecordDetail.gst) }}
+                        {{ getFormatNumberString(editEstimatedCostForm.gst) }}
                       </span>
                     </dd>
                   </dl>
@@ -1112,7 +1273,9 @@ getRepairRecordInfo(id)
                       Total Amount (SGD)
                     </p>
                     <span class="heading-body-large-body-14px-medium">
-                      {{ getFormatNumberString(repairRecordDetail.totalCost) }}
+                      {{
+                        getFormatNumberString(editingTotalAmountWithCurrency)
+                      }}
                     </span>
                   </div>
                   <!-- total amount convert -->
@@ -1130,8 +1293,8 @@ getRepairRecordInfo(id)
                         <span
                           class="heading-body-body-12px-medium text-neutrals-off-black"
                         >
-                          1 SGD = {{ repairRecordDetail.rate }}
-                          {{ repairRecordDetail.currency }}
+                          1 SGD = {{ editEstimatedCostForm.rate }}
+                          {{ editEstimatedCostForm.currency }}
                         </span>
                         <!-- TODO 10/24, 月姐说暂时没有修改汇率的功能 -->
                         <!--<i class="icon-edit-line text-16 text-neutrals-grey-3" />-->
@@ -1139,10 +1302,11 @@ getRepairRecordInfo(id)
                     </div>
                     <div class="flex-between text-neutrals-off-black">
                       <p class="heading-body-large-body-14px-medium">
-                        Total Amount ({{ repairRecordDetail.currency }})
+                        Total Amount ({{ editEstimatedCostForm.currency }})
                       </p>
                       <span class="heading-body-large-body-14px-medium">
-                        ${{ totalCostWithExchangeRate }}
+                        {{ currencyMap[editEstimatedCostForm.currency]
+                        }}{{ editingTotalAmountWithExchangeRate }}
                       </span>
                     </div>
                   </div>
@@ -1420,6 +1584,15 @@ getRepairRecordInfo(id)
 .note-container {
   :deep(.el-textarea__inner) {
     @apply bg-transparent;
+  }
+}
+
+// 重置让输入框的文字居右
+:deep(.el-col) {
+  &.text-end {
+    .el-input__inner {
+      @apply text-align-end;
+    }
   }
 }
 </style>
