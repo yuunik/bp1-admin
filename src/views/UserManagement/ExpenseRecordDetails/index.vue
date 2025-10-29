@@ -393,7 +393,7 @@ const handleGetExtraData = () => {
   editEstimatedCostForm.value.gst = repairRecordDetail.value.gst
   editEstimatedCostForm.value.totalCost = repairRecordDetail.value.totalCost
   // 隐藏额外数据信息
-  isShowExtraData.value = false
+  isShowExtraData.value = true
 }
 
 // 编辑维修记录
@@ -571,7 +571,7 @@ getRepairRecordInfo(id)
         <el-button
           text
           type="primary"
-          v-show="isEditMode"
+          v-show="isShowExtraData && isEditMode"
           @click="clearExtraData"
         >
           <template #icon>
