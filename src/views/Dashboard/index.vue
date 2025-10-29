@@ -253,6 +253,15 @@ const handleNavigateToExpenseList = () => {
   clearBreadcrumbList()
 }
 
+// 跳转品牌详情页
+const handleNavigateToBrandDetail = (brand) => {
+  router.push({
+    name: 'BrandAndModelManagement',
+    params: { id: brand.id },
+  })
+  clearBreadcrumbList()
+}
+
 onMounted(async () => {
   // 获取数据
   await Promise.all([getDashboardData(), getExpenseUserList()])
@@ -516,12 +525,7 @@ onMounted(async () => {
                 </el-avatar>
                 <span
                   class="cursor-pointer text-wrap underline"
-                  @click="
-                    $router.push({
-                      name: RouteName.PERSON_MANAGE,
-                      params: { id: row.id },
-                    })
-                  "
+                  @click="handleNavigateToBrandDetail(row)"
                 >
                   {{ row.name || '-' }}
                 </span>
