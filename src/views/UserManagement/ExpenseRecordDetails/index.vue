@@ -104,14 +104,6 @@ const totalCostWithExchangeRate = computed(() => {
 // 编辑模式
 const isEditMode = ref(false)
 
-// 编辑表单
-const estimatedCostForm = reactive({
-  name: '',
-  mileage: '',
-  date: '',
-  note: '',
-})
-
 // 修理厂搜索关键字
 const workshopSearchKey = ref('')
 
@@ -223,19 +215,19 @@ const getRepairRecordInfo = async (id) => {
   // 深拷贝一份，避免直接改接口原始对象
   const { cloned } = useCloned(data)
   // 类型转换, String -> Number
-  cloned.value.totalCost = Number(cloned.value.totalCost)
-  cloned.value.gst = Number(cloned.value.gst)
-  cloned.value.discount = Number(cloned.value.discount)
-  cloned.value.rate = Number(cloned.value.rate)
+  // cloned.value.totalCost = Number(cloned.value.totalCost)
+  // cloned.value.gst = Number(cloned.value.gst)
+  // cloned.value.discount = Number(cloned.value.discount)
+  // cloned.value.rate = Number(cloned.value.rate)
   // 给每个 expenseItemDtos 元素加上 isExpand
   if (cloned.value.expenseItemDtos && cloned.value.expenseItemDtos.length) {
     cloned.value.expenseItemDtos = cloned.value.expenseItemDtos.map((item) => {
-      item.totalCost = Number(item.totalCost)
-      item.gst = Number(item.gst)
-      item.discount = Number(item.discount)
-      item.rate = Number(item.rate)
-      item.totalAmount = Number(item.totalAmount)
-      item.unitPrice = Number(item.unitPrice)
+      // item.totalCost = Number(item.totalCost)
+      // item.gst = Number(item.gst)
+      // item.discount = Number(item.discount)
+      // item.rate = Number(item.rate)
+      // item.totalAmount = Number(item.totalAmount)
+      // item.unitPrice = Number(item.unitPrice)
       return {
         ...item,
         isExpand: false,
@@ -523,9 +515,8 @@ getRepairRecordInfo(id)
       <dd>
         <span v-if="!isEditMode">{{ repairRecordDetail.mileage }} km</span>
         <el-input
-          v-model="estimatedCostForm.mileage"
+          v-model.number="editEstimatedCostForm.mileage"
           placeholder="Enter"
-          type="number"
           v-else
         >
           <template #suffix>
@@ -552,7 +543,7 @@ getRepairRecordInfo(id)
       <dd class="note-container">
         <span v-show="!isEditMode">{{ repairRecordDetail.note || '-' }}</span>
         <el-input
-          v-model="estimatedCostForm.note"
+          v-model="editEstimatedCostForm.note"
           placeholder="Enter"
           type="textarea"
           :row="4"
