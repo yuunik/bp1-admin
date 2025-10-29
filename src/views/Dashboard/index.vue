@@ -2,6 +2,8 @@
 import { Line, Pie } from 'vue-chartjs'
 import { storeToRefs } from 'pinia'
 import Big from 'big.js'
+import emitter from '@/utils/emitterUtil.js'
+import { useRouter } from 'vue-router'
 
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
@@ -18,8 +20,10 @@ import {
   getFormatNumberString,
   getFullFilePath,
 } from '@/utils/dataFormattedUtil.js'
-import { RouteName } from '@/utils/constantsUtil.js'
+import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
+
+const router = useRouter()
 
 const chartData = ref({
   labels: [
@@ -226,6 +230,29 @@ const getExpenseUserList = async () => {
 // 排序函数
 const sort = useSort(sortParams, getExpenseUserList)
 
+// 清空面包屑
+const clearBreadcrumbList = () =>
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+
+// 跳转 OBD 列表页
+const handleNavigateToOBDList = () => {
+  router.push({ name: RouteName.OBD_MANAGEMENT })
+  clearBreadcrumbList()
+}
+
+// 跳转 用户 列表页
+const handleNavigateToUserList = () => {
+  router.push({ name: RouteName.EXTERN })
+  clearBreadcrumbList()
+}
+
+// 跳转 expense 列表页
+const handleNavigateToExpenseList = () => {
+  // TODO expense 列表页路由跳转, 待做...
+  // router.push({ name: RouteName.EXPENSE })
+  clearBreadcrumbList()
+}
+
 onMounted(async () => {
   // 获取数据
   await Promise.all([getDashboardData(), getExpenseUserList()])
@@ -316,7 +343,10 @@ onMounted(async () => {
           >
             OBD
           </h3>
-          <i class="icon-typesarrow-right text-16" />
+          <i
+            class="icon-typesarrow-right text-16 cursor-pointer"
+            @click="handleNavigateToOBDList"
+          />
         </div>
         <!-- card container -->
         <div class="flex gap-24">
@@ -345,7 +375,10 @@ onMounted(async () => {
           >
             User
           </h3>
-          <i class="icon-typesarrow-right text-16" />
+          <i
+            class="icon-typesarrow-right text-16 cursor-pointer"
+            @click="handleNavigateToUserList"
+          />
         </div>
         <!-- card container -->
         <div class="flex gap-16">
@@ -375,7 +408,10 @@ onMounted(async () => {
           >
             Expense Summary
           </h3>
-          <i class="icon-typesarrow-right text-16" />
+          <i
+            class="icon-typesarrow-right text-16"
+            @click="handleNavigateToExpenseList"
+          />
         </div>
         <!-- card container -->
         <div class="flex gap-16">
