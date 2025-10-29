@@ -159,6 +159,8 @@ export default defineConfig({
       'cb-content-width': 'wc-218',
       // 内容区折叠宽度
       'cf-content-width': 'wc-68',
+      // 超过宽度, 自动换行
+      'wrap-text': 'inline-block whitespace-normal break-words break-all',
     },
   ],
   theme: {
