@@ -375,6 +375,8 @@ const handleAddNewRow = () => {
   nextTick(() => {
     // 关闭dropdown
     addExpenseItemDropdownRef.value?.handleClose()
+    // 重置复选框
+    selectedAddExpenseItemNameList.value = []
   })
 }
 
