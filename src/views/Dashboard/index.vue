@@ -161,6 +161,15 @@ const newUserCount = ref(0)
 // obd用户数
 const obdUserCount = ref(0)
 
+// 假设两个 tab 平分宽度
+const tabs = ['By User', 'By Car Brand']
+
+// 记录当前选中的 tab，默认选中第一个
+const activeTab = ref('By User')
+
+// 计算当前 tab 的索引
+const activeTabIndex = computed(() => tabs.indexOf(activeTab.value))
+
 // 获取数据
 const getDashboardData = async () => {
   // 获取数据
@@ -220,52 +229,52 @@ onMounted(async () => {
         </p>
       </div>
       <!-- order info -->
-      <div class="get-gray flex flex-col gap-8">
-        <!-- title -->
-        <div class="flex-between h-32">
-          <h3
-            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
-          >
-            Order
-          </h3>
-          <i class="icon-typesarrow-right text-16" />
-        </div>
-        <!-- card container -->
-        <div class="flex flex-col gap-8">
-          <div class="flex gap-16">
-            <dashboard-card
-              class="flex-1"
-              metric-label="All Orders"
-              metric-value="-"
-            />
-            <dashboard-card
-              class="flex-1"
-              metric-label="New Additions"
-              metric-value="-"
-            />
-          </div>
-          <div class="flex gap-16">
-            <dashboard-card
-              class="flex-1"
-              metric-label="Pending"
-              metric-value="-"
-              metric-value-text-color="text-status-colours-yellow"
-            />
-            <dashboard-card
-              class="flex-1"
-              metric-label="Shipped"
-              metric-value="-"
-              metric-value-text-color="text-status-colours-orange"
-            />
-            <dashboard-card
-              class="flex-1"
-              metric-label="Refund"
-              metric-value="-"
-              metric-value-text-color="text-status-colours-purple"
-            />
-          </div>
-        </div>
-      </div>
+      <!--<div class="get-gray flex flex-col gap-8">-->
+      <!--  &lt;!&ndash; title &ndash;&gt;-->
+      <!--  <div class="flex-between h-32">-->
+      <!--    <h3-->
+      <!--      class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"-->
+      <!--    >-->
+      <!--      Order-->
+      <!--    </h3>-->
+      <!--    <i class="icon-typesarrow-right text-16" />-->
+      <!--  </div>-->
+      <!--  &lt;!&ndash; card container &ndash;&gt;-->
+      <!--  <div class="flex flex-col gap-8">-->
+      <!--    <div class="flex gap-16">-->
+      <!--      <dashboard-card-->
+      <!--        class="flex-1"-->
+      <!--        metric-label="All Orders"-->
+      <!--        metric-value="-"-->
+      <!--      />-->
+      <!--      <dashboard-card-->
+      <!--        class="flex-1"-->
+      <!--        metric-label="New Additions"-->
+      <!--        metric-value="-"-->
+      <!--      />-->
+      <!--    </div>-->
+      <!--    <div class="flex gap-16">-->
+      <!--      <dashboard-card-->
+      <!--        class="flex-1"-->
+      <!--        metric-label="Pending"-->
+      <!--        metric-value="-"-->
+      <!--        metric-value-text-color="text-status-colours-yellow"-->
+      <!--      />-->
+      <!--      <dashboard-card-->
+      <!--        class="flex-1"-->
+      <!--        metric-label="Shipped"-->
+      <!--        metric-value="-"-->
+      <!--        metric-value-text-color="text-status-colours-orange"-->
+      <!--      />-->
+      <!--      <dashboard-card-->
+      <!--        class="flex-1"-->
+      <!--        metric-label="Refund"-->
+      <!--        metric-value="-"-->
+      <!--        metric-value-text-color="text-status-colours-purple"-->
+      <!--      />-->
+      <!--    </div>-->
+      <!--  </div>-->
+      <!--</div>-->
       <!-- OBD info -->
       <div class="get-gray flex flex-col gap-8">
         <!-- title -->
@@ -295,7 +304,7 @@ onMounted(async () => {
           />
         </div>
       </div>
-      <!-- User list info -->
+      <!-- User -->
       <div class="flex flex-col gap-8">
         <!-- title -->
         <div class="flex-between h-32">
@@ -323,13 +332,65 @@ onMounted(async () => {
             metric-label="OBD Users"
             :metric-value="obdUserCount"
           />
+        </div>
+      </div>
+      <!-- Expense Summary -->
+      <div class="flex flex-col gap-8">
+        <!-- title -->
+        <div class="flex-between h-32">
+          <h3
+            class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20"
+          >
+            Expense Summary
+          </h3>
+          <i class="icon-typesarrow-right text-16" />
+        </div>
+        <!-- card container -->
+        <div class="flex gap-16">
           <dashboard-card
             class="flex-1"
             metric-label="Total Expense"
             :metric-value="expenseUserListTotalAmount"
           />
+          <dashboard-card
+            class="flex-1"
+            metric-label="Avg Expense / User"
+            :metric-value="userCount"
+          />
+          <dashboard-card
+            class="flex-1"
+            metric-label="Top Brand"
+            :metric-value="newUserCount"
+          />
         </div>
-        <div>
+        <div class="rounded-10 relative flex bg-[#F5F6F9] p-2">
+          <!-- 滑块 -->
+          <div
+            :class="[
+              'bg-neutrals-white',
+              'rounded-6',
+              'absolute',
+              'bottom-2',
+              'top-2',
+              'w-[50%]',
+              'shadow-[0_2px_2_0_#0000001A]',
+              'transition-all',
+              activeTabIndex === 0 ? 'left-2' : 'left-[calc(50%-2px)]',
+            ]"
+          />
+          <!-- Tab 列表 -->
+          <div
+            v-for="tab in tabs"
+            :key="tab"
+            class="relative z-10 flex flex-1 cursor-pointer items-center justify-center p-8"
+            @click="activeTab = tab"
+          >
+            <span class="heading-body-large-body-14px-medium text-strong-950">
+              {{ tab }}
+            </span>
+          </div>
+        </div>
+        <div v-show="activeTabIndex === 0">
           <el-table :data="expenseUserList" @sort-change="sort">
             <el-table-column prop="Name" label="User" min-width="69%">
               <template #default="{ row }">
@@ -343,9 +404,47 @@ onMounted(async () => {
                   :size="20"
                   @error="() => true"
                 >
-                  <template #error>
-                    <i class="i-ep:picture" />
-                  </template>
+                  <i class="i-ep:picture" />
+                </el-avatar>
+                <span
+                  class="cursor-pointer text-wrap underline"
+                  @click="
+                    $router.push({
+                      name: RouteName.PERSON_MANAGE,
+                      params: { id: row.UserId },
+                    })
+                  "
+                >
+                  {{ row.Name || '-' }}
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="TotalAmount"
+              label="Total Expense"
+              min-width="31%"
+            >
+              <template v-slot="{ row }">
+                <span>${{ row.TotalAmount }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div v-show="activeTabIndex === 1">
+          <el-table :data="expenseUserList" @sort-change="sort">
+            <el-table-column prop="Name" label="User" min-width="69%">
+              <template #default="{ row }">
+                <el-avatar
+                  v-if="row.Logo"
+                  fit="cover"
+                  :src="getFullFilePath(row.Logo)"
+                  class="mr-8 h-20 w-20 shrink-0"
+                  alt="brand icon"
+                  shape="circle"
+                  :size="20"
+                  @error="() => true"
+                >
+                  <i class="i-ep:picture" />
                 </el-avatar>
                 <span
                   class="cursor-pointer text-wrap underline"
