@@ -1,6 +1,7 @@
 <script setup>
 import { Line, Pie } from 'vue-chartjs'
 import { storeToRefs } from 'pinia'
+import Big from 'big.js'
 
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 
@@ -13,7 +14,10 @@ import {
   getDashboardDataApi,
 } from '@/apis/dahboardApi.js'
 import DashboardCard from '@/views/Dashboard/components/DashboardCard.vue'
-import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import {
+  getFormatNumberString,
+  getFullFilePath,
+} from '@/utils/dataFormattedUtil.js'
 import { RouteName } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 
@@ -143,6 +147,9 @@ const dashboardData = ref({})
 // expense user list
 const expenseUserList = ref([])
 
+// expense brand list
+const expenseBrandList = ref([])
+
 // 排序参数
 const sortParams = reactive({
   sort: '',
@@ -170,6 +177,24 @@ const activeTab = ref('By User')
 // 计算当前 tab 的索引
 const activeTabIndex = computed(() => tabs.indexOf(activeTab.value))
 
+// 用户总数
+const totalUserCount = ref(0)
+
+// 品牌总数
+const brandCount = ref(0)
+
+// 平均花费
+const averageExpense = computed(() => {
+  const total = expenseUserListTotalAmount.value || 0
+  const count = userCount.value || 0
+  return count > 0 ? Big(total).div(count).toNumber() : 0
+})
+
+// 花费总数第一的品牌
+const firstExpenseBrand = computed(
+  () => (expenseBrandList.value && expenseBrandList.value[0]) || 'null',
+)
+
 // 获取数据
 const getDashboardData = async () => {
   // 获取数据
@@ -184,11 +209,18 @@ const getDashboardData = async () => {
 // 获取expense user list数据
 const getExpenseUserList = async () => {
   const {
-    data: { users, allAmount },
+    data: { users, brands, allAmount, userCount, brandCount: bCount },
   } = await getAllUserExpenseSumApi(sortParams)
-  // 设置数据
+  // expense user list
   expenseUserList.value = users
-  expenseUserListTotalAmount.value = `$${allAmount}`
+  // expense brand list
+  expenseBrandList.value = brands
+  // 总花费
+  expenseUserListTotalAmount.value = allAmount
+  // 用户总数
+  totalUserCount.value = userCount
+  // 品牌总数
+  brandCount.value = bCount
 }
 
 // 排序函数
@@ -350,17 +382,17 @@ onMounted(async () => {
           <dashboard-card
             class="flex-1"
             metric-label="Total Expense"
-            :metric-value="expenseUserListTotalAmount"
+            :metric-value="`$${getFormatNumberString(expenseUserListTotalAmount)}`"
           />
           <dashboard-card
             class="flex-1"
             metric-label="Avg Expense / User"
-            :metric-value="userCount"
+            :metric-value="`$${getFormatNumberString(averageExpense)}`"
           />
           <dashboard-card
             class="flex-1"
             metric-label="Top Brand"
-            :metric-value="newUserCount"
+            :metric-value="firstExpenseBrand.name"
           />
         </div>
         <div class="rounded-10 relative flex bg-[#F5F6F9] p-2">
@@ -392,12 +424,12 @@ onMounted(async () => {
         </div>
         <div v-show="activeTabIndex === 0">
           <el-table :data="expenseUserList" @sort-change="sort">
-            <el-table-column prop="Name" label="User" min-width="69%">
+            <el-table-column prop="name" label="User" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
-                  v-if="row.Logo"
+                  v-if="row.logo"
                   fit="cover"
-                  :src="getFullFilePath(row.Logo)"
+                  :src="getFullFilePath(row.logo)"
                   class="mr-8 h-20 w-20 shrink-0"
                   alt="brand icon"
                   shape="circle"
@@ -411,33 +443,33 @@ onMounted(async () => {
                   @click="
                     $router.push({
                       name: RouteName.PERSON_MANAGE,
-                      params: { id: row.UserId },
+                      params: { id: row.id },
                     })
                   "
                 >
-                  {{ row.Name || '-' }}
+                  {{ row.name || '-' }}
                 </span>
               </template>
             </el-table-column>
             <el-table-column
-              prop="TotalAmount"
+              prop="totalAmount"
               label="Total Expense"
               min-width="31%"
             >
               <template v-slot="{ row }">
-                <span>${{ row.TotalAmount }}</span>
+                <span>${{ getFormatNumberString(row.totalAmount) }}</span>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div v-show="activeTabIndex === 1">
-          <el-table :data="expenseUserList" @sort-change="sort">
-            <el-table-column prop="Name" label="User" min-width="69%">
+          <el-table :data="expenseBrandList" @sort-change="sort">
+            <el-table-column prop="name" label="User" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
-                  v-if="row.Logo"
+                  v-if="row.logo"
                   fit="cover"
-                  :src="getFullFilePath(row.Logo)"
+                  :src="getFullFilePath(row.logo)"
                   class="mr-8 h-20 w-20 shrink-0"
                   alt="brand icon"
                   shape="circle"
@@ -451,21 +483,21 @@ onMounted(async () => {
                   @click="
                     $router.push({
                       name: RouteName.PERSON_MANAGE,
-                      params: { id: row.UserId },
+                      params: { id: row.id },
                     })
                   "
                 >
-                  {{ row.Name || '-' }}
+                  {{ row.name || '-' }}
                 </span>
               </template>
             </el-table-column>
             <el-table-column
-              prop="TotalAmount"
+              prop="totalAmount"
               label="Total Expense"
               min-width="31%"
             >
               <template v-slot="{ row }">
-                <span>${{ row.TotalAmount }}</span>
+                <span>${{ getFormatNumberString(row.totalAmount) }}</span>
               </template>
             </el-table-column>
           </el-table>
