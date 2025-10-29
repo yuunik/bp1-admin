@@ -35,12 +35,13 @@ export const getFirstLetter = (str) => {
 }
 
 /**
- * @description 获取数字格式化字符串, 如 10 -> 10.00, 5.3 -> 5.30
+ * @description 获取数字格式化字符串, 如 10 -> 10.00, 5.3 -> 5.30, 1000 -> 1,000.00
  * @param number
  * @returns {string}
  */
 export const getFormatNumberString = (number) =>
-  new Intl.NumberFormat(undefined, {
+  new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
+    useGrouping: true, // ✅ 启用千位分隔符
   }).format(number)

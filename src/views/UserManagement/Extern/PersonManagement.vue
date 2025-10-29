@@ -14,7 +14,10 @@ import {
   getUserVehicleListApi,
   resetUserPasswordApi,
 } from '@/apis/userApi.js'
-import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import {
+  getFormatNumberString,
+  getFullFilePath,
+} from '@/utils/dataFormattedUtil.js'
 import {
   getDateWithDDMMMYYYY,
   getDateWithDDMMMYYYYhhmma,
@@ -411,7 +414,13 @@ onMounted(async () => {
           class="[&>dd]:leading-32 [&>dt]:leading-32 mx-32 grid grid-cols-[122px_1fr] items-center gap-4 [&>dd]:h-32 [&>dt]:h-32"
         >
           <dt>Total Cost</dt>
-          <dd>{{ repairTotalPrice ? `$ ${repairTotalPrice}` : '-' }}</dd>
+          <dd>
+            {{
+              repairTotalPrice
+                ? `$ ${getFormatNumberString(repairTotalPrice)}`
+                : '-'
+            }}
+          </dd>
           <dt>AI Insights</dt>
           <dd>-</dd>
         </dl>
