@@ -95,6 +95,35 @@ const statusFilterParams = ref([
   },
 ])
 
+const workshopFilterStatusList = ref([])
+
+const workshopStatusKeys = computed(() =>
+  workshopFilterStatusList.value.length > 0
+    ? workshopFilterStatusList.value.join(',')
+    : '',
+)
+
+const workshopFilterParams = ref([
+  {
+    label: 'Pending',
+    value: 'Pending',
+  },
+  {
+    label: 'Active',
+    value: 'Active',
+  },
+  {
+    label: 'Disable',
+    value: 'Disable',
+  },
+  {
+    label: 'Rejected',
+    value: 'Rejected',
+  },
+])
+
+const workshopSearchKey = ref('')
+
 // 勾选的 workshop id
 const selectedWorkshopIdList = ref([])
 
@@ -128,12 +157,12 @@ const getUserList = useDebounceFn(async () => {
 // 获取修理厂列表
 const getMerchantList = useDebounceFn(async () => {
   const { data, count } = await getMerchantListApi({
-    searchKey: searchKey.value,
+    searchKey: workshopSearchKey.value,
     page: pagination.value.currentPage,
     pageSize: pagination.value.pageSize,
     sort: merchantSortParams.sort,
     sortBy: merchantSortParams.sortBy,
-    statusKey: statusKeys.value,
+    statusKey: workshopStatusKeys.value,
   })
   // 记录总数
   pagination.value.total = count
@@ -445,33 +474,33 @@ cacheView(RouteName.EXTERN)
         :name="UserManagementTab.Workshop"
       />
     </el-tabs>
-    <!-- 搜索栏 -->
-    <div class="flex-between mx-32 mb-16 h-24">
-      <div class="row-center h-24 gap-8">
-        <!-- 账号状态筛选 -->
-        <base-filter-panel
-          v-model="statusList"
-          :section-list="statusFilterParams"
-          condition-text="Status"
-          @search="refresh"
-        />
-        <!-- 清除按钮 -->
-        <el-button
-          text
-          class="h-24! text-status-colours-blue!"
-          @click="statusList = []"
-          v-show="statusList.length"
-        >
-          Clear
-        </el-button>
-      </div>
-      <!-- 输入搜索 -->
-      <base-filter-input v-model="searchKey" @inputChange="refresh" />
-    </div>
-    <!-- 分割线 -->
-    <el-divider />
     <!-- person 页 -->
     <template v-if="activeTab === UserManagementTab.PERSON">
+      <!-- 搜索栏 -->
+      <div class="flex-between mx-32 mb-16 h-24">
+        <div class="row-center h-24 gap-8">
+          <!-- 账号状态筛选 -->
+          <base-filter-panel
+            v-model="statusList"
+            :section-list="statusFilterParams"
+            condition-text="Status"
+            @search="refresh"
+          />
+          <!-- 清除按钮 -->
+          <el-button
+            text
+            class="h-24! text-status-colours-blue!"
+            @click="statusList = []"
+            v-show="statusList.length"
+          >
+            Clear
+          </el-button>
+        </div>
+        <!-- 输入搜索 -->
+        <base-filter-input v-model="searchKey" @inputChange="refresh" />
+      </div>
+      <!-- 分割线 -->
+      <el-divider />
       <!-- 表格容器 -->
       <div
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
@@ -633,6 +662,31 @@ cacheView(RouteName.EXTERN)
     </template>
     <!-- workshop 页 -->
     <template v-if="activeTab === UserManagementTab.Workshop">
+      <!-- 搜索栏 -->
+      <div class="flex-between mx-32 mb-16 h-24">
+        <div class="row-center h-24 gap-8">
+          <!-- 账号状态筛选 -->
+          <base-filter-panel
+            v-model="workshopFilterStatusList"
+            :section-list="workshopFilterParams"
+            condition-text="Status"
+            @search="refresh"
+          />
+          <!-- 清除按钮 -->
+          <el-button
+            text
+            class="h-24! text-status-colours-blue!"
+            @click="workshopFilterStatusList = []"
+            v-show="workshopFilterStatusList.length"
+          >
+            Clear
+          </el-button>
+        </div>
+        <!-- 输入搜索 -->
+        <base-filter-input v-model="workshopSearchKey" @inputChange="refresh" />
+      </div>
+      <!-- 分割线 -->
+      <el-divider />
       <!-- 表格容器 -->
       <div
         class="pb-38 flex-between box-border flex min-h-0 flex-1 flex-col px-32 pt-16"
