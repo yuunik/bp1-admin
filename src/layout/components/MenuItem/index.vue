@@ -1,9 +1,11 @@
 <script setup>
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
-import emitter from '@/utils/emitterUtil.js'
 
+import emitter from '@/utils/emitterUtil.js'
 import MenuItem from '@/layout/components/MenuItem/index.vue'
 import { EmitterEvent } from '@/utils/constantsUtil.js'
+import useRouteSettingsStore from '@/store/modules/routeSettings.js'
 
 // 定义数据类型
 defineProps({
@@ -18,15 +20,25 @@ defineProps({
   },
 })
 
+// 路由数据的状态管理库
+const { clearAllKeepAliveRoute } = useRouteSettingsStore()
+
+// 获取路由器
 const router = useRouter()
 
+// 鼠标悬停的索引
 const hoveredIndex = ref(null)
+
 // 路由跳转
 const handleNavigation = (path) => {
   router.push(path)
+  // 面包屑数据重置
   emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  // 缓存路由重置
+  clearAllKeepAliveRoute()
 }
 
+// 获取菜单折叠状态
 const isMenuCollapsed = inject('isMenuCollapsed')
 </script>
 

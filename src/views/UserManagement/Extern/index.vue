@@ -1,8 +1,14 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import {
+  ref,
+  watch,
+  computed,
+  onActivated,
+  onDeactivated,
+  onMounted,
+} from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
-import { Star } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 
 import BasePagination from '@/components/BasePagination.vue'
@@ -15,15 +21,26 @@ import {
   mergeMerchantApi,
   rejectMerchantApi,
 } from '@/apis/userApi.js'
-import { UserManagementTab } from '@/utils/constantsUtil.js'
+import { RouteName, UserManagementTab } from '@/utils/constantsUtil.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getLastUsedDate } from '@/utils/dateUtil.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { useSort } from '@/composables/useSort.js'
-import StarIcon from '@/assets/specialIcons/fi_star.svg'
 import BaseTag from '@/components/BaseTag.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import useCacheView from '@/composables/useCacheView.js'
+
+import StarIcon from '@/assets/specialIcons/fi_star.svg'
+
+// 定义组件选项
+// 不定义的话, 会让缓存功能失效
+defineOptions({
+  name: RouteName.EXTERN,
+})
+
+// 获取缓存功能函数
+const cacheView = useCacheView()
 
 // 修理厂列表
 const merchantList = ref([])
@@ -402,6 +419,9 @@ watch(
     }
   },
 )
+
+// 组件创建后, 进行的相关初始化操作
+cacheView(RouteName.EXTERN)
 </script>
 
 <template>

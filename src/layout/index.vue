@@ -8,19 +8,27 @@ import { useLocalStorage } from '@vueuse/core'
 import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
-
-import CompanyLogo from '@/assets/images/company-logo-full.png'
-import Logo from '@/assets/images/company-logo.png'
 import BaseDialog from '@/components/BaseDialog.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
 import { modifyAdminPasswordApi } from '@/apis/userCenterApi.js'
 import { md5Encrypt } from '@/utils/md5Util.js'
 import routes from '@/router/routes/index.js'
+import useRouteSettingsStore from '@/store/modules/routeSettings.js'
 
+import CompanyLogo from '@/assets/images/company-logo-full.png'
+import Logo from '@/assets/images/company-logo.png'
+
+// 用户数据的状态管理库
 const userStore = useUserStore()
+
+// 路由数据的状态管理库
+const routeSettingsStore = useRouteSettingsStore()
 
 // 获取用户相关信息
 const { userId, username, userRole, usernameAbbr } = storeToRefs(userStore)
+
+// 获取缓存路由列表信息
+const { keepAliveRouteList } = storeToRefs(routeSettingsStore)
 
 const router = useRouter()
 
@@ -258,7 +266,11 @@ provide('isMenuCollapsed', isMenuCollapsed)
       <!-- breadcrumb -->
       <breadcrumb class="shrink-0" />
       <!-- router view -->
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <keep-alive :include="keepAliveRouteList">
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
       <!-- 设置中心 -->
       <aside
         class="z-999 w-150 rounded-8 shadow-default bg-neutrals-white text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
