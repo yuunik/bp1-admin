@@ -7,14 +7,16 @@ import {
   getVehicleScanRecordDetailApi,
 } from '@/apis/obdApi.js'
 import { RouteName, VehicleEcuCategory } from '@/utils/constantsUtil.js'
+import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import CodeDetailsDrawer from '@/views/ObdManagement/DTC/components/CodeDetailsDrawer.vue'
+import { getPdfApi } from '@/apis/shareApi.js'
 
 // 展开图标
 import ExpandIcon from '@/assets/specialIcons/arrow-down-s-line.svg'
 // 收起图标
 import CollapseIcon from '@/assets/specialIcons/arrow-right-s-line.svg'
-import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import CodeDetailsDrawer from '@/views/ObdManagement/DTC/components/CodeDetailsDrawer.vue'
-import { getPdfApi } from '@/apis/shareApi.js'
+// 正常状态的图标
+import NormalStatusIcon from '@/assets/specialIcons/check-one-fill.svg'
 
 const route = useRoute()
 
@@ -564,11 +566,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -788,11 +801,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -1013,11 +1037,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -1238,11 +1273,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -1463,11 +1509,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -1688,11 +1745,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -1913,11 +1981,22 @@ if (id) {
                       </el-tooltip>
                     </el-col>
                     <el-col :span="9">
-                      {{
-                        item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
-                          ? `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <template
+                        v-if="
+                          item.dtcItemDtcDtos && item.dtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{
+                          `${item.dtcItemDtcDtos.length} DTC${item.dtcItemDtcDtos.length > 1 ? 's' : ''}`
+                        }}
+                      </template>
+                      <template v-else>
+                        <el-image
+                          :src="NormalStatusIcon"
+                          class="h-16 w-16"
+                          fit="cover"
+                        />
+                      </template>
                     </el-col>
                   </el-row>
                 </el-col>
