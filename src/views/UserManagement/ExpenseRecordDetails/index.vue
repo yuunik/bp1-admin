@@ -192,7 +192,7 @@ const isSelectAll = computed(
 // 分组形式的expense
 const expenseListByGroup = ref([])
 
-// 新增的 expense name 数组
+// 新增的 expense item id 数组
 const selectedAddExpenseItemNameList = ref([])
 
 // 新增expense 触发框实例
@@ -608,6 +608,16 @@ const handleTotalAmountChange = useDebounceFn(
   TimingPreset.DEBOUNCE,
 )
 
+// 维修记录item name的下拉框的change事件
+const handleItemNameChange = (val, record) => {
+  // 获取所选中的 item 信息
+  const selectedItem = itemList.value.find((item) => item.name === val)
+  // 设置 category 信息
+  record.category = selectedItem.category
+  // 设置 type 信息
+  record.type = selectedItem.module
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -940,7 +950,11 @@ getRepairRecordInfo(id)
                     <el-checkbox v-model="record.isChecked" />
                   </el-col>
                   <el-col :span="6">
-                    <el-select v-model="record.name" filterable>
+                    <el-select
+                      v-model="record.name"
+                      filterable
+                      @chang="(val) => handleItemNameChange(val, record)"
+                    >
                       <el-option
                         v-for="item in itemList"
                         :key="item.id"
