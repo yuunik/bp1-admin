@@ -1,12 +1,5 @@
 <script setup>
-import {
-  ref,
-  watch,
-  computed,
-  onActivated,
-  onDeactivated,
-  onMounted,
-} from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
@@ -32,6 +25,7 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import useCacheView from '@/composables/useCacheView.js'
 
 import StarIcon from '@/assets/specialIcons/fi_star.svg'
+import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 // 定义组件选项
 // 不定义的话, 会让缓存功能失效
@@ -514,13 +508,16 @@ cacheView(RouteName.EXTERN)
           >
             <!-- 用户头像 -->
             <template #default="{ row }">
-              <el-image
+              <el-avatar
                 :src="getFullFilePath(row.logo)"
-                v-if="row.logo"
                 fit="cover"
-                alt="merchant logo"
-                class="mr-8 h-14 w-14"
-              />
+                alt="user avatar"
+                class="mr-8"
+                :size="20"
+                @error="() => true"
+              >
+                <img :src="DefaultAvatar" />
+              </el-avatar>
               <!-- 用户名称 -->
               <el-text>{{ row?.name ?? '-' }}</el-text>
             </template>
