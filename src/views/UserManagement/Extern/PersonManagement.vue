@@ -25,13 +25,14 @@ import {
 } from '@/utils/dateUtil.js'
 import BaseTag from '@/components/BaseTag.vue'
 import { RouteName } from '@/utils/constantsUtil.js'
-
-import EmptyOBD from '@/assets/specialIcons/empty-obd.svg'
-import EmptyCar from '@/assets/specialIcons/empty-car.svg'
 import { unbindOBDApi } from '@/apis/obdApi.js'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BasePagination from '@/components/BasePagination.vue'
 import { useSort } from '@/composables/useSort.js'
+
+import EmptyOBD from '@/assets/specialIcons/empty-obd.svg'
+import EmptyCar from '@/assets/specialIcons/empty-car.svg'
+import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 const logAndNoteDataList = ref([
   {
@@ -390,7 +391,7 @@ onMounted(async () => {
           :src="getFullFilePath(userInfo.logo)"
           @error="avatarErrorHandler"
         >
-          user
+          <img :src="DefaultAvatar" />
         </el-avatar>
         <span class="heading-body-large-body-14px-medium text-strong-950">
           {{ userInfo.name || '-' }}
