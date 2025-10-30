@@ -6,9 +6,6 @@ import emitter from '@/utils/emitterUtil.js'
 import { useRouter } from 'vue-router'
 
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
-
-// 静态资源
-import GreetingIcon from '@/assets/images/Waving Hand.png'
 import { useUserStore } from '@/store/index.js'
 import { getTodayWithWeekday } from '@/utils/dateUtil.js'
 import {
@@ -22,6 +19,10 @@ import {
 } from '@/utils/dataFormattedUtil.js'
 import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
+
+// 静态资源
+import GreetingIcon from '@/assets/images/Waving Hand.png'
+import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 const router = useRouter()
 
@@ -472,7 +473,6 @@ onMounted(async () => {
             <el-table-column prop="name" label="User" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
-                  v-if="row.logo"
                   fit="cover"
                   :src="getFullFilePath(row.logo)"
                   class="mr-8 h-20 w-20 shrink-0"
@@ -481,7 +481,7 @@ onMounted(async () => {
                   :size="20"
                   @error="() => true"
                 >
-                  <i class="i-ep:picture" />
+                  <img :src="DefaultAvatar" />
                 </el-avatar>
                 <span
                   class="cursor-pointer text-wrap underline"
