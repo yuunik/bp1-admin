@@ -193,7 +193,7 @@ const isSelectAll = computed(
 const expenseListByGroup = ref([])
 
 // 新增的 expense item id 数组
-const selectedAddExpenseItemNameList = ref([])
+const selectedAddExpenseItemIdList = ref([])
 
 // 新增expense 触发框实例
 const addExpenseItemDropdownRef = ref(null)
@@ -437,27 +437,39 @@ const getGroupList = async () => {
   }))
 }
 
+const selectedAddExpenseItemList = computed(
+  () =>
+    isEditMode &&
+    itemList.value.filter((item) =>
+      selectedAddExpenseItemIdList.value.includes(item.id),
+    ),
+)
+
 // 新增一行
 const handleAddNewRow = () => {
-  for (const expenseName of selectedAddExpenseItemNameList.value) {
+  // 打开加载状态
+  loading.value = true
+  for (const expenseItem of selectedAddExpenseItemList.value) {
     editEstimatedCostForm.value.expenseItemDtos.push({
       id: '',
-      name: expenseName,
+      name: expenseItem.name,
       amount: '',
       date: '',
       note: '',
       group: '',
-      category: '',
-      type: '',
+      category: expenseItem.category,
+      type: expenseItem.module,
       isExpand: false,
       isChecked: false,
     })
   }
+  // 关闭加载状态
+  loading.value = false
   nextTick(() => {
     // 关闭dropdown
     addExpenseItemDropdownRef.value?.handleClose()
     // 重置复选框
-    selectedAddExpenseItemNameList.value = []
+    selectedAddExpenseItemIdList.value = []
   })
 }
 
@@ -1205,17 +1217,17 @@ getRepairRecordInfo(id)
                         <!-- batch select -->
                         <div
                           class="flex-between h-32"
-                          v-show="selectedAddExpenseItemNameList.length"
+                          v-show="selectedAddExpenseItemList.length"
                         >
                           <span
                             class="heading-body-body-12px-regular text-neutrals-off-black"
                           >
-                            {{ selectedAddExpenseItemNameList.length }} selected
+                            {{ selectedAddExpenseItemList.length }} selected
                           </span>
                           <div>
                             <el-button
                               size="small"
-                              @click.stop="selectedAddExpenseItemNameList = []"
+                              @click.stop="selectedAddExpenseItemIdList = []"
                             >
                               Clear
                             </el-button>
@@ -1229,11 +1241,11 @@ getRepairRecordInfo(id)
                           </div>
                         </div>
                         <el-checkbox-group
-                          v-model="selectedAddExpenseItemNameList"
+                          v-model="selectedAddExpenseItemIdList"
                         >
                           <div
                             class="py-8"
-                            v-for="(group, index) in groupFilterParams"
+                            v-for="group in groupFilterParams"
                             :key="group.value"
                             v-show="
                               expenseItemActiveTab === 'all' ||
@@ -1268,7 +1280,7 @@ getRepairRecordInfo(id)
                                   >
                                     <el-checkbox
                                       :label="listItem.name"
-                                      :value="listItem.name"
+                                      :value="listItem.id"
                                       size="small"
                                     />
                                   </template>
