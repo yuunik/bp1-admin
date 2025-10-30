@@ -559,11 +559,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -610,7 +608,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -622,19 +620,19 @@ if (id) {
                         : ''
                     "
                   >
-                    <el-row :span="16" class="w-full!">
+                    <el-row :span="16" class="w-full! min-h-40!">
                       <el-col :span="1"></el-col>
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -794,11 +792,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -845,7 +841,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -862,17 +858,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
-                            <!--<span class="text-truncate">-->
-                            <!--  {{ dtcDto.name || '-' }}-->
-                            <!--</span>-->
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1030,11 +1023,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -1081,7 +1072,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -1098,17 +1089,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
-                            <!--<span class="text-truncate">-->
-                            <!--  {{ dtcDto.name || '-' }}-->
-                            <!--</span>-->
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1266,11 +1254,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -1317,7 +1303,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -1334,17 +1320,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
-                            <!--<span class="text-truncate">-->
-                            <!--  {{ dtcDto.name || '-' }}-->
-                            <!--</span>-->
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1502,11 +1485,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -1553,7 +1534,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -1570,17 +1551,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
-                            <!--<span class="text-truncate">-->
-                            <!--  {{ dtcDto.name || '-' }}-->
-                            <!--</span>-->
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1738,11 +1716,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -1789,7 +1765,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -1806,17 +1782,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
-                            <!--<span class="text-truncate">-->
-                            <!--  {{ dtcDto.name || '-' }}-->
-                            <!--</span>-->
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -1974,11 +1947,9 @@ if (id) {
                       />
                     </el-col>
                     <el-col :span="14">
-                      <el-tooltip :content="item.name">
-                        <span class="text-truncate">
-                          {{ item.name || '-' }}
-                        </span>
-                      </el-tooltip>
+                      <span class="wrap-text">
+                        {{ item.name || '-' }}
+                      </span>
                     </el-col>
                     <el-col :span="9">
                       <template
@@ -2025,7 +1996,7 @@ if (id) {
                   v-if="item.hasOEMItem && item.isExpand"
                   v-for="(dtcDto, index) in item.dtcItemDtcDtos"
                   :key="dtcDto.id"
-                  class="h-40"
+                  class="auto-height"
                 >
                   <el-col :span="1"></el-col>
                   <el-col
@@ -2042,17 +2013,14 @@ if (id) {
                       <el-col :span="23">
                         <el-row :gutter="16" class="w-full! gray-border">
                           <el-col :span="5" class="extra">
-                            <el-tooltip :content="dtcDto.code">
-                              <span class="text-truncate">
-                                {{ dtcDto.code || '-' }}
-                              </span>
-                            </el-tooltip>
-                            <!--<span class="text-truncate">-->
-                            <!--  {{ dtcDto.name || '-' }}-->
-                            <!--</span>-->
+                            <span class="wrap-text">
+                              {{ dtcDto.code || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="15">
-                            {{ dtcDto.name || '-' }}
+                            <span class="wrap-text">
+                              {{ dtcDto.name || '-' }}
+                            </span>
                           </el-col>
                           <el-col :span="4">
                             <el-button
@@ -2133,6 +2101,14 @@ if (id) {
     &.h-40 {
       .el-col {
         @apply h-40;
+      }
+    }
+
+    &.auto-height {
+      @apply min-h-40;
+
+      .el-col {
+        @apply h-auto;
       }
     }
 
