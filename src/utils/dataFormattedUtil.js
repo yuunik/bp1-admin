@@ -45,3 +45,13 @@ export const getFormatNumberString = (number) =>
     maximumFractionDigits: 2,
     useGrouping: true, // ✅ 启用千位分隔符
   }).format(number)
+
+/**
+ * @description 获取数字四舍五入整数
+ * @param val
+ * @returns {number|string}
+ */
+export const roundToInt = (val) => {
+  if (val == null || isNaN(val)) return '-'
+  return Math.round(val)
+}
