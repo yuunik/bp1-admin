@@ -21,7 +21,7 @@ import {
 } from '@/apis/clubApi.js'
 import BasePagination from '@/components/BasePagination.vue'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
+import { getDateWithDDMMMYYYY, getLastUsedDate } from '@/utils/dateUtil.js'
 import { useUserStore } from '@/store/index.js'
 import useFileUpload from '@/composables/useFileUpload.js'
 import BaseTag from '@/components/BaseTag.vue'
@@ -32,6 +32,8 @@ import { getUserListApi } from '@/apis/userApi.js'
 import { useSort } from '@/composables/useSort.js'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
+
+import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 const uploadUrl = `${import.meta.env.VITE_SERVER_URL_API}/manager/club/edit`
 
@@ -512,6 +514,13 @@ watch(
   },
 )
 
+watch(
+  () => clubLogPagination.currentPage,
+  () => {
+    getClubLog()
+  },
+)
+
 onMounted(async () => {
   const {
     params: { id },
@@ -902,22 +911,23 @@ onUnmounted(() => {
               label="Date & Time"
               sortable="custom"
               min-width="19%"
-            />
+            >
+              <template #default="{ row }">
+                <span>{{ getLastUsedDate(row.createTime) }}</span>
+              </template>
+            </el-table-column>
             <el-table-column prop="name" label="User" min-width="19%">
               <template #default="{ row }">
                 <el-avatar
-                  v-if="row.logo"
                   fit="cover"
-                  :src="getFullFilePath(row.logo)"
+                  :src="getFullFilePath(row.userDto.logo)"
                   class="mr-8 h-20 w-20 shrink-0"
                   alt="brand icon"
                   shape="circle"
                   :size="20"
                   @error="errorHandler"
                 >
-                  <template #error>
-                    <i class="i-ep:picture" />
-                  </template>
+                  <img :src="DefaultAvatar" />
                 </el-avatar>
                 <span
                   class="cursor-pointer text-wrap underline"
@@ -928,7 +938,7 @@ onUnmounted(() => {
                     })
                   "
                 >
-                  {{ row.name || '-' }}
+                  {{ row.userDto.name || '-' }}
                 </span>
               </template>
             </el-table-column>
