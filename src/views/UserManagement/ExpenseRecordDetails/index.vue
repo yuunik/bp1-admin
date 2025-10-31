@@ -933,7 +933,7 @@ getRepairRecordInfo(id)
                             record.aiRepairItemDto.level === 2,
                         }"
                       >
-                        {{ record.aiRepairItemDto.ratio }} %
+                        {{ Big(record.aiRepairItemDto.ratio).times(100) }} %
                       </span>
                       <p
                         class="heading-body-body-12px-medium text-neutrals-off-black"
