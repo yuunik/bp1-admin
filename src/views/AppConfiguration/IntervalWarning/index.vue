@@ -12,7 +12,7 @@ const activeTab = ref(IntervalWarningTab.MAINTENANCE)
 // 当前的 tab 名称
 const tabArray = Object.freeze([
   { key: IntervalWarningTab.MAINTENANCE, component: Maintenance },
-  { key: IntervalWarningTab.PREDICTION, component: Prediction },
+  // { key: IntervalWarningTab.PREDICTION, component: Prediction },
   { key: IntervalWarningTab.LIVE_DATA_WARNING, component: LiveDataWarning },
 ])
 
