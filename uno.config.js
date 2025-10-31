@@ -164,6 +164,9 @@ export default defineConfig({
     },
   ],
   theme: {
+    breakpoints: {
+      mm: '400px',
+    },
     colors: {
       menuColor: '#001529',
       primaryColor: '#409eff',
