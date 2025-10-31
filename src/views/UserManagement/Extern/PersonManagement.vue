@@ -629,7 +629,7 @@ onMounted(async () => {
                 <span
                   class="heading-body-body-12px-regular text-neutrals-off-black"
                 >
-                  {{ getDateWithDDMMMYYYY(row.OBDDto?.bindingTime) }}
+                  {{ getDateWithDDMMMYYYY(row.bindTime) }}
                 </span>
               </template>
             </el-table-column>
