@@ -489,7 +489,11 @@ onMounted(async () => {
             >
               <template #default="{ row }">
                 <el-text>
-                  {{ row.totalCost ? `$${row.totalCost}` : '-' }}
+                  {{
+                    row.totalCost
+                      ? `$${getFormatNumberString(row.totalCost)}`
+                      : '-'
+                  }}
                 </el-text>
               </template>
             </el-table-column>
