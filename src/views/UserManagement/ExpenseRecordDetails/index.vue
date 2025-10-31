@@ -327,6 +327,11 @@ const getRepairRecordInfo = async (id) => {
 const handleOpenEditEstimatedCostDialog = (record) => {
   const { cloned } = useCloned(record)
   selectedEstimatedCost.value = cloned.value
+  // 回显表单
+  editEstimatedCostForm.value = {
+    cost: cloned.value.aiRepairItemDto.avg,
+    description: cloned.value.aiRepairItemDto.remark,
+  }
   dialogEditEstimatedCostVisible.value = true
 }
 
@@ -938,8 +943,12 @@ getRepairRecordInfo(id)
                       <p
                         class="heading-body-body-12px-medium text-neutrals-off-black"
                       >
-                        Market Average: ${{ record.aiRepairItemDto.avg }} · Your
-                        Price: ${{ record.unitPrice }}
+                        Market Average: ${{
+                          getFormatNumberString(record.aiRepairItemDto.avg)
+                        }}
+                        · Your Price: ${{
+                          getFormatNumberString(record.totalAmount)
+                        }}
                       </p>
                       <p
                         class="heading-body-body-12px-medium text-neutrals-off-black"
@@ -1535,8 +1544,8 @@ getRepairRecordInfo(id)
         <!-- Title -->
         <el-form-item label="Market Average ($)" prop="cost">
           <el-input
-            v-model="editEstimatedCostForm.cost"
-            placeholder="Enter title"
+            v-model.number="editEstimatedCostForm.cost"
+            placeholder="Enter cost"
           />
         </el-form-item>
 
@@ -1544,7 +1553,7 @@ getRepairRecordInfo(id)
         <el-form-item label="Description" prop="description">
           <el-input
             v-model="editEstimatedCostForm.description"
-            placeholder="Enter content"
+            placeholder="Enter description"
           />
         </el-form-item>
       </el-form>
