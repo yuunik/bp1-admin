@@ -280,10 +280,16 @@ const handleEditEstimatedCostForm = async () => {
   try {
     // 验证表单
     await editEstimatedCostFormRef.value.validate()
+    // 算 ratio
+    const ratio = Big(editEstimatedCostForm.value.totalAmount)
+      .minus(editEstimatedCostForm.value.avg)
+      .div(editEstimatedCostForm.value.avg)
+      .toNumber()
     await updateExpenseItemCostAnalysisApi({
       id: selectedEstimatedCost.value.id,
       avg: editEstimatedCostForm.value.cost,
       remark: editEstimatedCostForm.value.description,
+      ratio: ratio,
     })
     // 提示
     ElMessage.success('Edit success')
@@ -331,6 +337,7 @@ const handleOpenEditEstimatedCostDialog = (record) => {
   editEstimatedCostForm.value = {
     cost: cloned.value.aiRepairItemDto.avg,
     description: cloned.value.aiRepairItemDto.remark,
+    totalAmount: cloned.value.totalAmount,
   }
   dialogEditEstimatedCostVisible.value = true
 }
@@ -1552,6 +1559,8 @@ getRepairRecordInfo(id)
         <!-- Content -->
         <el-form-item label="Description" prop="description">
           <el-input
+            type="textarea"
+            :rows="4"
             v-model="editEstimatedCostForm.description"
             placeholder="Enter description"
           />

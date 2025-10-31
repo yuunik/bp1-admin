@@ -371,6 +371,7 @@ export const getRepairRecordDetailApi = (expenseId) => {
  * @param params.id
  * @param params.avg 市场均价
  * @param params.remark 备注
+ * @param params.ratio 占比
  *
  * @returns {Promise}
  */
@@ -380,6 +381,7 @@ export const updateExpenseItemCostAnalysisApi = (params) => {
   data.append('id', params.id)
   data.append('avg', params.avg)
   data.append('remark', params.remark)
+  data.append('ratio', params.ratio)
 
   return request({
     url: UserApi.EDIT_EXPENSE_ITEM_COST_ANALYSIS,
