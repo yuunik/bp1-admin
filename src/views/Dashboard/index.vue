@@ -509,7 +509,7 @@ onMounted(async () => {
         </div>
         <div v-show="activeTabIndex === 1">
           <el-table :data="expenseBrandList" @sort-change="sort">
-            <el-table-column prop="name" label="User" min-width="69%">
+            <el-table-column prop="name" label="Brand" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
                   v-if="row.logo"
