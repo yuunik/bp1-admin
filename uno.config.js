@@ -165,7 +165,10 @@ export default defineConfig({
   ],
   theme: {
     breakpoints: {
+      // A4 纸张宽度
       a4: '595px',
+      // 电脑屏幕宽度
+      pc: '768px',
     },
     colors: {
       menuColor: '#001529',
