@@ -297,7 +297,7 @@ const avatarErrorHandler = () => true
           <el-image
             :src="getFullFilePath(vehicleReportInfo.vehicleDto?.cover)"
             alt="user vehicle image"
-            class="w-120 rounded-16 md:(w-200 h-133) row-center! h-80"
+            class="w-120 rounded-16 md:(w-200 h-133) print:(w-200 h-133) row-center! h-80"
             fit="cover"
           >
             <template #error>
@@ -515,7 +515,7 @@ const avatarErrorHandler = () => true
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_p]:min-w-100 [&>li]:h-15 grid grid-cols-1 gap-8 px-12 md:grid-cols-2 [&>li]:flex [&>li]:gap-8"
+              class="[&_p]:min-w-100 [&>li]:h-15 grid grid-cols-1 gap-8 px-12 md:grid-cols-2 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
             >
               <li>
                 <p class="poppins-10px-regular text-neutrals-grey-4">
@@ -612,7 +612,9 @@ const avatarErrorHandler = () => true
               >
                 <el-col :span="2"></el-col>
                 <el-col :xs="18" :sm="6">
-                  <span class="poppins-10px-semibold hidden md:block">
+                  <span
+                    class="poppins-10px-semibold hidden md:block print:block"
+                  >
                     System
                   </span>
                   <span class="poppins-10px-semibold md:hidden">
@@ -621,7 +623,7 @@ const avatarErrorHandler = () => true
                 </el-col>
                 <el-col
                   :span="12"
-                  class="hidden! md:block! poppins-10px-semibold"
+                  class="hidden! md:block! print:block! poppins-10px-semibold"
                 >
                   OEM
                 </el-col>
@@ -2130,10 +2132,6 @@ label {
 .report-container :deep(.el-row) {
   @apply m-0! row-center px-12 py-8;
 
-  &.md-model {
-    @apply pl-17!;
-  }
-
   &.no-p {
     @apply p-0!;
   }
@@ -2164,6 +2162,7 @@ label {
     @apply pr-0!;
   }
 }
+
 // 重置i标签样式, 做图标使用
 i {
   @apply text-neutrals-white poppins-10px-regular rounded-full px-6 py-2;
@@ -2178,46 +2177,59 @@ i {
   @apply bg-branding-colours-primary shadow-default text-neutrals-off-white h-48! bottom-42 px-32! py-16! rounded-12! text-16! font-400! fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer border-none;
 }
 
+@media (max-width: 767px) {
+  // h5 模式下, 添加样式对齐
+  :deep(.el-row) {
+    &.md-model {
+      @apply pl-17!;
+    }
+  }
+}
+
 // 屏幕宽度大于 768px 时，修改字体大小
 @media (min-width: 768px) {
   .poppins-28px-semibold {
-    @apply text-30! print:text-28;
+    @apply text-30;
   }
 
   .poppins-20px-semibold {
-    @apply text-22! print:text-20;
+    @apply text-22;
   }
 
   .poppins-12px-regular {
-    @apply text-14! print:text-12;
+    @apply text-14;
   }
 
   .poppins-12px-medium {
-    @apply text-14! print:text-12;
+    @apply text-14;
   }
 
   .poppins-12px-semibold {
-    @apply text-14! print:text-12;
+    @apply text-14;
   }
 
   .poppins-10px-regular {
-    @apply text-12! print:text-10;
+    @apply text-12;
   }
 
   .poppins-10px-medium {
-    @apply text-12! print:text-10;
+    @apply text-12;
   }
 
   .poppins-10px-semibold {
-    @apply text-12! print:text-10;
+    @apply text-12;
   }
 
   .text-10px-regular {
-    @apply text-12 print:text-10;
+    @apply text-12;
   }
 
   .hanno-20px-regular {
-    @apply text-22 print:text-20;
+    @apply text-22;
+  }
+
+  .roboto-12px-semibold {
+    @apply text-14;
   }
 }
 
@@ -2261,6 +2273,10 @@ i {
 
   .hanno-20px-regular {
     @apply text-20;
+  }
+
+  .roboto-12px-semibold {
+    @apply text-12;
   }
 }
 </style>
