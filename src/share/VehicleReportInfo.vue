@@ -323,7 +323,9 @@ const avatarErrorHandler = () => true
             </h2>
             <ul class="flex flex-col gap-4 [&>li]:flex [&>li]:gap-8">
               <li class="flex items-center">
-                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-70 pc:w-80"
+                >
                   VIN
                 </p>
                 <span
@@ -333,7 +335,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li class="flex items-center">
-                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-70 pc:w-80"
+                >
                   License Plate
                 </p>
                 <span
@@ -343,7 +347,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li class="flex items-center">
-                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-70 pc:w-80"
+                >
                   Mileage
                 </p>
                 <span
@@ -361,7 +367,7 @@ const avatarErrorHandler = () => true
             class="bg-branding-primary rounded-16 text-neutrals-white flex gap-16 p-12"
           >
             <!-- 评分 -->
-            <div class="min-w-42 flex flex-col">
+            <div class="w-42 pc:w-50 flex flex-col items-center">
               <em
                 class="hanno-20px-regular text-align-center font-hanno leading-24 h-24 not-italic"
               >
@@ -392,7 +398,7 @@ const avatarErrorHandler = () => true
             <div class="flex flex-col gap-8">
               <h4 class="ml-12">
                 <span
-                  class="poppins-10px-semibold text-neutrals-grey-4 min-h-14"
+                  class="poppins-10px-semibold text-neutrals-grey-4 leading-14 pc:(h-20 leading-20) h-14"
                 >
                   Issues
                 </span>
@@ -454,7 +460,7 @@ const avatarErrorHandler = () => true
             <div class="flex flex-col gap-8">
               <h4 class="ml-12">
                 <span
-                  class="poppins-10px-semibold text-neutrals-grey-4 min-h-14"
+                  class="poppins-10px-semibold text-neutrals-grey-4 leading-14 pc:(h-20 leading-20) h-14"
                 >
                   Expense Records
                 </span>
@@ -515,10 +521,12 @@ const avatarErrorHandler = () => true
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_p]:min-w-100 [&>li]:h-15 a4:grid-cols-2 grid grid-cols-1 gap-8 px-12 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
+              class="[&>li]:h-15 a4:grid-cols-2 grid grid-cols-1 gap-8 px-12 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
             >
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Vehicle Type
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -526,7 +534,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Primary Colour
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -534,7 +544,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Manufacturing Year
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -542,7 +554,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Chassis No.
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -550,7 +564,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Original Reg. Date
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -562,7 +578,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Transfer Count
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -570,7 +588,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   COE Category
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -578,7 +598,9 @@ const avatarErrorHandler = () => true
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Engine Capacity
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">

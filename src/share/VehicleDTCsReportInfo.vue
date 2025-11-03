@@ -269,7 +269,9 @@ const generatePdf = async () => {
             </h2>
             <ul class="flex flex-col gap-4 [&>li]:flex [&>li]:gap-8">
               <li class="flex items-center">
-                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-70 pc:w-80"
+                >
                   VIN
                 </p>
                 <span
@@ -279,7 +281,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li class="flex items-center">
-                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-70 pc:w-80"
+                >
                   License Plate
                 </p>
                 <span
@@ -289,7 +293,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li class="flex items-center">
-                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-70 pc:w-80"
+                >
                   Mileage
                 </p>
                 <span
@@ -308,10 +314,12 @@ const generatePdf = async () => {
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_p]:min-w-100 [&>li]:h-15 a4:grid-cols-2 grid grid-cols-1 gap-8 px-12 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
+              class="[&>li]:h-15 a4:grid-cols-2 grid grid-cols-1 gap-8 px-12 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
             >
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Vehicle Type
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -319,7 +327,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Primary Colour
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -327,7 +337,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Manufacturing Year
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -335,7 +347,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Chassis No.
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -343,7 +357,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Original Reg. Date
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -355,7 +371,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Transfer Count
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -363,7 +381,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   COE Category
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
@@ -371,7 +391,9 @@ const generatePdf = async () => {
                 </span>
               </li>
               <li>
-                <p class="poppins-10px-regular text-neutrals-grey-4">
+                <p
+                  class="poppins-10px-regular text-neutrals-grey-4 w-100 pc:w-120"
+                >
                   Engine Capacity
                 </p>
                 <span class="poppins-10px-regular text-neutrals-off-black">
