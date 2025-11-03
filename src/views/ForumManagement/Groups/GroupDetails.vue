@@ -670,6 +670,12 @@ onUnmounted(() => {
                       <el-dropdown-item
                         v-for="user in clubManagerList"
                         :key="user.id"
+                        @click="
+                          $router.push({
+                            name: RouteName.PERSON_MANAGE,
+                            params: { id: user.userId },
+                          })
+                        "
                       >
                         <div class="clubManagerList-center">
                           <el-avatar
