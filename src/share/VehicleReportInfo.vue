@@ -413,6 +413,7 @@ const avatarErrorHandler = () => true
                   <p
                     :class="[
                       'poppins-10px-semibold',
+                      'wrap-text',
                       vehicleReportInfo.faultCodeCount > 0
                         ? 'text-status-colours-red'
                         : 'text-neutrals-off-black',
@@ -436,6 +437,7 @@ const avatarErrorHandler = () => true
                   <p
                     :class="[
                       'poppins-10px-semibold',
+                      'wrap-text',
                       vehicleReportInfo.reportPredictionDtos?.length > 0
                         ? 'text-status-colours-red'
                         : 'text-neutrals-off-black',
@@ -468,7 +470,7 @@ const avatarErrorHandler = () => true
                     color="#6F7788"
                   ></base-svg-icon>
                   <p
-                    class="poppins-10px-semibold h-15 text-truncate text-align-center w-full"
+                    class="poppins-10px-semibold h-15 wrap-text text-align-center w-full break-normal"
                   >
                     {{ vehicleReportInfo.repairCount ?? '-' }} Repair
                   </p>
@@ -483,10 +485,9 @@ const avatarErrorHandler = () => true
                     color="#6F7788"
                   ></base-svg-icon>
                   <p
-                    class="poppins-10px-semibold h-15 text-truncate text-align-center w-full"
+                    class="poppins-10px-semibold h-15 wrap-text text-align-center w-full break-normal"
                   >
-                    {{ vehicleReportInfo.maintenanceCount ?? '-' }}
-                    Maintenance
+                    {{ vehicleReportInfo.maintenanceCount ?? '-' }} Maintenance
                   </p>
                 </div>
                 <!-- Modification -->
@@ -499,7 +500,7 @@ const avatarErrorHandler = () => true
                     color="#6F7788"
                   ></base-svg-icon>
                   <p
-                    class="poppins-10px-semibold h-15 text-truncate text-align-center w-full"
+                    class="poppins-10px-semibold h-15 wrap-text text-align-center w-full break-normal"
                   >
                     {{ vehicleReportInfo.modificationCount ?? '-' }}
                     Modification
