@@ -282,8 +282,8 @@ const handleEditEstimatedCostForm = async () => {
     await editEstimatedCostFormRef.value.validate()
     // 算 ratio
     const ratio = Big(editEstimatedCostForm.value.totalAmount)
-      .minus(editEstimatedCostForm.value.avg)
-      .div(editEstimatedCostForm.value.avg)
+      .minus(editEstimatedCostForm.value.cost)
+      .div(editEstimatedCostForm.value.cost)
       .toNumber()
     await updateExpenseItemCostAnalysisApi({
       id: selectedEstimatedCost.value.id,
