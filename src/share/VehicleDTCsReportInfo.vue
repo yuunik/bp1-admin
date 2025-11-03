@@ -15,12 +15,7 @@ import { VehicleEcuCategory } from '@/utils/constantsUtil.js'
 
 import DefaultCardImg from '@/assets/specialIcons/default-car-img.svg'
 import EngineIcon from '@/assets/icons/engine-load.svg'
-import TransmissionIcon from '@/assets/icons/tranmission.svg'
-import BrakesIcon from '@/assets/icons/brakes.svg'
-import ElectricalIcon from '@/assets/icons/electronic-central-electric.svg'
-import ChassisIcon from '@/assets/icons/chassis.svg'
-import BodyAndTrimIcon from '@/assets/icons/services-icon.svg'
-import OthersIcon from '@/assets/icons/others-icon.svg'
+import NormalStatusIcon from '@/assets/specialIcons/check-one-fill.svg'
 
 // 页面加载状态
 const isLoading = ref(false)
@@ -244,27 +239,27 @@ const generatePdf = async () => {
       <!-- 报告 -->
       <article>
         <!-- 车辆信息 -->
-        <section class="my-16 flex items-center gap-32">
+        <section class="my-16 flex items-center gap-16">
           <el-image
             :src="getFullFilePath(vehicleDTCsReportInfo.vehicleDto?.cover)"
             alt="user vehicle image"
-            class="w-200 rounded-16"
+            class="w-120 rounded-16 a4:(w-200 h-133) print:(w-200 h-133) row-center! h-80"
             fit="cover"
           >
             <template #error>
               <!-- 车辆图片加载失败的默认 -->
               <el-image
                 :src="DefaultCardImg"
+                class="rounded-16"
                 alt="user vehicle image"
-                class="w-200"
                 fit="cover"
               />
             </template>
           </el-image>
           <div class="flex flex-1 flex-col gap-8">
-            <h2 class="items-centers flex">
+            <h2 class="row-center">
               <em
-                class="poppins-20px-semibold text-neutrals-blue h-30 row-center not-italic"
+                class="text-16 text-neutrals-blue h-30 row-center poppins-20px-semibold not-italic"
               >
                 {{
                   `${vehicleDTCsReportInfo.brand} ${vehicleDTCsReportInfo.model} ${vehicleDTCsReportInfo.year}` ||
@@ -272,36 +267,36 @@ const generatePdf = async () => {
                 }}
               </em>
             </h2>
-            <ul
-              class="[&>li]:h-15 flex flex-col gap-4 [&>li]:flex [&>li]:gap-8"
-            >
+            <ul class="flex flex-col gap-4 [&>li]:flex [&>li]:gap-8">
               <li class="flex items-center">
-                <label class="poppins-10px-regular flex-[1_1_92px]">VIN</label>
-                <el-text
-                  class="poppins-10px-regular text-truncate flex-[1_1_189px]"
+                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
+                  VIN
+                </p>
+                <span
+                  class="poppins-10px-regular wrap-text text-neutrals-off-black flex-1"
                 >
                   {{ vehicleDTCsReportInfo.vin || '-' }}
-                </el-text>
+                </span>
               </li>
               <li class="flex items-center">
-                <label class="poppins-10px-regular flex-[1_1_92px]">
+                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
                   License Plate
-                </label>
-                <el-text
-                  class="poppins-10px-regular text-truncate flex-[1_1_189px]"
+                </p>
+                <span
+                  class="poppins-10px-regular wrap-text text-neutrals-off-black flex-1"
                 >
                   {{ vehicleDTCsReportInfo.licensePlate || '-' }}
-                </el-text>
+                </span>
               </li>
               <li class="flex items-center">
-                <label class="poppins-10px-regular flex-[1_1_92px]">
+                <p class="poppins-10px-regular text-neutrals-grey-4 min-w-80">
                   Mileage
-                </label>
-                <el-text
-                  class="poppins-10px-regular text-truncate flex-[1_1_189px]"
+                </p>
+                <span
+                  class="poppins-10px-regular wrap-text text-neutrals-off-black flex-1"
                 >
                   {{ getFormatNumber(vehicleDTCsReportInfo.mileage) || '-' }} km
-                </el-text>
+                </span>
               </li>
             </ul>
           </div>
@@ -309,63 +304,79 @@ const generatePdf = async () => {
         <div class="flex flex-col gap-24">
           <!-- Vehicle Information -->
           <section class="section-container">
-            <h3 class="section-header">
+            <h3 class="section-header h-18 row-center">
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_label]:w-100 [&>li]:h-15 grid grid-cols-2 gap-8 [&>li]:flex [&>li]:gap-8"
+              class="[&_p]:min-w-100 [&>li]:h-15 a4:grid-cols-2 grid grid-cols-1 gap-8 px-12 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
             >
               <li>
-                <label>Vehicle Type</label>
-                <el-text class="text-truncate">
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Vehicle Type
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.vehicleType || '-' }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>Primary Colour</label>
-                <el-text class="text-truncate">
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Primary Colour
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.primaryColour || '-' }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>Manufacturing Year</label>
-                <el-text class="text-truncate">
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Manufacturing Year
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.year || '-' }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>Chassis No.</label>
-                <el-text class="text-truncate">
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Chassis No.
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.vin || '-' }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>Original Reg. Date</label>
-                <el-text class="text-truncate">
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Original Reg. Date
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{
                     getDateWithDDMMMYYYY(
                       vehicleDTCsReportInfo.vehicleDto?.createTime,
                     ) || '-'
                   }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>Transfer Count</label>
-                <el-text>
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Transfer Count
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.transferCount || '-' }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>COE Category</label>
-                <el-text>
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  COE Category
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.coeCategory || '-' }}
-                </el-text>
+                </span>
               </li>
               <li>
-                <label>Engine Capacity</label>
-                <el-text class="text-truncate">
+                <p class="poppins-10px-regular text-neutrals-grey-4">
+                  Engine Capacity
+                </p>
+                <span class="poppins-10px-regular text-neutrals-off-black">
                   {{ vehicleDTCsReportInfo.vehicleDto?.engineCapacity || '-' }}
-                </el-text>
+                </span>
               </li>
             </ul>
           </section>
@@ -377,35 +388,56 @@ const generatePdf = async () => {
               vehicleDTCsReportInfo.reportDtcItemDtos.length > 0
             "
           >
-            <h3 class="section-header">
-              <em class="title">Fault Codes</em>
-            </h3>
+            <div class="row-center h-18 leading-18 section-header gap-4">
+              <h3 class="text-neutrals-off-black poppins-12px-semibold">
+                Fault Codes
+              </h3>
+              <span class="text-neutrals-off-black poppins-12px-semibold">
+                ({{ vehicleDTCsReportInfo.faultCodeCount }})
+              </span>
+            </div>
             <!-- table -->
             <div>
               <!-- thead -->
               <el-row
-                class="bg-neutrals-grey-1 rounded-t-8 text-neutrals-grey-4 poppins-10px-semibold rounded"
+                class="bg-neutrals-grey-1 rounded-t-8 text-neutrals-grey-4 rounded"
                 :gutter="16"
               >
                 <el-col :span="2"></el-col>
-                <el-col :span="6">System</el-col>
-                <el-col :span="12">ECU</el-col>
-                <el-col :span="4">DTC</el-col>
+                <el-col :span="18" class="a4:hidden!">
+                  <span class="poppins-10px-semibold">System & OEM</span>
+                </el-col>
+                <el-col :span="6" class="a4-no-view">
+                  <span class="poppins-10px-semibold">System</span>
+                </el-col>
+                <el-col
+                  :span="12"
+                  class="hidden! a4:block! print:block! poppins-10px-semibold"
+                >
+                  OEM
+                </el-col>
+                <el-col :span="4" class="poppins-10px-semibold">DTC</el-col>
               </el-row>
               <!-- tbody -->
               <!-- Engine -->
               <template v-if="engineItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image :src="EngineIcon" class="h-20 w-20" fit="cover" />
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
+                    />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.ENGINE }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.ENGINE }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -434,24 +466,51 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== engineItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== engineItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -462,18 +521,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -483,29 +551,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -518,20 +614,22 @@ const generatePdf = async () => {
               <!-- Transmission -->
               <template v-if="transmissionItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image
-                      :src="TransmissionIcon"
-                      class="h-20 w-20"
-                      fit="cover"
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.TRANSMISSION }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.TRANSMISSION }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -563,25 +661,53 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== transmissionItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== transmissionItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -590,18 +716,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -611,29 +746,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -646,16 +809,22 @@ const generatePdf = async () => {
               <!-- Brakes -->
               <template v-if="brakesItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image :src="BrakesIcon" class="h-20 w-20" fit="cover" />
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
+                    />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.BRAKES }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.BRAKES }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -684,25 +853,53 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== brakesItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== brakesItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -711,18 +908,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -732,29 +938,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -767,20 +1001,22 @@ const generatePdf = async () => {
               <!-- Electrical -->
               <template v-if="electricalItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image
-                      :src="ElectricalIcon"
-                      class="h-20 w-20"
-                      fit="cover"
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.ELECTRICAL }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.ELECTRICAL }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -809,25 +1045,53 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== electricalItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== electricalItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -836,18 +1100,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -857,29 +1130,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -892,20 +1193,22 @@ const generatePdf = async () => {
               <!-- Chassis -->
               <template v-if="chassisItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image
-                      :src="ChassisIcon"
-                      class="h-20 w-20"
-                      fit="cover"
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.CHASSIS }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.CHASSIS }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -934,25 +1237,53 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== chassisItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== chassisItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -961,18 +1292,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -982,29 +1322,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -1017,20 +1385,22 @@ const generatePdf = async () => {
               <!-- Body and Trim -->
               <template v-if="bodyAndTrimItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image
-                      :src="BodyAndTrimIcon"
-                      class="h-20 w-20"
-                      fit="cover"
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.BODY_AND_TRIM }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.BODY_AND_TRIM }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -1062,25 +1432,53 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== bodyAndTrimItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== bodyAndTrimItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -1089,18 +1487,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -1110,29 +1517,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -1145,16 +1580,22 @@ const generatePdf = async () => {
               <!-- Others -->
               <template v-if="otherItemList.length > 0">
                 <el-row
-                  class="poppins-10px-regular text-neutrals-off-black"
+                  class="poppins-10px-regular text-neutrals-off-black row-center"
                   :gutter="16"
                 >
-                  <el-col :span="2">
-                    <el-image :src="OthersIcon" class="h-20 w-20" fit="cover" />
+                  <el-col :span="2" class="flex!">
+                    <img
+                      :src="EngineIcon"
+                      class="mx-auto h-16 w-16 object-cover"
+                    />
                   </el-col>
-                  <el-col :span="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.OTHERS }}
                   </el-col>
-                  <el-col :span="12"></el-col>
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.OTHERS }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -1183,25 +1624,53 @@ const generatePdf = async () => {
                     class="poppins-10px-regular text-neutrals-off-black"
                     :gutter="16"
                   >
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="12" class="divider-neutral-grey-4-1px">
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
+                    >
                       {{ item.name }}
                     </el-col>
                     <el-col :span="4" class="divider-neutral-grey-4-1px">
-                      {{
-                        item.reportDtcItemDtcDtos &&
-                        item.reportDtcItemDtcDtos.length > 0
-                          ? `${item.reportDtcItemDtcDtos.length} DTC${item.reportDtcItemDtcDtos.length > 1 ? 's' : ''}`
-                          : '-'
-                      }}
+                      <span
+                        v-if="
+                          item.reportDtcItemDtcDtos &&
+                          item.reportDtcItemDtcDtos.length > 0
+                        "
+                      >
+                        {{ item.reportDtcItemDtcDtos.length }} DTC{{
+                          item.reportDtcItemDtcDtos.length > 1 ? 's' : ''
+                        }}
+                      </span>
+                      <el-image
+                        v-else
+                        :src="NormalStatusIcon"
+                        class="h-12 w-12"
+                        fit="cover"
+                      />
                     </el-col>
                   </el-row>
-                  <el-row v-if="index !== otherItemList.length - 1">
-                    <el-col :span="2"></el-col>
-                    <el-col :span="6"></el-col>
-                    <el-col :span="16"><el-divider /></el-col>
+                  <el-row
+                    v-if="index !== otherItemList.length - 1"
+                    class="no-p"
+                  >
+                    <el-col :span="2" />
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
+
                   <!-- DTC 数量 -->
                   <template
                     v-if="
@@ -1210,18 +1679,27 @@ const generatePdf = async () => {
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black pb-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="8">DTC</el-col>
-                          <el-col :span="16">Description</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
                     </el-row>
@@ -1231,29 +1709,57 @@ const generatePdf = async () => {
                       :class="[
                         'poppins-10px-regular',
                         'text-neutrals-off-black',
+                        'px-0!',
                         index === item.reportDtcItemDtcDtos.length - 1
                           ? 'pt-1!'
-                          : 'py-1!',
+                          : 'pt-1! pb-0!',
                       ]"
                       :gutter="16"
                     >
-                      <el-col :span="2"></el-col>
-                      <el-col :span="6"></el-col>
-                      <el-col :span="16">
+                      <el-col :span="2" />
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
                             },
                           ]"
                         >
-                          <el-col :span="8">
-                            {{ dtcDto.faultCode || '-' }}
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
                           </el-col>
-                          <el-col :span="16">
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
                             {{ dtcDto.name || '-' }}
                           </el-col>
                         </el-row>
@@ -1270,12 +1776,12 @@ const generatePdf = async () => {
       <!-- 导出 PDF 按钮 -->
       <el-button
         type="primary"
-        class="bg-branding-colours-primary shadow-default text-neutrals-off-white bottom-68 fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer rounded-full border-none px-20 py-10"
+        class="button-style"
         @click="generatePdf"
         :loading="isGeneratingPdf"
         v-if="$route.query.type !== 'print'"
       >
-        Export as PDF
+        Download PDF
       </el-button>
     </main>
   </div>
@@ -1296,16 +1802,38 @@ label {
   @apply flex flex-col gap-16;
 
   .section-header {
-    @apply bg-branding-light-blue rounded-8 px-12 py-8;
+    @apply bg-branding-light-blue rounded-8 row-center leading-18 px-12 py-8;
 
     .title {
-      @apply text-neutrals-off-black poppins-12px-semibold not-italic;
+      @apply text-neutrals-off-black poppins-12px-semibold h-18 not-italic;
     }
   }
 }
 
-:deep(.el-row) {
-  @apply m-0! px-8 py-12;
+.report-container :deep(.el-row) {
+  @apply m-0! row-center px-12 py-8;
+
+  &.no-p {
+    @apply p-0!;
+  }
+
+  &.p-lr-12 {
+    & > .el-col:first-child {
+      @apply pl-12!;
+    }
+
+    & > .el-col:last-child {
+      @apply pr-12!;
+    }
+  }
+
+  &.mb-8 {
+    @apply mb-8!;
+  }
+
+  &.no-pt {
+    @apply pt-0!;
+  }
 
   & > .el-col:first-child {
     @apply pl-0!;
@@ -1320,4 +1848,126 @@ label {
 i {
   @apply text-neutrals-white poppins-10px-regular rounded-full px-6 py-2;
 }
+
+.report-container :deep(.el-divider--horizontal) {
+  border-top: 1px solid #eaeef4;
+}
+
+// 按钮样式
+.button-style {
+  @apply bg-branding-colours-primary shadow-default text-neutrals-off-white h-48! bottom-42 px-32! py-16! rounded-12! text-16! font-400! fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer border-none;
+}
+
+// 手机屏幕样式
+@media (max-width: 594px) {
+  // h5 模式下
+  :deep(.el-row) {
+    // 添加 padding-left , 使得标题对齐
+    &.md-model {
+      @apply pl-17!;
+    }
+
+    .el-col {
+      // 样式不可见
+      &.a4-no-view {
+        @apply hidden;
+      }
+    }
+  }
+}
+
+// 屏幕宽度大于 768px 时，修改字体大小 (大于 768px 时，默认使用的设备为 pc)
+@media (min-width: 768px) {
+  .poppins-28px-semibold {
+    @apply text-30;
+  }
+
+  .poppins-20px-semibold {
+    @apply text-22;
+  }
+
+  .poppins-12px-regular {
+    @apply text-14;
+  }
+
+  .poppins-12px-medium {
+    @apply text-14;
+  }
+
+  .poppins-12px-semibold {
+    @apply text-14;
+  }
+
+  .poppins-10px-regular {
+    @apply text-12;
+  }
+
+  .poppins-10px-medium {
+    @apply text-12;
+  }
+
+  .poppins-10px-semibold {
+    @apply text-12;
+  }
+
+  .text-10px-regular {
+    @apply text-12;
+  }
+
+  .hanno-20px-regular {
+    @apply text-22;
+  }
+
+  .roboto-12px-semibold {
+    @apply text-14;
+  }
+}
+
+// 打印样式
+@media print {
+  .poppins-28px-semibold {
+    @apply text-28;
+  }
+
+  .poppins-20px-semibold {
+    @apply text-20;
+  }
+
+  .poppins-12px-regular {
+    @apply text-12;
+  }
+
+  .poppins-12px-medium {
+    @apply text-12;
+  }
+
+  .poppins-12px-semibold {
+    @apply text-12;
+  }
+
+  .poppins-10px-regular {
+    @apply text-10;
+  }
+
+  .poppins-10px-medium {
+    @apply text-10;
+  }
+
+  .poppins-10px-semibold {
+    @apply text-10;
+  }
+
+  .text-10px-regular {
+    @apply text-10;
+  }
+
+  .hanno-20px-regular {
+    @apply text-20;
+  }
+
+  .roboto-12px-semibold {
+    @apply text-12;
+  }
+}
+/* </editor-fold> */
 </style>

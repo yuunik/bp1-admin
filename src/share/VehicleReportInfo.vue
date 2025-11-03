@@ -297,7 +297,7 @@ const avatarErrorHandler = () => true
           <el-image
             :src="getFullFilePath(vehicleReportInfo.vehicleDto?.cover)"
             alt="user vehicle image"
-            class="w-120 rounded-16 md:(w-200 h-133) print:(w-200 h-133) row-center! h-80"
+            class="w-120 rounded-16 a4:(w-200 h-133) print:(w-200 h-133) row-center! h-80"
             fit="cover"
           >
             <template #error>
@@ -515,7 +515,7 @@ const avatarErrorHandler = () => true
               <em class="title">Vehicle Information</em>
             </h3>
             <ul
-              class="[&_p]:min-w-100 [&>li]:h-15 grid grid-cols-1 gap-8 px-12 md:grid-cols-2 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
+              class="[&_p]:min-w-100 [&>li]:h-15 a4:grid-cols-2 grid grid-cols-1 gap-8 px-12 print:grid-cols-2 [&>li]:flex [&>li]:gap-8"
             >
               <li>
                 <p class="poppins-10px-regular text-neutrals-grey-4">
@@ -611,19 +611,15 @@ const avatarErrorHandler = () => true
                 :gutter="16"
               >
                 <el-col :span="2"></el-col>
-                <el-col :xs="18" :sm="6">
-                  <span
-                    class="poppins-10px-semibold hidden md:block print:block"
-                  >
-                    System
-                  </span>
-                  <span class="poppins-10px-semibold md:hidden">
-                    System & OEM
-                  </span>
+                <el-col :span="18" class="a4:hidden!">
+                  <span class="poppins-10px-semibold">System & OEM</span>
+                </el-col>
+                <el-col :span="6" class="a4-no-view">
+                  <span class="poppins-10px-semibold">System</span>
                 </el-col>
                 <el-col
                   :span="12"
-                  class="hidden! md:block! print:block! poppins-10px-semibold"
+                  class="hidden! a4:block! print:block! poppins-10px-semibold"
                 >
                   OEM
                 </el-col>
@@ -642,10 +638,13 @@ const avatarErrorHandler = () => true
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.ENGINE }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.ENGINE }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -675,11 +674,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -707,8 +711,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -723,8 +732,17 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
                         <el-row
                           :gutter="24"
                           class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
@@ -748,8 +766,31 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
                         <el-row
                           :gutter="24"
                           :class="[
@@ -785,14 +826,17 @@ const avatarErrorHandler = () => true
                 >
                   <el-col :span="2" class="flex!">
                     <img
-                      :src="TransmissionIcon"
+                      :src="EngineIcon"
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.TRANSMISSION }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.TRANSMISSION }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -825,11 +869,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -857,8 +906,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -869,15 +923,24 @@ const avatarErrorHandler = () => true
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black py-0! px-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
                           <el-col :span="6">DTC</el-col>
                           <el-col :span="18">Description</el-col>
@@ -898,13 +961,37 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
                             'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
@@ -934,14 +1021,17 @@ const avatarErrorHandler = () => true
                 >
                   <el-col :span="2" class="flex!">
                     <img
-                      :src="BrakesIcon"
+                      :src="EngineIcon"
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.BRAKES }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.BRAKES }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -971,11 +1061,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -1003,8 +1098,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -1015,15 +1115,24 @@ const avatarErrorHandler = () => true
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black py-0! px-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
                           <el-col :span="6">DTC</el-col>
                           <el-col :span="18">Description</el-col>
@@ -1044,13 +1153,37 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
                             'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
@@ -1080,14 +1213,17 @@ const avatarErrorHandler = () => true
                 >
                   <el-col :span="2" class="flex!">
                     <img
-                      :src="ElectricalIcon"
+                      :src="EngineIcon"
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.ELECTRICAL }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.ELECTRICAL }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -1117,11 +1253,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -1149,8 +1290,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -1161,15 +1307,24 @@ const avatarErrorHandler = () => true
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black py-0! px-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
                           <el-col :span="6">DTC</el-col>
                           <el-col :span="18">Description</el-col>
@@ -1190,13 +1345,37 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
                             'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
@@ -1226,14 +1405,17 @@ const avatarErrorHandler = () => true
                 >
                   <el-col :span="2" class="flex!">
                     <img
-                      :src="ChassisIcon"
+                      :src="EngineIcon"
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.CHASSIS }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.CHASSIS }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -1263,11 +1445,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -1295,8 +1482,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -1307,15 +1499,24 @@ const avatarErrorHandler = () => true
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black py-0! px-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
                           <el-col :span="6">DTC</el-col>
                           <el-col :span="18">Description</el-col>
@@ -1336,13 +1537,37 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
                             'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
@@ -1372,14 +1597,17 @@ const avatarErrorHandler = () => true
                 >
                   <el-col :span="2" class="flex!">
                     <img
-                      :src="BodyAndTrimIcon"
+                      :src="EngineIcon"
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.BODY_AND_TRIM }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.BODY_AND_TRIM }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -1412,11 +1640,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -1444,8 +1677,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -1456,15 +1694,24 @@ const avatarErrorHandler = () => true
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black py-0! px-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
                           <el-col :span="6">DTC</el-col>
                           <el-col :span="18">Description</el-col>
@@ -1485,13 +1732,37 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
                             'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
@@ -1521,14 +1792,17 @@ const avatarErrorHandler = () => true
                 >
                   <el-col :span="2" class="flex!">
                     <img
-                      :src="OthersIcon"
+                      :src="EngineIcon"
                       class="mx-auto h-16 w-16 object-cover"
                     />
                   </el-col>
-                  <el-col :xs="18" :sm="6" class="poppins-10px-regular">
+                  <el-col :span="18" class="poppins-10px-regular a4:hidden!">
                     {{ VehicleEcuCategory.OTHERS }}
                   </el-col>
-                  <el-col :xs="0" :sm="12" />
+                  <el-col :span="6" class="poppins-10px-regular a4-no-view">
+                    {{ VehicleEcuCategory.OTHERS }}
+                  </el-col>
+                  <el-col :span="12" class="a4-no-view" />
                   <el-col :span="4">
                     <i
                       :class="[
@@ -1558,11 +1832,16 @@ const avatarErrorHandler = () => true
                     :gutter="16"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
+                    <el-col :span="6" class="a4-no-view" />
                     <el-col
-                      :xs="18"
-                      :sm="12"
-                      class="divider-neutral-grey-4-1px"
+                      :span="18"
+                      class="divider-neutral-grey-4-1px a4:hidden!"
+                    >
+                      {{ item.name }}
+                    </el-col>
+                    <el-col
+                      :span="12"
+                      class="divider-neutral-grey-4-1px a4-no-view"
                     >
                       {{ item.name }}
                     </el-col>
@@ -1590,8 +1869,13 @@ const avatarErrorHandler = () => true
                     class="no-p"
                   >
                     <el-col :span="2" />
-                    <el-col :xs="0" :sm="6" />
-                    <el-col :xs="22" :sm="16"><el-divider /></el-col>
+                    <el-col :span="6" class="a4-no-view" />
+                    <el-col :span="22" class="a4:hidden!">
+                      <el-divider />
+                    </el-col>
+                    <el-col :span="16" class="a4-no-view">
+                      <el-divider />
+                    </el-col>
                   </el-row>
 
                   <!-- DTC 数量 -->
@@ -1602,17 +1886,26 @@ const avatarErrorHandler = () => true
                     "
                   >
                     <el-row
-                      class="poppins-10px-regular text-neutrals-off-black py-0! px-0!"
+                      class="poppins-10px-regular text-neutrals-off-black poppins-10px-semibold py-0! px-0!"
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
-                          class="rounded-t-8 bg-neutrals-off-white"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
                         >
-                          <el-col :span="6" class="pr-8!">DTC</el-col>
+                          <el-col :span="6">DTC</el-col>
+                          <el-col :span="18">Description</el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          class="rounded-t-8 bg-neutrals-off-white md-model text-neutrals-grey-4"
+                        >
+                          <el-col :span="6">DTC</el-col>
                           <el-col :span="18">Description</el-col>
                         </el-row>
                       </el-col>
@@ -1631,13 +1924,37 @@ const avatarErrorHandler = () => true
                       :gutter="16"
                     >
                       <el-col :span="2" />
-                      <el-col :xs="0" :sm="6" />
-                      <el-col :xs="22" :sm="16" class="pl-0!">
+                      <el-col :span="6" class="a4-no-view" />
+                      <el-col :span="22" class="pl-0! a4:hidden!">
                         <el-row
                           :gutter="24"
                           :class="[
                             'bg-neutrals-off-white',
                             'items-start!',
+                            'md-model',
+                            {
+                              'rounded-b-8':
+                                index === item.reportDtcItemDtcDtos.length - 1,
+                            },
+                          ]"
+                        >
+                          <el-col :span="6">
+                            <span>
+                              {{ dtcDto.faultCode || '-' }}
+                            </span>
+                          </el-col>
+                          <el-col :span="18">
+                            {{ dtcDto.name || '-' }}
+                          </el-col>
+                        </el-row>
+                      </el-col>
+                      <el-col :span="16" class="pl-0! a4-no-view">
+                        <el-row
+                          :gutter="24"
+                          :class="[
+                            'bg-neutrals-off-white',
+                            'items-start!',
+                            'md-model',
                             {
                               'rounded-b-8':
                                 index === item.reportDtcItemDtcDtos.length - 1,
@@ -2177,16 +2494,25 @@ i {
   @apply bg-branding-colours-primary shadow-default text-neutrals-off-white h-48! bottom-42 px-32! py-16! rounded-12! text-16! font-400! fixed inset-x-0 mx-auto inline-flex w-fit cursor-pointer border-none;
 }
 
-@media (max-width: 767px) {
-  // h5 模式下, 添加样式对齐
+// 手机屏幕样式
+@media (max-width: 594px) {
+  // h5 模式下
   :deep(.el-row) {
+    // 添加 padding-left , 使得标题对齐
     &.md-model {
       @apply pl-17!;
+    }
+
+    .el-col {
+      // 样式不可见
+      &.a4-no-view {
+        @apply hidden;
+      }
     }
   }
 }
 
-// 屏幕宽度大于 768px 时，修改字体大小
+// 屏幕宽度大于 768px 时，修改字体大小 (大于 768px 时，默认使用的设备为 pc)
 @media (min-width: 768px) {
   .poppins-28px-semibold {
     @apply text-30;
@@ -2279,4 +2605,5 @@ i {
     @apply text-12;
   }
 }
+/* </editor-fold> */
 </style>
