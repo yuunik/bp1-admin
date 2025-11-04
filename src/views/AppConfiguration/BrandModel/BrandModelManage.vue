@@ -51,7 +51,7 @@ const predictBrandChildNameList = ref([])
 const fileUpload = useFileUpload()
 
 // 预测数据抽屉可见
-const drawerPredictionOemVisible = ref(false)
+const drawerPredictionOemVisible = ref(true)
 
 // 所选择的预测数据
 const selectedPredictionItem = ref({})
@@ -574,7 +574,6 @@ onMounted(async () => {
   <prediction-oem-list-drawer
     v-model="drawerPredictionOemVisible"
     v-if="drawerPredictionOemVisible"
-    :prediction-Item="selectedPredictionItem"
   />
 </template>
 
