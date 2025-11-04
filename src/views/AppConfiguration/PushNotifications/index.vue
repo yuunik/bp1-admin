@@ -1108,7 +1108,7 @@ initData()
                   'text-neutrals-grey-4!': !selectedUserList.length,
                 }"
                 v-show="userSelectorVisible"
-                @click.stop="userStatusList = []"
+                @click.stop="addUserStatusList = []"
               >
                 Clear
               </el-button>
