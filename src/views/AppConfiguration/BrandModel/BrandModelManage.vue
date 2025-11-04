@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 
 import {
@@ -11,19 +11,46 @@ import {
   modifyBrandModelNameApi,
   modifyBrandInfoApi,
   uploadBrandLogoApi,
+  getPredictBrandListApi,
+  getPredictSubItemNameListApi,
+  modifyPredictionDataApi,
 } from '@/apis/appApi.js'
-import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
+import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 import BaseTag from '@/components/BaseTag.vue'
 
+import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
+import useFileUpload from '@/composables/useFileUpload.js'
+
 // 车辆详情
 const brandModelInfo = ref({})
 
+// 预测列表数据
+const predictBrandList = ref([])
+
+// 获取路由
+const route = useRoute()
+
+// 获取路由器
+const router = useRouter()
+
+// 当前的品牌 id
+const brandId = ref('')
+
+// 当前的tab
+const activeTab = ref('Details')
+
+// 预测数据名称列表
+const predictBrandChildNameList = ref([])
+
+// 文件上传逻辑
+const fileUpload = useFileUpload()
+
 // 获取车辆品牌详情
-const getBrandModelInfo = async (id) => {
-  const { data } = await getBrandModelInfoApi(id)
+const getBrandModelInfo = async () => {
+  const { data } = await getBrandModelInfoApi(brandId.value)
   // 请求成功
   brandModelInfo.value = data
   // 记录品牌的编辑状态为 false
@@ -33,23 +60,11 @@ const getBrandModelInfo = async (id) => {
     // 记录型号的编辑状态为 false
     item.isEdit = false
   }
+  // 获取预测列表
+  getPredictBrandList()
   // 更新面包屑
   emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.value.brand)
 }
-
-// 获取路由
-const route = useRoute()
-// 获取路由器
-const router = useRouter()
-// id 字段校验
-if (route.params.id) {
-  // 有 id , 则说明查看详情
-  getBrandModelInfo(route.params.id)
-} else {
-  // 无 id , 则跳转至首页
-  router.push({ name: RouteName.DASHBOARD })
-}
-
 // 获取上传的本地文件
 const handleGetLocalFile = async (file) => {
   const {
@@ -71,7 +86,7 @@ const handleEditBrand = async () => {
   })
   // 修改成功
   ElMessage.success('Edit Brand Name Success')
-  getBrandModelInfo(route.params.id)
+  getBrandModelInfo()
 }
 
 // 解禁车辆品牌
@@ -105,7 +120,7 @@ const handleEditBrandModelName = async (row) => {
     ElMessage.success('Add Brand Model Success')
   }
   // 刷新页面
-  getBrandModelInfo(route.params.id)
+  getBrandModelInfo()
 }
 
 // 待添加车辆品牌名称
@@ -121,7 +136,7 @@ const handleDeleteBrandModel = async (id) => {
   await deleteBrandModelApi(id)
   // 删除成功
   ElMessage.success('Delete Brand Model Success')
-  getBrandModelInfo(route.params.id)
+  getBrandModelInfo()
 }
 
 // 禁用车辆品牌
@@ -130,12 +145,99 @@ const handleDisabledBrand = async () => {
   // 删除成功
   ElMessage.success('Delete Brand Success')
   // 刷新
-  getBrandModelInfo(route.params.id)
+  getBrandModelInfo()
 }
+
+// 获取车辆的预测列表
+const getPredictBrandList = async () => {
+  const { data } = await getPredictBrandListApi(brandModelInfo.value.brand)
+  // 遍历预测列表, 新增编辑状态
+  for (const item of data) {
+    item.isEdit = false
+  }
+  predictBrandList.value = data
+}
+
+// 新增预测数据
+const handleAddPredictBrand = () =>
+  predictBrandList.value.push({
+    name: '',
+    isEdit: true,
+    predictionOemDtos: [],
+  })
+
+// 获取预测子项名称列表
+const getPredictBrandChildNameList = async () => {
+  const { data } = await getPredictSubItemNameListApi()
+  predictBrandChildNameList.value = data
+}
+
+// 切换至预测数据编辑模式
+const handleSwitchToEditMode = (predictionItem) => {
+  // 获取子项名称列表
+  getPredictBrandChildNameList()
+  // 切换至编辑模式
+  predictionItem.isEdit = true
+}
+
+// 预测数据名称改变
+const handlePredictionItemNameChange = (val, row) => {
+  const predictionItem = predictBrandChildNameList.value.find(
+    (item) => item.name === val,
+  )
+  row.mileage = predictionItem.mileage
+  row.day = predictionItem.day
+}
+
+// 编辑预测数据
+const handleEditPredictBrand = async (row) => {
+  if (row.localLogo) {
+    row.logo = row.localLogo
+  }
+  await modifyPredictionDataApi({
+    id: row.id,
+    name: row.name,
+    mileage: row.mileage,
+    date: row.day,
+    file: row.logo,
+  })
+  // 修改成功
+  ElMessage.success('Edit Prediction Data Success')
+  getBrandModelInfo()
+}
+
+// logo加载失败的回退行为
+const onErrorImage = () => true
+
+// 图标上传
+const handlePredictionIconChange = async (file, row) => {
+  await fileUpload.handleValidateImageUpload(file)
+  row.localLogo = fileUpload.localFilePath.value
+}
+
+// 管理预测数据
+const handlePredictionItemManage = async (row) => {
+  if (row.id) {
+    console.log('/////////////////////////////')
+    // 编辑
+    handleEditPredictBrand(row)
+  } else {
+    // 新增
+  }
+}
+
+onMounted(async () => {
+  // id 字段校验
+  if (route.params.id) {
+    brandId.value = route.params.id
+    // 有 id , 则说明查看详情
+    getBrandModelInfo()
+  }
+})
 </script>
 
 <template>
-  <section class="h-full overflow-auto">
+  <section class="flex h-full flex-col overflow-auto pb-32">
     <!-- header -->
     <div class="flex-between px-32 py-16">
       <h3 class="heading-h2-20px-medium neutrals-off-black">
@@ -146,10 +248,14 @@ const handleDisabledBrand = async () => {
       </el-button>
       <el-button v-else @click="handleEnableBrand">Enable</el-button>
     </div>
-    <!-- divider -->
-    <el-divider />
+    <!-- tabs -->
+    <el-tabs v-model="activeTab" class="has-top">
+      <el-tab-pane label="Details" name="Details" />
+      <el-tab-pane label="Model List" name="Model List" />
+      <el-tab-pane label="Prediction Items" name="Prediction Items" />
+    </el-tabs>
     <!-- content -->
-    <div>
+    <el-scrollbar>
       <!-- 品牌信息 -->
       <div class="flex gap-24 px-32 pb-24 pt-16">
         <!-- logo -->
@@ -212,7 +318,7 @@ const handleDisabledBrand = async () => {
           </div>
         </div>
       </div>
-      <!-- 型号信息-->
+      <!-- 车辆品牌型号信息表格 -->
       <div>
         <!-- 标签信息 -->
         <div class="items-center-safe box-border flex gap-8 px-32 py-7">
@@ -280,7 +386,146 @@ const handleDisabledBrand = async () => {
           </el-button>
         </div>
       </div>
-    </div>
+      <!-- 车辆品牌预测信息表格 -->
+      <div class="mt-24">
+        <!-- 标签信息 -->
+        <div class="items-center-safe box-border flex gap-8 px-32 py-7">
+          <h4>Prediction Items</h4>
+          <!-- 预测信息数量 -->
+          <el-text class="flex-1">
+            {{ predictBrandList.length ?? 0 }}
+          </el-text>
+        </div>
+        <!-- 分割线 -->
+        <el-divider class="mt-8" />
+        <!-- 预测数据列表 -->
+        <div class="table-container mx-32">
+          <el-table :data="predictBrandList">
+            <!-- 预测数据的图标 -->
+            <el-table-column prop="logo" label="Icon" min-width="19%">
+              <template #default="{ row }">
+                <el-avatar
+                  :src="
+                    row?.localLogo ? row.localLogo : getFullFilePath(row.logo)
+                  "
+                  :size="20"
+                  class="prediction logo"
+                  fit="cover"
+                  @error="onErrorImage"
+                >
+                  <el-image :src="DefaultLogo" fit="cover" class="h-20 w-20" />
+                </el-avatar>
+                <!-- 编辑模式下, 可更换 logo -->
+                <el-upload
+                  class="row-center"
+                  :on-change="
+                    (uploadFile, _) =>
+                      handlePredictionIconChange(uploadFile, row)
+                  "
+                  :auto-upload="false"
+                  :show-file-list="false"
+                  v-show="row.isEdit"
+                >
+                  <el-button type="primary" text>
+                    <template #icon>
+                      <i class="icon-upload-2-line branding-colours-primary" />
+                    </template>
+                    <template #default>Upload</template>
+                  </el-button>
+                </el-upload>
+              </template>
+            </el-table-column>
+            <!-- 操作 -->
+            <el-table-column prop="name" label="Item Name" min-width="27%">
+              <template #default="{ row }">
+                <el-select
+                  v-show="row.isEdit"
+                  v-model="row.name"
+                  class="select--bg-neutrals-grey-1"
+                  @change="(val) => handlePredictionItemNameChange(val, row)"
+                >
+                  <el-option
+                    v-for="predictionItem in predictBrandChildNameList"
+                    :label="predictionItem.name"
+                    :value="predictionItem.name"
+                  />
+                </el-select>
+                <span v-show="!row.isEdit">{{ row.name }}</span>
+              </template>
+            </el-table-column>
+            <!-- Range -->
+            <el-table-column prop="mileage" label="Range" min-width="18%">
+              <template #default="{ row }">
+                <el-input
+                  v-show="row.isEdit"
+                  v-model.number="row.mileage"
+                  placeholder="Type Here"
+                  class="input--bg-neutrals-grey-1"
+                >
+                  <template #suffix>km</template>
+                </el-input>
+                <span v-show="!row.isEdit">
+                  {{ getFormatNumber(row.mileage) }} km
+                </span>
+              </template>
+            </el-table-column>
+            <!-- Time -->
+            <el-table-column prop="day" label="Time" min-width="18%">
+              <template #default="{ row }">
+                <el-input
+                  v-show="row.isEdit"
+                  v-model.number="row.day"
+                  placeholder="Type Here"
+                  class="input--bg-neutrals-grey-1"
+                >
+                  <template #suffix>day</template>
+                </el-input>
+                <span v-show="!row.isEdit">
+                  {{ getFormatNumber(row.day) }} day
+                  <span v-if="row.day !== 1">s</span>
+                </span>
+              </template>
+            </el-table-column>
+            <!-- Strings -->
+            <el-table-column label="Strings" min-width="14%">
+              <template #default="{ row }">
+                {{ row.predictionOemDtos.length || '-' }}
+              </template>
+            </el-table-column>
+            <!-- Actions -->
+            <el-table-column min-width="4%">
+              <template #default="{ row }">
+                <template v-if="!row.isEdit">
+                  <!-- 编辑 -->
+                  <i
+                    class="icon-edit-line mr-8 cursor-pointer"
+                    @click="handleSwitchToEditMode(row)"
+                  />
+                  <!-- 删除 -->
+                  <i class="icon-delete-bin-line cursor-pointer" />
+                </template>
+                <template v-else>
+                  <el-button
+                    type="primary"
+                    size="small"
+                    @click="handlePredictionItemManage(row)"
+                  >
+                    {{ row.id ? 'Save' : 'Add' }}
+                  </el-button>
+                </template>
+              </template>
+            </el-table-column>
+          </el-table>
+          <!-- 新增按钮 -->
+          <el-button type="primary" text class="my-8 w-fit">
+            <template #icon>
+              <i class="icon-typesadd branding-colours-primary" />
+            </template>
+            <template #default>New Item</template>
+          </el-button>
+        </div>
+      </div>
+    </el-scrollbar>
   </section>
 </template>
 

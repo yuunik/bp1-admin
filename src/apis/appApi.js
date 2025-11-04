@@ -95,6 +95,10 @@ const AppApi = Object.freeze({
   GET_USER_AI_USE_COUNT: '/manager/user/aicount',
   // 编辑ai使用次数
   MODIFY_USER_AI_USE_COUNT: '/manager/user/addaicount',
+  // 获取预测列表
+  GET_PREDICT_LIST: '/manager/prediction/getpredictions',
+  // 获取预测子项名称列表
+  GET_PREDICT_NAME_LIST: '/manager/prediction/getbasepredictions',
 })
 
 // 获取 token
@@ -325,6 +329,7 @@ export const modifyPredictionDataApi = (params) => {
   data.append('name', params.name)
   data.append('date', params.date)
   data.append('file', params.file)
+
   return request({
     url: AppApi.MODIFY_PREDICT_DATA,
     method: 'POST',
@@ -925,6 +930,41 @@ export const modifyUserAiUseCountApi = (params) => {
 
   return request({
     url: AppApi.MODIFY_USER_AI_USE_COUNT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取车辆品牌的预测列表
+ *
+ * @param brand 车辆品牌
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getPredictBrandListApi = (brand) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brand', brand)
+
+  return request({
+    url: AppApi.GET_PREDICT_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取预测子项名称列表
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getPredictSubItemNameListApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  return request({
+    url: AppApi.GET_PREDICT_NAME_LIST,
     method: 'POST',
     data,
   })
