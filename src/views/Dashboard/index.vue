@@ -451,7 +451,7 @@ onMounted(async () => {
               'bottom-2',
               'top-2',
               'w-[50%]',
-              'shadow-[0_2px_2_0_#0000001A]',
+              'slider-shadow',
               'transition-all',
               activeTabIndex === 0 ? 'left-2' : 'left-[calc(50%-2px)]',
             ]"
