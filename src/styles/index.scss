@@ -305,15 +305,37 @@ i {
 
 // 背景色为 #EAEEF480 的输入框
 .input--bg-neutrals-grey-1 {
+  // 默认带 8px 圆角的 el-input
   .el-input__wrapper {
     @apply rounded-8 bg-neutrals-grey-1-with-50 shadow-none border-none;
+  }
+
+  // 带 12px 圆角的 el-input
+  &.rounded-12 {
+    .el-input__wrapper {
+      @apply rounded-12 bg-neutrals-grey-1-with-50 shadow-none border-none;
+    }
+  }
+}
+
+.input--no-padding {
+  .el-input__wrapper {
+    @apply p-0;
   }
 }
 
 // 背景色为 #EAEEF480 的 el-select
 .select--bg-neutrals-grey-1 {
+  // 默认带 8px 圆角的 el-select
   .el-select__wrapper {
     @apply rounded-8 bg-neutrals-grey-1-with-50 shadow-none border-none;
+  }
+
+  // 带 12px 圆角的 el-select
+  &.rounded-12 {
+    .el-select__wrapper {
+      @apply rounded-12 bg-neutrals-grey-1-with-50 shadow-none border-none;
+    }
   }
 }
 

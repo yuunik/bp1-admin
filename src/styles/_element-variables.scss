@@ -28,6 +28,7 @@
 
 // 重置 el-table 的样式
 .el-table {
+  // 表格默认背景色为白色
   background-color: rgb(252, 252, 252) !important; // 示例颜色
 
   th {
@@ -36,6 +37,20 @@
 
   tr {
     background-color: rgb(252, 252, 252)  !important;
+  }
+
+  // 表格背景色为 transparent
+  &.bg-transparent {
+    background-color: transparent !important;
+
+    th {
+      background-color: transparent !important;
+    }
+
+    tr {
+      background-color: transparent !important;
+    }
+
   }
 }
 
@@ -148,6 +163,11 @@
 }
 
 .el-table {
+  // 不需要table的默认背景色
+  &.no-bg {
+    background-color: transparent !important;
+  }
+
   .cell {
     display: flex !important;
     align-items: center !important;
@@ -173,5 +193,21 @@
 
   .el-menu-item.is-active{
     @apply text-neutrals-off-black! bg-[#ecf5ff]!;
+  }
+}
+
+// 抽屉的样式
+.el-drawer {
+  // 自定义抽屉的样式
+  &.custom-drawer {
+    // 隐藏头部
+    .el-drawer__header {
+      @apply hidden!;
+    }
+
+    // 自定义body的样式
+    .el-drawer__body {
+      @apply p-0 flex flex-col gap-16;
+    }
   }
 }
