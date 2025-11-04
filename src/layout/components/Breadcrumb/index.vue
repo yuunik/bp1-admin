@@ -19,7 +19,7 @@ const router = useRouter()
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
   // 若路由有清除面包屑的 meta, 则清空面包屑
-  if (to.meta.isClearBreadcrumb) {
+  if (to.meta.isClearBreadcrumb && !isClickBreadcrumb.value) {
     // 清空面包屑
     breadcrumb.value = []
     breadcrumbList.value = []
