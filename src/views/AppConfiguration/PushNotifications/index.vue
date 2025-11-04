@@ -365,8 +365,6 @@ const editNotification = async () => {
     return
   }
 
-  console.log('%%%%%%%%%%%%%%%%', params)
-
   try {
     // 编辑
     await editPushTaskApi(params)
@@ -583,9 +581,12 @@ const openEditNotificationDialog = async (notification) => {
     cloned.value.sentTime === cloned.value.updateTime ? 0 : 'schedule'
   // 回显推送任务的计划时间
   if (notificationForm.value.sendTime === 'schedule') {
+    // 回显日期选择器的显示时间
     notificationForm.value.scheduleTime = dayjs(cloned.value.sentTime).format(
       'YYYY-MM-DD HH:mm:ss',
     )
+    // 回显推送时间的时间戳
+    scheduleTime.value = dayjs(cloned.value.sentTime).valueOf()
   }
   // 回显obd版本
   notificationForm.value.obdVersion = cloned.value.obdVersion
