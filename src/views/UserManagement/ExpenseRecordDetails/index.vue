@@ -636,8 +636,6 @@ const handleTotalAmountChange = useDebounceFn(
 const handleItemNameChange = (val, record) => {
   // 获取所选中的 item 信息
   const selectedItem = itemList.value.find((item) => item.name === val)
-  console.log(selectedItem, '@@@@@@@@@@@@@@@@')
-  console.log(record, '###############')
   // 设置 category 信息
   record.category = selectedItem.category
   // 设置 type 信息
