@@ -113,7 +113,7 @@ const { getToken } = useAuthToken()
 export const getBrandModalListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  params?.page && data.append('page', params.page)
+  params?.page != null && data.append('page', params.page)
   params?.pageSize && data.append('pageSize', params.pageSize)
   params?.sort && data.append('sort', params.sort)
   params?.sortBy && data.append('sortBy', params.sortBy)
