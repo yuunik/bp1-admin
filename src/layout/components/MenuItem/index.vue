@@ -33,7 +33,7 @@ const hoveredIndex = ref(null)
 const handleNavigation = (path) => {
   router.push(path)
   // 面包屑数据重置
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  // emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   // 缓存路由重置
   clearAllKeepAliveRoute()
 }

@@ -32,6 +32,7 @@ const constantRoutes = [
           showInBreadcrumb: true,
           icon: 'icon-Component-5',
           selectedIcon: 'icon-typedashboard',
+          isClearBreadcrumb: true,
         },
       },
     ],
@@ -62,6 +63,7 @@ const constantRoutes = [
           title: RouteName.REAL_TIME_ORDER,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       /**
@@ -76,6 +78,7 @@ const constantRoutes = [
           title: RouteName.ACTIVITY_ORDER,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
     ],
@@ -107,6 +110,7 @@ const constantRoutes = [
           title: RouteName.OBD_LIST,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // OBD 详情
@@ -144,6 +148,7 @@ const constantRoutes = [
           title: RouteName.DTC_LIST,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // DTC 详情页
@@ -182,6 +187,7 @@ const constantRoutes = [
           title: RouteName.INVENTORY,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // create stock order
@@ -260,6 +266,7 @@ const constantRoutes = [
           title: RouteName.INTERNAL,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       /**
@@ -273,6 +280,7 @@ const constantRoutes = [
           title: RouteName.EXTERN,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       {
@@ -350,6 +358,7 @@ const constantRoutes = [
           showInBreadcrumb: true,
           icon: 'icon-Component-5-4',
           selectedIcon: 'icon-typedatabase-2-fill',
+          isClearBreadcrumb: true,
         },
       },
     ],
@@ -404,6 +413,7 @@ const constantRoutes = [
           title: RouteName.FORUM,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // 俱乐部列表页
@@ -415,6 +425,7 @@ const constantRoutes = [
           title: RouteName.GROUPS,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // 俱乐部详情
@@ -455,6 +466,7 @@ const constantRoutes = [
           title: RouteName.VERSION_CONTROL,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // 版本管理
@@ -501,6 +513,7 @@ const constantRoutes = [
             meta: {
               showInMenu: false,
               showInBreadcrumb: true,
+              isClearBreadcrumb: true,
             },
           },
           // 车辆管理页面
@@ -536,6 +549,7 @@ const constantRoutes = [
           title: RouteName.BRAND_MODEL,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       {
@@ -547,6 +561,7 @@ const constantRoutes = [
           title: RouteName.AI_CHAT_MANAGEMENT,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       {
@@ -558,6 +573,7 @@ const constantRoutes = [
           title: RouteName.INTERVAL_WARNING,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       {
@@ -569,6 +585,7 @@ const constantRoutes = [
           title: 'Expense Items',
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // push notifications
@@ -581,6 +598,7 @@ const constantRoutes = [
           title: RouteName.PUSH_NOTIFICATIONS,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
       // 邮箱验证码页
@@ -593,6 +611,7 @@ const constantRoutes = [
           title: RouteName.EMAIL_VERIFICATION,
           showInMenu: true,
           showInBreadcrumb: true,
+          isClearBreadcrumb: true,
         },
       },
     ],
@@ -622,6 +641,7 @@ const constantRoutes = [
           showInMenu: false,
           showInBreadcrumb: true,
           icon: 'icon-settings',
+          isClearBreadcrumb: true,
         },
       },
     ],
@@ -650,6 +670,7 @@ const constantRoutes = [
           showInMenu: false,
           showInBreadcrumb: true,
           icon: 'icon-settings',
+          isClearBreadcrumb: true,
         },
       },
     ],

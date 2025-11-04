@@ -5,16 +5,30 @@ import { ArrowRight } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
 
 import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
+import { EmitterEvent } from '@/utils/constantsUtil.js'
+import { useUserStore } from '@/store/index.js'
 
 import CompanyLogo from '@/assets/images/company-logo.png'
-import { useUserStore } from '@/store/index.js'
 
 // 路由
 const route = useRoute()
 
 // 路由器
 const router = useRouter()
+
+// 全局前置守卫
+router.beforeEach((to, from, next) => {
+  // 若路由有清除面包屑的 meta, 则清空面包屑
+  if (to.meta.isClearBreadcrumb) {
+    // 清空面包屑
+    breadcrumb.value = []
+    breadcrumbList.value = []
+    isGetTopLevelRoute.value = false
+  }
+
+  // 继续导航
+  next()
+})
 
 // 面包屑列表
 // const breadcrumbList = computed(() => {
