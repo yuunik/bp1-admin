@@ -24,6 +24,7 @@ import BaseTag from '@/components/BaseTag.vue'
 
 import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
 import useFileUpload from '@/composables/useFileUpload.js'
+import PredictionOemListDrawer from '@/views/AppConfiguration/BrandModel/components/PredictionOemListDrawer.vue'
 
 // 车辆详情
 const brandModelInfo = ref({})
@@ -49,6 +50,12 @@ const predictBrandChildNameList = ref([])
 // 文件上传逻辑
 const fileUpload = useFileUpload()
 
+// 预测数据抽屉可见
+const drawerPredictionOemVisible = ref(false)
+
+// 所选择的预测数据
+const selectedPredictionItem = ref({})
+
 // 获取车辆品牌详情
 const getBrandModelInfo = async () => {
   const { data } = await getBrandModelInfoApi(brandId.value)
@@ -66,6 +73,7 @@ const getBrandModelInfo = async () => {
   // 更新面包屑
   emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, brandModelInfo.value.brand)
 }
+
 // 获取上传的本地文件
 const handleGetLocalFile = async (file) => {
   const {
@@ -250,6 +258,12 @@ const handleAddPredictBrandItem = async (row) => {
   getBrandModelInfo()
 }
 
+// 查看预测数据的OEM信息列表
+const handleViewPredictionOemList = async (row) => {
+  selectedPredictionItem.value = row
+  drawerPredictionOemVisible.value = true
+}
+
 onMounted(async () => {
   // id 字段校验
   if (route.params.id) {
@@ -424,7 +438,11 @@ onMounted(async () => {
         <el-divider class="mt-8" />
         <!-- 预测数据列表 -->
         <div class="table-container mx-32">
-          <el-table :data="predictBrandList">
+          <el-table
+            :data="predictBrandList"
+            @row-click="handleViewPredictionOemList"
+            row-class-name="clickable-row"
+          >
             <!-- 预测数据的图标 -->
             <el-table-column prop="logo" label="Icon" min-width="19%">
               <template #default="{ row }">
@@ -553,6 +571,11 @@ onMounted(async () => {
       </div>
     </el-scrollbar>
   </section>
+  <prediction-oem-list-drawer
+    v-model="drawerPredictionOemVisible"
+    v-if="drawerPredictionOemVisible"
+    :prediction-Item="selectedPredictionItem"
+  />
 </template>
 
 <style scoped lang="scss">
