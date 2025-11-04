@@ -25,6 +25,7 @@ import BaseTag from '@/components/BaseTag.vue'
 import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
 import useFileUpload from '@/composables/useFileUpload.js'
 import PredictionOemListDrawer from '@/views/AppConfiguration/BrandModel/components/PredictionOemListDrawer.vue'
+import { useCloned } from '@vueuse/core'
 
 // 车辆详情
 const brandModelInfo = ref({})
@@ -55,6 +56,9 @@ const drawerPredictionOemVisible = ref(true)
 
 // 所选择的预测数据
 const selectedPredictionItem = ref({})
+
+// 需要修改的品牌名称
+const editBrandInfoName = ref('')
 
 // 获取车辆品牌详情
 const getBrandModelInfo = async () => {
@@ -87,11 +91,18 @@ const handleGetLocalFile = async (file) => {
   brandModelInfo.value.logo = logo
 }
 
+// 切换编辑品牌名称模式
+const handeSwitchToEditName = () => {
+  const { cloned } = useCloned(brandModelInfo.value.brand)
+  editBrandInfoName.value = cloned.value
+  brandModelInfo.value.isEdit = true
+}
+
 // 编辑车辆品牌名称
 const handleEditBrand = async () => {
   await modifyBrandInfoApi({
     id: brandModelInfo.value.id,
-    name: brandModelInfo.value.brand,
+    name: editBrandInfoName.value,
   })
   // 修改成功
   ElMessage.success('Edit Brand Name Success')
@@ -315,10 +326,7 @@ onMounted(async () => {
             </label>
             <!-- 值 -->
             <template v-if="brandModelInfo.isEdit">
-              <el-input
-                class="brand-name-input"
-                v-model="brandModelInfo.brand"
-              />
+              <el-input class="brand-name-input" v-model="editBrandInfoName" />
               <div class="flex gap-8">
                 <el-button @click="brandModelInfo.isEdit = false">
                   Cancel
@@ -334,7 +342,7 @@ onMounted(async () => {
               </el-text>
               <i
                 class="i-ep:edit ml-8 h-16 w-16 cursor-pointer"
-                @click="brandModelInfo.isEdit = true"
+                @click="handeSwitchToEditName"
               />
             </template>
           </div>
