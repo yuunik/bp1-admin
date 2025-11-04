@@ -158,6 +158,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
           text-color="#99A0AE"
           :default-active="$route.path"
           :collapse="isMenuCollapsed"
+          unique-opened
         >
           <menu-item :user-menu-routes="routes" />
         </el-menu>
