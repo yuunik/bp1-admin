@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getAppVersionInfoApi, modifyAppVersionApi } from '@/apis/appApi.js'
 import { ElMessage } from 'element-plus'
+import { useCloned } from '@vueuse/core'
 
 // 获取路由参数
 const {
@@ -15,6 +16,9 @@ const appVersionInfo = ref({})
 // 编辑模式
 const isEditMode = ref(false)
 
+// 应用版本表单
+const appVersionForm = ref({})
+
 // 获取版本详情
 const getAppVersionInfo = async (id) => {
   const { data } = await getAppVersionInfoApi(id)
@@ -24,7 +28,7 @@ const getAppVersionInfo = async (id) => {
 // 修改版本信息
 const handleModifyAppVersionInfo = async () => {
   try {
-    await modifyAppVersionApi(appVersionInfo.value)
+    await modifyAppVersionApi(appVersionForm.value)
     // 修改成功
     ElMessage.succsss('Modify success')
   } finally {
@@ -51,6 +55,13 @@ const appVersionInfoStatus = computed(() => {
   }
 })
 
+// 切换至编辑模式
+const handleEditAppVersionInfo = () => {
+  const { cloned } = useCloned(appVersionInfo.value)
+  appVersionForm.value = cloned.value
+  isEditMode.value = true
+}
+
 // 组件创建后, 获取版本详情
 if (id) {
   getAppVersionInfo(id)
@@ -67,7 +78,7 @@ if (id) {
       <el-button
         v-show="!isEditMode"
         type="primary"
-        @click="isEditMode = !isEditMode"
+        @click="handleEditAppVersionInfo"
       >
         Edit
       </el-button>
@@ -93,7 +104,7 @@ if (id) {
         <dt>Latest Version</dt>
         <dd v-show="!isEditMode">{{ appVersionInfo.version || '-' }}</dd>
         <dd v-show="isEditMode">
-          <el-input v-model="appVersionInfo.version" />
+          <el-input v-model="appVersionForm.version" />
         </dd>
         <dt>Status</dt>
         <dd v-show="!isEditMode">
@@ -101,7 +112,7 @@ if (id) {
         </dd>
         <dd v-show="isEditMode">
           <el-select
-            v-model="appVersionInfo.state"
+            v-model="appVersionForm.state"
             class="w-200! select--underline"
           >
             <el-option label="No prompt" :value="0" />
@@ -115,13 +126,13 @@ if (id) {
           {{ appVersionInfo.url || '-' }}
         </dd>
         <dd v-show="isEditMode">
-          <el-input v-model="appVersionInfo.url" />
+          <el-input v-model="appVersionForm.url" />
         </dd>
         <dt>Update Prompt</dt>
         <dd v-show="!isEditMode">{{ appVersionInfo.content || '-' }}</dd>
         <dd v-show="isEditMode">
           <el-input
-            v-model="appVersionInfo.content"
+            v-model="appVersionForm.content"
             type="textarea"
             :rows="15"
           />
