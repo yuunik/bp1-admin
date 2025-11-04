@@ -161,6 +161,7 @@ export default defineConfig({
       'cf-content-width': 'wc-68',
       // 超过宽度, 自动换行
       'wrap-text': 'inline-block whitespace-normal break-words break-normal',
+      'slider-shadow': 'shadow-[0_2px_2px_0_#0000001A]',
     },
   ],
   theme: {
