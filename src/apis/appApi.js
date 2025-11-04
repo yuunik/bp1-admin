@@ -36,7 +36,7 @@ const AppApi = Object.freeze({
   // 获取预测数据列表
   GET_PREDICT_DATA_LIST: '/manager/prediction/list',
   // 编辑预测数据
-  MODIFY_PREDICT_DATA: '/manager/editprediction',
+  MODIFY_PREDICT_DATA: '/manager/prediction/editprediction',
   // 编辑实时预警数据
   MODIFY_LIVE_DATA_WARNING_DATA: '/manager/vehiclewarn/edit',
   // 新增实时预警数据
@@ -317,18 +317,17 @@ export const getPredictionListApi = (params) => {
  * 修改预测数据
  * @param params 修改预测数据参数
  * @param params.id 预测数据ID
- * @param params.name 预测数据名称
  * @param params.date 预测数据时间
- * @param params.file 预测数据文件
+ * @param params.mileage 预测数据里程
+ *
  * @returns {Promise<ApiResponse<any>>}
  */
 export const modifyPredictionDataApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('id', params.id)
-  data.append('name', params.name)
-  data.append('date', params.date)
-  data.append('file', params.file)
+  data.append('predictionId', params.id)
+  data.append('day', params.date)
+  data.append('mileage', params.mileage)
 
   return request({
     url: AppApi.MODIFY_PREDICT_DATA,

@@ -162,7 +162,8 @@ const getPredictBrandList = async () => {
 const handleAddPredictBrand = () =>
   predictBrandList.value.push({
     name: '',
-    isEdit: true,
+    // 是否新增
+    isNew: true,
     predictionOemDtos: [],
   })
 
@@ -194,11 +195,13 @@ const handleEditPredictBrand = async (row) => {
   if (row.localLogo) {
     row.logo = row.localLogo
   }
+
   await modifyPredictionDataApi({
     id: row.id,
-    name: row.name,
-    mileage: row.mileage,
     date: row.day,
+    mileage: row.mileage,
+
+    name: row.name,
     file: row.logo,
   })
   // 修改成功
@@ -218,7 +221,6 @@ const handlePredictionIconChange = async (file, row) => {
 // 管理预测数据
 const handlePredictionItemManage = async (row) => {
   if (row.id) {
-    console.log('/////////////////////////////')
     // 编辑
     handleEditPredictBrand(row)
   } else {
@@ -416,30 +418,30 @@ onMounted(async () => {
                   <el-image :src="DefaultLogo" fit="cover" class="h-20 w-20" />
                 </el-avatar>
                 <!-- 编辑模式下, 可更换 logo -->
-                <el-upload
-                  class="row-center"
-                  :on-change="
-                    (uploadFile, _) =>
-                      handlePredictionIconChange(uploadFile, row)
-                  "
-                  :auto-upload="false"
-                  :show-file-list="false"
-                  v-show="row.isEdit"
-                >
-                  <el-button type="primary" text>
-                    <template #icon>
-                      <i class="icon-upload-2-line branding-colours-primary" />
-                    </template>
-                    <template #default>Upload</template>
-                  </el-button>
-                </el-upload>
+                <!--<el-upload-->
+                <!--  class="row-center"-->
+                <!--  :on-change="-->
+                <!--    (uploadFile, _) =>-->
+                <!--      handlePredictionIconChange(uploadFile, row)-->
+                <!--  "-->
+                <!--  :auto-upload="false"-->
+                <!--  :show-file-list="false"-->
+                <!--  v-show="row.isEdit"-->
+                <!--&gt;-->
+                <!--  <el-button type="primary" text>-->
+                <!--    <template #icon>-->
+                <!--      <i class="icon-upload-2-line branding-colours-primary" />-->
+                <!--    </template>-->
+                <!--    <template #default>Upload</template>-->
+                <!--  </el-button>-->
+                <!--</el-upload>-->
               </template>
             </el-table-column>
             <!-- 操作 -->
             <el-table-column prop="name" label="Item Name" min-width="27%">
               <template #default="{ row }">
                 <el-select
-                  v-show="row.isEdit"
+                  v-if="row.isNew"
                   v-model="row.name"
                   class="select--bg-neutrals-grey-1"
                   @change="(val) => handlePredictionItemNameChange(val, row)"
@@ -450,39 +452,36 @@ onMounted(async () => {
                     :value="predictionItem.name"
                   />
                 </el-select>
-                <span v-show="!row.isEdit">{{ row.name }}</span>
+                <span v-else>{{ row.name }}</span>
               </template>
             </el-table-column>
             <!-- Range -->
             <el-table-column prop="mileage" label="Range" min-width="18%">
               <template #default="{ row }">
                 <el-input
-                  v-show="row.isEdit"
+                  v-if="row.isEdit || row.isNew"
                   v-model.number="row.mileage"
                   placeholder="Type Here"
                   class="input--bg-neutrals-grey-1"
                 >
                   <template #suffix>km</template>
                 </el-input>
-                <span v-show="!row.isEdit">
-                  {{ getFormatNumber(row.mileage) }} km
-                </span>
+                <span v-else>{{ getFormatNumber(row.mileage) }} km</span>
               </template>
             </el-table-column>
             <!-- Time -->
             <el-table-column prop="day" label="Time" min-width="18%">
               <template #default="{ row }">
                 <el-input
-                  v-show="row.isEdit"
+                  v-if="row.isEdit || row.isNew"
                   v-model.number="row.day"
                   placeholder="Type Here"
                   class="input--bg-neutrals-grey-1"
                 >
                   <template #suffix>day</template>
                 </el-input>
-                <span v-show="!row.isEdit">
-                  {{ getFormatNumber(row.day) }} day
-                  <span v-if="row.day !== 1">s</span>
+                <span v-else>
+                  {{ getFormatNumber(row.day) }} day{{ row.day > 1 ? 's' : '' }}
                 </span>
               </template>
             </el-table-column>
