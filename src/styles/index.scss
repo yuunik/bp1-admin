@@ -310,6 +310,13 @@ i {
   }
 }
 
+// 背景色为 #EAEEF480 的 el-select
+.select--bg-neutrals-grey-1 {
+  .el-select__wrapper {
+    @apply rounded-8 bg-neutrals-grey-1-with-50 shadow-none border-none;
+  }
+}
+
 // 只有下边框的el-select
 .select--underline {
   .el-select__wrapper {
@@ -425,4 +432,9 @@ i {
   &::before {
     content: '$';
   }
+}
+
+// 列的内容水平居中
+.col-center {
+  @apply row-center;
 }
