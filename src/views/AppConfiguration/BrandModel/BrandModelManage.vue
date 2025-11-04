@@ -14,6 +14,7 @@ import {
   getPredictBrandListApi,
   getPredictSubItemNameListApi,
   modifyPredictionDataApi,
+  createPredictItemApi,
 } from '@/apis/appApi.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
@@ -159,13 +160,18 @@ const getPredictBrandList = async () => {
 }
 
 // 新增预测数据
-const handleAddPredictBrand = () =>
+const handleAddPredictBrand = () => {
+  // 预测子项名称列表为空时, 获取数据
+  if (predictBrandChildNameList.value.length === 0) {
+    getPredictBrandChildNameList()
+  }
   predictBrandList.value.push({
     name: '',
     // 是否新增
     isNew: true,
     predictionOemDtos: [],
   })
+}
 
 // 获取预测子项名称列表
 const getPredictBrandChildNameList = async () => {
@@ -175,8 +181,10 @@ const getPredictBrandChildNameList = async () => {
 
 // 切换至预测数据编辑模式
 const handleSwitchToEditMode = (predictionItem) => {
-  // 获取子项名称列表
-  getPredictBrandChildNameList()
+  // 预测子项名称列表为空时, 获取数据
+  if (predictBrandChildNameList.value.length === 0) {
+    getPredictBrandChildNameList()
+  }
   // 切换至编辑模式
   predictionItem.isEdit = true
 }
@@ -225,7 +233,21 @@ const handlePredictionItemManage = async (row) => {
     handleEditPredictBrand(row)
   } else {
     // 新增
+    handleAddPredictBrandItem(row)
   }
+}
+
+// 新增预测数据
+const handleAddPredictBrandItem = async (row) => {
+  await createPredictItemApi({
+    brand: brandModelInfo.value.brand,
+    day: row.day,
+    mileage: row.mileage,
+    name: row.name,
+  })
+  // 添加成功
+  ElMessage.success('Add Prediction Data Success')
+  getBrandModelInfo()
 }
 
 onMounted(async () => {
@@ -494,7 +516,7 @@ onMounted(async () => {
             <!-- Actions -->
             <el-table-column min-width="4%">
               <template #default="{ row }">
-                <template v-if="!row.isEdit">
+                <template v-if="!row.isEdit && !row.isNew">
                   <!-- 编辑 -->
                   <i
                     class="icon-edit-line mr-8 cursor-pointer"
@@ -516,7 +538,12 @@ onMounted(async () => {
             </el-table-column>
           </el-table>
           <!-- 新增按钮 -->
-          <el-button type="primary" text class="my-8 w-fit">
+          <el-button
+            type="primary"
+            text
+            class="my-8 w-fit"
+            @click="handleAddPredictBrand"
+          >
             <template #icon>
               <i class="icon-typesadd branding-colours-primary" />
             </template>

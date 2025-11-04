@@ -99,6 +99,8 @@ const AppApi = Object.freeze({
   GET_PREDICT_LIST: '/manager/prediction/getpredictions',
   // 获取预测子项名称列表
   GET_PREDICT_NAME_LIST: '/manager/prediction/getbasepredictions',
+  // 新增预测数据
+  ADD_PREDICT_DATA: '/manager/prediction/addprediction',
 })
 
 // 获取 token
@@ -964,6 +966,32 @@ export const getPredictSubItemNameListApi = () => {
 
   return request({
     url: AppApi.GET_PREDICT_NAME_LIST,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 新增预测数据
+ *
+ * @param params
+ * @param params.name 名称
+ * @param params.brand  品牌
+ * @param params.mileage 里程
+ * @param params.day 天数
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const createPredictItemApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('name', params.name)
+  data.append('brand', params.brand)
+  data.append('mileage', params.mileage)
+  data.append('day', params.day)
+
+  return request({
+    url: AppApi.ADD_PREDICT_DATA,
     method: 'POST',
     data,
   })
