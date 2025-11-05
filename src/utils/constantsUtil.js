@@ -157,3 +157,57 @@ export const AI_COST_LEVEL = Object.freeze({
   FAIR: 'Fair',
   HIGH: 'High',
 })
+
+// 图表图例颜色
+// 图表图例颜色
+export const ChartColor = Object.freeze({
+  Purple: '#A9AEFF',
+  Yellow: '#F6D78B',
+  Pink: '#FFACA7',
+  Green: '#C6D0BC',
+  Blue: '#9FC7FB',
+  Orange: '#F1B18E',
+  Gray: '#DBDDE1',
+})
+
+// module 颜色匹配表
+export const ModuleColorMap = Object.freeze({
+  Engine: ChartColor.Purple,
+  Transmission: ChartColor.Yellow,
+  Brakes: ChartColor.Pink,
+  Electrical: ChartColor.Green,
+  Chassis: ChartColor.Blue,
+  BodyAndTrim: ChartColor.Orange,
+  Others: ChartColor.Gray,
+})
+
+// category 颜色匹配表
+export const CategoryColorMap = Object.freeze({
+  Services: ChartColor.Yellow,
+  Repair: ChartColor.Pink,
+  Fuel: ChartColor.Green,
+  Maintenance: ChartColor.Blue,
+  Modification: ChartColor.Orange,
+  Others: ChartColor.Gray,
+})
+
+// module 图标匹配表
+export const ModuleIconMap = Object.freeze({
+  Engine: 'engine-load',
+  Transmission: 'tranmission',
+  Brakes: 'brakes',
+  Electrical: 'electronic-central-electric',
+  Chassis: 'chassis',
+  BodyAndTrim: 'services-icon',
+  Others: 'others-icon',
+})
+
+// category 图标匹配表
+export const CategoryIconMap = Object.freeze({
+  Services: 'services-icon',
+  Repair: 'repair shop',
+  Fuel: 'fuel-level',
+  Maintenance: 'fi_file-minus',
+  Modification: 'modification',
+  Others: 'others-icon',
+})
