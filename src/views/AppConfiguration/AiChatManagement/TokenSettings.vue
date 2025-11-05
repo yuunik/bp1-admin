@@ -1,5 +1,6 @@
 <script setup>
 import { ElMessage } from 'element-plus'
+import { useCloned } from '@vueuse/core'
 
 import { getUserAiUseCountApi, modifyUserAiUseCountApi } from '@/apis/appApi.js'
 
@@ -7,6 +8,9 @@ const isEditing = ref(false)
 
 // ai使用的默认次数
 const defaultTokenCount = ref(50)
+
+// 编辑模式下的默认次数
+const editTokenCount = ref(0)
 
 // 获取ai使用的默认次数
 const getDefaultTokenCount = async () => {
@@ -18,7 +22,7 @@ const getDefaultTokenCount = async () => {
 const handleEditTokenCount = async () => {
   try {
     await modifyUserAiUseCountApi({
-      count: defaultTokenCount.value,
+      count: editTokenCount.value,
     })
     // 提示
     ElMessage.success('AI usage count updated successfully.')
@@ -29,6 +33,13 @@ const handleEditTokenCount = async () => {
   }
 }
 
+// 切换编辑模式
+const handleSwitchEditMode = () => {
+  const { cloned } = useCloned(defaultTokenCount.value)
+  editTokenCount.value = cloned.value
+  isEditing.value = true
+}
+
 getDefaultTokenCount()
 </script>
 
@@ -36,26 +47,26 @@ getDefaultTokenCount()
   <!-- 分割线 -->
   <el-divider class="diver" />
   <div class="token-settings-container mx-32">
-    <el-row :gutter="32" class="h-32! border-container mb-8! mx-0!">
+    <el-row :gutter="16" class="h-32! border-container mx-0!">
       <el-col :span="9">
         <span class="heading-body-body-12px-medium text-neutrals-grey-3">
           Plan
         </span>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="10">
         <span class="heading-body-body-12px-medium text-neutrals-grey-3">
           Token
         </span>
       </el-col>
-      <el-col :span="1" />
+      <el-col :span="5" />
     </el-row>
-    <el-row :gutter="32" class="h-48! border-container mb-8! mx-0! row-center!">
+    <el-row :gutter="16" class="h-48! border-container mx-0! row-center!">
       <el-col :span="9">
         <span class="heading-body-body-12px-medium text-neutrals-off-black">
           Free Default
         </span>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="10">
         <span
           class="heading-body-body-12px-medium text-neutrals-off-black"
           v-if="!isEditing"
@@ -64,7 +75,7 @@ getDefaultTokenCount()
         </span>
         <el-input
           placeholder="Type Here"
-          v-model.number="defaultTokenCount"
+          v-model.number="editTokenCount"
           v-else
         >
           <template #suffix>
@@ -74,15 +85,18 @@ getDefaultTokenCount()
           </template>
         </el-input>
       </el-col>
-      <el-col :span="1">
+      <el-col :span="5" class="flex-end!">
         <i
           class="icon-edit-line cursor-pointer"
           v-if="!isEditing"
-          @click="isEditing = true"
+          @click="handleSwitchEditMode"
         />
-        <el-button type="primary" v-else @click="handleEditTokenCount">
-          Save
-        </el-button>
+        <div class="flex" v-else>
+          <el-button size="small" @click="isEditing = false">Cancel</el-button>
+          <el-button size="small" type="primary" @click="handleEditTokenCount">
+            Save
+          </el-button>
+        </div>
       </el-col>
     </el-row>
   </div>
