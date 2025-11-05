@@ -161,9 +161,21 @@ const handleEditBrandModelName = async (row) => {
 
 // 待添加车辆品牌名称
 const handleAddPendingBrandModel = () => {
+  const isAllDisabled = brandModelInfo.value.vehicleModelDtos.every((item) => {
+    // 新增时, 关闭所有的编辑状态
+    item.isEdit = false
+    return !item.isNew
+  })
+  // 有新增的元素时, 添加失败
+  if (!isAllDisabled) {
+    // 每次只能新增一个
+    ElMessage.info('You can only add one vehicle brand at a time.')
+    return
+  }
   brandModelInfo.value.vehicleModelDtos.push({
     name: '',
-    isEdit: true,
+    isEdit: false,
+    isNew: true,
   })
 }
 
@@ -314,10 +326,24 @@ const handleDeletePredictionItem = async (id) => {
 const handleSwitchEditModel = (row) => {
   for (const item of brandModelInfo.value.vehicleModelDtos) {
     item.isEdit = false
+    // 编辑时, 关闭所有的新增状态
+    brandModelInfo.value.vehicleModelDtos =
+      brandModelInfo.value.vehicleModelDtos.filter((item) => !item.isNew)
   }
   row.isEdit = true
   const { cloned } = useCloned(row)
   editModelInfoForm.value = cloned.value
+}
+
+const handleCancelEditBrandModelName = (row) => {
+  if (row.id) {
+    // 取消编辑
+    row.isEdit = false
+  } else {
+    // 取消新增
+    brandModelInfo.value.vehicleModelDtos =
+      brandModelInfo.value.vehicleModelDtos.filter((item) => !item.isNew)
+  }
 }
 
 // 监听 tab 切换
@@ -445,13 +471,34 @@ onMounted(async () => {
                   class="h-32"
                   v-model="editModelInfoForm.name"
                 />
+                <el-input
+                  v-else-if="row.isNew"
+                  placeholder="Enter..."
+                  class="h-32"
+                  v-model="row.name"
+                />
                 <span v-else>{{ row.name }}</span>
               </template>
             </el-table-column>
             <!-- 操作 -->
             <el-table-column column-key="actions" min-width="15%">
               <template #default="{ row }">
-                <template v-if="!row.isEdit">
+                <template v-if="row.isEdit || row.isNew">
+                  <el-button
+                    size="small"
+                    @click="handleCancelEditBrandModelName(row)"
+                  >
+                    Cancel
+                  </el-button>
+                  <el-button
+                    type="primary"
+                    @click="handleEditBrandModelName(row)"
+                    size="small"
+                  >
+                    {{ row.id ? 'Save' : 'Add' }}
+                  </el-button>
+                </template>
+                <template v-else>
                   <!-- 编辑 -->
                   <i
                     class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
@@ -470,18 +517,6 @@ onMounted(async () => {
                       />
                     </template>
                   </el-popconfirm>
-                </template>
-                <template v-else>
-                  <el-button size="small" @click="row.isEdit = false">
-                    Cancel
-                  </el-button>
-                  <el-button
-                    type="primary"
-                    @click="handleEditBrandModelName(row)"
-                    size="small"
-                  >
-                    {{ row.id ? 'Save' : 'Add' }}
-                  </el-button>
                 </template>
               </template>
             </el-table-column>
