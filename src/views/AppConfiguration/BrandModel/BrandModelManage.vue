@@ -299,6 +299,16 @@ const handleDeletePredictionItem = async (id) => {
   getBrandModelInfo()
 }
 
+const predictionOemListDrawerRef = ref(null)
+
+// 刷新预测数据列表
+const refreshPredictionItemList = async () => {
+  getPredictBrandList()
+  nextTick(() => {
+    predictionOemListDrawerRef.value.getPredictOemList()
+  })
+}
+
 onMounted(async () => {
   // id 字段校验
   if (route.params.id) {
@@ -607,9 +617,11 @@ onMounted(async () => {
     </el-scrollbar>
   </section>
   <prediction-oem-list-drawer
+    ref="predictionOemListDrawerRef"
     v-model="drawerPredictionOemVisible"
     v-if="drawerPredictionOemVisible"
     :prediction-Item="selectedPredictionItem"
+    @refresh="refreshPredictionItemList"
   />
 </template>
 

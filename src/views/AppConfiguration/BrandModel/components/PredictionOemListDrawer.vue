@@ -1,8 +1,11 @@
 <script setup>
-import { nextTick } from 'vue'
+import { nextTick, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 
-import { getBrandOemRealTimeInfoApi } from '@/apis/appApi.js'
+import {
+  createPredictOemDataApi,
+  getBrandOemRealTimeInfoApi,
+} from '@/apis/appApi.js'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 
 const drawerPredictionOemVisible = defineModel({
@@ -16,12 +19,11 @@ const { predictionItem } = defineProps({
   },
 })
 
-const predictOemList = computed(() =>
-  predictionItem.predictionOemDtos &&
-  predictionItem.predictionOemDtos.length > 0
-    ? predictionItem.predictionOemDtos
-    : [],
-)
+// 定义接收的事件
+const emit = defineEmits(['refresh'])
+
+// 预测数据列表
+const predictOemList = ref()
 
 // 品牌的OEM实时信息列表
 const oemList = ref([])
@@ -81,8 +83,52 @@ const handleAddPendingOemSubitem = (row, oemRow) => {
   nextTick(() => oemDataRef.value?.handleClose())
 }
 
+// 新增预测数据的OEM信息
+const handleAddOemItem = async (row) => {
+  await createPredictOemDataApi({
+    predictionId: predictionItem.id,
+    dataName: row.dataName,
+    ecuName: row.ecuName,
+    remark: row.remark,
+  })
+  // 提示
+  ElMessage.success('Added successfully')
+  // 刷新
+  // getPredictOemList()
+  emit('refresh')
+}
+
+// 管理预测数据的OEM信息
+const handleOEMItemManage = async (row) => {
+  if (row.id) {
+    // 编辑
+  } else {
+    // 新增
+    handleAddOemItem(row)
+  }
+}
+
+// 预测数据OEM列表
+const getPredictOemList = () =>
+  (predictOemList.value =
+    predictionItem.predictionOemDtos &&
+    predictionItem.predictionOemDtos.length > 0
+      ? predictionItem.predictionOemDtos.map((item) => ({
+          ...item,
+          isEdit: false,
+        }))
+      : [])
+
+// 暴露方法
+defineExpose({
+  getPredictOemList,
+})
+
 // 组件挂载后, 获取OEM实时信息列表
-getOemList()
+
+onMounted(async () => {
+  await Promise.all([getOemList(), getPredictOemList()])
+})
 </script>
 
 <template>
@@ -220,7 +266,7 @@ getOemList()
                         </el-table-column>
 
                         <!-- 操作列 -->
-                        <el-table-column label="" min-width="12%">
+                        <el-table-column min-width="12%">
                           <template #default="scope">
                             <el-button
                               type="primary"
@@ -242,7 +288,11 @@ getOemList()
             </template>
           </el-table-column>
           <!-- ECU Name -->
-          <el-table-column prop="dataName" label="DATA Name" min-width="25%" />
+          <el-table-column prop="dataName" label="DATA Name" min-width="25%">
+            <template #default="{ row }">
+              {{ row.dataName || '-' }}
+            </template>
+          </el-table-column>
           <!-- Actions -->
           <el-table-column min-width="12%">
             <template #default="{ row }">
@@ -256,7 +306,11 @@ getOemList()
                 <i class="icon-delete-bin-line cursor-pointer" />
               </template>
               <template v-else>
-                <el-button type="primary" size="small">
+                <el-button
+                  type="primary"
+                  size="small"
+                  @click="handleOEMItemManage(row)"
+                >
                   {{ row.id ? 'Save' : 'Add' }}
                 </el-button>
               </template>
