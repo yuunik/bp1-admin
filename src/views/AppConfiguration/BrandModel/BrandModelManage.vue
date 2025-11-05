@@ -2,6 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
 
 import {
   addBrandModelApi,
@@ -19,7 +20,7 @@ import {
 } from '@/apis/appApi.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent } from '@/utils/constantsUtil.js'
+import { EmitterEvent, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 import BaseTag from '@/components/BaseTag.vue'
 
@@ -65,6 +66,9 @@ const detailsRef = ref(null)
 const modelListRef = ref(null)
 
 const predictionItemRef = ref(null)
+
+// 编辑预测数据表单
+const editPredictionItemForm = ref({})
 
 // 已有的预测数据的名字数据
 const predictBrandNameList = computed(() =>
@@ -212,6 +216,22 @@ const handleAddPredictBrand = () => {
   if (predictBrandChildNameList.value.length === 0) {
     getPredictBrandChildNameList()
   }
+  const isAllDisabled = predictBrandList.value.every((item) => {
+    // 新增时, 关闭所有的编辑状态
+    item.isEdit = false
+    return !item.isNew
+  })
+  // 有新增的元素时, 添加失败
+  if (!isAllDisabled) {
+    // 每次只能新增一个
+    ElMessage.info('You can only add one prediction item at a time.')
+    return
+  }
+
+  // 检查predictBrandChildNameList 是否有可选项
+  if (predictBrandChildNameList.value.length === 0) {
+    ElMessage.info('No prediction names remain.')
+  }
   predictBrandList.value.push({
     name: '',
     // 是否新增
@@ -221,12 +241,12 @@ const handleAddPredictBrand = () => {
 }
 
 // 获取预测子项名称列表
-const getPredictBrandChildNameList = async () => {
+const getPredictBrandChildNameList = useDebounceFn(async () => {
   const { data } = await getPredictSubItemNameListApi()
   predictBrandChildNameList.value = data.filter(
     (item) => !predictBrandNameList.value.includes(item.name),
   )
-}
+}, TimingPreset.DEBOUNCE)
 
 // 切换至预测数据编辑模式
 const handleSwitchToEditMode = (predictionItem) => {
@@ -234,8 +254,19 @@ const handleSwitchToEditMode = (predictionItem) => {
   if (predictBrandChildNameList.value.length === 0) {
     getPredictBrandChildNameList()
   }
+  // 当打开编辑模式时, 关闭其他编辑模式
+  for (const item of predictBrandList.value) {
+    item.isEdit = false
+    // 若有新增模式, 一同关闭
+    predictBrandList.value = predictBrandList.value.filter(
+      (item) => !item.isNew,
+    )
+  }
   // 切换至编辑模式
   predictionItem.isEdit = true
+  // 深拷贝, 避免数据被修改
+  const { cloned } = useCloned(predictionItem)
+  editPredictionItemForm.value = cloned.value
 }
 
 // 预测数据名称改变
@@ -249,18 +280,11 @@ const handlePredictionItemNameChange = (val, row) => {
 }
 
 // 编辑预测数据
-const handleEditPredictBrand = async (row) => {
-  if (row.localLogo) {
-    row.logo = row.localLogo
-  }
-
+const handleEditPredictBrand = async () => {
   await modifyPredictionDataApi({
-    id: row.id,
-    date: row.day,
-    mileage: row.mileage,
-
-    name: row.name,
-    file: row.logo,
+    id: editPredictionItemForm.value.id,
+    date: editPredictionItemForm.value.day,
+    mileage: editPredictionItemForm.value.mileage,
   })
   // 修改成功
   ElMessage.success('Edit Prediction Data Success')
@@ -280,12 +304,12 @@ const handlePredictionIconChange = async (file, row) => {
 const handlePredictionItemManage = async (row) => {
   if (row.id) {
     // 编辑
-    handleEditPredictBrand(row)
+    handleEditPredictBrand()
   } else {
     // 新增
     handleAddPredictBrandItem(row)
   }
-  // 获取预测子项名称列表
+  // 更新预测子项名称列表
   getPredictBrandChildNameList()
 }
 
@@ -304,8 +328,8 @@ const handleAddPredictBrandItem = async (row) => {
 
 // 查看预测数据的OEM信息列表
 const handleViewPredictionOemList = async (row, column) => {
-  // 新增状态, 不可查看
-  if (row.isNew) return
+  // 新增状态/编辑状态, 不可查看
+  if (row.isNew || row.isEdit) return
   const { no } = column
   // 用户在操作栏操作, 立即返回
   if (no === 5) return
@@ -343,6 +367,19 @@ const handleCancelEditBrandModelName = (row) => {
     // 取消新增
     brandModelInfo.value.vehicleModelDtos =
       brandModelInfo.value.vehicleModelDtos.filter((item) => !item.isNew)
+  }
+}
+
+// 取消预测数据的新增或编辑
+const handleCancelManagePredictionItem = (row) => {
+  if (row.id) {
+    // 取消编辑
+    row.isEdit = false
+  } else {
+    // 删除新增的元素
+    predictBrandList.value = predictBrandList.value.filter(
+      (item) => !item.isNew,
+    )
   }
 }
 
@@ -555,7 +592,7 @@ onMounted(async () => {
             row-class-name="clickable-row"
           >
             <!-- 预测数据的图标 -->
-            <el-table-column prop="logo" label="Icon" min-width="19%">
+            <el-table-column prop="logo" label="Icon" min-width="8%">
               <template #default="{ row }">
                 <el-avatar
                   :src="
@@ -568,27 +605,9 @@ onMounted(async () => {
                 >
                   I
                 </el-avatar>
-                <!-- 编辑模式下, 可更换 logo -->
-                <!--<el-upload-->
-                <!--  class="row-center"-->
-                <!--  :on-change="-->
-                <!--    (uploadFile, _) =>-->
-                <!--      handlePredictionIconChange(uploadFile, row)-->
-                <!--  "-->
-                <!--  :auto-upload="false"-->
-                <!--  :show-file-list="false"-->
-                <!--  v-show="row.isEdit"-->
-                <!--&gt;-->
-                <!--  <el-button type="primary" text>-->
-                <!--    <template #icon>-->
-                <!--      <i class="icon-upload-2-line branding-colours-primary" />-->
-                <!--    </template>-->
-                <!--    <template #default>Upload</template>-->
-                <!--  </el-button>-->
-                <!--</el-upload>-->
               </template>
             </el-table-column>
-            <!-- 操作 -->
+            <!-- 名称 -->
             <el-table-column prop="name" label="Item Name" min-width="27%">
               <template #default="{ row }">
                 <el-select
@@ -610,7 +629,15 @@ onMounted(async () => {
             <el-table-column prop="mileage" label="Range" min-width="18%">
               <template #default="{ row }">
                 <el-input
-                  v-if="row.isEdit || row.isNew"
+                  v-if="row.isEdit"
+                  v-model.number="editPredictionItemForm.mileage"
+                  placeholder="Type Here"
+                  class="input--bg-neutrals-grey-1"
+                >
+                  <template #suffix>km</template>
+                </el-input>
+                <el-input
+                  v-else-if="row.isNew"
                   v-model.number="row.mileage"
                   placeholder="Type Here"
                   class="input--bg-neutrals-grey-1"
@@ -624,7 +651,15 @@ onMounted(async () => {
             <el-table-column prop="day" label="Time" min-width="18%">
               <template #default="{ row }">
                 <el-input
-                  v-if="row.isEdit || row.isNew"
+                  v-if="row.isEdit"
+                  v-model.number="editPredictionItemForm.day"
+                  placeholder="Type Here"
+                  class="input--bg-neutrals-grey-1"
+                >
+                  <template #suffix>day</template>
+                </el-input>
+                <el-input
+                  v-else-if="row.isNew"
                   v-model.number="row.day"
                   placeholder="Type Here"
                   class="input--bg-neutrals-grey-1"
@@ -643,8 +678,24 @@ onMounted(async () => {
               </template>
             </el-table-column>
             <!-- Actions -->
-            <el-table-column min-width="4%">
+            <el-table-column min-width="15%" class-name="col-flex-end">
               <template #default="{ row }">
+                <!-- 新增状态和编辑状态的操作栏 -->
+                <template v-if="row.isEdit || row.isNew">
+                  <el-button
+                    size="small"
+                    @click="handleCancelManagePredictionItem(row)"
+                  >
+                    Cancel
+                  </el-button>
+                  <el-button
+                    type="primary"
+                    size="small"
+                    @click="handlePredictionItemManage(row)"
+                  >
+                    {{ row.id ? 'Save' : 'Add' }}
+                  </el-button>
+                </template>
                 <template v-if="!row.isEdit && !row.isNew">
                   <!-- 编辑 -->
                   <i
@@ -656,15 +707,6 @@ onMounted(async () => {
                     class="icon-delete-bin-line cursor-pointer"
                     @click="handleDeletePredictionItem(row.id)"
                   />
-                </template>
-                <template v-else>
-                  <el-button
-                    type="primary"
-                    size="small"
-                    @click="handlePredictionItemManage(row)"
-                  >
-                    {{ row.id ? 'Save' : 'Add' }}
-                  </el-button>
                 </template>
               </template>
             </el-table-column>
