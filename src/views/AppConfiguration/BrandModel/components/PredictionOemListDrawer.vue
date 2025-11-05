@@ -1,6 +1,6 @@
 <script setup>
-import { nextTick, watch } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
+import { nextTick, watch, toRefs } from 'vue'
+import { useDebounceFn, useCloned } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 
 import {
@@ -21,6 +21,12 @@ const { predictionItem } = defineProps({
     required: true,
   },
 })
+
+// const { predictionItem } = toRefs(props)
+
+const { cloned } = useCloned(predictionItem)
+const predictionData = ref({})
+predictionData.value = cloned.value
 
 // 定义接收的事件
 const emit = defineEmits(['refresh'])
@@ -72,7 +78,7 @@ const handleAddOEMItem = async () =>
 // 获取品牌的OEM实时信息列表
 const getOemList = useDebounceFn(async () => {
   const { data } = await getBrandOemRealTimeInfoApi({
-    brand: predictionItem.brand,
+    brand: predictionData.value.brand,
     searchKey: searchKey.value,
   })
   oemList.value = data
@@ -89,7 +95,7 @@ const handleAddPendingOemSubitem = (row, oemRow) => {
 // 新增预测数据的OEM信息
 const handleAddOemItem = async (row) => {
   await createPredictOemDataApi({
-    predictionId: predictionItem.id,
+    predictionId: predictionData.value.id,
     dataName: row.dataName,
     ecuName: row.ecuName,
     remark: row.remark,
@@ -128,9 +134,9 @@ const handleOEMItemManage = async (row) => {
 // 预测数据OEM列表
 const getPredictOemList = () =>
   (predictOemList.value =
-    predictionItem.predictionOemDtos &&
-    predictionItem.predictionOemDtos.length > 0
-      ? predictionItem.predictionOemDtos.map((item) => ({
+    predictionData.value.predictionOemDtos &&
+    predictionData.value.predictionOemDtos.length > 0
+      ? predictionData.value.predictionOemDtos.map((item) => ({
           ...item,
           isEdit: false,
         }))
@@ -149,6 +155,14 @@ const handleDeleteOemItem = async (id) => {
 defineExpose({
   getPredictOemList,
 })
+
+watch(
+  () => predictionItem,
+  () => {
+    console.log('?????????????')
+  },
+  { deep: true },
+)
 
 // 组件挂载后, 获取OEM实时信息列表
 
@@ -174,7 +188,7 @@ onMounted(async () => {
     <h2
       class="row-center heading-h2-20px-medium text-neutrals-off-black mx-32 h-32"
     >
-      {{ predictionItem.name }}
+      {{ predictionData.name }}
     </h2>
     <!-- divider -->
     <el-divider />

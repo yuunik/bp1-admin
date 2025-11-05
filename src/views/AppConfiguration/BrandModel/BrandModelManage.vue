@@ -1,25 +1,25 @@
 <script setup>
 import { useRoute, useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 
 import {
   addBrandModelApi,
+  createPredictItemApi,
   deleteBrandApi,
   deleteBrandModelApi,
+  deletePredictItemApi,
   getBrandModelInfoApi,
-  modifyBrandModelNameApi,
-  modifyBrandInfoApi,
-  uploadBrandLogoApi,
   getPredictBrandListApi,
   getPredictSubItemNameListApi,
+  modifyBrandInfoApi,
+  modifyBrandModelNameApi,
   modifyPredictionDataApi,
-  createPredictItemApi,
-  deletePredictItemApi,
+  uploadBrandLogoApi,
 } from '@/apis/appApi.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
+import { EmitterEvent } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 import BaseTag from '@/components/BaseTag.vue'
 
@@ -303,7 +303,11 @@ const predictionOemListDrawerRef = ref(null)
 
 // 刷新预测数据列表
 const refreshPredictionItemList = async () => {
-  getPredictBrandList()
+  await getPredictBrandList()
+  // 更新所选中的预测数据
+  selectedPredictionItem.value = predictBrandList.value.find(
+    (item) => item.id === selectedPredictionItem.value.id,
+  )
   nextTick(() => {
     predictionOemListDrawerRef.value.getPredictOemList()
   })
@@ -621,6 +625,7 @@ onMounted(async () => {
     v-model="drawerPredictionOemVisible"
     v-if="drawerPredictionOemVisible"
     :prediction-Item="selectedPredictionItem"
+    :key="JSON.stringify(selectedPredictionItem)"
     @refresh="refreshPredictionItemList"
   />
 </template>
