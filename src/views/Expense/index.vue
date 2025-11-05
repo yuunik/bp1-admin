@@ -1,11 +1,14 @@
 <script setup>
-// tab 名
+import { useDebounceFn } from '@vueuse/core'
+
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
 import { useSort } from '@/composables/useSort.js'
 import { getExpenseListByUserApi } from '@/apis/expenseApi.js'
+import { TimingPreset } from '@/utils/constantsUtil.js'
 
+// tab 名
 const activeTab = ref('By User')
 
 // 输入搜索关键字
@@ -27,6 +30,15 @@ const sortParams = reactive({
   sortBy: '',
 })
 
+// 刷新
+const refresh = useDebounceFn(() => {
+  if (!pagination.currentPage) {
+    return getExpenseListByUser()
+  }
+  // 设置当前页为 1
+  pagination.currentPage = 0
+}, TimingPreset.DEBOUNCE)
+
 // 排序函数
 const handleSortChange = useSort(sortParams, () => refresh())
 
@@ -45,7 +57,7 @@ const getExpenseListByUser = async () => {
 // 监听分页数据
 watch(
   () => pagination.currentPage,
-  () => {},
+  () => getExpenseListByUser(),
 )
 
 // 组件创建, 获取数据
@@ -53,7 +65,7 @@ getExpenseListByUser()
 </script>
 
 <template>
-  <section class="flex h-full flex-col overflow-auto">
+  <section class="box-border flex h-full flex-col overflow-auto pb-24">
     <!-- 标题 -->
     <h2
       class="heading-h2-20px-medium text-neutrals-off-black leading-30 row-center mx-32 h-32"
