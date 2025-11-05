@@ -106,11 +106,16 @@ const handleAddPendingOemSubitem = (row, oemRow) => {
 
 // 新增预测数据的OEM信息
 const handleAddOemItem = async (row) => {
+  if (!row.ecuName) {
+    // 提示填写 ECU NAME
+    ElMessage.error('Please select ECU Name')
+    return
+  }
   await createPredictOemDataApi({
     predictionId: predictionData.value.id,
     dataName: row.dataName,
     ecuName: row.ecuName,
-    remark: row.remark,
+    remark: row.remark || '',
   })
   // 提示
   ElMessage.success('Added successfully')
@@ -120,11 +125,17 @@ const handleAddOemItem = async (row) => {
 
 // 编辑预测数据的OEM信息
 const handleEditOemItem = async (row) => {
+  if (!row.ecuName) {
+    // 提示填写 ECU NAME
+    ElMessage.error('Please select ECU Name')
+    return
+  }
+
   await modifyPredictOemDataApi({
     id: row.id,
     dataName: row.dataName,
     ecuName: row.ecuName,
-    remark: row.remark,
+    remark: row.remark || '',
   })
   // 提示
   ElMessage.success('Updated successfully')
