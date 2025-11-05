@@ -107,8 +107,10 @@ const AppApi = Object.freeze({
   ADD_PREDICT_OEM_INFO: '/manager/prediction/addpredictionoem',
   // 获取品牌的OEM实时信息
   GET_BRAND_OEM_REALTIME_List: '/manager/prediction/getoemlivedate',
-  // 编辑预测数据的OEM信息
+  // 编辑品牌的OEM实时信息
   MODIFY_PREDICT_OEM_INFO: '/manager/prediction/updatepredictionoem',
+  // 删除品牌的OEM实时信息
+  DELETE_PREDICT_OEM_INFO: '/manager/prediction/deletepredictionoem',
 })
 
 // 获取 token
@@ -1089,6 +1091,24 @@ export const modifyPredictOemDataApi = (params) => {
 
   return request({
     url: AppApi.MODIFY_PREDICT_OEM_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除预测的OEM实时信息
+ * @param ids
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const deletePredictOemDataApi = (ids) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('ids', ids)
+
+  return request({
+    url: AppApi.DELETE_PREDICT_OEM_INFO,
     method: 'POST',
     data,
   })

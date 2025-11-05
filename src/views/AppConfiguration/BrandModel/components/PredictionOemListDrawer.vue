@@ -5,6 +5,7 @@ import { ElMessage } from 'element-plus'
 
 import {
   createPredictOemDataApi,
+  deletePredictOemDataApi,
   getBrandOemRealTimeInfoApi,
   modifyPredictOemDataApi,
 } from '@/apis/appApi.js'
@@ -134,6 +135,15 @@ const getPredictOemList = () =>
           isEdit: false,
         }))
       : [])
+
+// 删除预测数据的OEM信息
+const handleDeleteOemItem = async (id) => {
+  await deletePredictOemDataApi(id)
+  // 提示
+  ElMessage.success('Deleted successfully')
+  // 刷新
+  emit('refresh')
+}
 
 // 暴露方法
 defineExpose({
@@ -319,7 +329,10 @@ onMounted(async () => {
                   @click="row.isEdit = true"
                 />
                 <!-- 删除 -->
-                <i class="icon-delete-bin-line cursor-pointer" />
+                <i
+                  class="icon-delete-bin-line cursor-pointer"
+                  @click="handleDeleteOemItem(row.id)"
+                />
               </template>
               <template v-else>
                 <el-button
