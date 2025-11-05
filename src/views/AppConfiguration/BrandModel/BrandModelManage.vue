@@ -61,6 +61,12 @@ const selectedPredictionItem = ref({})
 // 需要修改的品牌名称
 const editBrandInfoName = ref('')
 
+const detailsRef = ref(null)
+
+const modelListRef = ref(null)
+
+const predictionItemRef = ref(null)
+
 // 已有的预测数据的名字数据
 const predictBrandNameList = computed(() =>
   predictBrandList.value.length > 0
@@ -301,6 +307,17 @@ const handleDeletePredictionItem = async (id) => {
   getBrandModelInfo()
 }
 
+// 监听 tab 切换
+watch(activeTab, (val) => {
+  if (val === 'Details') {
+    detailsRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Model List') {
+    modelListRef.value.scrollIntoView({ behavior: 'smooth' })
+  } else if (val === 'Prediction Items') {
+    predictionItemRef.value.scrollIntoView({ behavior: 'smooth' })
+  }
+})
+
 onMounted(async () => {
   // id 字段校验
   if (route.params.id) {
@@ -332,7 +349,7 @@ onMounted(async () => {
     <!-- content -->
     <el-scrollbar>
       <!-- 品牌信息 -->
-      <div class="flex gap-24 px-32 pb-24 pt-16">
+      <div class="flex gap-24 px-32 pb-24 pt-16" ref="detailsRef">
         <!-- logo -->
         <base-upload
           :key="brandModelInfo.logo"
@@ -391,7 +408,7 @@ onMounted(async () => {
         </div>
       </div>
       <!-- 车辆品牌型号信息表格 -->
-      <div>
+      <div ref="modelListRef">
         <!-- 标签信息 -->
         <div class="items-center-safe box-border flex gap-8 px-32 py-7">
           <h4>Model List</h4>
@@ -459,7 +476,7 @@ onMounted(async () => {
         </div>
       </div>
       <!-- 车辆品牌预测信息表格 -->
-      <div class="mt-24">
+      <div class="mt-24" ref="predictionItemRef">
         <!-- 标签信息 -->
         <div class="items-center-safe box-border flex gap-8 px-32 py-7">
           <h4>Prediction Items</h4>
