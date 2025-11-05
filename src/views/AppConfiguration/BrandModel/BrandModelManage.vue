@@ -299,20 +299,6 @@ const handleDeletePredictionItem = async (id) => {
   getBrandModelInfo()
 }
 
-const predictionOemListDrawerRef = ref(null)
-
-// 刷新预测数据列表
-const refreshPredictionItemList = async () => {
-  await getPredictBrandList()
-  // 更新所选中的预测数据
-  selectedPredictionItem.value = predictBrandList.value.find(
-    (item) => item.id === selectedPredictionItem.value.id,
-  )
-  nextTick(() => {
-    predictionOemListDrawerRef.value.getPredictOemList()
-  })
-}
-
 onMounted(async () => {
   // id 字段校验
   if (route.params.id) {
@@ -625,8 +611,7 @@ onMounted(async () => {
     v-model="drawerPredictionOemVisible"
     v-if="drawerPredictionOemVisible"
     :prediction-Item="selectedPredictionItem"
-    :key="JSON.stringify(selectedPredictionItem)"
-    @refresh="refreshPredictionItemList"
+    @refresh="getPredictBrandList"
   />
 </template>
 

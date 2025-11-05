@@ -1,11 +1,12 @@
 <script setup>
-import { nextTick, watch, toRefs } from 'vue'
+import { nextTick } from 'vue'
 import { useDebounceFn, useCloned } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 
 import {
   createPredictOemDataApi,
   deletePredictOemDataApi,
+  getBrandOemInfoDetailApi,
   getBrandOemRealTimeInfoApi,
   modifyPredictOemDataApi,
 } from '@/apis/appApi.js'
@@ -22,10 +23,9 @@ const { predictionItem } = defineProps({
   },
 })
 
-// const { predictionItem } = toRefs(props)
+const predictionData = ref({})
 
 const { cloned } = useCloned(predictionItem)
-const predictionData = ref({})
 predictionData.value = cloned.value
 
 // 定义接收的事件
@@ -46,11 +46,17 @@ const oemDataRef = ref(null)
 // 勾选的OEM数据
 const selectedOEMIdList = ref([])
 
-// 批量删除OEM数据
-const dialogBatchDeleteOEMItemVisible = ref(false)
+// 获取品牌OEM实时信息列表
+const getOemRealTimeInfoList = async () => {
+  const { data } = await getBrandOemInfoDetailApi(predictionData.value.id)
+  predictOemList.value = data
+}
 
-// logo加载失败的回退行为
-const onErrorImage = () => true
+// 刷新
+const refresh = async () => {
+  getOemRealTimeInfoList()
+  emit('refresh')
+}
 
 // 处理跨行
 const handleTableSpan = ({ row, columnIndex }) => {
@@ -109,7 +115,7 @@ const handleAddOemItem = async (row) => {
   // 提示
   ElMessage.success('Added successfully')
   // 刷新
-  emit('refresh')
+  refresh()
 }
 
 // 编辑预测数据的OEM信息
@@ -123,7 +129,7 @@ const handleEditOemItem = async (row) => {
   // 提示
   ElMessage.success('Updated successfully')
   // 刷新
-  emit('refresh')
+  refresh()
 }
 
 // 管理预测数据的OEM信息
@@ -154,7 +160,7 @@ const handleDeleteOemItem = async (id) => {
   // 提示
   ElMessage.success('Deleted successfully')
   // 刷新
-  emit('refresh')
+  refresh()
 }
 
 // 勾选框勾选
@@ -167,18 +173,13 @@ const handleBatchDeleteOemItems = async () => {
   // 提示
   ElMessage.success('Deleted  successfully')
   // 刷新
-  emit('refresh')
+  refresh()
 }
 
-// 暴露方法
-defineExpose({
-  getPredictOemList,
-})
-
 // 组件挂载后, 获取OEM实时信息列表
-
+getOemRealTimeInfoList()
 onMounted(async () => {
-  await Promise.all([getOemList(), getPredictOemList()])
+  getOemList()
 })
 </script>
 
@@ -199,7 +200,7 @@ onMounted(async () => {
     <h2
       class="row-center heading-h2-20px-medium text-neutrals-off-black mx-32 h-32"
     >
-      {{ predictionData.name }}
+      {{ predictionData?.name }}
     </h2>
     <!-- divider -->
     <el-divider />
@@ -212,7 +213,7 @@ onMounted(async () => {
         </h3>
         <!-- Strings 数量 -->
         <span class="heading-body-large-body-14px-medium text-neutrals-grey-3">
-          {{ predictOemList.length }}
+          {{ predictOemList?.length }}
         </span>
       </div>
       <!-- 分割线 -->
