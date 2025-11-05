@@ -52,6 +52,11 @@
     }
 
   }
+
+  // 有上边框的table
+  &.has-top {
+    @apply divider-neutral-grey-4-1px;
+  }
 }
 
 // 重置 el-tab 的样式

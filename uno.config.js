@@ -139,14 +139,16 @@ export default defineConfig({
       // 文字溢出
       'text-truncate': 'text-ellipsis overflow-hidden whitespace-nowrap',
       // 间隔线
-      'divider-neutral-grey-4-1px': 'border-t-[#EAEEF4] border-t border-t-1',
-      'divider-neutral-off-white-1px': 'border-t-[#FCFCFC] border-t border-t-1',
-      'divider-neutral-grey-4-4px': 'border-t-[#EAEEF4] border-t border-t-4',
-      'divider-bottom-grey-4-1px': 'border-b-[#EAEEF4] border-b border-b-1',
+      'divider-neutral-grey-4-1px': 'border-t border-t-solid border-[#EAEEF4]',
+      'divider-neutral-off-white-1px':
+        ' border-t border-t-solid border-[#FCFCFC]',
+      'divider-neutral-grey-4-4px':
+        'border-t-4 border-t-solid border-[#EAEEF4] ',
+      'divider-bottom-grey-4-1px': 'border-b border-b-solid border-[#EAEEF4]  ',
       'divider-bottom-neutral-off-white-1px':
-        'border-b-[#FCFCFC] border-b border-b-1',
+        'border-b border-b-solid border-[#FCFCFC]',
       // 边框
-      'border-neutral-grey-1-1px': 'border-solid border border-[#EAEEF4]',
+      'border-neutral-grey-1-1px': 'border border-solid border-[#EAEEF4]',
       'border-branding-colours-primary-1px':
         'border-solid border border-[#006BF7]',
       // 默认过渡效果
