@@ -457,11 +457,19 @@ onMounted(async () => {
                     class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
                     @click="handleSwitchEditModel(row)"
                   />
-                  <!-- 删除 -->
-                  <i
-                    class="icon-delete-bin-line h-16 w-16 cursor-pointer"
-                    @click="handleDeleteBrandModel(row.id)"
-                  />
+                  <el-popconfirm
+                    :title="`Are you sure you want to delete '${row.name}' ?`"
+                    placement="left"
+                    width="200"
+                    @confirm="handleDeleteBrandModel(row.id)"
+                  >
+                    <template #reference>
+                      <!-- 删除 -->
+                      <i
+                        class="icon-delete-bin-line h-16 w-16 cursor-pointer"
+                      />
+                    </template>
+                  </el-popconfirm>
                 </template>
                 <template v-else>
                   <el-button size="small" @click="row.isEdit = false">
