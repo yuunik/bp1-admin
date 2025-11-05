@@ -1,7 +1,102 @@
-<script setup></script>
+<script setup>
+// tab 名
+import BaseFilterInput from '@/components/BaseFilterInput.vue'
+import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
+import BasePagination from '@/components/BasePagination.vue'
+import { useSort } from '@/composables/useSort.js'
+import { getExpenseListByUserApi } from '@/apis/expenseApi.js'
+
+const activeTab = ref('By User')
+
+// 输入搜索关键字
+const searchKeywords = ref('')
+
+// 分页数据
+const pagination = reactive({
+  currentPage: 0,
+  pageSize: 15,
+  total: 0,
+})
+
+// 列表数据
+const expenseList = ref([])
+
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
+// 排序函数
+const handleSortChange = useSort(sortParams, () => refresh())
+
+// 获取用户分页统计expense
+const getExpenseListByUser = async () => {
+  const { data } = await getExpenseListByUserApi({
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+    searchKey: searchKeywords.value,
+  })
+  expenseList.value = data
+}
+
+// 监听分页数据
+watch(
+  () => pagination.currentPage,
+  () => {},
+)
+
+// 组件创建, 获取数据
+getExpenseListByUser()
+</script>
 
 <template>
-  <section class="bg-red h-full overflow-auto">111</section>
+  <section class="flex h-full flex-col overflow-auto">
+    <!-- 标题 -->
+    <h2
+      class="heading-h2-20px-medium text-neutrals-off-black leading-30 row-center mx-32 h-32"
+    >
+      Expense
+    </h2>
+    <!-- tabs 栏 -->
+    <el-tabs
+      v-model="activeTab"
+      @tab-click="handleTabChange"
+      class="no-bottom my-16"
+    >
+      <el-tab-pane label="By User" name="By User" />
+      <el-tab-pane label="By Car Brand" name="By Car Brand" />
+    </el-tabs>
+    <!-- 输入搜索 -->
+    <base-filter-input
+      v-model="searchKeywords"
+      @inputChange="refresh"
+      class="mx-32 mb-16"
+    />
+    <!-- 分割线 -->
+    <el-divider />
+    <!-- 表格 -->
+    <div class="mx-32 flex flex-1 flex-col">
+      <el-table
+        :data="expenseList"
+        @sort-change="handleSortChange"
+        class="flex-1"
+      >
+        <!-- 用户名 -->
+        <el-table-column prop="name" label="Name" min-width="50%" />
+        <!-- 总花费 -->
+        <el-table-column
+          prop="totalAmount"
+          label="Total Expense"
+          min-width="50%"
+          sortable="custom"
+        />
+      </el-table>
+      <base-pagination v-model="pagination" />
+    </div>
+  </section>
 </template>
 
 <style scoped lang="scss"></style>

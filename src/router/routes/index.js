@@ -344,7 +344,7 @@ const constantRoutes = [
   // 费用模块
   {
     path: '/expense-management',
-    redirect: '/expense-management/expense-record',
+    redirect: '/expense-management/expense-list',
     name: RouteName.EXPENSE_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
@@ -352,18 +352,25 @@ const constantRoutes = [
        * 费用管理模块
        */
       {
-        path: '/expense-management/expense-record',
-        name: RouteName.EXPENSE_RECORD,
-        component: () =>
-          import('@/views/ExpenseManagement/ExpenseRecord/index.vue'),
+        path: '/expense-management/expense-list',
+        name: RouteName.EXPENSE,
+        component: () => import('@/views/Expense/index.vue'),
+        meta: {
+          title: RouteName.EXPENSE,
+          showInMenu: true,
+          showInBreadcrumb: true,
+          icon: 'icon-calendar-2-line',
+          selectedIcon: 'icon-calendar-2-fill',
+          isClearBreadcrumb: true,
+        },
       },
     ],
     meta: {
       title: RouteName.EXPENSE_MANAGEMENT,
       showInMenu: true,
       showInBreadcrumb: true,
-      icon: 'icon-typeuser-3-fill1',
-      selectedIcon: 'icon-typeuser-3-fill',
+      icon: 'icon-calendar-2-line',
+      selectedIcon: 'icon-calendar-2-fill',
       // 是否为一级路由
       isTopLevelRoute: true,
     },

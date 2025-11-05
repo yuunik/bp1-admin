@@ -73,6 +73,10 @@ export const RouteName = Object.freeze({
   // 实时订单
   REAL_TIME_ORDER: 'Real Time Order',
   EMAIL_VERIFICATION: 'Email Verification',
+  // 费用
+  EXPENSE_MANAGEMENT: 'Expense Management',
+  // 费用列表页
+  EXPENSE: 'Expense',
 })
 
 // 分享模块跳转路径
