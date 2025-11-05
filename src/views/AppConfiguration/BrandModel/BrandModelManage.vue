@@ -230,6 +230,7 @@ const handlePredictionItemNameChange = (val, row) => {
   )
   row.mileage = predictionItem.mileage
   row.day = predictionItem.day
+  row.logo = predictionItem.logo
 }
 
 // 编辑预测数据
