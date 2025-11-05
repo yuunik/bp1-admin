@@ -189,7 +189,6 @@ onMounted(async () => {
     size="67%"
     :show-close="false"
     class="custom-drawer"
-    :close-on-click-modal="false"
   >
     <!-- leading -->
     <i
