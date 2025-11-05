@@ -8,46 +8,46 @@ const drawerPredictionOemVisible = defineModel({
   required: true,
 })
 
-//const { predictionItem } = defineProps({
-//  predictionItem: {
-//    type: Object,
-//    required: true,
-//  },
-//})
+const { predictionItem } = defineProps({
+  predictionItem: {
+    type: Object,
+    required: true,
+  },
+})
 
-//const predictOemList = computed(() =>
-//  predictionItem.predictionOemDtos &&
-//  predictionItem.predictionOemDtos.length > 0
-//    ? predictionItem.predictionOemDtos
-//    : [],
-//)
+const predictOemList = computed(() =>
+  predictionItem.predictionOemDtos &&
+  predictionItem.predictionOemDtos.length > 0
+    ? predictionItem.predictionOemDtos
+    : [],
+)
 
-const predictOemList = ref([
-  {
-    id: 1,
-    no: 1,
-    string: 'GSW_Clutch_Wear_Value',
-    oemName: 'GSW_Clutch_Wear_Value',
-    ecuName: 'GSW_Clutch_Wear_Value',
-    isEdit: false,
-  },
-  {
-    id: 2,
-    no: 2,
-    string: 'Transmission_Clutch_Wear',
-    oemName: 'Transmission_Clutch_Wear',
-    ecuName: 'Transmission_Clutch_Wear',
-    isEdit: false,
-  },
-  {
-    id: 3,
-    no: 3,
-    string: 'Transmission_Clutch_Wear',
-    oemName: 'Transmission_Clutch_Wear',
-    ecuName: 'Transmission_Clutch_Wear',
-    isEdit: false,
-  },
-])
+// const predictOemList = ref([
+//   {
+//     id: 1,
+//     no: 1,
+//     string: 'GSW_Clutch_Wear_Value',
+//     oemName: 'GSW_Clutch_Wear_Value',
+//     ecuName: 'GSW_Clutch_Wear_Value',
+//     isEdit: false,
+//   },
+//   {
+//     id: 2,
+//     no: 2,
+//     string: 'Transmission_Clutch_Wear',
+//     oemName: 'Transmission_Clutch_Wear',
+//     ecuName: 'Transmission_Clutch_Wear',
+//     isEdit: false,
+//   },
+//   {
+//     id: 3,
+//     no: 3,
+//     string: 'Transmission_Clutch_Wear',
+//     oemName: 'Transmission_Clutch_Wear',
+//     ecuName: 'Transmission_Clutch_Wear',
+//     isEdit: false,
+//   },
+// ])
 
 const oemList = ref([
   { oem: 'GSW_Clutch_Wear_Value', ecu: 'GSW_Clutch_Wear_Value', unit: 'km/h' },

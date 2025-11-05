@@ -101,6 +101,8 @@ const AppApi = Object.freeze({
   GET_PREDICT_NAME_LIST: '/manager/prediction/getbasepredictions',
   // 新增预测数据
   ADD_PREDICT_DATA: '/manager/prediction/addprediction',
+  // 删除预测数据
+  DELETE_PREDICT_DATA: '/manager/prediction/deleteprediction',
 })
 
 // 获取 token
@@ -992,6 +994,24 @@ export const createPredictItemApi = (params) => {
 
   return request({
     url: AppApi.ADD_PREDICT_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 删除预测数据
+ *
+ * @param id
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const deletePredictItemApi = (id) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', id)
+  return request({
+    url: AppApi.DELETE_PREDICT_DATA,
     method: 'POST',
     data,
   })

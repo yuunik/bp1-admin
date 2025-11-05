@@ -15,6 +15,7 @@ import {
   getPredictSubItemNameListApi,
   modifyPredictionDataApi,
   createPredictItemApi,
+  deletePredictItemApi,
 } from '@/apis/appApi.js'
 import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import emitter from '@/utils/emitterUtil.js'
@@ -52,7 +53,7 @@ const predictBrandChildNameList = ref([])
 const fileUpload = useFileUpload()
 
 // 预测数据抽屉可见
-const drawerPredictionOemVisible = ref(true)
+const drawerPredictionOemVisible = ref(false)
 
 // 所选择的预测数据
 const selectedPredictionItem = ref({})
@@ -270,9 +271,23 @@ const handleAddPredictBrandItem = async (row) => {
 }
 
 // 查看预测数据的OEM信息列表
-const handleViewPredictionOemList = async (row) => {
+const handleViewPredictionOemList = async (row, column) => {
+  // 新增状态, 不可查看
+  if (row.isNew) return
+  const { no } = column
+  // 用户在操作栏操作, 立即返回
+  if (no === 5) return
+
   selectedPredictionItem.value = row
   drawerPredictionOemVisible.value = true
+}
+
+// 删除预测数据
+const handleDeletePredictionItem = async (id) => {
+  await deletePredictItemApi(id)
+  // 删除成功
+  ElMessage.success('Delete Prediction Data Success')
+  getBrandModelInfo()
 }
 
 onMounted(async () => {
@@ -549,7 +564,10 @@ onMounted(async () => {
                     @click="handleSwitchToEditMode(row)"
                   />
                   <!-- 删除 -->
-                  <i class="icon-delete-bin-line cursor-pointer" />
+                  <i
+                    class="icon-delete-bin-line cursor-pointer"
+                    @click="handleDeletePredictionItem(row.id)"
+                  />
                 </template>
                 <template v-else>
                   <el-button
@@ -582,6 +600,7 @@ onMounted(async () => {
   <prediction-oem-list-drawer
     v-model="drawerPredictionOemVisible"
     v-if="drawerPredictionOemVisible"
+    :prediction-Item="selectedPredictionItem"
   />
 </template>
 
