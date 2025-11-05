@@ -528,6 +528,7 @@ const constantRoutes = [
             meta: {
               showInMenu: true,
               showInBreadcrumb: true,
+              isClearBreadcrumb: false,
             },
           },
           // 车辆品牌新增页面
