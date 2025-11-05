@@ -188,6 +188,9 @@ const totalUserCount = ref(0)
 // 品牌总数
 const brandCount = ref(0)
 
+// Car Count Ranking
+const carCountRankingList = ref([])
+
 // 平均花费
 const averageExpense = computed(() => {
   const total = expenseUserListTotalAmount.value || 0
@@ -214,7 +217,14 @@ const getDashboardData = async () => {
 // 获取expense user list数据
 const getExpenseUserList = async () => {
   const {
-    data: { users, brands, allAmount, userCount, brandCount: bCount },
+    data: {
+      users,
+      brands,
+      allAmount,
+      userCount,
+      brandCount: bCount,
+      brandVehicles,
+    },
   } = await getAllUserExpenseSumApi(sortParams)
   // expense user list
   expenseUserList.value = users
@@ -226,6 +236,8 @@ const getExpenseUserList = async () => {
   totalUserCount.value = userCount
   // 品牌总数
   brandCount.value = bCount
+  // 车辆数
+  carCountRankingList.value = brandVehicles
 }
 
 // 排序函数
@@ -270,7 +282,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section class="h-full! border-box flex overflow-auto overflow-x-hidden">
+  <section class="border-box flex overflow-auto">
     <div class="box-border flex h-full w-[67%] w-full flex-col gap-24 p-32">
       <!-- greeting -->
       <div class="flex-between h-42">
@@ -441,35 +453,47 @@ onMounted(async () => {
             :metric-value="firstExpenseBrand.name"
           />
         </div>
-        <div class="rounded-10 relative flex bg-[#F5F6F9] p-2">
-          <!-- 滑块 -->
-          <div
-            :class="[
-              'bg-neutrals-white',
-              'rounded-6',
-              'absolute',
-              'bottom-2',
-              'top-2',
-              'w-[50%]',
-              'slider-shadow',
-              'transition-all',
-              activeTabIndex === 0 ? 'left-2' : 'left-[calc(50%-2px)]',
-            ]"
-          />
-          <!-- Tab 列表 -->
-          <div
-            v-for="tab in tabs"
-            :key="tab"
-            class="relative z-10 flex flex-1 cursor-pointer items-center justify-center p-8"
-            @click="activeTab = tab"
+      </div>
+      <!-- Expense Ranking -->
+      <div class="flex flex-col gap-8">
+        <div class="flex-between">
+          <h2
+            class="heading-body-large-body-14px-medium text-neutrals-off-black"
           >
-            <span class="heading-body-large-body-14px-medium text-strong-950">
-              {{ tab }}
-            </span>
+            Expense Ranking
+          </h2>
+          <div class="rounded-10 w-216 relative flex bg-[#F5F6F9] p-2">
+            <!-- 滑块 -->
+            <div
+              :class="[
+                'bg-neutrals-white',
+                'rounded-6',
+                'absolute',
+                'bottom-2',
+                'top-2',
+                'w-[50%]',
+                'slider-shadow',
+                'transition-all',
+                activeTabIndex === 0 ? 'left-2' : 'left-[calc(50%-2px)]',
+              ]"
+            />
+            <!-- Tab 列表 -->
+            <div
+              v-for="tab in tabs"
+              :key="tab"
+              class="relative z-10 flex flex-1 cursor-pointer items-center justify-center p-8"
+              @click="activeTab = tab"
+            >
+              <span
+                class="heading-body-large-body-14px-medium text-strong-950 leading-[1]"
+              >
+                {{ tab }}
+              </span>
+            </div>
           </div>
         </div>
         <div v-show="activeTabIndex === 0">
-          <el-table :data="expenseUserList" @sort-change="sort">
+          <el-table :data="expenseUserList" @sort-change="sort" class="has-top">
             <el-table-column prop="name" label="User" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
@@ -542,6 +566,47 @@ onMounted(async () => {
             </el-table-column>
           </el-table>
         </div>
+      </div>
+      <!-- Car Count Ranking -->
+      <div class="flex flex-col gap-8">
+        <h2
+          class="row-center heading-body-large-body-14px-medium text-neutrals-off-black h-32"
+        >
+          Car Count Ranking
+        </h2>
+        <el-table :data="carCountRankingList" class="has-top">
+          <el-table-column prop="name" label="Brand" min-width="69%">
+            <template #default="{ row }">
+              <el-avatar
+                fit="cover"
+                :src="getFullFilePath(row.logo)"
+                class="mr-8 h-20 w-20 shrink-0"
+                alt="brand icon"
+                shape="circle"
+                :size="20"
+                @error="() => true"
+              >
+                <img :src="DefaultAvatar" />
+              </el-avatar>
+              <span
+                class="cursor-pointer text-wrap underline"
+                @click="
+                  $router.push({
+                    name: RouteName.PERSON_MANAGE,
+                    params: { id: row.id },
+                  })
+                "
+              >
+                {{ row.name || '-' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="totalAmount"
+            label="Car Count"
+            min-width="31%"
+          />
+        </el-table>
       </div>
     </div>
     <!--<el-divider direction="vertical" />-->
