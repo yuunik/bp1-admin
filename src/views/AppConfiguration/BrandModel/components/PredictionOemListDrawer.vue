@@ -43,6 +43,12 @@ const searchKey = ref('')
 // oem 数据框实例
 const oemDataRef = ref(null)
 
+// 勾选的OEM数据
+const selectedOEMIdList = ref([])
+
+// 批量删除OEM数据
+const dialogBatchDeleteOEMItemVisible = ref(false)
+
 // logo加载失败的回退行为
 const onErrorImage = () => true
 
@@ -151,18 +157,23 @@ const handleDeleteOemItem = async (id) => {
   emit('refresh')
 }
 
+// 勾选框勾选
+const handleSelectionChange = (val) =>
+  (selectedOEMIdList.value = val.map((item) => item.id))
+
+// 批量删除
+const handleBatchDeleteOemItems = async () => {
+  await deletePredictOemDataApi(selectedOEMIdList.value.join(','))
+  // 提示
+  ElMessage.success('Deleted  successfully')
+  // 刷新
+  emit('refresh')
+}
+
 // 暴露方法
 defineExpose({
   getPredictOemList,
 })
-
-watch(
-  () => predictionItem,
-  () => {
-    console.log('?????????????')
-  },
-  { deep: true },
-)
 
 // 组件挂载后, 获取OEM实时信息列表
 
@@ -208,10 +219,17 @@ onMounted(async () => {
       <el-divider class="mt-8" />
       <!-- 预测数据列表 -->
       <div class="table-container mx-32">
+        <div class="flex-between h-42" v-show="selectedOEMIdList.length">
+          <span class="text-neutrals-off-black heading-body-body-12px-regular">
+            {{ selectedOEMIdList.length }} selected
+          </span>
+          <el-button @click="handleBatchDeleteOemItems">Delete</el-button>
+        </div>
         <el-table
           :data="predictOemList"
           :span-method="handleTableSpan"
           class="bg-transparent"
+          @selection-change="handleSelectionChange"
         >
           <!-- 选择框 -->
           <el-table-column type="selection" min-width="7%" />
