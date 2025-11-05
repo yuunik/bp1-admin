@@ -61,6 +61,13 @@ const selectedPredictionItem = ref({})
 // 需要修改的品牌名称
 const editBrandInfoName = ref('')
 
+// 已有的预测数据的名字数据
+const predictBrandNameList = computed(() =>
+  predictBrandList.value.length > 0
+    ? predictBrandList.value.map((item) => item.name).filter((item) => item)
+    : [],
+)
+
 // 获取车辆品牌详情
 const getBrandModelInfo = async () => {
   const { data } = await getBrandModelInfoApi(brandId.value)
@@ -196,7 +203,9 @@ const handleAddPredictBrand = () => {
 // 获取预测子项名称列表
 const getPredictBrandChildNameList = async () => {
   const { data } = await getPredictSubItemNameListApi()
-  predictBrandChildNameList.value = data
+  predictBrandChildNameList.value = data.filter(
+    (item) => !predictBrandNameList.value.includes(item.name),
+  )
 }
 
 // 切换至预测数据编辑模式
