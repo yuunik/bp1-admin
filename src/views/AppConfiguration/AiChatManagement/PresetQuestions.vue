@@ -227,11 +227,10 @@ onBeforeUnmount(() => {
           <el-switch
             v-model="row.status"
             :active-value="1"
-            :active-text="row.status === 1 ? 'On' : ''"
-            :inactive-text="row.status === 0 ? 'Off' : ''"
             :inactive-value="0"
             @change="handleConfirmEdit(row, false)"
           />
+          <span class="ml-8">{{ row.status === 1 ? 'On' : 'Off' }}</span>
         </template>
       </el-table-column>
       <!-- 操作 -->
