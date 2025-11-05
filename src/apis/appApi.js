@@ -107,6 +107,8 @@ const AppApi = Object.freeze({
   ADD_PREDICT_OEM_INFO: '/manager/prediction/addpredictionoem',
   // 获取品牌的OEM实时信息
   GET_BRAND_OEM_REALTIME_List: '/manager/prediction/getoemlivedate',
+  // 编辑预测数据的OEM信息
+  MODIFY_PREDICT_OEM_INFO: '/manager/prediction/updatepredictionoem',
 })
 
 // 获取 token
@@ -1062,6 +1064,31 @@ export const getBrandOemRealTimeInfoApi = (params) => {
 
   return request({
     url: AppApi.GET_BRAND_OEM_REALTIME_List,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 编辑预测的OEM实时信息
+ * @param params
+ * @param params.id 预测id
+ * @param params.dataName 数据名称
+ * @param params.ecuName ECU名称
+ * @param params.remark 备注
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyPredictOemDataApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('id', params.id)
+  data.append('dataName', params.dataName)
+  data.append('ecuName', params.ecuName)
+  data.append('remark', params.remark)
+
+  return request({
+    url: AppApi.MODIFY_PREDICT_OEM_INFO,
     method: 'POST',
     data,
   })

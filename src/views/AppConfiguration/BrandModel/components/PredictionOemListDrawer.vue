@@ -1,10 +1,12 @@
 <script setup>
 import { nextTick, watch } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 
 import {
   createPredictOemDataApi,
   getBrandOemRealTimeInfoApi,
+  modifyPredictOemDataApi,
 } from '@/apis/appApi.js'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 
@@ -94,7 +96,20 @@ const handleAddOemItem = async (row) => {
   // 提示
   ElMessage.success('Added successfully')
   // 刷新
-  // getPredictOemList()
+  emit('refresh')
+}
+
+// 编辑预测数据的OEM信息
+const handleEditOemItem = async (row) => {
+  await modifyPredictOemDataApi({
+    id: row.id,
+    dataName: row.dataName,
+    ecuName: row.ecuName,
+    remark: row.remark,
+  })
+  // 提示
+  ElMessage.success('Updated successfully')
+  // 刷新
   emit('refresh')
 }
 
@@ -102,6 +117,7 @@ const handleAddOemItem = async (row) => {
 const handleOEMItemManage = async (row) => {
   if (row.id) {
     // 编辑
+    handleEditOemItem(row)
   } else {
     // 新增
     handleAddOemItem(row)
