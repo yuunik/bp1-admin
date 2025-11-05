@@ -1,8 +1,9 @@
 <script setup>
-import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
-import BaseTag from '@/components/BaseTag.vue'
-import { getFormatNumber, getFullFilePath } from '@/utils/dataFormattedUtil.js'
-import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
+import { nextTick } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
+
+import { getBrandOemRealTimeInfoApi } from '@/apis/appApi.js'
+import { TimingPreset } from '@/utils/constantsUtil.js'
 
 const drawerPredictionOemVisible = defineModel({
   required: true,
@@ -22,40 +23,14 @@ const predictOemList = computed(() =>
     : [],
 )
 
-// const predictOemList = ref([
-//   {
-//     id: 1,
-//     no: 1,
-//     string: 'GSW_Clutch_Wear_Value',
-//     oemName: 'GSW_Clutch_Wear_Value',
-//     ecuName: 'GSW_Clutch_Wear_Value',
-//     isEdit: false,
-//   },
-//   {
-//     id: 2,
-//     no: 2,
-//     string: 'Transmission_Clutch_Wear',
-//     oemName: 'Transmission_Clutch_Wear',
-//     ecuName: 'Transmission_Clutch_Wear',
-//     isEdit: false,
-//   },
-//   {
-//     id: 3,
-//     no: 3,
-//     string: 'Transmission_Clutch_Wear',
-//     oemName: 'Transmission_Clutch_Wear',
-//     ecuName: 'Transmission_Clutch_Wear',
-//     isEdit: false,
-//   },
-// ])
+// 品牌的OEM实时信息列表
+const oemList = ref([])
 
-const oemList = ref([
-  { oem: 'GSW_Clutch_Wear_Value', ecu: 'GSW_Clutch_Wear_Value', unit: 'km/h' },
-  { oem: 'GSW_Clutch_Wear_Value', ecu: 'GSW_Clutch_Wear_Value', unit: 'km/h' },
-  { oem: 'GSW_Clutch_Wear_Value', ecu: 'GSW_Clutch_Wear_Value', unit: 'km/h' },
-  { oem: 'GSW_Clutch_Wear_Value', ecu: 'GSW_Clutch_Wear_Value', unit: 'km/h' },
-  { oem: 'GSW_Clutch_Wear_Value', ecu: 'GSW_Clutch_Wear_Value', unit: 'km/h' },
-])
+// 搜索关键字
+const searchKey = ref('')
+
+// oem 数据框实例
+const oemDataRef = ref(null)
 
 // logo加载失败的回退行为
 const onErrorImage = () => true
@@ -88,6 +63,26 @@ const handleAddOEMItem = async () =>
     oemEcu: '',
     isDraft: true,
   })
+
+// 获取品牌的OEM实时信息列表
+const getOemList = useDebounceFn(async () => {
+  const { data } = await getBrandOemRealTimeInfoApi({
+    brand: predictionItem.brand,
+    searchKey: searchKey.value,
+  })
+  oemList.value = data
+}, TimingPreset.DEBOUNCE)
+
+// 添加待添加的oem子项
+const handleAddPendingOemSubitem = (row, oemRow) => {
+  row.ecuName = oemRow.ecuName
+  row.dataName = oemRow.labelName
+  // 添加成功后, 关闭数据框
+  nextTick(() => oemDataRef.value?.handleClose())
+}
+
+// 组件挂载后, 获取OEM实时信息列表
+getOemList()
 </script>
 
 <template>
@@ -107,7 +102,7 @@ const handleAddOEMItem = async () =>
     <h2
       class="row-center heading-h2-20px-medium text-neutrals-off-black mx-32 h-32"
     >
-      Clutch Wear Level
+      {{ predictionItem.name }}
     </h2>
     <!-- divider -->
     <el-divider />
@@ -120,7 +115,7 @@ const handleAddOEMItem = async () =>
         </h3>
         <!-- Strings 数量 -->
         <span class="heading-body-large-body-14px-medium text-neutrals-grey-3">
-          3
+          {{ predictOemList.length }}
         </span>
       </div>
       <!-- 分割线 -->
@@ -137,42 +132,46 @@ const handleAddOEMItem = async () =>
           <!-- 序号 -->
           <el-table-column type="index" label="No." min-width="6%" />
           <!-- OEM Strings -->
-          <el-table-column prop="string" label="Strings" min-width="25%">
+          <el-table-column prop="remark" label="Strings" min-width="25%">
             <template #default="{ row }">
               <!-- 编辑模式 -->
               <el-input
                 v-if="row.isEdit || row.isDraft"
-                v-model="row.string"
+                v-model="row.remark"
                 class="input--bg-neutrals-grey-1 rounded-12"
                 placeholder="Type here"
               />
               <!-- 非编辑模式 -->
-              <span v-else>{{ row.string }}</span>
+              <span v-else>{{ row.remark || '-' }}</span>
             </template>
           </el-table-column>
-          <!-- OEM Name -->
-          <el-table-column prop="oemName" label="OEM Name" min-width="25%">
+          <!-- ECU Name -->
+          <el-table-column prop="ecuName" label="ECU Name" min-width="25%">
             <template #default="{ row }">
               <el-dropdown
                 trigger="click"
                 v-if="row.isEdit || row.isDraft"
                 placement="bottom-start"
                 class="w-full"
+                ref="oemDataRef"
               >
                 <el-input
-                  v-model="row.oemName"
-                  class="input--bg-neutrals-grey-1 cursor-pointer!"
+                  v-model="row.ecuName"
+                  class="input--bg-neutrals-grey-1 rounded-12 cursor-pointer!"
                   readonly
+                  placeholder="Select OEM/ECU"
                 >
                   <template #suffix>
                     <i class="icon-typesdropdown" />
                   </template>
                 </el-input>
                 <template #dropdown>
-                  <div class="rounded-full! w-600">
+                  <div class="w-600 max-h-336">
                     <el-input
                       class="input--without-border h-39 input--no-padding px-16 py-8"
                       placeholder="Enter"
+                      v-model="searchKey"
+                      @input="getOemList"
                     >
                       <template #prefix>
                         <i class="icon-mail-send-line-1" />
@@ -181,35 +180,55 @@ const handleAddOEMItem = async () =>
                     <el-divider />
                     <div class="px-16 py-8">
                       <el-table :data="oemList" class="bg-transparent">
-                        <!-- OEM Name -->
+                        <!-- ECU Name -->
                         <el-table-column
-                          prop="oem"
-                          label="OEM Name"
+                          prop="ecuName"
+                          label="ECU Name"
                           min-width="35%"
                         >
                           <template #default="{ row }">
-                            <span class="wrap-text">{{ row.oem }}</span>
+                            <span class="wrap-text">
+                              {{ row.ecuName || '-' }}
+                            </span>
                           </template>
                         </el-table-column>
 
-                        <!-- ECU Name -->
+                        <!-- DATA Name -->
                         <el-table-column
-                          prop="ecu"
-                          label="ECU Name"
+                          prop="labelName"
+                          label="DATA Name"
                           min-width="35%"
-                        />
+                        >
+                          <template #default="{ row }">
+                            <span class="wrap-text">
+                              {{ row.labelName || '-' }}
+                            </span>
+                          </template>
+                        </el-table-column>
 
                         <!-- Unit -->
                         <el-table-column
                           prop="unit"
                           label="Unit"
                           min-width="18%"
-                        />
+                        >
+                          <template #default="{ row }">
+                            <span class="wrap-text">
+                              {{ row.unit || '-' }}
+                            </span>
+                          </template>
+                        </el-table-column>
 
                         <!-- 操作列 -->
                         <el-table-column label="" min-width="12%">
-                          <template #default>
-                            <el-button type="primary" size="small">
+                          <template #default="scope">
+                            <el-button
+                              type="primary"
+                              size="small"
+                              @click="
+                                handleAddPendingOemSubitem(row, scope.row)
+                              "
+                            >
                               Add
                             </el-button>
                           </template>
@@ -219,11 +238,11 @@ const handleAddOEMItem = async () =>
                   </div>
                 </template>
               </el-dropdown>
-              <span v-else>{{ row.oemName }}</span>
+              <span v-else>{{ row.ecuName }}</span>
             </template>
           </el-table-column>
           <!-- ECU Name -->
-          <el-table-column prop="ecuName" label="ECU Name" min-width="25%" />
+          <el-table-column prop="dataName" label="DATA Name" min-width="25%" />
           <!-- Actions -->
           <el-table-column min-width="12%">
             <template #default="{ row }">

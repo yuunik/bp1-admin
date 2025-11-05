@@ -103,6 +103,10 @@ const AppApi = Object.freeze({
   ADD_PREDICT_DATA: '/manager/prediction/addprediction',
   // 删除预测数据
   DELETE_PREDICT_DATA: '/manager/prediction/deleteprediction',
+  // 新增预测数据的OEM信息
+  ADD_PREDICT_OEM_INFO: '/manager/prediction/addpredictionoem',
+  // 获取品牌的OEM实时信息
+  GET_BRAND_OEM_REALTIME_List: '/manager/prediction/getoemlivedate',
 })
 
 // 获取 token
@@ -1012,6 +1016,52 @@ export const deletePredictItemApi = (id) => {
   data.append('id', id)
   return request({
     url: AppApi.DELETE_PREDICT_DATA,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 新增预测数据的OEM信息
+ * @param params
+ * @param params.predictionId 预测id
+ * @param params.dataName 数据名称
+ * @param params.ecuName ECU名称
+ * @param params.remark 备注
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const createPredictOemDataApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('predictionId', params.predictionId)
+  data.append('dataName', params.dataName)
+  data.append('ecuName', params.ecuName)
+  data.append('remark', params.remark)
+
+  return request({
+    url: AppApi.ADD_PREDICT_OEM_INFO,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取品牌的OEM实时信息
+ * @param params
+ * @param params.brand  品牌
+ * @param params.searchKey 搜索关键字
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getBrandOemRealTimeInfoApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brand', params.brand)
+  data.append('searchKey', params.searchKey)
+
+  return request({
+    url: AppApi.GET_BRAND_OEM_REALTIME_List,
     method: 'POST',
     data,
   })
