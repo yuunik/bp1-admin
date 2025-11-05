@@ -243,28 +243,17 @@ const getExpenseUserList = async () => {
 // 排序函数
 const sort = useSort(sortParams, getExpenseUserList)
 
-// 清空面包屑
-const clearBreadcrumbList = () =>
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
-
 // 跳转 OBD 列表页
-const handleNavigateToOBDList = () => {
+const handleNavigateToOBDList = () =>
   router.push({ name: RouteName.OBD_MANAGEMENT })
-  clearBreadcrumbList()
-}
 
 // 跳转 用户 列表页
-const handleNavigateToUserList = () => {
-  router.push({ name: RouteName.EXTERN })
-  clearBreadcrumbList()
-}
+const handleNavigateToUserList = () => router.push({ name: RouteName.EXTERN })
 
 // 跳转 expense 列表页
-const handleNavigateToExpenseList = () => {
+const handleNavigateToExpenseList = () =>
   // TODO expense 列表页路由跳转, 待做...
-  // router.push({ name: RouteName.EXPENSE })
-  clearBreadcrumbList()
-}
+  router.push({ name: RouteName.EXPENSE })
 
 // 跳转品牌详情页
 const handleNavigateToBrandDetail = (brand) => {
@@ -431,7 +420,7 @@ onMounted(async () => {
             Expense Summary
           </h3>
           <i
-            class="icon-typesarrow-right text-16"
+            class="icon-typesarrow-right text-16 cursor-pointer"
             @click="handleNavigateToExpenseList"
           />
         </div>
