@@ -73,6 +73,9 @@ const predictBrandNameList = computed(() =>
     : [],
 )
 
+// 编辑车辆型号表单
+const editModelInfoForm = ref({})
+
 // 获取车辆品牌详情
 const getBrandModelInfo = async () => {
   const { data } = await getBrandModelInfoApi(brandId.value)
@@ -139,7 +142,7 @@ const handleEditBrandModelName = async (row) => {
     // 编辑
     await modifyBrandModelNameApi({
       id: row.id,
-      name: row.name,
+      name: editModelInfoForm.value.name,
     })
     // 添加成功
     ElMessage.success('Edit Brand Model Name Success')
@@ -307,6 +310,16 @@ const handleDeletePredictionItem = async (id) => {
   getBrandModelInfo()
 }
 
+// 品牌型号切换为编辑模式
+const handleSwitchEditModel = (row) => {
+  for (const item of brandModelInfo.value.vehicleModelDtos) {
+    item.isEdit = false
+  }
+  row.isEdit = true
+  const { cloned } = useCloned(row)
+  editModelInfoForm.value = cloned.value
+}
+
 // 监听 tab 切换
 watch(activeTab, (val) => {
   if (val === 'Details') {
@@ -422,27 +435,27 @@ onMounted(async () => {
         <!-- 型号列表 -->
         <div class="table-container mx-32">
           <el-table :data="brandModelInfo?.vehicleModelDtos">
-            <el-table-column type="selection" />
-            <el-table-column type="index" label="No." />
-            <el-table-column prop="name" label="Model">
+            <el-table-column type="selection" min-width="5%" />
+            <el-table-column type="index" label="No." min-width="8%" />
+            <el-table-column prop="name" label="Model" min-width="74%">
               <template #default="{ row }">
                 <el-input
                   v-if="row.isEdit"
                   placeholder="Enter..."
                   class="h-32"
-                  v-model="row.name"
+                  v-model="editModelInfoForm.name"
                 />
                 <span v-else>{{ row.name }}</span>
               </template>
             </el-table-column>
             <!-- 操作 -->
-            <el-table-column column-key="actions" min-width="7%">
+            <el-table-column column-key="actions" min-width="15%">
               <template #default="{ row }">
                 <template v-if="!row.isEdit">
                   <!-- 编辑 -->
                   <i
                     class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
-                    @click="row.isEdit = true"
+                    @click="handleSwitchEditModel(row)"
                   />
                   <!-- 删除 -->
                   <i
@@ -451,11 +464,15 @@ onMounted(async () => {
                   />
                 </template>
                 <template v-else>
+                  <el-button size="small" @click="row.isEdit = false">
+                    Cancel
+                  </el-button>
                   <el-button
                     type="primary"
                     @click="handleEditBrandModelName(row)"
+                    size="small"
                   >
-                    {{ row.id ? 'Edit' : 'Add' }}
+                    {{ row.id ? 'Save' : 'Add' }}
                   </el-button>
                 </template>
               </template>
