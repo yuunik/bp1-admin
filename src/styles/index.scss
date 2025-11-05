@@ -460,3 +460,10 @@ i {
 .col-center {
   @apply row-center;
 }
+
+// 列的内容左对齐
+.col-flex-end {
+  .cell {
+    @apply flex-end;
+  }
+}
