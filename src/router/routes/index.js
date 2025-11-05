@@ -341,6 +341,33 @@ const constantRoutes = [
       isTopLevelRoute: true,
     },
   },
+  // 费用模块
+  {
+    path: '/expense-management',
+    redirect: '/expense-management/expense-record',
+    name: RouteName.EXPENSE_MANAGEMENT,
+    component: () => import('@/layout/index.vue'),
+    children: [
+      /**
+       * 费用管理模块
+       */
+      {
+        path: '/expense-management/expense-record',
+        name: RouteName.EXPENSE_RECORD,
+        component: () =>
+          import('@/views/ExpenseManagement/ExpenseRecord/index.vue'),
+      },
+    ],
+    meta: {
+      title: RouteName.EXPENSE_MANAGEMENT,
+      showInMenu: true,
+      showInBreadcrumb: true,
+      icon: 'icon-typeuser-3-fill1',
+      selectedIcon: 'icon-typeuser-3-fill',
+      // 是否为一级路由
+      isTopLevelRoute: true,
+    },
+  },
   // 数据库模块
   {
     path: '/database-module',
