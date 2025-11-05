@@ -23,7 +23,6 @@ import { EmitterEvent } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 import BaseTag from '@/components/BaseTag.vue'
 
-import DefaultLogo from '@/assets/specialIcons/maintenance-logo.svg'
 import useFileUpload from '@/composables/useFileUpload.js'
 import PredictionOemListDrawer from '@/views/AppConfiguration/BrandModel/components/PredictionOemListDrawer.vue'
 import { useCloned } from '@vueuse/core'
@@ -506,7 +505,7 @@ onMounted(async () => {
                   fit="cover"
                   @error="onErrorImage"
                 >
-                  <el-image :src="DefaultLogo" fit="cover" class="h-20 w-20" />
+                  I
                 </el-avatar>
                 <!-- 编辑模式下, 可更换 logo -->
                 <!--<el-upload-->
