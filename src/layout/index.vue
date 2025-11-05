@@ -165,8 +165,11 @@ provide('isMenuCollapsed', isMenuCollapsed)
       </el-scrollbar>
       <!-- user center -->
       <ul
-        class="text-neutrals-grey-3 [&>li]:rounded-8 default-transition box-border flex flex-col gap-16 p-8 [&>li]:p-8"
-        :class="{ 'wf-menu-width!': isMenuCollapsed }"
+        class="text-neutrals-grey-3 [&>li]:rounded-8 default-transition box-border flex flex-col gap-16 [&>li]:p-8"
+        :class="{
+          'wf-menu-width!': isMenuCollapsed,
+          'p-8': !isMenuCollapsed,
+        }"
       >
         <li
           :class="[
@@ -175,6 +178,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
             {
               'bg-[#ffffff1a]': $route.name === 'Notifications',
               'text-neutrals-off-white': $route.name === 'Notifications',
+              'mx-auto': isMenuCollapsed,
             },
           ]"
           @click="$router.push({ name: 'Notifications' })"
@@ -201,6 +205,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
             {
               'bg-[#ffffff1a]': $route.name === 'Settings',
               'text-neutrals-off-white': $route.name === 'Settings',
+              'mx-auto': isMenuCollapsed,
             },
           ]"
           @click="$router.push({ name: 'Settings' })"
@@ -223,6 +228,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
           :class="{
             'bg-[#ffffff1a]': isShowSettingsDialog,
             'text-neutrals-off-white': isShowSettingsDialog,
+            'mx-auto': isMenuCollapsed,
           }"
           @click="isShowSettingsDialog = !isShowSettingsDialog"
         >
