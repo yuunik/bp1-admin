@@ -389,10 +389,13 @@ const loadOBDData = async (id) => {
             id="on_off"
             v-model="isObdOn"
             class="h-20 w-32"
-            active-text="On"
-            inactive-text="Off"
             @change="handleIsObdChange"
           />
+          <span
+            class="text-neutrals-off-black heading-body-body-12px-regular ml-8"
+          >
+            {{ obdInfo.status !== 10 ? 'On' : 'Off' }}
+          </span>
         </div>
         <div class="leading-32 flex gap-8">
           <label for="serial-number" class="w-112 leading-32 h-32">
