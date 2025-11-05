@@ -264,6 +264,8 @@ const handlePredictionItemManage = async (row) => {
     // 新增
     handleAddPredictBrandItem(row)
   }
+  // 获取预测子项名称列表
+  getPredictBrandChildNameList()
 }
 
 // 新增预测数据
