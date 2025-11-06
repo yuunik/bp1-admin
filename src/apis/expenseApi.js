@@ -10,6 +10,10 @@ const ExpenseApi = Object.freeze({
   GET_EXPENSE_LIST_BY_USER: '/manager/expense/groupbyuser',
   // 管理员根据车辆品牌分页统计expense
   GET_EXPENSE_LIST_BY_BRAND: '/manager/expense/groupbybrand',
+  // 管理员根据Brand获取分组价格
+  GET_EXPENSE_GROUP_PRICE_BY_BRAND: '/manager/expense/summarybybrand',
+  // 管理员根据Brand分页获取每个型号的分组价格
+  GET_EXPENSE_GROUP_PRICE_LIST_BY_BRAND: '/manager/expense/summarybymodel',
 })
 
 // 获取 token
@@ -64,6 +68,53 @@ export const getExpenseListByBrandApi = (params) => {
 
   return request({
     url: ExpenseApi.GET_EXPENSE_LIST_BY_BRAND,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 管理员根据Brand获取分组价格
+ * @param params
+ * @param params.brandId 品牌 id
+ * @param params.byGroup 分组类型
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export const getExpenseGroupPriceByBrandApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', params.brandId)
+  data.append('byGroup', params.byGroup)
+
+  return request({
+    url: ExpenseApi.GET_EXPENSE_GROUP_PRICE_BY_BRAND,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 管理员根据Brand分页获取每个型号的分组价格
+ *
+ * @param params
+ * @param params.brandId 品牌 id
+ * @param params.byGroup 分组类型
+ * @param params.page 页码
+ * @param params.pageSize 每页数量
+ *
+ * @returns {Promise<AxiosResponse<any>>}
+ */
+export const getExpenseGroupPriceListByBrandApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('brandId', params.brandId)
+  data.append('byGroup', params.byGroup)
+  data.append('page', params.page)
+  data.append('pageSize', params.page)
+
+  return request({
+    url: ExpenseApi.GET_EXPENSE_GROUP_PRICE_LIST_BY_BRAND,
     method: 'POST',
     data,
   })
