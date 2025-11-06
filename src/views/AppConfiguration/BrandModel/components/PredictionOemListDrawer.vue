@@ -106,9 +106,9 @@ const handleAddPendingOemSubitem = (row, oemRow) => {
 
 // 新增预测数据的OEM信息
 const handleAddOemItem = async (row) => {
-  if (!row.ecuName) {
+  if (!row.dataName) {
     // 提示填写 ECU NAME
-    ElMessage.error('Please select ECU Name')
+    ElMessage.error('Please select Data Name')
     return
   }
   await createPredictOemDataApi({
