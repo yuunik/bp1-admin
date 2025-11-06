@@ -211,10 +211,10 @@ const getPredictBrandList = async () => {
 }
 
 // 新增预测数据
-const handleAddPredictBrand = () => {
+const handleAddPredictBrand = async () => {
   // 预测子项名称列表为空时, 获取数据
   if (predictBrandChildNameList.value.length === 0) {
-    getPredictBrandChildNameList()
+    await getPredictBrandChildNameList()
   }
   const isAllDisabled = predictBrandList.value.every((item) => {
     // 新增时, 关闭所有的编辑状态
@@ -224,14 +224,11 @@ const handleAddPredictBrand = () => {
   // 有新增的元素时, 添加失败
   if (!isAllDisabled) {
     // 每次只能新增一个
-    ElMessage.info('You can only add one prediction item at a time.')
-    return
+    return ElMessage.info('You can only add one prediction item at a time.')
   }
-
   // 检查predictBrandChildNameList 是否有可选项
   if (predictBrandChildNameList.value.length === 0) {
-    ElMessage.info('No prediction names remain.')
-    return
+    return ElMessage.info('No prediction names remain.')
   }
   predictBrandList.value.push({
     name: '',
