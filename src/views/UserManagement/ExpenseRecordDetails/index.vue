@@ -642,6 +642,11 @@ const handleItemNameChange = (val, record) => {
   record.type = selectedItem.module
 }
 
+// record time 的输入框的 change 事件
+const handleRecordTimeChange = (val) => {
+  editEstimatedCostForm.value.date = val
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -742,6 +747,7 @@ getRepairRecordInfo(id)
             value-format="x"
             :disabled-date="disableDate"
             v-else
+            @change="handleRecordTimeChange"
           />
         </dd>
         <dt>Note</dt>
