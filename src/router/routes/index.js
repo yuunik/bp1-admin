@@ -364,6 +364,18 @@ const constantRoutes = [
           isClearBreadcrumb: true,
         },
       },
+      // 按 Car Brand（汽车品牌）分类 的费用详情页
+      {
+        path: '/expense-management/vehicle-expense-detail/:id',
+        name: RouteName.CAR_COST_DETAILS,
+        component: () =>
+          import('@/views/ExpenseManagement/CarBrandExpenseDetail/index.vue'),
+        meta: {
+          title: RouteName.CAR_COST_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
     ],
     meta: {
       title: RouteName.EXPENSE_MANAGEMENT,

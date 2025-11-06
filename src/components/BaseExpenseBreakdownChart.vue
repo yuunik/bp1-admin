@@ -157,10 +157,10 @@ const centerTextPlugin = ref({
 </script>
 
 <template>
-  <div class="w-832 h-312 flex gap-24">
-    <div class="w-250 h-282 flex flex-col items-center gap-24 py-8">
-      <!-- 饼图 -->
-      <div class="w-158 h-158">
+  <div class="h-312 flex gap-24">
+    <!-- 饼图 -->
+    <div class="h-282 flex w-[25%] flex-col items-center gap-24 py-8">
+      <div class="w-200 h-200">
         <Pie
           :data="pieData"
           :options="pieOptions"
@@ -186,10 +186,10 @@ const centerTextPlugin = ref({
       </ul>
     </div>
     <!-- 表格 -->
-    <div>
-      <el-table :data="tableData" style="width: 100%" stripe>
+    <div class="flex-1">
+      <el-table :data="tableData">
         <!-- 第一列：Module 名称 + 图标 -->
-        <el-table-column prop="name" label="Module" width="200">
+        <el-table-column prop="name" label="Module" min-width="50%">
           <template #default="{ row }">
             <div class="flex items-center gap-2">
               <i
@@ -221,7 +221,7 @@ const centerTextPlugin = ref({
           label="Total Expense"
           sortable
           align="right"
-          width="150"
+          min-width="50%"
         >
           <template #default="{ row }">
             <span>${{ row.amount }}</span>

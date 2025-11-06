@@ -77,6 +77,8 @@ export const RouteName = Object.freeze({
   EXPENSE_MANAGEMENT: 'Expense Management',
   // 费用列表页
   EXPENSE: 'Expense',
+  // 汽车品牌费用详情页
+  CAR_COST_DETAILS: 'Car Cost Details',
 })
 
 // 分享模块跳转路径
