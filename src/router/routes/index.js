@@ -354,7 +354,7 @@ const constantRoutes = [
       {
         path: '/expense-management/expense-list',
         name: RouteName.EXPENSE,
-        component: () => import('@/views/Expense/index.vue'),
+        component: () => import('@/views/ExpenseManagement/Expense/index.vue'),
         meta: {
           title: RouteName.EXPENSE,
           showInMenu: true,

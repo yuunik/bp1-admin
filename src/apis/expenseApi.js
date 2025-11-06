@@ -1,6 +1,6 @@
 /**
  * @file expenseApi.js
- * @description Expense Management 模块的接口文件
+ * @description ExpenseManagement Management 模块的接口文件
  */
 import request from '@/utils/request.js'
 import { useAuthToken } from '@/composables/useAuthToken.js'

@@ -2,11 +2,16 @@
 import { useDebounceFn } from '@vueuse/core'
 
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
-import { getDateWithDDMMMYYYY } from '@/utils/dateUtil.js'
 import BasePagination from '@/components/BasePagination.vue'
 import { useSort } from '@/composables/useSort.js'
 import { getExpenseListByUserApi } from '@/apis/expenseApi.js'
 import { TimingPreset } from '@/utils/constantsUtil.js'
+import {
+  getFormatNumberString,
+  getFullFilePath,
+} from '@/utils/dataFormattedUtil.js'
+
+import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 // tab 名
 const activeTab = ref('By User')
@@ -73,11 +78,7 @@ getExpenseListByUser()
       Expense
     </h2>
     <!-- tabs 栏 -->
-    <el-tabs
-      v-model="activeTab"
-      @tab-click="handleTabChange"
-      class="no-bottom my-16"
-    >
+    <el-tabs v-model="activeTab" class="no-bottom my-16">
       <el-tab-pane label="By User" name="By User" />
       <el-tab-pane label="By Car Brand" name="By Car Brand" />
     </el-tabs>
@@ -97,14 +98,40 @@ getExpenseListByUser()
         class="flex-1"
       >
         <!-- 用户名 -->
-        <el-table-column prop="name" label="Name" min-width="50%" />
+        <el-table-column prop="name" label="Name" min-width="50%">
+          <template #default="{ row }">
+            <el-avatar
+              :src="getFullFilePath(row.logo)"
+              fit="cover"
+              alt="user avatar"
+              class="mr-8"
+              :size="20"
+              @error="() => true"
+            >
+              <img :src="DefaultAvatar" />
+            </el-avatar>
+            <span class="ml-8">
+              {{ row.name }}
+            </span>
+          </template>
+        </el-table-column>
         <!-- 总花费 -->
         <el-table-column
-          prop="totalAmount"
+          prop="amount"
           label="Total Expense"
           min-width="50%"
           sortable="custom"
-        />
+        >
+          <template #default="{ row }">
+            <span>
+              {{
+                getFormatNumberString(row.amount)
+                  ? `$${getFormatNumberString(row.amount)}`
+                  : '-'
+              }}
+            </span>
+          </template>
+        </el-table-column>
       </el-table>
       <base-pagination v-model="pagination" />
     </div>
