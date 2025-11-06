@@ -231,6 +231,7 @@ const handleAddPredictBrand = () => {
   // 检查predictBrandChildNameList 是否有可选项
   if (predictBrandChildNameList.value.length === 0) {
     ElMessage.info('No prediction names remain.')
+    return
   }
   predictBrandList.value.push({
     name: '',
