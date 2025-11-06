@@ -248,6 +248,7 @@ const constantRoutes = [
               title: 'Internal Manage',
               showInMenu: false,
               showInBreadcrumb: true,
+              isClearBreadcrumb: false,
             },
           },
           {
