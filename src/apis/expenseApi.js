@@ -100,6 +100,7 @@ export const getExpenseGroupPriceByBrandApi = (params) => {
  * @param params
  * @param params.brandId 品牌 id
  * @param params.byGroup 分组类型
+ * @param params.searchKey 搜索关键字
  * @param params.page 页码
  * @param params.pageSize 每页数量
  *
@@ -110,8 +111,9 @@ export const getExpenseGroupPriceListByBrandApi = (params) => {
   data.append('token', getToken())
   data.append('brandId', params.brandId)
   data.append('byGroup', params.byGroup)
+  data.append('searchKey', params.searchKey)
   data.append('page', params.page)
-  data.append('pageSize', params.page)
+  data.append('pageSize', params.pageSize)
 
   return request({
     url: ExpenseApi.GET_EXPENSE_GROUP_PRICE_LIST_BY_BRAND,
