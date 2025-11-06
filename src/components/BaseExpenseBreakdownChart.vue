@@ -1,5 +1,6 @@
 <script setup>
 import { Pie } from 'vue-chartjs'
+import Big from 'big.js'
 
 import {
   CategoryColorMap,
@@ -8,117 +9,35 @@ import {
   ModuleIconMap,
 } from '@/utils/constantsUtil.js'
 import BaseSvgIcon from '@/components/BaseSvgIcon.vue'
-
-// 模块列表数据
-//const tableData = ref([
-//  {
-//    name: 'Engine',
-//    amount: 1000.0,
-//    icon: ModuleIconMap.Engine,
-//    color: ModuleColorMap.Engine,
-//  },
-//  {
-//    name: 'Transmission',
-//    amount: 1000.0,
-//    icon: ModuleIconMap.Transmission,
-//    color: ModuleColorMap.Transmission,
-//  },
-//  {
-//    name: 'Brakes',
-//    amount: 1000.0,
-//    icon: ModuleIconMap.Brakes,
-//    color: ModuleColorMap.Brakes,
-//  },
-//  {
-//    name: 'Electrical',
-//    amount: 1000.0,
-//    icon: ModuleIconMap.Electrical,
-//    color: ModuleColorMap.Electrical,
-//  },
-//  {
-//    name: 'Chassis',
-//    amount: 1000.0,
-//    icon: ModuleIconMap.Chassis,
-//    color: ModuleColorMap.Chassis,
-//  },
-//  {
-//    name: 'Body and Trim',
-//    amount: 1000.0,
-//    icon: ModuleIconMap.BodyAndTrim,
-//    color: ModuleColorMap.BodyAndTrim,
-//  },
-//  {
-//    name: 'Others',
-//    amount: 0.0,
-//    icon: ModuleIconMap.Others,
-//    color: ModuleColorMap.Others,
-//  },
-//])
+import { getFormatNumberString } from '../utils/dataFormattedUtil.js'
 
 // 分类列表数据
-const tableData = ref([
-  {
-    name: 'Services',
-    amount: 1000.0,
-    icon: CategoryIconMap.Services,
-    color: CategoryColorMap.Services,
+const { chartData } = defineProps({
+  chartData: {
+    type: Array,
+    required: true,
   },
-  {
-    name: 'Repair',
-    amount: 1000.0,
-    icon: CategoryIconMap.Repair,
-    color: CategoryColorMap.Repair,
-  },
-  {
-    name: 'Fuel',
-    amount: 1000.0,
-    icon: CategoryIconMap.Fuel,
-    color: CategoryColorMap.Fuel,
-  },
-  {
-    name: 'Maintenance',
-    amount: 1000.0,
-    icon: CategoryIconMap.Maintenance,
-    color: CategoryColorMap.Maintenance,
-  },
-  {
-    name: 'Modification',
-    amount: 1000.0,
-    icon: CategoryIconMap.Modification,
-    color: CategoryColorMap.Modification,
-  },
-  {
-    name: 'Others',
-    amount: 0.0,
-    icon: CategoryIconMap.Others,
-    color: CategoryColorMap.Others,
-  },
-])
+})
 
-//const pieData = ref({
-//  labels: ['Engine', 'Transmission', 'Brakes'],
-//  datasets: [
-//    {
-//      data: [20, 80, 200],
-//      backgroundColor: ['#ffaca7', '#f6d78b', '#a9aeff'], // 黑色 + 蓝色
-//      borderWidth: 0,
-//      cutout: '70%', // 控制环的粗细
-//    },
-//  ],
-//})
-
-const pieData = ref({
-  labels: tableData.value.map((item) => item.name),
+// 饼图数据
+const pieData = computed(() => ({
+  labels: chartData.map((item) => item.name),
   datasets: [
     {
-      data: tableData.value.map((item) => item.amount),
-      backgroundColor: tableData.value.map((item) => item.color), // 黑色 + 蓝色
+      data: chartData.map((item) => item.amount),
+      backgroundColor: chartData.map((item) => item.color), // 黑色 + 蓝色
       borderWidth: 0,
       cutout: '70%', // 控制环的粗细
     },
   ],
-})
+}))
 
+// 费用总价
+const totalExpense = computed(() =>
+  chartData.reduce((pre, cur) => Big(pre).plus(cur.amount), Big(0)),
+)
+
+// 饼图配置
 const pieOptions = ref({
   responsive: true,
   plugins: {
@@ -136,7 +55,9 @@ const centerTextPlugin = ref({
     ctx.save()
 
     const text1 = 'Total Expense'
-    const text2 = '$6,000.00'
+    const text2 = totalExpense.value
+      ? `$${getFormatNumberString(totalExpense.value)}`
+      : '-'
 
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -157,9 +78,9 @@ const centerTextPlugin = ref({
 </script>
 
 <template>
-  <div class="h-312 flex gap-24">
+  <div class="min-h-312 flex gap-24">
     <!-- 饼图 -->
-    <div class="h-282 flex w-[25%] flex-col items-center gap-24 py-8">
+    <div class="min-h-282 flex w-[25%] flex-col items-center gap-24 py-8">
       <div class="w-200 h-200">
         <Pie
           :data="pieData"
@@ -169,7 +90,7 @@ const centerTextPlugin = ref({
       </div>
       <ul class="w-226 grid h-96 grid-cols-2 gap-8">
         <li
-          v-for="item in tableData"
+          v-for="item in chartData"
           :key="item.name"
           class="h-18 row-center gap-4"
         >
@@ -187,7 +108,7 @@ const centerTextPlugin = ref({
     </div>
     <!-- 表格 -->
     <div class="flex-1">
-      <el-table :data="tableData">
+      <el-table :data="chartData">
         <!-- 第一列：Module 名称 + 图标 -->
         <el-table-column prop="name" label="Module" min-width="50%">
           <template #default="{ row }">
@@ -224,7 +145,13 @@ const centerTextPlugin = ref({
           min-width="50%"
         >
           <template #default="{ row }">
-            <span>${{ row.amount }}</span>
+            <span>
+              {{
+                getFormatNumberString(row.amount)
+                  ? `$${getFormatNumberString(row.amount)}`
+                  : '-'
+              }}
+            </span>
           </template>
         </el-table-column>
       </el-table>
