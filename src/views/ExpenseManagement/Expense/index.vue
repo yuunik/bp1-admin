@@ -148,10 +148,18 @@ watch(
     <!-- 表格 -->
     <div class="mx-32 flex flex-1 flex-col">
       <el-table
+        v-if="activeTab === 'By User'"
         :data="userExpenseList"
         @sort-change="handleSortChange"
         class="flex-1"
-        v-if="activeTab === 'By User'"
+        row-class-name="clickable-row"
+        @row-click="
+          (row) =>
+            $router.push({
+              name: RouteName.PERSON_MANAGE,
+              params: { id: row.id },
+            })
+        "
       >
         <!-- 用户名 -->
         <el-table-column prop="name" label="Name" min-width="50%">
@@ -166,15 +174,7 @@ watch(
             >
               <img :src="DefaultAvatar" />
             </el-avatar>
-            <span
-              class="ml-8 cursor-pointer underline"
-              @click="
-                $router.push({
-                  name: RouteName.PERSON_MANAGE,
-                  params: { id: row.id },
-                })
-              "
-            >
+            <span class="ml-8">
               {{ row.name }}
             </span>
           </template>
@@ -198,10 +198,18 @@ watch(
         </el-table-column>
       </el-table>
       <el-table
+        v-else
         :data="brandExpenseList"
         @sort-change="handleSortChange"
         class="flex-1"
-        v-else
+        row-class-name="clickable-row"
+        @row-click="
+          (row) =>
+            $router.push({
+              name: RouteName.CAR_COST_DETAILS,
+              params: { id: row.id },
+            })
+        "
       >
         <!-- 品牌名 -->
         <el-table-column
@@ -209,6 +217,7 @@ watch(
           label="Brand"
           min-width="50%"
           sortable="custom"
+          row-class-name="clickable-row"
         >
           <template #default="{ row }">
             <el-avatar
@@ -221,15 +230,7 @@ watch(
             >
               B
             </el-avatar>
-            <span
-              class="ml-8 cursor-pointer underline"
-              @click="
-                $router.push({
-                  name: RouteName.CAR_COST_DETAILS,
-                  params: { id: row.id },
-                })
-              "
-            >
+            <span class="ml-8">
               {{ row.name }}
             </span>
           </template>
