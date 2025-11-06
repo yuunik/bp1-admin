@@ -179,7 +179,7 @@ export const ModuleColorMap = Object.freeze({
   Brakes: ChartColor.Pink,
   Electrical: ChartColor.Green,
   Chassis: ChartColor.Blue,
-  BodyAndTrim: ChartColor.Orange,
+  'Body and Trim': ChartColor.Orange,
   Others: ChartColor.Gray,
 })
 
@@ -200,7 +200,7 @@ export const ModuleIconMap = Object.freeze({
   Brakes: 'brakes',
   Electrical: 'electronic-central-electric',
   Chassis: 'chassis',
-  BodyAndTrim: 'services-icon',
+  'Body and Trim': 'services-icon',
   Others: 'others-icon',
 })
 
