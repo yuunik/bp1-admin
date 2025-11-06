@@ -16,6 +16,7 @@ import {
   getExpenseGroupPriceByBrandApi,
   getExpenseGroupPriceListByBrandApi,
 } from '@/apis/expenseApi.js'
+import { getFormatNumberString } from '../../../utils/dataFormattedUtil.js'
 
 // 获取路由
 const route = useRoute()
@@ -43,29 +44,6 @@ const pagination = reactive({
   pageSize: 15,
   total: 0,
 })
-
-const tableData = ref([
-  {
-    model: 'A1',
-    engine: 500,
-    transmission: 500,
-    brakes: 500,
-    electrical: 500,
-    chassis: 500,
-    bodyTrim: 500,
-    others: 500,
-  },
-  {
-    model: 'A2',
-    engine: 500,
-    transmission: 500,
-    brakes: 500,
-    electrical: 500,
-    chassis: 500,
-    bodyTrim: 500,
-    others: 500,
-  },
-])
 
 // 费用数据列表
 const expenseList = ref([])
@@ -99,7 +77,7 @@ const chartData = computed(() =>
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
-    return
+    return getExpenseGroupPriceListByBrand()
   }
   // 设置当前页为 1
   pagination.currentPage = 0
@@ -116,14 +94,17 @@ const getExpenseGroupPriceByBrand = async () => {
 
 // 管理员根据Brand分页获取每个型号的分组价格
 const getExpenseGroupPriceListByBrand = async () => {
-  const { data } = await getExpenseGroupPriceListByBrandApi({
+  const { data, count } = await getExpenseGroupPriceListByBrandApi({
     brandId: brandId.value,
     byGroup: byGroup.value,
+    searchKey: searchKeywords.value,
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
   })
   modelExpenseList.value = data
+  pagination.total = count
 }
+
 // 获取数据
 const fetchExpenseList = async () =>
   await Promise.all([
@@ -132,18 +113,22 @@ const fetchExpenseList = async () =>
   ])
 
 // 数据重置
-const resetData = () =>
+const resetData = () => {
+  // 清空搜索关键字
+  searchKeywords.value = ''
+
   // 切换tab, 清空分页参数
-  (pagination.value = {
+  pagination.value = {
     currentPage: 0,
     pageSize: 15,
     total: 0,
-  })
+  }
+}
 
 // 监听分页数据
 watch(
   () => pagination.currentPage,
-  () => fetchExpenseList(),
+  () => getExpenseGroupPriceListByBrand(),
 )
 
 // 监听tab切换
@@ -181,7 +166,7 @@ watch(
     />
     <div class="mx-32 flex flex-1 flex-col">
       <h3
-        class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center mx-32 h-24"
+        class="heading-body-large-body-14px-medium text-neutrals-off-black leading-20 row-center h-24"
       >
         Model Expense
       </h3>
@@ -194,24 +179,129 @@ watch(
       />
       <!-- 表格 -->
       <div class="flex flex-1 flex-col">
-        <el-table :data="tableData" class="has-top flex-1">
-          <el-table-column prop="model" label="Model" width="100" />
+        <el-table
+          v-if="activeTab === 'By Module'"
+          :data="modelExpenseList"
+          class="has-top flex-1"
+        >
+          <el-table-column prop="name" label="Model" width="100" />
 
-          <el-table-column prop="engine" label="Engine" align="right" />
+          <el-table-column prop="engine" label="Engine">
+            <template #default="{ row }">
+              <span>
+                {{ row.engine ? `$${getFormatNumberString(row.engine)}` : '-' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="transmission" label="Transmission">
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.transmission
+                    ? `$${getFormatNumberString(row.transmission)}`
+                    : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="brakes" label="Brakes">
+            <template #default="{ row }">
+              <span>
+                {{ row.brakes ? `$${getFormatNumberString(row.brakes)}` : '-' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="electrical" label="Electrical">
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.electrical
+                    ? `$${getFormatNumberString(row.electrical)}`
+                    : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="chassis" label="Chassis">
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.chassis ? `$${getFormatNumberString(row.chassis)}` : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
           <el-table-column
-            prop="transmission"
-            label="Transmission"
-            align="right"
-          />
-          <el-table-column prop="brakes" label="Brakes" align="right" />
-          <el-table-column prop="electrical" label="Electrical" align="right" />
-          <el-table-column prop="chassis" label="Chassis" align="right" />
-          <el-table-column
-            prop="bodyTrim"
+            prop="bodyAndTrim"
             label="Body and Trim"
             align="right"
-          />
-          <el-table-column prop="others" label="Others" align="right" />
+          >
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.bodyAndTrim
+                    ? `$${getFormatNumberString(row.bodyAndTrim)}`
+                    : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-table v-else :data="modelExpenseList" class="has-top flex-1">
+          <el-table-column prop="name" label="Model" width="100" />
+
+          <el-table-column prop="fuel" label="Fuel">
+            <template #default="{ row }">
+              <span>
+                {{ row.fuel ? `$${getFormatNumberString(row.fuel)}` : '-' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="maintenance" label="Maintenance">
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.maintenance
+                    ? `$${getFormatNumberString(row.maintenance)}`
+                    : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="modification" label="Modification">
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.modification
+                    ? `$${getFormatNumberString(row.modification)}`
+                    : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="repair" label="Repair">
+            <template #default="{ row }">
+              <span>
+                {{ row.repair ? `$${getFormatNumberString(row.repair)}` : '-' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="services" label="Services">
+            <template #default="{ row }">
+              <span>
+                {{
+                  row.services ? `$${getFormatNumberString(row.services)}` : '-'
+                }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="others" label="Others">
+            <template #default="{ row }">
+              <span>
+                {{ row.others ? `$${getFormatNumberString(row.others)}` : '-' }}
+              </span>
+            </template>
+          </el-table-column>
         </el-table>
         <base-pagination v-model="pagination" />
       </div>
