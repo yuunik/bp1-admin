@@ -4,7 +4,10 @@ import { useDebounceFn } from '@vueuse/core'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BasePagination from '@/components/BasePagination.vue'
 import { useSort } from '@/composables/useSort.js'
-import { getExpenseListByUserApi } from '@/apis/expenseApi.js'
+import {
+  getExpenseListByBrandApi,
+  getExpenseListByUserApi,
+} from '@/apis/expenseApi.js'
 import { TimingPreset } from '@/utils/constantsUtil.js'
 import {
   getFormatNumberString,
@@ -12,7 +15,6 @@ import {
 } from '@/utils/dataFormattedUtil.js'
 
 import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
-
 // tab 名
 const activeTab = ref('By User')
 
@@ -26,8 +28,11 @@ const pagination = reactive({
   total: 0,
 })
 
-// 列表数据
-const expenseList = ref([])
+// 用户费用列表数据
+const userExpenseList = ref([])
+
+// 品牌费用列表数据
+const brandExpenseList = ref([])
 
 // 排序参数
 const sortParams = reactive({
@@ -38,7 +43,7 @@ const sortParams = reactive({
 // 刷新
 const refresh = useDebounceFn(() => {
   if (!pagination.currentPage) {
-    return getExpenseListByUser()
+    actionMap[activeTab.value]?.()
   }
   // 设置当前页为 1
   pagination.currentPage = 0
@@ -49,24 +54,73 @@ const handleSortChange = useSort(sortParams, () => refresh())
 
 // 获取用户分页统计expense
 const getExpenseListByUser = async () => {
-  const { data } = await getExpenseListByUserApi({
+  const { data, count } = await getExpenseListByUserApi({
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
     searchKey: searchKeywords.value,
   })
-  expenseList.value = data
+  userExpenseList.value = data
+  pagination.total = count
+}
+
+// 管理员根据车辆品牌分页统计expense
+const getExpenseListByBrand = async () => {
+  const { data, count } = await getExpenseListByBrandApi({
+    page: pagination.currentPage,
+    pageSize: pagination.pageSize,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
+    searchKey: searchKeywords.value,
+  })
+  brandExpenseList.value = data
+  pagination.total = count
+}
+
+// 动作映射
+const actionMap = {
+  'By User': getExpenseListByUser,
+  'By Car Brand': getExpenseListByBrand,
+}
+
+// 获取数据
+const fetchExpenseList = () => actionMap[activeTab.value]?.()
+
+// 数据重置
+const resetData = () => {
+  // 切换tab, 清空分页参数
+  pagination.value = {
+    currentPage: 0,
+    pageSize: 15,
+    total: 0,
+  }
+  // 清空搜索关键字
+  searchKeywords.value = ''
+  // 清空排序参数
+  sortParams.sort = ''
+  sortParams.sortBy = ''
 }
 
 // 监听分页数据
 watch(
   () => pagination.currentPage,
-  () => getExpenseListByUser(),
+  () => fetchExpenseList(),
 )
 
-// 组件创建, 获取数据
-getExpenseListByUser()
+// 监听tab切换
+watch(
+  activeTab,
+  () => {
+    // 数据重置
+    resetData()
+    // 获取数据
+    fetchExpenseList()
+  },
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
@@ -85,7 +139,7 @@ getExpenseListByUser()
     <!-- 输入搜索 -->
     <base-filter-input
       v-model="searchKeywords"
-      @inputChange="refresh"
+      @input-change="refresh"
       class="mx-32 mb-16"
     />
     <!-- 分割线 -->
@@ -93,9 +147,10 @@ getExpenseListByUser()
     <!-- 表格 -->
     <div class="mx-32 flex flex-1 flex-col">
       <el-table
-        :data="expenseList"
+        :data="userExpenseList"
         @sort-change="handleSortChange"
         class="flex-1"
+        v-if="activeTab === 'By User'"
       >
         <!-- 用户名 -->
         <el-table-column prop="name" label="Name" min-width="50%">
@@ -109,6 +164,53 @@ getExpenseListByUser()
               @error="() => true"
             >
               <img :src="DefaultAvatar" />
+            </el-avatar>
+            <span class="ml-8">
+              {{ row.name }}
+            </span>
+          </template>
+        </el-table-column>
+        <!-- 总花费 -->
+        <el-table-column
+          prop="amount"
+          label="Total Expense"
+          min-width="50%"
+          sortable="custom"
+        >
+          <template #default="{ row }">
+            <span>
+              {{
+                getFormatNumberString(row.amount)
+                  ? `$${getFormatNumberString(row.amount)}`
+                  : '-'
+              }}
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table
+        :data="brandExpenseList"
+        @sort-change="handleSortChange"
+        class="flex-1"
+        v-else
+      >
+        <!-- 品牌名 -->
+        <el-table-column
+          prop="name"
+          label="Name"
+          min-width="50%"
+          sortable="custom"
+        >
+          <template #default="{ row }">
+            <el-avatar
+              :src="getFullFilePath(row.logo)"
+              fit="cover"
+              alt="user avatar"
+              class="mr-8"
+              :size="20"
+              @error="() => true"
+            >
+              B
             </el-avatar>
             <span class="ml-8">
               {{ row.name }}
