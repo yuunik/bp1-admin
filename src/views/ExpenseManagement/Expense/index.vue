@@ -8,13 +8,14 @@ import {
   getExpenseListByBrandApi,
   getExpenseListByUserApi,
 } from '@/apis/expenseApi.js'
-import { TimingPreset } from '@/utils/constantsUtil.js'
+import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import {
   getFormatNumberString,
   getFullFilePath,
 } from '@/utils/dataFormattedUtil.js'
 
 import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
+
 // tab 名
 const activeTab = ref('By User')
 
@@ -165,7 +166,15 @@ watch(
             >
               <img :src="DefaultAvatar" />
             </el-avatar>
-            <span class="ml-8">
+            <span
+              class="ml-8 cursor-pointer underline"
+              @click="
+                $router.push({
+                  name: RouteName.PERSON_MANAGE,
+                  params: { id: row.id },
+                })
+              "
+            >
               {{ row.name }}
             </span>
           </template>
@@ -197,7 +206,7 @@ watch(
         <!-- 品牌名 -->
         <el-table-column
           prop="name"
-          label="Name"
+          label="Brand"
           min-width="50%"
           sortable="custom"
         >
