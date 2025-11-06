@@ -221,7 +221,15 @@ watch(
             >
               B
             </el-avatar>
-            <span class="ml-8">
+            <span
+              class="ml-8 cursor-pointer underline"
+              @click="
+                $router.push({
+                  name: RouteName.CAR_COST_DETAILS,
+                  params: { id: row.id },
+                })
+              "
+            >
               {{ row.name }}
             </span>
           </template>
