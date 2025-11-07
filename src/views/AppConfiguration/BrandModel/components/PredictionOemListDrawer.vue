@@ -271,17 +271,18 @@ onMounted(async () => {
                 ref="oemDataRef"
               >
                 <el-input
-                  v-model="row.ecuName"
+                  :value="`${row.ecuName || ''} / ${row.dataName || ''}`"
                   class="input--bg-neutrals-grey-1 rounded-12 cursor-pointer!"
                   readonly
                   placeholder="Select OEM/ECU"
+                  @input="(val) => (row.ecuName = val)"
                 >
                   <template #suffix>
                     <i class="icon-typesdropdown" />
                   </template>
                 </el-input>
                 <template #dropdown>
-                  <div class="w-600 max-h-336">
+                  <div class="w-600 max-h-600 overflow-auto">
                     <el-input
                       class="input--without-border h-39 input--no-padding px-16 py-8"
                       placeholder="Enter"
