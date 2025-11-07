@@ -23,6 +23,7 @@ import 'virtual:uno.css'
 import 'virtual:svg-icons-register'
 import '@/utils/chart.js'
 import clickOutside from '@/directives/clickOutside.js'
+import downFile from '@/directives/downFile.js'
 
 const app = createApp(App)
 
@@ -30,6 +31,8 @@ const app = createApp(App)
 app.directive('debounce', debounce)
 // 点击目标以外的区域后, 执行的指令
 app.directive('click-outside', clickOutside)
+// 下载文件指令
+app.directive('down-file', downFile)
 
 app.use(store)
 app.use(router)
