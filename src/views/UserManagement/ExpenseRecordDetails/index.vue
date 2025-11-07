@@ -1491,16 +1491,11 @@ getRepairRecordInfo(id)
           class="mx-32 grid grid-cols-2 gap-12"
           v-if="repairRecordDetail.attachmentDtos?.length"
         >
-          <div
-            class="mx-32 grid grid-cols-2 gap-12"
-            v-if="repairRecordDetail.attachmentDtos?.length"
-          >
-            <file-info-card
-              v-for="item in repairRecordDetail.attachmentDtos"
-              :key="item.id"
-              :info="item"
-            />
-          </div>
+          <file-info-card
+            v-for="item in repairRecordDetail.attachmentDtos"
+            :key="item.id"
+            :info="item"
+          />
         </div>
         <el-empty v-else description="No attachment data" />
       </div>

@@ -28,16 +28,23 @@ defineProps({
 </script>
 
 <template>
-  <div class="rounded-12 border-[1px]-[#EAEEF4] row-center h-64 gap-8 p-12">
+  <div class="rounded-12 border-neutral-grey-1-1px row-center h-64 gap-8 p-12">
     <!-- 图片 -->
     <el-image
       v-if="info.type === 'image'"
       :src="getFullFilePath(info.path)"
-      class="border-container rounded-8 h-40 w-40"
+      class="border-neutral-grey-1-1px rounded-8 h-40 w-40"
+      alt="Attachment image"
       fit="cover"
     />
     <!-- PDF -->
-    <el-image v-else :src="PDFIcon" class="h-40 w-40" fit="cover" />
+    <el-image
+      v-else
+      :src="PDFIcon"
+      class="h-40 w-40"
+      fit="cover"
+      alt="Attachment pdf"
+    />
     <div class="text-neutrals-grey-4 flex flex-1 flex-col gap-8">
       <p class="heading-body-body-12px-regular text-neutrals-off-black">
         {{ info.name || 'Untitled file' }}
@@ -60,7 +67,7 @@ defineProps({
     </div>
     <div class="flex gap-8">
       <base-svg-icon name="down_line" color="#6F7788" size="16" />
-      <base-svg-icon name="delete-2" color="#6F7788" size="16" />
+      <!--<base-svg-icon name="delete-2" color="#6F7788" size="16" />-->
     </div>
   </div>
 </template>
