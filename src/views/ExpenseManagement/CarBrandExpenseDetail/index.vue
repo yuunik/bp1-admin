@@ -246,6 +246,13 @@ watch(
               </span>
             </template>
           </el-table-column>
+          <el-table-column prop="others" label="Others" align="right">
+            <template #default="{ row }">
+              <span>
+                {{ row.others ? `$${getFormatNumberString(row.others)}` : '-' }}
+              </span>
+            </template>
+          </el-table-column>
         </el-table>
         <el-table v-else :data="modelExpenseList" class="has-top flex-1">
           <el-table-column prop="name" label="Model" width="100" />
