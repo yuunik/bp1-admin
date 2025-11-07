@@ -509,6 +509,7 @@ const handleEditRepairRecord = useDebounceFn(async () => {
   if (!editEstimatedCostForm.value.expenseItemDtos.length) {
     return ElMessage.error('Expense Item Can Not Be Empty')
   }
+
   try {
     await updateRepairRecordApi(editEstimatedCostForm.value)
     ElMessage.success('Edit success')
@@ -647,6 +648,15 @@ const handleRecordTimeChange = (val) => {
   editEstimatedCostForm.value.date = val
 }
 
+// 处理维修厂的选择事件
+const handleMerchantDtoChange = (selectedId) => {
+  const selectedItem = merchantList.value.find((item) => item.id === selectedId)
+  if (selectedItem) {
+    editEstimatedCostForm.value.merchantDto.id = selectedItem.id
+    editEstimatedCostForm.value.merchantDto.name = selectedItem.name
+  }
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -707,10 +717,10 @@ getRepairRecordInfo(id)
             v-if="!isEditMode"
           />
           <el-select
-            v-model="editEstimatedCostForm.merchantDto.name"
+            v-model="editEstimatedCostForm.merchantDto.id"
             class="select--underline"
             placeholder="Select"
-            @popup-scroll="getMerchantList"
+            @change="handleMerchantDtoChange"
             v-else
           >
             <el-option
