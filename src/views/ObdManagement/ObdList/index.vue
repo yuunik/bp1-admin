@@ -177,7 +177,7 @@ const viewOBDDetail = (row, column) => {
   if (no === 6 && row.userDto?.id) {
     // OBD 已绑定用户, 查看用户详情
     return router.push({
-      name: 'Workshop Manage',
+      name: 'Person Manage',
       params: { id: row.userDto.id },
     })
   }

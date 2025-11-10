@@ -197,8 +197,7 @@ onMounted(async () => {
         Disable
       </el-button>
     </div>
-    <el-divider />
-    <el-tabs v-model="activeTab">
+    <el-tabs v-model="activeTab" class="has-top">
       <el-tab-pane label="Customer Details" name="Customer Details" />
     </el-tabs>
     <el-scrollbar>
