@@ -113,6 +113,8 @@ const AppApi = Object.freeze({
   DELETE_PREDICT_OEM_INFO: '/manager/prediction/deletepredictionoem',
   // 获取品牌的OEM信息详情
   GET_PREDICT_OEM_INFO_DETAIL: '/manager/prediction/getpredictionoems',
+  // 获取AI prompt
+  GET_AI_PROMPT: '/manager/aichat/getaiprompt',
 })
 
 // 获取 token
@@ -1129,6 +1131,20 @@ export const getBrandOemInfoDetailApi = (predictionId) => {
 
   return request({
     url: AppApi.GET_PREDICT_OEM_INFO_DETAIL,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取AI prompt
+ */
+export const getAiPromptApi = () => {
+  const data = new FormData()
+  data.append('token', getToken())
+
+  return request({
+    url: AppApi.GET_AI_PROMPT,
     method: 'POST',
     data,
   })

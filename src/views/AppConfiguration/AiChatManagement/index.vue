@@ -5,6 +5,7 @@ import { AIChatManagementTab } from '@/utils/constantsUtil.js'
 import PresetQuestions from './PresetQuestions.vue'
 import TokenSettings from './TokenSettings.vue'
 import UserQuestionRecords from './UserQuestionRecords.vue'
+import AiPrompt from './AiPrompt.vue'
 
 // 当前的tab
 const activeTab = ref(AIChatManagementTab.PRESET_QUESTIONS)
@@ -17,6 +18,7 @@ const tabMap = Object.freeze({
   [AIChatManagementTab.PRESET_QUESTIONS]: PresetQuestions,
   [AIChatManagementTab.USER_QUESTION_RECORDS]: UserQuestionRecords,
   [AIChatManagementTab.TOKEN_SETTINGS]: TokenSettings,
+  [AIChatManagementTab.AI_PROMPT]: AiPrompt,
 })
 </script>
 
@@ -43,6 +45,10 @@ const tabMap = Object.freeze({
       <el-tab-pane
         :label="AIChatManagementTab.TOKEN_SETTINGS"
         :name="AIChatManagementTab.TOKEN_SETTINGS"
+      />
+      <el-tab-pane
+        :label="AIChatManagementTab.AI_PROMPT"
+        :name="AIChatManagementTab.AI_PROMPT"
       />
     </el-tabs>
     <!-- tab 内容区 -->

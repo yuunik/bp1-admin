@@ -5,6 +5,7 @@ export const AIChatManagementTab = Object.freeze({
   PRESET_QUESTIONS: 'Preset Questions',
   USER_QUESTION_RECORDS: 'User Question Records',
   TOKEN_SETTINGS: 'Token Settings',
+  AI_PROMPT: 'AI Prompt',
 })
 
 // Interval & Warning 模块的常量定义
