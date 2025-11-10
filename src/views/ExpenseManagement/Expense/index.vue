@@ -13,8 +13,18 @@ import {
   getFormatNumberString,
   getFullFilePath,
 } from '@/utils/dataFormattedUtil.js'
+import useCacheView from '@/composables/useCacheView.js'
 
 import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
+
+// 定义组件选项
+// 不定义的话, 会让缓存功能失效
+defineOptions({
+  name: RouteName.EXPENSE,
+})
+
+// 获取缓存功能函数
+const cacheView = useCacheView()
 
 // tab 名
 const activeTab = ref('By User')
@@ -122,6 +132,9 @@ watch(
     immediate: true,
   },
 )
+
+// 组件创建后, 进行的相关初始化操作
+cacheView(RouteName.EXPENSE)
 </script>
 
 <template>
