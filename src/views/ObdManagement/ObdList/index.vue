@@ -44,6 +44,39 @@ const pagination = reactive({
 const sortParams = reactive({
   sortBy: '',
   sort: '',
+  // 排序所属分类
+  sortType: RouteName.OBD_LIST,
+  // 排序数组
+  sortArray: [
+    {
+      label: 'SN',
+      prop: 'sn',
+    },
+    {
+      label: 'Status',
+      prop: 'status',
+    },
+    {
+      label: 'Last Used',
+      prop: 'useTime',
+    },
+    {
+      label: 'Warranty End',
+      prop: 'warrantyTime',
+    },
+    {
+      label: 'Bind Time',
+      prop: 'bindingTime',
+    },
+    {
+      label: 'User',
+      prop: 'user',
+    },
+    {
+      label: 'Remark',
+      prop: 'remark',
+    },
+  ],
 })
 
 // 筛选参数
