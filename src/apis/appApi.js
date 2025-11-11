@@ -1167,14 +1167,16 @@ export const getAiPromptApi = () => {
 export const modifyAiPromptApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  params.prediction && data.append('prediction', params.prediction)
-  params.faultCode && data.append('faultCode', params.faultCode)
-  params.repair && data.append('repair', params.repair)
-  params.expenseItemCost &&
+  params.prediction !== undefined &&
+    data.append('prediction', params.prediction)
+  params.faultCode !== undefined && data.append('faultCode', params.faultCode)
+  params.repair !== undefined && data.append('repair', params.repair)
+  params.expenseItemCost !== undefined &&
     data.append('expenseItemCost', params.expenseItemCost)
-  params.maintenanceSetting &&
+  params.maintenanceSetting !== undefined &&
     data.append('maintenanceSetting', params.maintenanceSetting)
-  params.reportInfo && data.append('reportInfo', params.reportInfo)
+  params.reportInfo !== undefined &&
+    data.append('reportInfo', params.reportInfo)
 
   return request({
     url: AppApi.MODIFY_AI_PROMPT,

@@ -130,11 +130,11 @@ getAiPrompt()
 
 <template>
   <!-- 条件搜索 -->
-  <base-filter-input
-    v-model="searchKeyword"
-    @input-change="handleSearchByInput"
-    class="mx-32"
-  />
+  <!--<base-filter-input-->
+  <!--  v-model="searchKeyword"-->
+  <!--  @input-change="handleSearchByInput"-->
+  <!--  class="mx-32"-->
+  <!--/>-->
   <!-- 分割线 -->
   <el-divider class="diver" />
   <el-scrollbar
