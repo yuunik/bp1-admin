@@ -115,6 +115,8 @@ const AppApi = Object.freeze({
   GET_PREDICT_OEM_INFO_DETAIL: '/manager/prediction/getpredictionoems',
   // 获取AI prompt
   GET_AI_PROMPT: '/manager/aichat/getaiprompt',
+  // 编辑 AI prompt
+  MODIFY_AI_PROMPT: '/manager/aichat/editaiprompt',
 })
 
 // 获取 token
@@ -1145,6 +1147,37 @@ export const getAiPromptApi = () => {
 
   return request({
     url: AppApi.GET_AI_PROMPT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 编辑 AI prompt
+ * @param params
+ * @param params.prediction 预测
+ * @param params.faultCode 故障码
+ * @param params.repair 修复建议
+ * @param params.expenseItemCost 维修费用
+ * @param params.maintenanceSetting 维护设置
+ * @param params.reportInfo 报表信息
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const modifyAiPromptApi = (params) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  params.prediction && data.append('prediction', params.prediction)
+  params.faultCode && data.append('faultCode', params.faultCode)
+  params.repair && data.append('repair', params.repair)
+  params.expenseItemCost &&
+    data.append('expenseItemCost', params.expenseItemCost)
+  params.maintenanceSetting &&
+    data.append('maintenanceSetting', params.maintenanceSetting)
+  params.reportInfo && data.append('reportInfo', params.reportInfo)
+
+  return request({
+    url: AppApi.MODIFY_AI_PROMPT,
     method: 'POST',
     data,
   })

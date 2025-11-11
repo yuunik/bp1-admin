@@ -1,11 +1,6 @@
 <script setup>
 import VueMarkdown from 'vue-markdown-render'
-import {
-  CirclePlus,
-  RemoveFilled,
-  SortDown,
-  SortUp,
-} from '@element-plus/icons-vue'
+import { CirclePlus, RemoveFilled } from '@element-plus/icons-vue'
 import { useCloned, useDebounceFn } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 
@@ -13,9 +8,8 @@ import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import {
   getAiChatRecordList,
   getAiPromptApi,
-  modifyAiAnswerApi,
+  modifyAiPromptApi,
 } from '@/apis/appApi.js'
-import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 
 // 搜索参数
 const searchKeyword = ref('')
@@ -49,9 +43,6 @@ const getQuestionListByScroll = async () => {
     page: paginationParams.currentPage++,
     pageSize: paginationParams.pageSize,
   })
-  // aiPromptList.value.push(
-  //   ...data.map((item) => ({ ...item, isExpand: false })),
-  // )
   aiPromptList.value = data.map((item) => ({ ...item, isExpand: false }))
   isHasMore.value = data.length === 0
 }
@@ -79,16 +70,28 @@ const sort = ref('')
 
 const isExpand = ref(false)
 
+const keyMap = {
+  Prediction: 'prediction',
+  'Fault Code': 'faultCode',
+  Repair: 'repair',
+  'Expense Item Cost': 'expenseItemCost',
+  'Maintenance Setting': 'maintenanceSetting',
+  'Report Info': 'reportInfo',
+}
+
 // 修改ai的回答文本
-const handleEditAIAnswer = async (record) => {
+const handleEditAIAnswer = async (records) => {
+  const params = {}
+
+  const mappedKey = keyMap[records.key]
+  if (mappedKey) {
+    params[mappedKey] = editContent.value
+  }
+
   try {
-    await modifyAiAnswerApi({
-      id: record.id,
-      answer: editContent.value,
-    })
-    ElMessage.success('AI answer updated successfully.')
+    await modifyAiPromptApi(params)
+    ElMessage.success('AI prompt updated successfully.')
   } finally {
-    editContent.value = ''
     getAiPrompt()
   }
 }
@@ -101,13 +104,15 @@ const handleManageExpandRow = (record) => {
 
 // 切换编辑模式
 const handleManageEditMode = (record) => {
+  // 批量关闭编辑模式
+  for (const item of aiPromptList.value) {
+    item.isEditable && (item.isEditable = false)
+  }
   try {
     loading.value = true
-    console.log('record', record)
     const { cloned } = useCloned(record)
-    console.log('cloned', cloned.value.answer)
     editContent.value = cloned.value.value
-    record.isEditable = !record.isEditable
+    record.isEditable = true
   } finally {
     loading.value = false
   }
@@ -133,7 +138,7 @@ getAiPrompt()
   <!-- 分割线 -->
   <el-divider class="diver" />
   <el-scrollbar
-    class="px-32 pb-32"
+    class="table-container px-32 pb-32"
     @end-reached="getQuestionListByScroll"
     v-show="aiPromptList.length"
   >
@@ -259,5 +264,9 @@ getAiPrompt()
   :deep(.el-textarea__inner) {
     @apply rounded-12;
   }
+}
+
+.table-container :deep(.el-row) {
+  @apply row-center;
 }
 </style>
