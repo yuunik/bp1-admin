@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useDebounceFn } from '@vueuse/core'
+import { useCloned, useDebounceFn } from '@vueuse/core'
 
 import {
   addBrandModelApi,
@@ -23,10 +23,8 @@ import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseUpload from '@/components/BaseUpload.vue'
 import BaseTag from '@/components/BaseTag.vue'
-
 import useFileUpload from '@/composables/useFileUpload.js'
 import PredictionOemListDrawer from '@/views/AppConfiguration/BrandModel/components/PredictionOemListDrawer.vue'
-import { useCloned } from '@vueuse/core'
 
 // 车辆详情
 const brandModelInfo = ref({})
@@ -70,6 +68,9 @@ const predictionItemRef = ref(null)
 // 编辑预测数据表单
 const editPredictionItemForm = ref({})
 
+// 车辆型号全选
+const isBrandModelAllChecked = ref(false)
+
 // 已有的预测数据的名字数据
 const predictBrandNameList = computed(() =>
   predictBrandList.value.length > 0
@@ -79,6 +80,14 @@ const predictBrandNameList = computed(() =>
 
 // 编辑车辆型号表单
 const editModelInfoForm = ref({})
+
+// 车辆型号列表
+const brandModelList = computed(() =>
+  brandModelInfo.value.vehicleModelDtos &&
+  brandModelInfo.value.vehicleModelDtos.length
+    ? brandModelInfo.value.vehicleModelDtos
+    : [],
+)
 
 // 获取车辆品牌详情
 const getBrandModelInfo = async () => {
@@ -91,6 +100,8 @@ const getBrandModelInfo = async () => {
   for (const item of brandModelInfo.value?.vehicleModelDtos) {
     // 记录型号的编辑状态为 false
     item.isEdit = false
+    item.isChecked = false
+    item.isNew = false
   }
   // 获取预测列表
   getPredictBrandList()
@@ -165,7 +176,7 @@ const handleEditBrandModelName = async (row) => {
 
 // 待添加车辆品牌名称
 const handleAddPendingBrandModel = () => {
-  const isAllDisabled = brandModelInfo.value.vehicleModelDtos.every((item) => {
+  const isAllDisabled = brandModelList.value.every((item) => {
     // 新增时, 关闭所有的编辑状态
     item.isEdit = false
     return !item.isNew
@@ -347,7 +358,7 @@ const handleDeletePredictionItem = async (id) => {
 // 品牌型号切换为编辑模式
 const handleSwitchEditModel = (row) => {
   for (const item of brandModelInfo.value.vehicleModelDtos) {
-    item.isEdit = false
+    item.isEdit && (item.isEdit = false)
     // 编辑时, 关闭所有的新增状态
     brandModelInfo.value.vehicleModelDtos =
       brandModelInfo.value.vehicleModelDtos.filter((item) => !item.isNew)
@@ -363,8 +374,9 @@ const handleCancelEditBrandModelName = (row) => {
     row.isEdit = false
   } else {
     // 取消新增
-    brandModelInfo.value.vehicleModelDtos =
-      brandModelInfo.value.vehicleModelDtos.filter((item) => !item.isNew)
+    brandModelList.value.length &&
+      (brandModelInfo.value.vehicleModelDtos =
+        brandModelInfo.value.vehicleModelDtos.filter((item) => !item.isNew))
   }
 }
 
@@ -380,6 +392,18 @@ const handleCancelManagePredictionItem = (row) => {
     )
   }
 }
+
+// 处理车辆型号的全选事件
+const handleModelListSelectAll = (val) =>
+  brandModelInfo.value.vehicleModelDtos.forEach((item) => {
+    item.isChecked = val
+  })
+
+// 处理单个车辆型号的勾选事件
+const handleModelCheckChange = () =>
+  (isBrandModelAllChecked.value = brandModelList.value.every(
+    (item) => item.isChecked,
+  ))
 
 // 监听 tab 切换
 watch(activeTab, (val) => {
@@ -495,67 +519,142 @@ onMounted(async () => {
         <el-divider class="mt-8" />
         <!-- 型号列表 -->
         <div class="table-container mx-32">
-          <el-table :data="brandModelInfo?.vehicleModelDtos">
-            <el-table-column type="selection" min-width="5%" />
-            <el-table-column type="index" label="No." min-width="8%" />
-            <el-table-column prop="name" label="Model" min-width="74%">
-              <template #default="{ row }">
-                <el-input
-                  v-if="row.isEdit"
-                  placeholder="Enter..."
-                  class="h-32"
-                  v-model="editModelInfoForm.name"
+          <!--<el-table :data="brandModelInfo?.vehicleModelDtos">-->
+          <!--  <el-table-column type="selection" min-width="5%" />-->
+          <!--  <el-table-column type="index" label="No." min-width="8%" />-->
+          <!--  <el-table-column prop="name" label="Model" min-width="74%">-->
+          <!--    <template #default="{ row }">-->
+          <!--      <el-input-->
+          <!--        v-if="row.isEdit"-->
+          <!--        placeholder="Enter..."-->
+          <!--        class="h-32"-->
+          <!--        v-model="editModelInfoForm.name"-->
+          <!--      />-->
+          <!--      <el-input-->
+          <!--        v-else-if="row.isNew"-->
+          <!--        placeholder="Enter..."-->
+          <!--        class="h-32"-->
+          <!--        v-model="row.name"-->
+          <!--      />-->
+          <!--      <span v-else>{{ row.name }}</span>-->
+          <!--    </template>-->
+          <!--  </el-table-column>-->
+          <!--  &lt;!&ndash; 操作 &ndash;&gt;-->
+          <!--  <el-table-column column-key="actions" min-width="15%">-->
+          <!--    <template #default="{ row }">-->
+          <!--      <template v-if="row.isEdit || row.isNew">-->
+          <!--        <el-button-->
+          <!--          size="small"-->
+          <!--          @click="handleCancelEditBrandModelName(row)"-->
+          <!--        >-->
+          <!--          Cancel-->
+          <!--        </el-button>-->
+          <!--        <el-button-->
+          <!--          type="primary"-->
+          <!--          @click="handleEditBrandModelName(row)"-->
+          <!--          size="small"-->
+          <!--        >-->
+          <!--          {{ row.id ? 'Save' : 'Add' }}-->
+          <!--        </el-button>-->
+          <!--      </template>-->
+          <!--      <template v-else>-->
+          <!--        &lt;!&ndash; 编辑 &ndash;&gt;-->
+          <!--        <i-->
+          <!--          class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"-->
+          <!--          @click="handleSwitchEditModel(row)"-->
+          <!--        />-->
+          <!--        <el-popconfirm-->
+          <!--          :title="`Are you sure you want to delete '${row.name}' ?`"-->
+          <!--          placement="left"-->
+          <!--          width="200"-->
+          <!--          @confirm="handleDeleteBrandModel(row.id)"-->
+          <!--        >-->
+          <!--          <template #reference>-->
+          <!--            &lt;!&ndash; 删除 &ndash;&gt;-->
+          <!--            <i-->
+          <!--              class="icon-delete-bin-line h-16 w-16 cursor-pointer"-->
+          <!--            />-->
+          <!--          </template>-->
+          <!--        </el-popconfirm>-->
+          <!--      </template>-->
+          <!--    </template>-->
+          <!--  </el-table-column>-->
+          <!--</el-table>-->
+          <!-- 全选栏 -->
+          <div class="row-center border-b-solid h-32 border-b border-[#EAEEF4]">
+            <el-checkbox
+              class="pl-8"
+              v-model="isBrandModelAllChecked"
+              @change="handleModelListSelectAll"
+            />
+            <span
+              class="heading-body-body-12px-medium text-neutrals-grey-3 ml-16"
+            >
+              Model
+            </span>
+          </div>
+          <!-- 型号列表 -->
+          <ul
+            class="[&>li]:border-b-solid grid grid-cols-3 gap-x-24 [&>li]:box-border [&>li]:flex [&>li]:h-[40px] [&>li]:items-center [&>li]:border-b [&>li]:border-b-[#EAEEF4] [&>li]:pl-8"
+          >
+            <li
+              v-for="brandModel in brandModelList"
+              :key="brandModel"
+              class="heading-body-body-12px-regular neutrals-off-black row-center h-32 gap-16"
+            >
+              <el-checkbox
+                v-model="brandModel.isChecked"
+                @change="handleModelCheckChange"
+              />
+              <el-input
+                v-if="brandModel.isEdit"
+                placeholder="Enter..."
+                class="h-32 flex-1"
+                v-model="editModelInfoForm.name"
+              />
+              <el-input
+                v-else-if="brandModel.isNew"
+                placeholder="Enter..."
+                class="h-32 flex-1"
+                v-model="brandModel.name"
+              />
+              <span v-else class="flex-1">{{ brandModel.name }}</span>
+              <div v-if="brandModel.isNew || brandModel.isEdit">
+                <el-button
+                  size="small"
+                  @click="handleCancelEditBrandModelName(brandModel)"
+                >
+                  Cancel
+                </el-button>
+                <el-button
+                  size="small"
+                  type="primary"
+                  @click="handleEditBrandModelName(brandModel)"
+                >
+                  {{ brandModel.id ? 'Save' : 'Add' }}
+                </el-button>
+              </div>
+              <div v-else>
+                <!-- 删除 -->
+                <i
+                  class="icon-edit-line mr-8 cursor-pointer"
+                  @click="handleSwitchEditModel(brandModel)"
                 />
-                <el-input
-                  v-else-if="row.isNew"
-                  placeholder="Enter..."
-                  class="h-32"
-                  v-model="row.name"
-                />
-                <span v-else>{{ row.name }}</span>
-              </template>
-            </el-table-column>
-            <!-- 操作 -->
-            <el-table-column column-key="actions" min-width="15%">
-              <template #default="{ row }">
-                <template v-if="row.isEdit || row.isNew">
-                  <el-button
-                    size="small"
-                    @click="handleCancelEditBrandModelName(row)"
-                  >
-                    Cancel
-                  </el-button>
-                  <el-button
-                    type="primary"
-                    @click="handleEditBrandModelName(row)"
-                    size="small"
-                  >
-                    {{ row.id ? 'Save' : 'Add' }}
-                  </el-button>
-                </template>
-                <template v-else>
-                  <!-- 编辑 -->
-                  <i
-                    class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"
-                    @click="handleSwitchEditModel(row)"
-                  />
-                  <el-popconfirm
-                    :title="`Are you sure you want to delete '${row.name}' ?`"
-                    placement="left"
-                    width="200"
-                    @confirm="handleDeleteBrandModel(row.id)"
-                  >
-                    <template #reference>
-                      <!-- 删除 -->
-                      <i
-                        class="icon-delete-bin-line h-16 w-16 cursor-pointer"
-                      />
-                    </template>
-                  </el-popconfirm>
-                </template>
-              </template>
-            </el-table-column>
-          </el-table>
+                <!-- 编辑 -->
+                <el-popconfirm
+                  :title="`Are you sure you want to delete '${brandModel.name}' ?`"
+                  placement="left"
+                  width="200"
+                  @confirm="handleDeleteBrandModel(brandModel.id)"
+                >
+                  <template #reference>
+                    <!-- 删除 -->
+                    <i class="icon-delete-bin-line h-16 w-16 cursor-pointer" />
+                  </template>
+                </el-popconfirm>
+              </div>
+            </li>
+          </ul>
           <!-- 新增按钮 -->
           <el-button
             type="primary"
