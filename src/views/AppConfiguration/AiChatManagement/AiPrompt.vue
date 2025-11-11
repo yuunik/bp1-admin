@@ -194,7 +194,7 @@ getAiPrompt()
         </el-col>
         <el-col :span="22" class="row-center gap-4">
           <p
-            class="heading-body-body-12px-medium text-neutrals-grey-3"
+            class="heading-body-body-12px-medium text-neutrals-grey-4"
             :class="
               record.isExpand
                 ? 'text-neutrals-off-black'
