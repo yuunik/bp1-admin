@@ -8,6 +8,9 @@ const downFile = {
       // 非空校验
       if (!url) return
 
+      // 打开新窗口跳转
+      window.open(url, '_blank')
+
       // 创建隐藏的 a 标签
       // const link = document.createElement('a')
       // link.href = url
@@ -21,17 +24,17 @@ const downFile = {
       // link.click()
       // document.body.removeChild(link)
 
-      const response = await fetch(url, { method: 'GET' })
-      const blob = await response.blob()
-      const link = document.createElement('a')
-      const filename = url.split('/').pop() || 'download'
-
-      link.href = URL.createObjectURL(blob)
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(link.href)
+      // const response = await fetch(url, { method: 'GET' })
+      // const blob = await response.blob()
+      // const link = document.createElement('a')
+      // const filename = url.split('/').pop() || 'download'
+      //
+      // link.href = URL.createObjectURL(blob)
+      // link.download = filename
+      // document.body.appendChild(link)
+      // link.click()
+      // document.body.removeChild(link)
+      // URL.revokeObjectURL(link.href)
     }
 
     el.addEventListener('click', el.__downFileHandler__)

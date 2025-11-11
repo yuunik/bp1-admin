@@ -28,7 +28,10 @@ defineProps({
 </script>
 
 <template>
-  <div class="rounded-12 border-neutral-grey-1-1px row-center h-64 gap-8 p-12">
+  <div
+    class="rounded-12 border-neutral-grey-1-1px row-center h-64 cursor-pointer gap-8 p-12"
+    v-down-file="getFullFilePath(info.path)"
+  >
     <!-- 图片 -->
     <el-image
       v-if="info.type === 'image'"
@@ -65,16 +68,16 @@ defineProps({
       <!--        </span>-->
       <!--</div>-->
     </div>
-    <div class="flex gap-8">
-      <base-svg-icon
-        name="down_line"
-        color="#6F7788"
-        size="16"
-        class="cursor-pointer"
-        v-down-file="getFullFilePath(info.path)"
-      />
-      <!--<base-svg-icon name="delete-2" color="#6F7788" size="16" />-->
-    </div>
+    <!--<div class="flex gap-8">-->
+    <!--  <base-svg-icon-->
+    <!--    name="down_line"-->
+    <!--    color="#6F7788"-->
+    <!--    size="16"-->
+    <!--    class="cursor-pointer"-->
+    <!--    v-down-file="getFullFilePath(info.path)"-->
+    <!--  />-->
+    <!--  <base-svg-icon name="delete-2" color="#6F7788" size="16" />-->
+    <!--</div>-->
   </div>
 </template>
 
