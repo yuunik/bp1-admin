@@ -46,6 +46,9 @@ const oemDataRef = ref(null)
 // 勾选的OEM数据
 const selectedOEMIdList = ref([])
 
+// oem 输入查找框实例
+const oemInputRef = ref(null)
+
 // 获取品牌OEM实时信息列表
 const getOemRealTimeInfoList = async () => {
   const { data } = await getBrandOemInfoDetailApi(predictionData.value.id)
@@ -100,8 +103,12 @@ const getOemList = useDebounceFn(async () => {
 const handleAddPendingOemSubitem = (row, oemRow) => {
   row.ecuName = oemRow.ecuName
   row.dataName = oemRow.labelName
-  // 添加成功后, 关闭数据框
-  nextTick(() => oemDataRef.value?.handleClose())
+  nextTick(() => {
+    // 清空搜索关键字
+    searchKey.value = ''
+    // 添加成功后, 关闭数据框
+    oemDataRef.value?.handleClose()
+  })
 }
 
 // 新增预测数据的OEM信息
@@ -187,8 +194,18 @@ const handleBatchDeleteOemItems = async () => {
   refresh()
 }
 
+// 处理触发框的显隐事件
+const handleDropdownVisibleChange = (visible) => {
+  if (visible) {
+    setTimeout(() => {
+      oemInputRef.value.focus()
+    }, 500)
+  }
+}
+
 // 组件挂载后, 获取OEM实时信息列表
 getOemRealTimeInfoList()
+
 onMounted(async () => {
   getOemList()
 })
@@ -269,6 +286,7 @@ onMounted(async () => {
                 placement="bottom-start"
                 class="w-full"
                 ref="oemDataRef"
+                @visible-change="handleDropdownVisibleChange"
               >
                 <el-input
                   :value="`${row.ecuName || ''} / ${row.dataName || ''}`"
@@ -287,6 +305,7 @@ onMounted(async () => {
                       class="input--without-border h-39 input--no-padding px-16 py-8"
                       placeholder="Enter"
                       v-model="searchKey"
+                      ref="oemInputRef"
                       @input="getOemList"
                     >
                       <template #prefix>
