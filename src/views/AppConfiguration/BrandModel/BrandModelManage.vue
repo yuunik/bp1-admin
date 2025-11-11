@@ -89,6 +89,13 @@ const brandModelList = computed(() =>
     : [],
 )
 
+// 已选择的车辆型号列表
+const brandModelCheckedList = computed(() =>
+  brandModelList.value.length
+    ? brandModelList.value.filter((item) => item.isChecked)
+    : [],
+)
+
 // 获取车辆品牌详情
 const getBrandModelInfo = async () => {
   const { data } = await getBrandModelInfoApi(brandId.value)
@@ -197,6 +204,18 @@ const handleAddPendingBrandModel = () => {
 // 删除车辆品牌型号
 const handleDeleteBrandModel = async (id) => {
   await deleteBrandModelApi(id)
+  // 删除成功
+  ElMessage.success('Delete Brand Model Success')
+  getBrandModelInfo()
+}
+
+// 批量删除车辆品牌型号
+const handleBatchDeleteBrandModel = async () => {
+  await deleteBrandModelApi(
+    brandModelList.value
+      .filter((item) => item.isChecked)
+      .map((item) => item.id),
+  )
   // 删除成功
   ElMessage.success('Delete Brand Model Success')
   getBrandModelInfo()
@@ -519,67 +538,15 @@ onMounted(async () => {
         <el-divider class="mt-8" />
         <!-- 型号列表 -->
         <div class="table-container mx-32">
-          <!--<el-table :data="brandModelInfo?.vehicleModelDtos">-->
-          <!--  <el-table-column type="selection" min-width="5%" />-->
-          <!--  <el-table-column type="index" label="No." min-width="8%" />-->
-          <!--  <el-table-column prop="name" label="Model" min-width="74%">-->
-          <!--    <template #default="{ row }">-->
-          <!--      <el-input-->
-          <!--        v-if="row.isEdit"-->
-          <!--        placeholder="Enter..."-->
-          <!--        class="h-32"-->
-          <!--        v-model="editModelInfoForm.name"-->
-          <!--      />-->
-          <!--      <el-input-->
-          <!--        v-else-if="row.isNew"-->
-          <!--        placeholder="Enter..."-->
-          <!--        class="h-32"-->
-          <!--        v-model="row.name"-->
-          <!--      />-->
-          <!--      <span v-else>{{ row.name }}</span>-->
-          <!--    </template>-->
-          <!--  </el-table-column>-->
-          <!--  &lt;!&ndash; 操作 &ndash;&gt;-->
-          <!--  <el-table-column column-key="actions" min-width="15%">-->
-          <!--    <template #default="{ row }">-->
-          <!--      <template v-if="row.isEdit || row.isNew">-->
-          <!--        <el-button-->
-          <!--          size="small"-->
-          <!--          @click="handleCancelEditBrandModelName(row)"-->
-          <!--        >-->
-          <!--          Cancel-->
-          <!--        </el-button>-->
-          <!--        <el-button-->
-          <!--          type="primary"-->
-          <!--          @click="handleEditBrandModelName(row)"-->
-          <!--          size="small"-->
-          <!--        >-->
-          <!--          {{ row.id ? 'Save' : 'Add' }}-->
-          <!--        </el-button>-->
-          <!--      </template>-->
-          <!--      <template v-else>-->
-          <!--        &lt;!&ndash; 编辑 &ndash;&gt;-->
-          <!--        <i-->
-          <!--          class="icon-edit-line mr-8 h-16 w-16 cursor-pointer"-->
-          <!--          @click="handleSwitchEditModel(row)"-->
-          <!--        />-->
-          <!--        <el-popconfirm-->
-          <!--          :title="`Are you sure you want to delete '${row.name}' ?`"-->
-          <!--          placement="left"-->
-          <!--          width="200"-->
-          <!--          @confirm="handleDeleteBrandModel(row.id)"-->
-          <!--        >-->
-          <!--          <template #reference>-->
-          <!--            &lt;!&ndash; 删除 &ndash;&gt;-->
-          <!--            <i-->
-          <!--              class="icon-delete-bin-line h-16 w-16 cursor-pointer"-->
-          <!--            />-->
-          <!--          </template>-->
-          <!--        </el-popconfirm>-->
-          <!--      </template>-->
-          <!--    </template>-->
-          <!--  </el-table-column>-->
-          <!--</el-table>-->
+          <!-- Batch delete -->
+          <div class="flex-between h-42" v-show="brandModelCheckedList.length">
+            <span
+              class="text-neutrals-off-black heading-body-body-12px-regular"
+            >
+              {{ brandModelCheckedList.length }} selected
+            </span>
+            <el-button @click="handleBatchDeleteBrandModel">Delete</el-button>
+          </div>
           <!-- 全选栏 -->
           <div class="row-center border-b-solid h-32 border-b border-[#EAEEF4]">
             <el-checkbox

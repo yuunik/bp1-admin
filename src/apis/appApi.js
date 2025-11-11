@@ -589,7 +589,7 @@ export const addBrandModelApi = (params) => {
 export const deleteBrandModelApi = (modelId) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('modelId', modelId)
+  data.append('modelIds', modelId)
 
   return request({
     url: AppApi.DELETE_BRAND_MODEL,
