@@ -92,8 +92,8 @@ const handleEditAIAnswer = async (records) => {
     await modifyAiPromptApi(params)
     ElMessage.success('AI prompt updated successfully.')
   } finally {
-    // getAiPrompt()
-    records.isEditable = false
+    getAiPrompt()
+    isExpand.value = false
   }
 }
 
