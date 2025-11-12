@@ -328,7 +328,7 @@ watch(
   >
     <template #content>
       <dl
-        class="[&>dt]:leading-80 grid grid-cols-[80px_1fr] items-center gap-x-8 [&>dt]:h-80"
+        class="[&>dt]:leading-80 grid grid-cols-[100px_1fr] items-center gap-x-8 [&>dt]:h-80"
       >
         <dt class="heading-body-body-12px-medium">Person name</dt>
         <dd>{{ resetPasswordUAdmin.name }}</dd>
