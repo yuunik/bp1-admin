@@ -243,7 +243,7 @@ getAiPrompt()
           <el-input
             type="textarea"
             class="mt-4! answer-container"
-            rows="10"
+            :autosize="true"
             v-model="editContent"
             v-else
           />
