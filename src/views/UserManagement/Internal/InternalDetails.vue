@@ -71,9 +71,12 @@ const adminInfoFormRules = reactive({
   ],
 })
 
+// 当前的用户id
+const currentAdminId = ref('')
+
 // 获取管理员信息
-const getAdminInfo = async (id) => {
-  const { data } = await adminInfoApi(id)
+const getAdminInfo = async () => {
+  const { data } = await adminInfoApi(currentAdminId.value)
   adminDetails.value = { ...data, isEditing: false }
   // 记录原有管理员账号状态
   isActive.value = adminDetails.value.state
@@ -132,7 +135,8 @@ const {
 
 if (id) {
   // 路径存在 id,获取数据
-  getAdminInfo(id)
+  currentAdminId.value = id
+  getAdminInfo()
 }
 </script>
 

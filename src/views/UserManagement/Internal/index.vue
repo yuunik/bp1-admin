@@ -160,18 +160,29 @@ const handleResetPassword = async (row) => {
 
 // 复制重置密码后的用户信息
 const handleCopyPassword = async () => {
+  const text = `Person name: ${resetPasswordUAdmin.value.name}
+    \nEmail: ${resetPasswordUAdmin.value.email}
+    \nPassword: ${resetPasswordUAdmin.value.resetPassword}`
+
+  const successTip =
+    'The "Reset Password" information has been successfully copied. You can paste it now.'
+
   try {
-    await navigator.clipboard.writeText(
-      `Person name: Bessie Cooper\n Email: Bessie Cooper \n Password: 32523213`,
-    )
-    // 提示
-    ElMessage.success(
-      'The "Reset Password" information has been successfully copied. You can paste it now.',
-    )
-  } catch (err) {
-    ElMessage.error('Failed to copy, try again.')
+    await navigator.clipboard.writeText(text)
+    ElMessage.success(successTip)
+  } catch {
+    const textarea = document.createElement('textarea')
+    textarea.value = text
+    document.body.appendChild(textarea)
+    textarea.select()
+    try {
+      document.execCommand('copy')
+      ElMessage.success(successTip)
+    } catch {
+      ElMessage.error('Failed to copy')
+    }
+    document.body.removeChild(textarea)
   } finally {
-    // 关闭弹窗
     dialogResetPasswordVisible.value = false
   }
 }
