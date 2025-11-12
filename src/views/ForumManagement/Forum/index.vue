@@ -9,6 +9,14 @@ import {
 import Posts from './PostList.vue'
 import Comments from './CommentsList.vue'
 import emitter from '@/utils/emitterUtil.js'
+import useCacheView from '@/composables/useCacheView.js'
+
+defineOptions({
+  name: RouteName.FORUM_MANAGEMENT,
+})
+
+// 获取缓存功能函数
+const cacheView = useCacheView()
 
 // 当前的tab
 const activeTab = ref(ForumManagementTab.POSTS)
@@ -34,6 +42,8 @@ const goToCommentList = () => {
 
 // 修改面包屑
 emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, [])
+// 组件创建后, 进行的相关初始化操作
+cacheView(RouteName.FORUM_MANAGEMENT)
 </script>
 
 <template>
