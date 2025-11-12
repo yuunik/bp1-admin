@@ -173,6 +173,20 @@
     background-color: transparent !important;
   }
 
+  // 无数据, 暂时置灰
+  &.get-gray {
+    // 表头
+    .el-table__header {
+      thead {
+        @apply text-neutrals-grey-2;
+      }
+    }
+    // 内容
+    .el-table__row {
+      @apply text-neutrals-grey-1;
+    }
+  }
+
   .cell {
     display: flex !important;
     align-items: center !important;

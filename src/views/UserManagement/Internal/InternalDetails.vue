@@ -272,7 +272,7 @@ if (id) {
       <el-divider />
       <!-- table -->
       <div class="mx-32">
-        <el-table :data="logAndNoteDataList">
+        <el-table :data="logAndNoteDataList" class="get-gray">
           <el-table-column prop="date" label="Date" />
           <el-table-column prop="user" label="User" />
           <el-table-column prop="action" label="Action" />
