@@ -11,7 +11,7 @@ import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import BaseDialog from '@/components/BaseDialog.vue'
 import BaseTag from '@/components/BaseTag.vue'
-import { resetUserPasswordApi } from '@/apis/userApi.js'
+import { resetAdminPasswordApi } from '@/apis/userApi.js'
 
 const route = useRoute()
 
@@ -148,12 +148,12 @@ const goToEditPage = (id) => {
 
 // 重置管理员密码
 const handleResetPassword = async (row) => {
-  await resetUserPasswordApi(row.id)
+  const { data } = await resetAdminPasswordApi(row.id)
   ElMessage.success('Success')
   // 记录重置管理员信息
   resetPasswordUAdmin.value = row
   // 记录重置的管理员密码
-  resetPasswordUAdmin.value.resetPassword = 'reset password'
+  resetPasswordUAdmin.value.resetPassword = data
   // 打开弹窗
   dialogResetPasswordVisible.value = true
 }

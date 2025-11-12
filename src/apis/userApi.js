@@ -16,6 +16,8 @@ const UserApi = Object.freeze({
   ADMIN_USER_STATUS: '/manager/user/banned',
   // 重置用户密码
   RESET_USER_PASSWORD: '/manager/user/resetpassword',
+  // 重置管理员密码
+  RESET_ADMIN_PASSWORD: '/manager/resetmangerpassword',
   // 新增修理厂
   ADD_MERCHANT: '/manager/merchant/add',
   // 获取用户详情
@@ -509,6 +511,23 @@ export const mergeMerchantApi = (params) => {
 
   return request({
     url: UserApi.MERGE_MERCHANT,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 重置管理员账号的密码
+ * @param userId 管理员id
+ *
+ */
+export const resetAdminPasswordApi = (userId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('userId', userId)
+
+  return request({
+    url: UserApi.RESET_ADMIN_PASSWORD,
     method: 'POST',
     data,
   })
