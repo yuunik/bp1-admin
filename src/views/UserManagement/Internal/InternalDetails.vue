@@ -9,6 +9,7 @@ import {
 import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 import { TimingPreset } from '@/utils/constantsUtil.js'
+import BaseTag from '@/components/BaseTag.vue'
 
 // 获取路由
 const route = useRoute()
@@ -42,11 +43,6 @@ const adminDetails = ref({})
 // 表单数据
 const formRef = ref(null)
 
-// 账号状态
-const accountStatus = computed(() =>
-  adminDetails.value.state === 1 ? 'Active' : 'Disabled',
-)
-
 const buttonText = computed(() =>
   adminDetails.value.state === 1 ? 'Disable' : 'Enable',
 )
@@ -69,13 +65,6 @@ const adminInfoFormRules = reactive({
   ],
   role: [
     { required: true, message: 'Please select your role', trigger: 'change' },
-  ],
-  phone: [
-    {
-      required: true,
-      message: 'Please enter your phone number',
-      trigger: 'blur',
-    },
   ],
   status: [
     { required: true, message: 'Please select your status', trigger: 'change' },
@@ -197,6 +186,7 @@ if (id) {
       class="form-container mx-32"
       :rules="adminInfoFormRules"
       ref="formRef"
+      require-asterisk-position="right"
       v-else
     >
       <el-row :gutter="20">
@@ -225,29 +215,22 @@ if (id) {
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="Phone" prop="phone">
-            <el-input v-model="adminDetails.phone" style="width: 100%" />
+          <el-form-item label="Phone">
+            <el-input v-model="adminDetails.phoneNumber" style="width: 100%" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="Status*" prop="status">
             <el-select
-              v-model="adminDetails.status"
+              v-model="adminDetails.state"
               placeholder="Select category"
-              style="width: 100%"
             >
-              <!--<template #prefix>-->
-              <!--  <el-tag-->
-              <!--    :type="adminDetails.status === 1 ? 'success' : 'danger'"-->
-              <!--  >-->
-              <!--    {{ adminDetails.status === 1 ? 'Active' : 'Disabled' }}-->
-              <!--  </el-tag>-->
-              <!--</template>-->
               <template #label="{ value }">
                 <!-- state 为 0, 为 Disabled, state 为 1 , 则 Active -->
-                <el-tag :type="value === 1 ? 'success' : 'danger'">
-                  {{ value === 1 ? 'Active' : 'Disabled' }}
-                </el-tag>
+                <base-tag
+                  :color="value === 1 ? 'green' : 'red'"
+                  :text="value === 1 ? 'Active' : 'Disabled'"
+                />
               </template>
               <el-option label="Active" :value="1" />
               <el-option label="Disabled" :value="2" />
