@@ -581,7 +581,7 @@ onMounted(async () => {
                 class="cursor-pointer text-wrap underline"
                 @click="
                   $router.push({
-                    name: RouteName.PERSON_MANAGE,
+                    name: 'BrandAndModelManagement',
                     params: { id: row.id },
                   })
                 "
