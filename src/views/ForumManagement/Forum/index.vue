@@ -37,15 +37,7 @@ emitter.emit(EmitterEvent.UPDATE_BREADCRUMB_LIST, [])
 </script>
 
 <template>
-  <router-view
-    v-if="$route.name === RouteName.POST_DETAILS"
-    @changeTabName="goToPostList"
-  />
-  <router-view
-    v-else-if="$route.name === RouteName.COMMENT_DETAILS"
-    @changeTabName="goToCommentList"
-  />
-  <section class="flex h-full flex-col gap-16 overflow-auto" v-else>
+  <section class="flex h-full flex-col gap-16 overflow-auto">
     <!-- Forum Management Header -->
     <div class="px-32">
       <!-- 标题 -->

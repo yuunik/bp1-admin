@@ -425,37 +425,14 @@ const constantRoutes = [
     name: RouteName.FORUM_MANAGEMENT,
     component: () => import('@/layout/index.vue'),
     children: [
+      /**
+       * 论坛管理模块
+       */
       // 帖子列表
       {
         path: '/forum-management/forum-list',
         name: RouteName.FORUM,
         component: () => import('@/views/ForumManagement/Forum/index.vue'),
-        children: [
-          // 贴文详情页
-          {
-            path: '/forum-management/post-details/:id',
-            name: RouteName.POST_DETAILS,
-            component: () =>
-              import('@/views/ForumManagement/Forum/PostDetails.vue'),
-            meta: {
-              title: RouteName.POST_DETAILS,
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-          // 评论详情页
-          {
-            path: '/forum-management/comment-details/:id',
-            name: RouteName.COMMENT_DETAILS,
-            component: () =>
-              import('@/views/ForumManagement/Forum/CommentDetails.vue'),
-            meta: {
-              title: RouteName.COMMENT_DETAILS,
-              showInMenu: false,
-              showInBreadcrumb: true,
-            },
-          },
-        ],
         meta: {
           title: RouteName.FORUM,
           showInMenu: true,
@@ -463,6 +440,33 @@ const constantRoutes = [
           isClearBreadcrumb: true,
         },
       },
+      // 贴文详情页
+      {
+        path: '/forum-management/post-details/:id',
+        name: RouteName.POST_DETAILS,
+        component: () =>
+          import('@/views/ForumManagement/Forum/PostDetails.vue'),
+        meta: {
+          title: RouteName.POST_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      // 评论详情页
+      {
+        path: '/forum-management/comment-details/:id',
+        name: RouteName.COMMENT_DETAILS,
+        component: () =>
+          import('@/views/ForumManagement/Forum/CommentDetails.vue'),
+        meta: {
+          title: RouteName.COMMENT_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: true,
+        },
+      },
+      /**
+       * 俱乐部管理模块
+       */
       // 俱乐部列表页
       {
         path: '/forum-management/group-list',
