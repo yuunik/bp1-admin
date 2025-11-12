@@ -10,9 +10,6 @@ import AiPrompt from './AiPrompt.vue'
 // 当前的tab
 const activeTab = ref(AIChatManagementTab.PRESET_QUESTIONS)
 
-// tab 点击事件
-const handleTabChange = (tab) => (activeTab.value = tab)
-
 // tab 内容区
 const tabMap = Object.freeze({
   [AIChatManagementTab.PRESET_QUESTIONS]: PresetQuestions,
@@ -29,11 +26,7 @@ const tabMap = Object.freeze({
       AI Chat Management
     </h3>
     <!-- tabs 栏 -->
-    <el-tabs
-      v-model="activeTab"
-      @tab-click="handleTabChange"
-      class="tabs-container"
-    >
+    <el-tabs v-model="activeTab" class="tabs-container">
       <el-tab-pane
         :label="AIChatManagementTab.PRESET_QUESTIONS"
         :name="AIChatManagementTab.PRESET_QUESTIONS"
