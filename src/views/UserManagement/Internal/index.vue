@@ -323,6 +323,7 @@ watch(
   <base-dialog
     v-model="dialogResetPasswordVisible"
     title="Reset Password"
+    confirm-text="Copy"
     @cancel="dialogResetPasswordVisible = false"
     @confirm="handleCopyPassword"
   >
