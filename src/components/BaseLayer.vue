@@ -19,7 +19,7 @@
 
 <script lang="js">
 import { defineComponent } from 'vue'
-import drag from '@/directives/drag/index'
+import drag from '@/directives/drag/index.js'
 export default defineComponent({
   props: {
     layer: {
