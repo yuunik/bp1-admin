@@ -146,7 +146,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
         :src="Logo"
         fit="cover"
         alt="Company Logo"
-        class="default-transition mx-auto h-24 w-24"
+        class="default-transition mx-auto mt-8 h-24 w-24"
         v-show="isMenuCollapsed"
       />
       <!-- menu -->
