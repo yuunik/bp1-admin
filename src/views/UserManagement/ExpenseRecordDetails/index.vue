@@ -575,63 +575,83 @@ const handleTabChange = (val) => {
 
 // unit price 的输入框的 change 事件
 const handleUnitPriceChange = useDebounceFn(
-  (record, val) =>
-    (record.totalAmount = Big(val)
-      .times(record.quantity || 0) // unitPrice * quantity
-      .minus(record.discount || 0) // - discount
-      .plus(record.gst || 0) // - tax rate
-      // .toFixed(2) // 保留两位小数
-      .toNumber()), // 转为数字
+  (record, val) => {
+    if (val !== '') {
+      record.totalAmount = Big(val)
+        .times(record.quantity || 0) // unitPrice * quantity
+        .minus(record.discount || 0) // - discount
+        .plus(record.gst || 0) // - tax rate
+        // .toFixed(2) // 保留两位小数
+        .toNumber()
+    } else {
+      record.unitPrice = 0
+      record.totalAmount = 0
+    }
+  }, // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
 // quantity 的输入框的 change 事件
 const handleQuantityChange = useDebounceFn(
-  (record, val) =>
-    (record.totalAmount = Big(record.unitPrice)
-      .times(val) // unitPrice * quantity
-      .minus(record.discount || 0) // - discount
-      .plus(record.gst || 0) // - tax rate
-      // .toFixed(2) // 保留两位小数
-      .toNumber()), // 转为数字
+  (record, val) => {
+    if (val !== '') {
+      record.totalAmount = Big(record.unitPrice)
+        .times(val) // unitPrice * quantity
+        .minus(record.discount || 0) // - discount
+        .plus(record.gst || 0) // - tax rate
+        // .toFixed(2) // 保留两位小数
+        .toNumber()
+    } else {
+      record.quantity = 0
+      record.totalAmount = 0
+    }
+  }, // 转为数字
   TimingPreset.DEBOUNCE,
 )
 
 // discount 的输入框的 change 事件
-const handleDiscountChange = useDebounceFn(
-  (record, val) =>
-    (record.totalAmount = Big(record.unitPrice)
+const handleDiscountChange = useDebounceFn((record, val) => {
+  if (val !== '') {
+    record.totalAmount = Big(record.unitPrice)
       .times(record.quantity || 0) // unitPrice * quantity
       .minus(val) // - discount
       .plus(record.gst || 0) // - tax rate
       // .toFixed(2) // 保留两位小数
-      .toNumber()), // 转为数字
-  TimingPreset.DEBOUNCE,
-)
+      .toNumber()
+  } else {
+    record.discount = 0
+  }
+}, TimingPreset.DEBOUNCE)
 
 // gst 的输入框的 change 事件
-const handleGstChange = useDebounceFn(
-  (record, val) =>
-    (record.totalAmount = Big(record.unitPrice)
+const handleGstChange = useDebounceFn((record, val) => {
+  if (val !== '') {
+    record.totalAmount = Big(record.unitPrice)
       .times(record.quantity || 0) // unitPrice * quantity
       .minus(record.discount || 0) // - discount
       .plus(val) // - tax rate
       // .toFixed(2) // 保留两位小数
-      .toNumber()), // 转为数字
-  TimingPreset.DEBOUNCE,
-)
+      .toNumber()
+  } else {
+    record.gst = 0
+  }
+}, TimingPreset.DEBOUNCE)
 
 // total amount 的输入框的 change 事件
-const handleTotalAmountChange = useDebounceFn(
-  (record, val) =>
-    (record.unitPrice = Big(val)
+const handleTotalAmountChange = useDebounceFn((record, val) => {
+  if (val !== '') {
+    record.unitPrice = Big(val)
       .plus(record.discount || 0) // totalAmount + discount
       .minus(record.gst || 0) // - gst
       .div(record.quantity) // ÷ quantity
       // .toFixed(2) // 保留两位小数
-      .toNumber()), // 转为数字
-  TimingPreset.DEBOUNCE,
-)
+      .toNumber() // 转为数字
+  } else {
+    record.totalAmount = 0
+    record.unitPrice = 0
+    record.quantity = 0
+  }
+}, TimingPreset.DEBOUNCE)
 
 // 维修记录item name的下拉框的change事件
 const handleItemNameChange = (val, record) => {

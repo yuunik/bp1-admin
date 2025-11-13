@@ -432,7 +432,7 @@ export const updateRepairRecordApi = (params) => {
   data.append('discount', params.discount)
   // 币种符号
   // data.append('r_cur', params.r_cur)
-  data.append('itemDtos', stringify(params.expenseItemDtos))
+  data.append('itemDtos', JSON.stringify(params.expenseItemDtos))
 
   return request({
     url: UserApi.EDIT_REPAIR_RECORD,
