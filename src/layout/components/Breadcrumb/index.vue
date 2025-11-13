@@ -9,6 +9,7 @@ import { EmitterEvent } from '@/utils/constantsUtil.js'
 import { useUserStore } from '@/store/index.js'
 
 import CompanyLogo from '@/assets/images/company-logo.png'
+import { useCloned } from '@vueuse/core'
 
 // 路由
 const route = useRoute()
@@ -101,8 +102,10 @@ watch(
       isGetTopLevelRoute.value = true
       breadcrumbList.value.push(topLevelRoute)
     }
+    // 深拷贝, 以免影响原数据
+    const { cloned } = useCloned(route)
     // 添加当前路由
-    breadcrumbList.value.push(JSON.parse(JSON.stringify(route)))
+    breadcrumbList.value.push(cloned.value)
     // 与仓库中的记录的面包屑进行比较, 若长度小于仓库中的记录, 则说明说为刷新情况, 则将仓库中的记录的面包屑进行覆盖
     if (breadcrumbList.value.length < breadcrumb.value.length) {
       breadcrumbList.value = breadcrumb.value

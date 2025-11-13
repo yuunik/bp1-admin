@@ -3,6 +3,8 @@
  * @description User Management 模块的接口文件
  */
 
+import { stringify } from 'flatted'
+
 import request from '@/utils/request.js'
 import { useAuthToken } from '@/composables/useAuthToken.js'
 
@@ -430,7 +432,7 @@ export const updateRepairRecordApi = (params) => {
   data.append('discount', params.discount)
   // 币种符号
   // data.append('r_cur', params.r_cur)
-  data.append('itemDtos', JSON.stringify(params.expenseItemDtos))
+  data.append('itemDtos', stringify(params.expenseItemDtos))
 
   return request({
     url: UserApi.EDIT_REPAIR_RECORD,
