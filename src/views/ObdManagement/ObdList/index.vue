@@ -12,6 +12,7 @@ import { ElMessage } from 'element-plus'
 import BasePagination from '@/components/BasePagination.vue'
 import { closeOBDApi, getOBDListApi, unbindOBDApi } from '@/apis/obdApi.js'
 import {
+  getDateWithDDMMMYYYY,
   getLastUsedDate,
   getOneYearLaterDateWithDDMMMYYYYY,
 } from '@/utils/dateUtil.js'
@@ -355,7 +356,7 @@ getObdList()
           min-width="20%"
         >
           <template #default="{ row }">
-            {{ getOneYearLaterDateWithDDMMMYYYYY(row.warrantyTime) }}
+            {{ getDateWithDDMMMYYYY(row.warrantyTime) }}
           </template>
         </el-table-column>
         <!-- 绑定时间 -->
