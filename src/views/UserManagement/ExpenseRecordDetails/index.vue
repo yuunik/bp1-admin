@@ -737,10 +737,11 @@ getRepairRecordInfo(id)
             v-if="!isEditMode"
           />
           <el-select
-            v-model="editEstimatedCostForm.merchantDto.id"
+            :model-value="editEstimatedCostForm.merchantDto.name"
             class="select--underline"
             placeholder="Select"
             @change="handleMerchantDtoChange"
+            value-key="merchantDtoId"
             v-else
           >
             <el-option
