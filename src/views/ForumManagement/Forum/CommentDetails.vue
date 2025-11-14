@@ -115,6 +115,13 @@ const getForumDetail = async () => {
   // 如果是富文本 则解析
   if (!isJson.value) return
   const deltaOps = JSON.parse(postInfo.content)
+  // 补全 link 前缀
+  deltaOps.forEach((op) => {
+    const link = op?.attributes?.link
+    if (link && !/^https?:\/\//.test(link)) {
+      op.attributes.link = `https://${link}`
+    }
+  })
   const quill = new Quill(quillContainer.value, {
     theme: 'snow',
     readOnly: true, // 只读模式
