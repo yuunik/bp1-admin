@@ -1,16 +1,17 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useDebounceFn } from '@vueuse/core'
 
 import BasePagination from '@/components/BasePagination.vue'
 import { deleteForumApi, getForumListApi } from '@/apis/forumApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
-import { useDebounceFn } from '@vueuse/core'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
-import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
-import { ElMessage } from 'element-plus'
+import { useSort } from '@/composables/useSort.js'
+import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 // 帖子列表
 const postList = ref([])
@@ -49,6 +50,12 @@ const selectedPostId = ref('')
 // 贴文类型筛选列表
 const typeList = ref([])
 
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
 // 贴文值筛选列表
 const typeKeys = computed(() =>
   typeList.value.length > 0 ? typeList.value.join(',') : '',
@@ -58,6 +65,9 @@ const typeKeys = computed(() =>
 const hasCondition = computed(() => {
   return typeList.value.length > 0
 })
+
+// 帖子排序
+const sort = useSort(sortParams, () => getPostList())
 
 // 帖子详情
 const handleViewPostDetails = (row, column) => {
@@ -78,6 +88,8 @@ const getPostList = async () => {
     pageSize: pagination.pageSize,
     searchKey: conditionSearchParams.searchText,
     type: typeKeys.value,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
   })
   postList.value = data
   pagination.total = count
@@ -165,20 +177,22 @@ watch(
     />
   </div>
   <!-- 分割线 -->
-  <el-divider class="diver" />
-  <div class="pb-38 flex flex-1 flex-col overflow-auto px-32 pt-16">
+  <div
+    class="pb-38 divider-neutral-grey-4-1px flex flex-1 flex-col overflow-auto px-32"
+  >
     <!-- 贴文列表表格 -->
     <el-table
       :data="postList"
       class="flex-1"
       row-class-name="clickable-row"
       @row-click="handleViewPostDetails"
+      @sort-change="sort"
     >
       <!-- 选择框 -->
       <el-table-column type="selection" column-key="selection" min-width="7%" />
       <!-- 用户 -->
       <el-table-column
-        prop="userDto?.name"
+        prop="username"
         label="User"
         column-key="user"
         min-width="17%"
@@ -196,9 +210,7 @@ watch(
               :size="20"
               @error="errorHandler"
             >
-              <template #error>
-                <i class="i-ep:picture" />
-              </template>
+              <img :src="DefaultAvatar" />
             </el-avatar>
             <el-text>{{ row.userDto?.name || '-' }}</el-text>
           </div>
@@ -212,12 +224,12 @@ watch(
         min-width="15%"
       >
         <template #default="{ row }">
-          <span class="h-41 text-truncate">{{ row.title || '-' }}</span>
+          <span>{{ row.title || '-' }}</span>
         </template>
       </el-table-column>
       <!-- 被举报次数 -->
       <el-table-column
-        prop="tipOffCount"
+        prop="tipoff"
         label="Reports"
         sortable
         column-key="status"
@@ -229,7 +241,7 @@ watch(
       </el-table-column>
       <!-- 评论数 -->
       <el-table-column
-        prop="commentCount"
+        prop="comment"
         label="Comments"
         sortable
         column-key="comments"
@@ -251,7 +263,7 @@ watch(
       </el-table-column>
       <!-- 日期 -->
       <el-table-column
-        prop="date"
+        prop="createTime"
         label="Date"
         sortable
         column-key="date"

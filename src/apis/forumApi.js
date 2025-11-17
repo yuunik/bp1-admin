@@ -27,11 +27,26 @@ const ForumApi = Object.freeze({
 // 获取 token
 const { getToken } = useAuthToken()
 
+/**
+ * 获取论坛列表
+ * @param params
+ * @param params.page
+ * @param params.pageSize
+ * @param params.sort
+ * @param params.sortBy
+ * @param params.searchKey
+ * @param params.type
+ * @param params.clubIds
+ *
+ * @returns {*}
+ */
 export const getForumListApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
+  data.append('sort', params.sort)
+  data.append('sortBy', params.sortBy)
   params.searchKey && data.append('searchKey', params.searchKey)
   params.type && data.append('type', params.type)
   params.clubIds && data.append('clubIds', params.clubIds)
