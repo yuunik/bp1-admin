@@ -64,6 +64,8 @@ export const getCommentListApi = (params) => {
   data.append('page', params.page)
   data.append('pageSize', params.pageSize)
   data.append('searchKey', params.searchKey)
+  data.append('sortBy', params.sortBy)
+  data.append('sort', params.sort)
   params.type && data.append('type', params.type)
 
   return request({

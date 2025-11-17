@@ -11,6 +11,7 @@ import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import BaseDialog from '@/components/BaseDialog.vue'
+import { useSort } from '@/composables/useSort.js'
 
 const commentList = ref([])
 
@@ -58,7 +59,16 @@ const hasCondition = computed(() => {
   return typeList.value.length > 0
 })
 
+// 排序参数
+const sortParams = reactive({
+  sort: '',
+  sortBy: '',
+})
+
 const router = useRouter()
+
+// 评论排序
+const sort = useSort(sortParams, () => getCommentList())
 
 // 获取帖子列表
 const getCommentList = async () => {
@@ -67,6 +77,8 @@ const getCommentList = async () => {
     pageSize: pagination.pageSize,
     searchKey: conditionSearchParams.searchText,
     type: typeKeys.value,
+    sort: sortParams.sort,
+    sortBy: sortParams.sortBy,
   })
   commentList.value = data
 }
@@ -167,21 +179,22 @@ watch(
       @input-change="handleSearchByInput"
     />
   </div>
-  <!-- 分割线 -->
-  <el-divider class="diver" />
-  <div class="pb-38 flex h-full flex-1 flex-col overflow-auto px-32 pt-16">
+  <div
+    class="pb-38 divider-neutral-grey-4-1px flex h-full flex-1 flex-col overflow-auto px-32"
+  >
     <!-- 评论列表表格 -->
     <el-table
       :data="commentList"
       class="flex-1"
       row-class-name="clickable-row"
       @row-click="handleViewCommentDetails"
+      @sort-change="sort"
     >
       <!-- 选择框 -->
       <el-table-column type="selection" column-key="selection" min-width="7%" />
       <!-- 用户 -->
       <el-table-column
-        prop="user"
+        prop="username"
         label="User"
         column-key="user"
         min-width="22%"
@@ -220,7 +233,7 @@ watch(
       </el-table-column>
       <!-- 被举报次数 -->
       <el-table-column
-        prop="reports"
+        prop="tipoff"
         label="Reports"
         sortable
         column-key="status"
@@ -246,7 +259,7 @@ watch(
       </el-table-column>
       <!-- 日期 -->
       <el-table-column
-        prop="date"
+        prop="createTime"
         label="Date"
         sortable
         column-key="date"
