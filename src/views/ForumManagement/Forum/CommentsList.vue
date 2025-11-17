@@ -72,7 +72,7 @@ const sort = useSort(sortParams, () => getCommentList())
 
 // 获取帖子列表
 const getCommentList = async () => {
-  const { data } = await getCommentListApi({
+  const { data, count } = await getCommentListApi({
     page: pagination.currentPage,
     pageSize: pagination.pageSize,
     searchKey: conditionSearchParams.searchText,
@@ -80,7 +80,10 @@ const getCommentList = async () => {
     sort: sortParams.sort,
     sortBy: sortParams.sortBy,
   })
+  console.log('@@@@@@@@@@@@@', data)
   commentList.value = data
+  pagination.total = count
+  console.log('//////////////', commentList.value)
 }
 
 // 搜索
@@ -198,7 +201,7 @@ watch(
         label="User"
         column-key="user"
         min-width="22%"
-        sortable
+        sortable="custom"
       >
         <template #default="{ row }">
           <div class="flex items-center">
@@ -235,19 +238,19 @@ watch(
       <el-table-column
         prop="tipoff"
         label="Reports"
-        sortable
+        sortable="custom"
         column-key="status"
         min-width="12%"
       >
         <template #default="{ row }">
-          <span>{{ row.reports || '-' }}</span>
+          <span>{{ row.tipOffCount || '-' }}</span>
         </template>
       </el-table-column>
       <!-- 状态 -->
       <el-table-column
         prop="status"
         label="Status"
-        sortable
+        sortable="custom"
         column-key="status"
         min-width="12%"
       >
@@ -261,7 +264,7 @@ watch(
       <el-table-column
         prop="createTime"
         label="Date"
-        sortable
+        sortable="custom"
         column-key="date"
         min-width="19%"
       >

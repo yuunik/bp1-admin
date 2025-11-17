@@ -196,7 +196,7 @@ watch(
         label="User"
         column-key="user"
         min-width="17%"
-        sortable
+        sortable="custom"
       >
         <template #default="{ row }">
           <div class="flex items-center">
@@ -231,7 +231,7 @@ watch(
       <el-table-column
         prop="tipoff"
         label="Reports"
-        sortable
+        sortable="custom"
         column-key="status"
         min-width="12%"
       >
@@ -243,15 +243,19 @@ watch(
       <el-table-column
         prop="comment"
         label="Comments"
-        sortable
+        sortable="custom"
         column-key="comments"
         min-width="12%"
-      />
+      >
+        <template #default="{ row }">
+          <span class="h-41 text-truncate">{{ row.comment || '-' }}</span>
+        </template>
+      </el-table-column>
       <!-- 状态 -->
       <el-table-column
         prop="status"
         label="Status"
-        sortable
+        sortable="custom"
         column-key="status"
         min-width="12%"
       >
@@ -265,7 +269,7 @@ watch(
       <el-table-column
         prop="createTime"
         label="Date"
-        sortable
+        sortable="custom"
         column-key="date"
         min-width="19%"
       >
