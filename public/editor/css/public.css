@@ -1,0 +1,526 @@
+/* 基础样式复写 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden;}
+body { background: #EAEEF4; }
+#app {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+:root, :host {
+    --van-primary-color: #202834;
+}
+
+/* 复写vant组件样式 */
+.van-field__label {
+    width: auto;
+    margin-right: 15px;
+}
+.van-radio__label {
+    margin-left: 2px;
+}
+.van-slider .van-slider__button {
+    width: 14px;
+    height: 14px;
+    border: 1px solid #1B1A1E;
+}
+.van-form {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.van-form .van-cell {
+    background: #F4F7FA;
+}
+.van-tabs__nav--line.van-tabs__nav--shrink,
+.van-tabs__nav--line.van-tabs__nav--complete {
+    padding: 0;
+}
+.data-loading.van-toast--loading {
+    background-color: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+.data-loading .van-loading__circular circle {
+    stroke: #FFFFFF !important;
+}
+.data-loading .van-loading__spinner {
+    width: 40px;
+    height: 40px;
+}
+.noUi-horizontal.noUi-target {
+    height: 5px!important;
+    border: none!important;
+    background: #CACFD8!important;
+    box-shadow: none!important;
+}
+.noUi-tooltip, .noUi-pips { display: none !important; }
+.noUi-handle {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 4px !important;
+    border: 2px solid #fff !important;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.5) !important;
+    background: #fff;
+    top: -10px!important;
+    right: -12px!important;
+    z-index: 10 !important;
+}
+.noUi-handle::before, .noUi-handle::after { display: none !important; }
+.noUi-handle.selected { box-shadow: 0 0 0 2px #337ab7 !important; }
+
+
+/* 通用样式 */
+.text-left {
+    text-align: left;
+}
+.text-right {
+    text-align: right;
+}
+.form-value-input {
+    border: 1px solid #CACFD8;
+    border-radius: 12px;
+    padding: 0 8px;
+    height: 30px;
+    font-size: 14px;
+    width: 100%;
+}
+.item-right-input {
+    margin-left: 20px;
+    width: 70px;
+}
+.item-align-select {
+    display: flex;
+    justify-content: flex-start;
+    gap: 25px;
+}
+.item-align-select > i {
+    font-size: 16px;
+    display: inline-flex;
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    justify-content: center;
+    align-items: center;
+}
+.item-align-select > i.active {
+    border: 1px solid #CACFD8;
+    border-radius: 4px;
+    background: #fff;
+    color: #1B1A1E;
+}
+.base-grid {
+    background: #F4F7FA;
+}
+.base-grid.title .van-grid-item__content {
+    padding-bottom: 5px;
+}
+.base-grid.title .van-grid-item:nth-of-type(2) .van-grid-item__content{
+    align-items: flex-end;
+}
+.base-grid.title .btn-toggle-link {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.base-grid.title .btn-toggle-link > i {
+    font-size: 26px;
+}
+.base-grid .van-grid-item__content {
+    align-items: flex-start;
+    justify-content: center;
+    padding: 12px 8px;
+    background: none;
+    font-size: 14px;
+}
+.base-grid .grid-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+.base-grid .grid-wrap .van-stepper {
+    flex: 1;
+    display: flex;
+    background: #fff;
+    border: 1px solid #CACFD8;
+    border-radius: 12px;
+    overflow: hidden;
+}
+.base-grid .grid-wrap .van-stepper .van-stepper__input {
+    flex: 1;
+    background: none;
+    height: 35px;
+}
+.base-grid .grid-wrap .van-stepper__minus,
+.base-grid .grid-wrap .van-stepper__plus {
+    background: none;
+    height: 35px;
+    width: 35px;
+    transform: scale(0.8);
+}
+
+/* 控制器相关样式 */
+.step {
+    background: #F4F7FA;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+}
+.step .step-left,
+.step .step-right {
+    width: 100px;
+}
+.step .step-right .van-button{
+    height: 32px;
+    line-height: 32px;
+    border-radius: 12px;
+    background: #202834;
+    border-color: #202834;
+}
+.step .step-left {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+.step .step-left .step-btn{
+    color: #CACFD8;
+    border: 2px solid #CACFD8;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+.control {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 2;
+    color: #1B1A1E;
+    text-align: center;
+    /* 重要样式：告诉浏览器该区域不需要默认触摸行为（如双指缩放、滑动滚动），避免与自定义手势冲突 */
+    touch-action: none;
+}
+.control .color-picker {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.control .color-picker > span,
+.control .color-picker > button {
+    width: 1.5rem;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    display: inline-block;
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    line-height: 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.control .color-picker > button {
+    padding-left: 3px;
+}
+.control .box-insert {
+    display: flex;
+    justify-content: center;
+    background: #F4F7FA;
+    padding-bottom: 34px;
+}
+.control .btn-insert {
+    cursor: pointer;
+    flex: 1;
+    padding-top: 20px;
+    font-size: 12px;
+}
+.control .btn-insert > span {
+    font-size: 32px;
+}
+.control .btn-insert .pic {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.control .btn-insert .txt {
+    margin-top: 5px;
+}
+.control .box-element {
+    background: #fff;
+    border-radius: 20px 20px 0 0;
+    box-shadow: rgba(0, 0, 0, 0.15) 0 -5px 5px;
+    padding: 6px 0 34px 0;
+    position: relative;
+    z-index: 1;
+}
+.control .box-element .text-input{
+    display: flex;
+    width: 100%;
+    padding-top: 20px;
+    align-items: center;
+}
+.control .box-element .text-input .search-box{
+    flex: 1;
+}
+.control .box-element .text-input .icon-success {
+    margin-right: 20px;
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    background: #1B1A1E;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 22px;
+}
+.control .box-element .element-type{
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 20px;
+}
+.control .box-element .element-type > i {
+    font-size: 24px;
+    height: 24px;
+}
+.control .box-element .element-type .van-tabs {
+    width: calc(100% - 48px);
+    margin-top: -3px;
+}
+.control .box-element .element-type .van-tabs--line .van-tabs__wrap {
+    margin-top: -10px;
+}
+.control .box-element .element-type .van-tab {
+    flex: none;
+}
+.control .box-element .element-type .van-tabs__nav {
+    gap: 30px;
+    justify-content: center;
+    background: transparent;
+}
+.control .box-element .element-sub-type {
+    margin: 0 20px;
+}
+.control .box-element .element-sub-type .van-tabs__nav {
+    background: transparent;
+    gap: 10px;
+}
+.control .box-element .element-sub-type .van-tab--grow{
+    padding: 0;
+}
+.control .box-element .element-sub-type .van-tabs__line {
+    display: none;
+}
+.control .box-element .element-sub-type .shape-icon{
+    display: inline-block;
+    font-size: 25px;
+    color: #6F7788;
+}
+.control .box-element .element-sub-type .van-tabs.shape-container {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #F4F7FA;
+}
+.control .box-element .element-sub-type .van-tabs.shape-container .van-tab--active{
+    border: 1px solid #CACFD8;
+    border-radius: 4px;
+    background: #fff;
+}
+.control .box-element .element-sub-type .van-tabs.shape-container .van-tab--active .shape-icon{
+    color: #1B1A1E;
+}
+.control .box-element .element-sub-type .van-tab__text{
+    white-space: nowrap;
+}
+.control .box-element .element-sub-type .van-tab {
+    padding: 0;
+    flex: auto;
+}
+.control .box-element .element-sub-type .van-tabs__nav {
+    justify-content: space-between;
+}
+.control .select-box {
+    padding-top: 5px;
+    font-size: 16px;
+}
+.control .select-box .select-item {
+    padding: 15px 0;
+    position: relative;
+}
+.control .select-box .select-item input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+}
+.control .search-box {
+    background: #F4F7FA;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 20px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+}
+.control .search-box .icon-search {
+    color: #99A0AE;
+}
+.control .search-box input {
+    width: 100%;
+    border: none;
+    background: none;
+    padding: 10px;
+    font-size: 14px;
+}
+.control .list-wrap {
+    margin: 10px 20px;
+    padding: 20px 10px;
+    background: #F4F7FA;
+    border-radius: 4px;
+}
+.control .list-wrap .list-box {
+    max-height: 250px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    text-align: left;
+}
+.control .list-box .list-item {
+    display: inline-block;
+    width: calc(100% / 3 - 10px);
+    margin:  5px;
+    font-size: 12px;
+    text-align: center;
+    border: 3px solid transparent;
+    overflow: hidden;
+}
+.control .list-box .list-item.active {
+    border-color: #006BF7;
+}
+.control .list-box.template .list-item {
+    width: calc(100% / 2 - 10px);
+    border-radius: 13px;
+}
+.control .list-box .list-item .item-box {
+    background: #000;
+    padding: 10px;
+    height: 47px;
+    border-radius: 8px;
+}
+.control .list-box.template .list-item .item-box {
+    padding: 0;
+    height: auto;
+}
+.control .list-box.template .list-item .item-box img{
+    width: 100%;
+}
+.control .list-box .list-item .item-txt {
+    margin-top: 6px;
+    color: #6F7788;
+}
+.control .gradient-slider {
+    width: 100%;
+    padding-left: 12px;
+}
+.control .gradient-slider .container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+.control .gradient-slider .container .noUi-target {
+    flex: 1;
+}
+.control .gradient-slider .container .btn-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.control .gradient-slider .btn-group .btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #CACFD8;
+    border-radius: 12px;
+    background: #fff;
+    color: #1B1A1E;
+    font-size: 24px;
+    cursor: pointer;
+}
+.control .form-setting .setting-select-box{
+    display: flex;
+    overflow: auto;
+    gap: 5px;
+    padding: 10px 0;
+}
+.control .form-setting .setting-select-item {
+    font-size: 9px;
+    background: #000;
+    display: flex;
+    padding: 2px;
+    min-width: 60px;
+    width: 60px;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.control .form-setting .setting-select-item.active {
+    border: 2px solid #3288f8;
+}
+.control .form-setting .setting-select-item .select-item-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.control .form-setting .setting-select-list {
+    min-height: 50px;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #F4F7FA;
+    border-radius: 4px;
+    margin-top: 10px;
+    position: relative;
+}
+.control .form-setting .setting-select-list .setting-list-item {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 10px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: left;
+    border: 2px solid transparent;
+}
+.control .form-setting .setting-select-list .setting-list-item.active {
+    border: 2px solid #3288f8;
+}
+.control .setting-select-list .setting-list-item .item-right {
+    white-space: nowrap;
+    min-width: 45%;
+    width: 45%;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.control .form-setting .setting-select-list .setting-list-empty {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    position: absolute;
+}

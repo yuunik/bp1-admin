@@ -851,6 +851,15 @@ const constantRoutes = [
       isTopLevelRoute: true,
     },
   },
+  {
+    path: '/editor',
+    component: () => import('@/views/editor/editor.vue'),
+    name: 'editor',
+    meta: {
+      title: 'editor',
+    },
+    hidden: true,
+  },
 ]
 
 export default constantRoutes
