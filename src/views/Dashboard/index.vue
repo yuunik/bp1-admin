@@ -590,11 +590,11 @@ onMounted(async () => {
               </span>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="totalAmount"
-            label="Car Count"
-            min-width="31%"
-          />
+          <el-table-column prop="count" label="Car Count" min-width="31%">
+            <template v-slot="{ row }">
+              <span>{{ row.count || '-' }}</span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
