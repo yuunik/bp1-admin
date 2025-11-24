@@ -30,12 +30,12 @@ const router = useRouter()
 const hoveredIndex = ref(null)
 
 // 路由跳转
-const handleNavigation = (path) => {
+const handleNavigation = async (path) => {
   router.push(path)
   // 面包屑数据重置
-  // emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   // 缓存路由重置
-  clearAllKeepAliveRoute()
+  await clearAllKeepAliveRoute()
 }
 
 // 获取菜单折叠状态
