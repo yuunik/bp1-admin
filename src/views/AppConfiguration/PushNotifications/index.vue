@@ -22,6 +22,7 @@ import BaseTag from '@/components/BaseTag.vue'
 import { getDateWithDDMMMYYYYhhmma } from '@/utils/dateUtil.js'
 import { useSort } from '@/composables/useSort.js'
 import { getUserListApi } from '@/apis/userApi.js'
+import { getForumListApi } from '@/apis/forumApi.js'
 
 // 通知列表
 const notificationList = ref([])
@@ -152,6 +153,7 @@ const notificationForm = ref({
   userStatus: '', // all / selected
   sendTime: '', // 推送任务的目标时间戳
   scheduleTime: '',
+  linkId: '',
 })
 
 // 条件搜索参数
@@ -249,6 +251,48 @@ const selectedUserList = computed(() =>
 // 弹窗中的推送任务搜索关键字
 const addUserSearchText = ref('')
 
+// 帖子列表
+const postList = ref([])
+
+// 分页参数
+const postPagination = reactive({
+  pageSize: 9999,
+  total: 0,
+  currentPage: 0,
+})
+
+// 帖子筛选参数
+const postFilterParams = computed(() =>
+  postList.value
+    ? postList.value.map((post) => ({
+        label: post.title,
+        value: post.id,
+      }))
+    : [],
+)
+
+// 获取帖子列表
+const getPostList = async () => {
+  const { data, count } = await getForumListApi({
+    page: postPagination.currentPage,
+    pageSize: postPagination.pageSize,
+  })
+  postList.value = data
+  postPagination.total = count
+}
+
+const forumLoading = ref(false)
+
+// 处理通知类型的变化
+const handleNotificationFromTypeChange = async (val) => {
+  if (val === 'Forum') {
+    forumLoading.value = true
+    // 获取帖子列表
+    await getPostList()
+    forumLoading.value = false
+  }
+}
+
 // 新增推送任务
 const addNotification = async () => {
   // 基础参数（必传）
@@ -260,6 +304,7 @@ const addNotification = async () => {
       hasPushTime.value && notificationForm.value.sendTime === 'schedule'
         ? scheduleTime.value
         : notificationForm.value.sendTime,
+    linkId: notificationForm.value.linkId,
   }
 
   // 条件传递 obdVersion
@@ -1017,7 +1062,7 @@ initData()
 
         <!-- 三列布局 -->
         <el-row :gutter="8">
-          <el-col :span="8">
+          <el-col :span="notificationForm.type === 'Forum' ? 6 : 8">
             <el-form-item
               label="Notification Type"
               prop="type"
@@ -1026,6 +1071,7 @@ initData()
               <el-select
                 v-model="notificationForm.type"
                 placeholder="Select type"
+                @change="handleNotificationFromTypeChange"
               >
                 <el-option
                   v-for="typeInfo in typeFilterParams"
@@ -1036,7 +1082,22 @@ initData()
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6" v-if="notificationForm.type === 'Forum'">
+            <el-form-item label="Forum" prop="type" class="label-required">
+              <el-select
+                v-model="notificationForm.linkId"
+                placeholder="Select forum"
+              >
+                <el-option
+                  v-for="forumInfo in postFilterParams"
+                  :key="forumInfo.label"
+                  :label="forumInfo.label"
+                  :value="forumInfo.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="notificationForm.type === 'Forum' ? 6 : 8">
             <el-form-item label="OBD Version" prop="obdVersion">
               <el-select
                 v-model="notificationForm.obdVersion"
@@ -1052,7 +1113,7 @@ initData()
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="notificationForm.type === 'Forum' ? 6 : 8">
             <el-form-item label="Application Type" prop="applicationType">
               <el-select
                 v-model="notificationForm.applicationType"

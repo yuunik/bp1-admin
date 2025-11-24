@@ -779,6 +779,7 @@ export const createPushTaskApi = (params) => {
   params.appType && params.appType && data.append('appType', params.appType)
   params.pushUserIds && data.append('pushUserIds', params.pushUserIds)
   data.append('sentTime', params.sentTime)
+  data.append('linkId', params.linkId)
 
   return request({
     url: AppApi.CREATE_PUSH_TASK,
