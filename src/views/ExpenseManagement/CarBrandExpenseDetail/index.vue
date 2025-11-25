@@ -1,7 +1,9 @@
 <script setup>
+import { ref, computed, watch, reactive } from 'vue'
 import { useDebounceFn } from '@vueuse/core'
 import { useRoute } from 'vue-router'
 
+import { getFormatNumberString } from '@/utils/dataFormattedUtil.js'
 import BaseExpenseBreakdownChart from '@/components/BaseExpenseBreakdownChart.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import {
@@ -16,7 +18,6 @@ import {
   getExpenseGroupPriceByBrandApi,
   getExpenseGroupPriceListByBrandApi,
 } from '@/apis/expenseApi.js'
-import { getFormatNumberString } from '../../../utils/dataFormattedUtil.js'
 
 // 获取路由
 const route = useRoute()
@@ -27,6 +28,7 @@ const brandId = ref('')
 // 获取路径中的id
 const {
   params: { id },
+  query: { brand },
 } = route
 if (id) {
   brandId.value = id
@@ -151,7 +153,7 @@ watch(
     <h2
       class="heading-h2-20px-medium text-neutrals-off-black leading-30 row-center mx-32 h-32"
     >
-      Audi
+      {{ brand }}
     </h2>
     <!-- tabs 栏 -->
     <el-tabs v-model="activeTab" class="has-top">
@@ -174,8 +176,8 @@ watch(
       <!-- 输入搜索 -->
       <base-filter-input
         v-model="searchKeywords"
-        @input-change="refresh"
         class="h-32"
+        @input-change="refresh"
       />
       <!-- 表格 -->
       <div class="flex flex-1 flex-col">

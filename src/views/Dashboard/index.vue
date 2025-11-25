@@ -260,6 +260,7 @@ const handleNavigateToBrandDetail = (brand) =>
   router.push({
     name: RouteName.CAR_COST_DETAILS,
     params: { id: brand.id },
+    query: { brand: brand.name },
   })
 
 onMounted(async () => {

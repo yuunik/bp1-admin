@@ -14,7 +14,6 @@ import {
   getFullFilePath,
 } from '@/utils/dataFormattedUtil.js'
 import useCacheView from '@/composables/useCacheView.js'
-
 import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
 // 定义组件选项
@@ -153,8 +152,8 @@ cacheView(RouteName.EXPENSE)
     <!-- 输入搜索 -->
     <base-filter-input
       v-model="searchKeywords"
-      @input-change="refresh"
       class="mx-32 mb-16"
+      @input-change="refresh"
     />
     <!-- 分割线 -->
     <el-divider />
@@ -163,9 +162,9 @@ cacheView(RouteName.EXPENSE)
       <el-table
         v-if="activeTab === 'By User'"
         :data="userExpenseList"
-        @sort-change="handleSortChange"
         class="flex-1"
         row-class-name="clickable-row"
+        @sort-change="handleSortChange"
         @row-click="
           (row) =>
             $router.push({
@@ -213,14 +212,17 @@ cacheView(RouteName.EXPENSE)
       <el-table
         v-else
         :data="brandExpenseList"
-        @sort-change="handleSortChange"
-        class="flex-1"
         row-class-name="clickable-row"
+        class="flex-1"
+        @sort-change="handleSortChange"
         @row-click="
           (row) =>
             $router.push({
               name: RouteName.CAR_COST_DETAILS,
               params: { id: row.id },
+              query: {
+                brand: row.name,
+              },
             })
         "
       >
