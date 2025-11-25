@@ -1,10 +1,11 @@
 <script setup>
+import { ref, computed, onMounted, reactive } from 'vue'
 import { Line, Pie } from 'vue-chartjs'
 import { storeToRefs } from 'pinia'
 import Big from 'big.js'
-import emitter from '@/utils/emitterUtil.js'
 import { useRouter } from 'vue-router'
 
+import emitter from '@/utils/emitterUtil.js'
 import ContentItem from '@/views/Dashboard/components/ContentItem.vue'
 import { useUserStore } from '@/store/index.js'
 import { getTodayWithWeekday } from '@/utils/dateUtil.js'
@@ -252,17 +253,14 @@ const handleNavigateToUserList = () => router.push({ name: RouteName.EXTERN })
 
 // 跳转 expense 列表页
 const handleNavigateToExpenseList = () =>
-  // TODO expense 列表页路由跳转, 待做...
   router.push({ name: RouteName.EXPENSE })
 
 // 跳转品牌详情页
-const handleNavigateToBrandDetail = (brand) => {
+const handleNavigateToBrandDetail = (brand) =>
   router.push({
-    name: 'BrandAndModelManagement',
+    name: RouteName.CAR_COST_DETAILS,
     params: { id: brand.id },
   })
-  clearBreadcrumbList()
-}
 
 onMounted(async () => {
   // 获取数据
@@ -482,7 +480,7 @@ onMounted(async () => {
           </div>
         </div>
         <div v-show="activeTabIndex === 0">
-          <el-table :data="expenseUserList" @sort-change="sort" class="has-top">
+          <el-table :data="expenseUserList" class="has-top" @sort-change="sort">
             <el-table-column prop="name" label="User" min-width="69%">
               <template #default="{ row }">
                 <el-avatar
@@ -514,7 +512,7 @@ onMounted(async () => {
               label="Total Expense"
               min-width="31%"
             >
-              <template v-slot="{ row }">
+              <template #default="{ row }">
                 <span>${{ getFormatNumberString(row.totalAmount) }}</span>
               </template>
             </el-table-column>
@@ -549,7 +547,7 @@ onMounted(async () => {
               label="Total Expense"
               min-width="31%"
             >
-              <template v-slot="{ row }">
+              <template #default="{ row }">
                 <span>${{ getFormatNumberString(row.totalAmount) }}</span>
               </template>
             </el-table-column>
@@ -591,7 +589,7 @@ onMounted(async () => {
             </template>
           </el-table-column>
           <el-table-column prop="count" label="Car Count" min-width="31%">
-            <template v-slot="{ row }">
+            <template #default="{ row }">
               <span>{{ row.count || '-' }}</span>
             </template>
           </el-table-column>
