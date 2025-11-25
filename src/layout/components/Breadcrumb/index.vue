@@ -99,20 +99,29 @@ watch(
     // 若没有获取过一级路由, 则添加一级路由
     if (!isGetTopLevelRoute.value && topLevelRoute) {
       isGetTopLevelRoute.value = true
-      breadcrumbList.value.push(topLevelRoute)
+      breadcrumbList.value.push({
+        name: topLevelRoute.name,
+        path: topLevelRoute.path,
+        meta: { ...topLevelRoute.meta },
+      })
     }
     // 深拷贝, 以免影响原数据
-    // todo 生产环境似乎有循环引用的问题, 暂定
-    // const { cloned } = useCloned(route)
-    // console.log(JSON.parse(JSON.stringify(route)))
     // 添加当前路由
-    breadcrumbList.value.push(JSON.parse(JSON.stringify(route)))
+    breadcrumbList.value.push({
+      name: route.name,
+      path: route.path,
+      meta: { ...route.meta },
+    })
     // 与仓库中的记录的面包屑进行比较, 若长度小于仓库中的记录, 则说明说为刷新情况, 则将仓库中的记录的面包屑进行覆盖
     if (breadcrumbList.value.length < breadcrumb.value.length) {
       breadcrumbList.value = breadcrumb.value
     } else {
       // 否则, 则将当前路由添加到仓库中
-      breadcrumb.value = breadcrumbList.value
+      breadcrumb.value = breadcrumbList.value.map((x) => ({
+        path: x.path,
+        name: x.name,
+        meta: x.meta,
+      }))
     }
   },
   {
