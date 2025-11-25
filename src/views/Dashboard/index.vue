@@ -245,23 +245,51 @@ const getExpenseUserList = async () => {
 const sort = useSort(sortParams, getExpenseUserList)
 
 // 跳转 OBD 列表页
-const handleNavigateToOBDList = () =>
+const handleNavigateToOBDList = () => {
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({ name: RouteName.OBD_MANAGEMENT })
+}
 
 // 跳转 用户 列表页
-const handleNavigateToUserList = () => router.push({ name: RouteName.EXTERN })
+const handleNavigateToUserList = () => {
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  router.push({ name: RouteName.EXTERN })
+}
+
+// 跳转用户详情页
+const handleNavigateToUserDetail = (user) => {
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  router.push({
+    name: RouteName.PERSON_MANAGE,
+    params: { id: user.id },
+  })
+}
+
+// 跳转品牌管理页
+const handleNavigateToBrandManagement = (row) => {
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  router.push({
+    name: 'BrandAndModelManagement',
+    params: { id: row.id },
+  })
+}
 
 // 跳转 expense 列表页
-const handleNavigateToExpenseList = () =>
+const handleNavigateToExpenseList = () => {
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
+  console.log('???????????????')
   router.push({ name: RouteName.EXPENSE })
+}
 
 // 跳转品牌详情页
-const handleNavigateToBrandDetail = (brand) =>
+const handleNavigateToBrandDetail = (brand) => {
+  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({
     name: RouteName.CAR_COST_DETAILS,
     params: { id: brand.id },
     query: { brand: brand.name },
   })
+}
 
 onMounted(async () => {
   // 获取数据
@@ -497,12 +525,7 @@ onMounted(async () => {
                 </el-avatar>
                 <span
                   class="cursor-pointer text-wrap underline"
-                  @click="
-                    $router.push({
-                      name: RouteName.PERSON_MANAGE,
-                      params: { id: row.id },
-                    })
-                  "
+                  @click="handleNavigateToUserDetail(row)"
                 >
                   {{ row.name || '-' }}
                 </span>
@@ -578,12 +601,7 @@ onMounted(async () => {
               </el-avatar>
               <span
                 class="cursor-pointer text-wrap underline"
-                @click="
-                  $router.push({
-                    name: 'BrandAndModelManagement',
-                    params: { id: row.id },
-                  })
-                "
+                @click="handleNavigateToBrandManagement(row)"
               >
                 {{ row.name || '-' }}
               </span>
