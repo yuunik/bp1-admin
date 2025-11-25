@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useDebounceFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { Picture } from '@element-plus/icons-vue'
+import { useHead } from '@unhead/vue'
 
 import { useUserStore } from '@/store'
 import { RouteName, TimingPreset } from '@/utils/constantsUtil.js'
@@ -18,6 +18,18 @@ import { md5Encrypt } from '@/utils/md5Util.js'
 // 静态资源
 import Logo from '@/assets/images/company-logo-full.png'
 import GreetingIcon from '@/assets/images/Waving Hand.png'
+
+// 动态更新 header 标签
+useHead({
+  meta: [
+    {
+      name: 'viewport',
+      // 选择缩放模式或者响应模式
+      content: 'width=1080, initial-scale=0.3, user-scalable=yes',
+      key: 'viewport',
+    },
+  ],
+})
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -281,16 +293,16 @@ watch(dialogForgetPasswordVisible, (val) => {
         </div>
         <div class="text-align-right">
           <el-form
+            ref="loginFormRef"
             :model="loginForm"
             :rules="loginFormRules"
-            ref="loginFormRef"
             label-width="112"
             label-position="left"
           >
             <el-form-item label="Email" class="bottom-border-only" prop="email">
               <el-input
-                placeholder="Enter your email"
                 v-model="loginForm.email"
+                placeholder="Enter your email"
               />
             </el-form-item>
             <el-form-item
@@ -299,8 +311,8 @@ watch(dialogForgetPasswordVisible, (val) => {
               prop="password"
             >
               <el-input
-                placeholder="Enter your password"
                 v-model="loginForm.password"
+                placeholder="Enter your password"
                 :type="isShowPassword ? 'text' : 'password'"
                 @keyup.enter="handleLogin"
               >
@@ -323,9 +335,9 @@ watch(dialogForgetPasswordVisible, (val) => {
         <el-button
           type="primary"
           class="primary-button"
-          @click="handleLogin"
           :loading="isLoading"
           :disabled="isLoading"
+          @click="handleLogin"
         >
           Log In
         </el-button>
@@ -350,22 +362,22 @@ watch(dialogForgetPasswordVisible, (val) => {
       >
         <el-form-item label="Email" prop="email">
           <el-input
-            placeholder="Enter your email"
-            v-model="forgetPasswordForm.email"
             ref="forgetEmailInputRef"
+            v-model="forgetPasswordForm.email"
+            placeholder="Enter your email"
             @keyup.enter="forgetPasswordSendCode"
           />
         </el-form-item>
         <el-form-item label="Code" prop="code">
           <el-input
-            placeholder="Enter your code"
             v-model="forgetPasswordForm.code"
+            placeholder="Enter your code"
           >
             <template #suffix>
               <span
                 class="heading-body-body-12px-medium text-neutrals-grey-3 hover:text-neutrals-off-black whitespace-nowrap hover:underline"
-                @click.self="forgetPasswordSendCode"
                 :class="isSendCode ? 'cursor-not-allowed' : 'cursor-pointer'"
+                @click.self="forgetPasswordSendCode"
               >
                 Send Code
                 <!-- 倒计时 -->
@@ -376,8 +388,8 @@ watch(dialogForgetPasswordVisible, (val) => {
         </el-form-item>
         <el-form-item label="New Password" prop="newPassword">
           <el-input
-            placeholder="Enter your password"
             v-model="forgetPasswordForm.newPassword"
+            placeholder="Enter your password"
             :type="isShowNewPassword ? 'text' : 'password'"
           >
             <template #suffix>
@@ -390,8 +402,8 @@ watch(dialogForgetPasswordVisible, (val) => {
         </el-form-item>
         <el-form-item label="Confirm Password" prop="confirmPassword">
           <el-input
-            placeholder="Enter your confirm password"
             v-model="forgetPasswordForm.confirmPassword"
+            placeholder="Enter your confirm password"
             :type="isShowConfirmNewPassword ? 'text' : 'password'"
           >
             <template #suffix>

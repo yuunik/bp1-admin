@@ -39,7 +39,7 @@ $default-background-image: radial-gradient(circle, #0a1c34 0%, #1b1a1e 100%);
 
 // 公共背景样式
 %common-bg-style {
-  @apply w-full h-full box-border flex p-8 gap-8 min-w-1080 min-h-750;
+  @apply w-full h-full box-border flex p-8 gap-8;
   background-image: $default-background-image;
 }
 

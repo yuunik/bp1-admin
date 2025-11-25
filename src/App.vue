@@ -1,3 +1,18 @@
+<script setup>
+import { useHead } from '@unhead/vue'
+
+useHead({
+  meta: [
+    {
+      name: 'viewport',
+      content:
+        'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no',
+      key: 'viewport',
+    },
+  ],
+})
+</script>
+
 <template>
   <router-view />
 </template>

@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
+import { createHead } from '@unhead/vue/client'
 
 import App from './App.vue'
+
 import store from '@/store/index.js'
 import router from '@/router/index.js'
 import debounce from '@/directives/debounce/index.js'
@@ -26,6 +28,7 @@ import clickOutside from '@/directives/clickOutside.js'
 import downFile from '@/directives/downFile.js'
 
 const app = createApp(App)
+const head = createHead()
 
 // 防抖指令
 app.directive('debounce', debounce)
@@ -38,5 +41,6 @@ app.use(store)
 app.use(router)
 // 注册全局 SvgIcon
 app.use(SvgIconPlugin)
+app.use(head)
 
 app.mount('#app')

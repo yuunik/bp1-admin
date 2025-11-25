@@ -4,19 +4,32 @@ import { provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useLocalStorage } from '@vueuse/core'
+import { useHead } from '@unhead/vue'
 
-import { useUserStore } from '@/store/index.js'
 import MenuItem from './components/MenuItem/index.vue'
 import Breadcrumb from './components/Breadcrumb/index.vue'
+
 import BaseDialog from '@/components/BaseDialog.vue'
+import { useUserStore } from '@/store/index.js'
 import { RouteName } from '@/utils/constantsUtil.js'
 import { modifyAdminPasswordApi } from '@/apis/userCenterApi.js'
 import { md5Encrypt } from '@/utils/md5Util.js'
 import routes from '@/router/routes/index.js'
 import useRouteSettingsStore from '@/store/modules/routeSettings.js'
-
 import CompanyLogo from '@/assets/images/company-logo-full.png'
 import Logo from '@/assets/images/company-logo.png'
+
+// 动态更新header标签
+useHead({
+  meta: [
+    {
+      name: 'viewport',
+      // 选择缩放模式或者响应模式
+      content: 'width=1080, initial-scale=0.3, user-scalable=yes',
+      key: 'viewport',
+    },
+  ],
+})
 
 // 用户数据的状态管理库
 const userStore = useUserStore()
@@ -136,18 +149,18 @@ provide('isMenuCollapsed', isMenuCollapsed)
     >
       <!-- Company Logo -->
       <el-image
+        v-show="!isMenuCollapsed"
         :src="CompanyLogo"
         fit="contain"
         alt="Company Logo"
         class="w-83 default-transition ml-8 mt-8 h-24"
-        v-show="!isMenuCollapsed"
       />
       <el-image
+        v-show="isMenuCollapsed"
         :src="Logo"
         fit="cover"
         alt="Company Logo"
         class="default-transition mx-auto mt-8 h-24 w-24"
-        v-show="isMenuCollapsed"
       />
       <!-- menu -->
       <el-scrollbar class="default-transition flex-1">
@@ -189,11 +202,11 @@ provide('isMenuCollapsed', isMenuCollapsed)
               'text-neutrals-off-white': $route.name === 'Notifications',
             }"
           />
-          <span class="flex-1" v-if="!isMenuCollapsed">Notifications</span>
+          <span v-if="!isMenuCollapsed" class="flex-1">Notifications</span>
           <!-- notification dot -->
           <i
-            class="icon-typesnotification-dot heading-caption-caption-10px-medium flex-center bg-status-colours-green h-16 w-16 rounded-full text-[#FCFCFC]"
             v-if="!isMenuCollapsed"
+            class="icon-typesnotification-dot heading-caption-caption-10px-medium flex-center bg-status-colours-green h-16 w-16 rounded-full text-[#FCFCFC]"
           >
             1
           </i>
@@ -245,7 +258,7 @@ provide('isMenuCollapsed', isMenuCollapsed)
             </span>
           </i>
           <!-- user info -->
-          <div class="flex flex-col gap-8" v-if="!isMenuCollapsed">
+          <div v-if="!isMenuCollapsed" class="flex flex-col gap-8">
             <!-- user name -->
             <span class="heading-caption-caption-10px-medium">
               {{ username }}
@@ -260,9 +273,9 @@ provide('isMenuCollapsed', isMenuCollapsed)
       <!-- expand button -->
       <div class="expand-btn z-99" @click="isMenuCollapsed = !isMenuCollapsed">
         <!-- 折叠图标 -->
-        <i class="text-16 icon-typescollapsable" v-show="!isMenuCollapsed" />
+        <i v-show="!isMenuCollapsed" class="text-16 icon-typescollapsable" />
         <!-- 展开图标 -->
-        <i class="text-16 icon-mail-send-line" v-show="isMenuCollapsed" />
+        <i v-show="isMenuCollapsed" class="text-16 icon-mail-send-line" />
       </div>
     </nav>
     <!-- content -->
@@ -280,8 +293,8 @@ provide('isMenuCollapsed', isMenuCollapsed)
       </router-view>
       <!-- 设置中心 -->
       <aside
-        class="z-999 w-150 rounded-8 shadow-default bg-neutrals-white text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
         v-if="isShowSettingsDialog"
+        class="z-999 w-150 rounded-8 shadow-default bg-neutrals-white text-neutrals-off-black absolute bottom-8 left-8 flex flex-col gap-8 p-8 [&>span]:cursor-pointer"
       >
         <span
           class="leading-36 rounded-8 hover:bg-status-colours-light-blue heading-body-body-12px-regular h-36 p-8"
@@ -320,15 +333,15 @@ provide('isMenuCollapsed', isMenuCollapsed)
       >
         <el-form-item label="Current Password">
           <el-input
-            type="password"
             v-model="changePasswordForm.currentPassword"
+            type="password"
             placeholder="Please enter your current password"
           />
         </el-form-item>
         <el-form-item label="New Password">
           <el-input
-            placeholder="Enter your password"
             v-model="changePasswordForm.newPassword"
+            placeholder="Enter your password"
             :type="isShowPassword ? 'text' : 'password'"
           >
             <template #suffix>
@@ -341,8 +354,8 @@ provide('isMenuCollapsed', isMenuCollapsed)
         </el-form-item>
         <el-form-item label="Confirm Password">
           <el-input
-            placeholder="Enter your password"
             v-model="changePasswordForm.confirmPassword"
+            placeholder="Enter your password"
             :type="isShowConfirmPasswordVisible ? 'text' : 'password'"
           >
             <template #suffix>
@@ -395,8 +408,8 @@ provide('isMenuCollapsed', isMenuCollapsed)
         </el-form-item>
         <el-form-item label="Password">
           <el-input
-            placeholder="Enter your password"
             v-model="changeEmailForm.currentPassword"
+            placeholder="Enter your password"
             :type="isShowCurrentPassword ? 'text' : 'password'"
           >
             <template #suffix>

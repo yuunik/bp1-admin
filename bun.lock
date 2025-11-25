@@ -5,6 +5,7 @@
       "name": "pd1-admin",
       "dependencies": {
         "@element-plus/icons-vue": "^2.3.2",
+        "@unhead/vue": "^2.0.19",
         "@vueuse/core": "^13.5.0",
         "axios": "^1.10.0",
         "big.js": "^7.0.1",
@@ -297,6 +298,8 @@
     "@types/svgo": ["@types/svgo@2.6.4", "https://registry.npmmirror.com/@types/svgo/-/svgo-2.6.4.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-l4cmyPEckf8moNYHdJ+4wkHvFxjyW6ulm9l4YGaOxeyBWPhBOT0gvni1InpFPdzx1dKf/2s62qGITwxNWnPQng=="],
 
     "@types/web-bluetooth": ["@types/web-bluetooth@0.0.21", "https://registry.npmmirror.com/@types/web-bluetooth/-/web-bluetooth-0.0.21.tgz", {}, "sha512-oIQLCGWtcFZy2JW77j9k8nHzAOpqMHLQejDA48XXMWH6tjCQHz5RCFz1bzsmROyL6PUm+LLnUiI4BCn221inxA=="],
+
+    "@unhead/vue": ["@unhead/vue@2.0.19", "https://registry.npmmirror.com/@unhead/vue/-/vue-2.0.19.tgz", { "dependencies": { "hookable": "^5.5.3", "unhead": "2.0.19" }, "peerDependencies": { "vue": ">=3.5.18" } }, "sha512-7BYjHfOaoZ9+ARJkT10Q2TjnTUqDXmMpfakIAsD/hXiuff1oqWg1xeXT5+MomhNcC15HbiABpbbBmITLSHxdKg=="],
 
     "@unocss/astro": ["@unocss/astro@66.3.2", "https://registry.npmmirror.com/@unocss/astro/-/astro-66.3.2.tgz", { "dependencies": { "@unocss/core": "66.3.2", "@unocss/reset": "66.3.2", "@unocss/vite": "66.3.2" }, "peerDependencies": { "vite": "^2.9.0 || ^3.0.0-0 || ^4.0.0 || ^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0" }, "optionalPeers": ["vite"] }, "sha512-O3cmQyAQsSqRSI3CkDpm3to4CrkYPyxrO7XHO0QpfTl2XcFoYsVNTAHnIKdxPG9gjZcB7x03gpRMZKjQHreihA=="],
 
@@ -1325,6 +1328,8 @@
     "unconfig": ["unconfig@7.3.2", "https://registry.npmmirror.com/unconfig/-/unconfig-7.3.2.tgz", { "dependencies": { "@quansync/fs": "^0.1.1", "defu": "^6.1.4", "jiti": "^2.4.2", "quansync": "^0.2.8" } }, "sha512-nqG5NNL2wFVGZ0NA/aCFw0oJ2pxSf1lwg4Z5ill8wd7K4KX/rQbHlwbh+bjctXL5Ly1xtzHenHGOK0b+lG6JVg=="],
 
     "undici-types": ["undici-types@7.10.0", "https://registry.npmmirror.com/undici-types/-/undici-types-7.10.0.tgz", {}, "sha512-t5Fy/nfn+14LuOc2KNYg75vZqClpAiqscVvMygNnlsHBFpSXdJaYtXMcdNLpl/Qvc3P2cB3s6lOV51nqsFq4ag=="],
+
+    "unhead": ["unhead@2.0.19", "https://registry.npmmirror.com/unhead/-/unhead-2.0.19.tgz", { "dependencies": { "hookable": "^5.5.3" } }, "sha512-gEEjkV11Aj+rBnY6wnRfsFtF2RxKOLaPN4i+Gx3UhBxnszvV6ApSNZbGk7WKyy/lErQ6ekPN63qdFL7sa1leow=="],
 
     "unimport": ["unimport@4.2.0", "https://registry.npmmirror.com/unimport/-/unimport-4.2.0.tgz", { "dependencies": { "acorn": "^8.14.1", "escape-string-regexp": "^5.0.0", "estree-walker": "^3.0.3", "local-pkg": "^1.1.1", "magic-string": "^0.30.17", "mlly": "^1.7.4", "pathe": "^2.0.3", "picomatch": "^4.0.2", "pkg-types": "^2.1.0", "scule": "^1.3.0", "strip-literal": "^3.0.0", "tinyglobby": "^0.2.12", "unplugin": "^2.2.2", "unplugin-utils": "^0.2.4" } }, "sha512-mYVtA0nmzrysnYnyb3ALMbByJ+Maosee2+WyE0puXl+Xm2bUwPorPaaeZt0ETfuroPOtG8jj1g/qeFZ6buFnag=="],
 
