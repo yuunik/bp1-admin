@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import { useCloned } from '@vueuse/core'
 
 import emitter from '@/utils/emitterUtil.js'
-import { EmitterEvent } from '@/utils/constantsUtil.js'
+import { EmitterEvent, RouteName } from '@/utils/constantsUtil.js'
 import { useUserStore } from '@/store/index.js'
 import CompanyLogo from '@/assets/images/company-logo.png'
 
@@ -81,6 +81,12 @@ const realBreadcrumbList = computed(() =>
 watch(
   () => route.matched,
   () => {
+    if (route.name === RouteName.DASHBOARD) {
+      isClickBreadcrumb.value = false
+      breadcrumb.value = []
+      breadcrumbList.value = []
+      isGetTopLevelRoute.value = false
+    }
     // 点击面包屑时, 不执行更新面包屑操作, 需要删除多余的面包屑
     if (isClickBreadcrumb.value) {
       // 删除点击项的面包屑
@@ -111,17 +117,14 @@ watch(
       name: route.name,
       path: route.path,
       meta: { ...route.meta },
+      isClickBreadcrumb: true,
     })
     // 与仓库中的记录的面包屑进行比较, 若长度小于仓库中的记录, 则说明说为刷新情况, 则将仓库中的记录的面包屑进行覆盖
     if (breadcrumbList.value.length < breadcrumb.value.length) {
       breadcrumbList.value = breadcrumb.value
     } else {
       // 否则, 则将当前路由添加到仓库中
-      breadcrumb.value = breadcrumbList.value.map((x) => ({
-        path: x.path,
-        name: x.name,
-        meta: x.meta,
-      }))
+      breadcrumb.value = breadcrumbList.value
     }
   },
   {
@@ -132,8 +135,12 @@ watch(
 
 // 面包屑的点击事件
 const handleBreadcrumbClick = (route, routeIndex) => {
+  console.log(route, '@@@@@@@@@@@@@@@@@@@@')
   // 若不是点击一级路由, 则进行路由跳转
-  if (routeIndex !== 0 || routeIndex === realBreadcrumbList.value.length - 1) {
+  if (
+    route.isClickBreadcrumb ||
+    routeIndex === realBreadcrumbList.value.length - 1
+  ) {
     router.push(route.path)
     isClickBreadcrumb.value = true
     clickIndex.value = routeIndex

@@ -246,19 +246,16 @@ const sort = useSort(sortParams, getExpenseUserList)
 
 // 跳转 OBD 列表页
 const handleNavigateToOBDList = () => {
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({ name: RouteName.OBD_MANAGEMENT })
 }
 
 // 跳转 用户 列表页
 const handleNavigateToUserList = () => {
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({ name: RouteName.EXTERN })
 }
 
 // 跳转用户详情页
 const handleNavigateToUserDetail = (user) => {
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({
     name: RouteName.PERSON_MANAGE,
     params: { id: user.id },
@@ -267,7 +264,6 @@ const handleNavigateToUserDetail = (user) => {
 
 // 跳转品牌管理页
 const handleNavigateToBrandManagement = (row) => {
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({
     name: 'BrandAndModelManagement',
     params: { id: row.id },
@@ -276,14 +272,12 @@ const handleNavigateToBrandManagement = (row) => {
 
 // 跳转 expense 列表页
 const handleNavigateToExpenseList = () => {
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   console.log('???????????????')
   router.push({ name: RouteName.EXPENSE })
 }
 
 // 跳转品牌详情页
 const handleNavigateToBrandDetail = (brand) => {
-  emitter.emit(EmitterEvent.CLEAR_BREADCRUMB_LIST)
   router.push({
     name: RouteName.CAR_COST_DETAILS,
     params: { id: brand.id },
