@@ -1,45 +1,48 @@
-import { defineConfig } from 'eslint/config'
-import vue from 'eslint-plugin-vue'
-import vueParser from 'vue-eslint-parser'
 import js from '@eslint/js'
-import importPlugin from 'eslint-plugin-import'
-import nodePlugin from 'eslint-plugin-node'
-import prettierPlugin from 'eslint-plugin-prettier'
-import prettierConfig from 'eslint-config-prettier'
+import pluginVue from 'eslint-plugin-vue'
+import pluginImport from 'eslint-plugin-import'
+import pluginNode from 'eslint-plugin-node'
+import pluginPrettier from 'eslint-plugin-prettier'
+import configPrettier from 'eslint-config-prettier'
+import vueParser from 'vue-eslint-parser'
 import globals from 'globals'
-import babelParser from '@babel/eslint-parser'
 
-export default defineConfig([
-  // JS & Vue Script 部分
+export default [
+  // 1. 全局忽略
+  {
+    ignores: ['dist/**', 'node_modules/**', 'public/**', '**/*.d.ts'],
+  },
+
+  // 2. JS 推荐配置
+  js.configs.recommended,
+
+  // 3. Vue 推荐配置
+  ...pluginVue.configs['flat/recommended'],
+
+  // 4. Prettier 配置 (关闭冲突规则)
+  configPrettier,
+
+  // 5. 通用配置
   {
     files: ['**/*.{js,mjs,cjs,vue}'],
     languageOptions: {
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
-        babelOptions: {
-          presets: ['@babel/preset-env'],
-        },
-        sourceType: 'module',
-        ecmaVersion: 'latest',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2021,
       },
-      globals: globals.browser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
     },
     plugins: {
-      js,
-      import: importPlugin,
-      node: nodePlugin,
-      prettier: prettierPlugin,
+      import: pluginImport,
+      node: pluginNode,
+      prettier: pluginPrettier,
     },
-    extends: [
-      'plugin:import/recommended',
-      'plugin:node/recommended',
-      'plugin:prettier/recommended',
-      'js', // @eslint/js 的 recommended 设置
-      prettierConfig,
-    ],
     rules: {
-      'prettier/prettier': 'error', // prettier 错误作为 ESLint 错误
+      'prettier/prettier': 'error',
+      'import/first': 'error',
+      'import/no-duplicates': 'error',
       'import/order': [
         'warn',
         {
@@ -54,34 +57,23 @@ export default defineConfig([
           'newlines-between': 'always',
         },
       ],
-      'node/no-unsupported-features/es-syntax': 'off', // 允许 ESModules
+      'node/no-unsupported-features/es-syntax': 'off',
+      'node/no-missing-import': 'off',
+      'vue/multi-word-component-names': 'off',
+      'vue/no-v-html': 'off',
     },
   },
 
-  // Vue 文件部分
+  // 6. Vue 文件解析器配置
   {
     files: ['**/*.vue'],
     languageOptions: {
       parser: vueParser,
       parserOptions: {
+        // 移除 Babel，直接让 vue-parser 处理 script
         ecmaVersion: 'latest',
         sourceType: 'module',
       },
-      globals: globals.browser,
-    },
-    plugins: {
-      vue,
-      prettier: prettierPlugin,
-    },
-    extends: [
-      'plugin:vue/vue3-recommended',
-      'plugin:prettier/recommended',
-      prettierConfig,
-    ],
-    rules: {
-      'vue/multi-word-component-names': 'off',
-      'vue/no-v-html': 'off',
-      'prettier/prettier': 'error',
     },
   },
-])
+]
