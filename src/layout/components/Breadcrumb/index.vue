@@ -3,13 +3,12 @@ import { onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowRight } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
+import { useCloned } from '@vueuse/core'
 
 import emitter from '@/utils/emitterUtil.js'
 import { EmitterEvent } from '@/utils/constantsUtil.js'
 import { useUserStore } from '@/store/index.js'
-
 import CompanyLogo from '@/assets/images/company-logo.png'
-import { useCloned } from '@vueuse/core'
 
 // 路由
 const route = useRoute()
@@ -103,9 +102,11 @@ watch(
       breadcrumbList.value.push(topLevelRoute)
     }
     // 深拷贝, 以免影响原数据
-    const { cloned } = useCloned(route)
+    // todo 生产环境似乎有循环引用的问题, 暂定
+    // const { cloned } = useCloned(route)
+    // console.log(JSON.parse(JSON.stringify(route)))
     // 添加当前路由
-    breadcrumbList.value.push(cloned.value)
+    breadcrumbList.value.push(JSON.parse(JSON.stringify(route)))
     // 与仓库中的记录的面包屑进行比较, 若长度小于仓库中的记录, 则说明说为刷新情况, 则将仓库中的记录的面包屑进行覆盖
     if (breadcrumbList.value.length < breadcrumb.value.length) {
       breadcrumbList.value = breadcrumb.value
@@ -180,8 +181,8 @@ onBeforeUnmount(() => {
 
 <template>
   <el-breadcrumb
-    separator=">"
     v-if="route.path !== '/dashboard'"
+    separator=">"
     :separator-icon="ArrowRight"
     class="heading-body-body-12px-medium box-border px-32 pb-16 pt-24"
   >
