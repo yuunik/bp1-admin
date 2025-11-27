@@ -35,7 +35,7 @@ if (id) {
 }
 
 // 当前 tab 页
-const activeTab = ref('By Module')
+const activeTab = ref('By Category')
 
 // 输入搜索关键字
 const searchKeywords = ref('')
@@ -157,8 +157,8 @@ watch(
     </h2>
     <!-- tabs 栏 -->
     <el-tabs v-model="activeTab" class="has-top">
-      <el-tab-pane label="By Module" name="By Module" />
       <el-tab-pane label="By Category" name="By Category" />
+      <el-tab-pane label="By Module" name="By Module" />
     </el-tabs>
     <!-- 图表 -->
     <base-expense-breakdown-chart
@@ -248,13 +248,6 @@ watch(
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="others" label="Others" align="right">
-            <template #default="{ row }">
-              <span>
-                {{ row.others ? `$${getFormatNumberString(row.others)}` : '-' }}
-              </span>
-            </template>
-          </el-table-column>
         </el-table>
         <el-table v-else :data="modelExpenseList" class="has-top flex-1">
           <el-table-column prop="name" label="Model" width="100" />
@@ -301,13 +294,6 @@ watch(
                 {{
                   row.services ? `$${getFormatNumberString(row.services)}` : '-'
                 }}
-              </span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="others" label="Others">
-            <template #default="{ row }">
-              <span>
-                {{ row.others ? `$${getFormatNumberString(row.others)}` : '-' }}
               </span>
             </template>
           </el-table-column>
