@@ -54,6 +54,8 @@ const UserApi = Object.freeze({
   REJECT_MERCHANT: '/manager/merchant/reject',
   // 管理员合并修理厂
   MERGE_MERCHANT: '/manager/merchant/merge',
+  // 管理员解禁修理厂
+  UNBAN_MERCHANT: '/manager/merchant/enable',
 })
 
 // 获取 token
@@ -533,6 +535,22 @@ export const resetAdminPasswordApi = (userId) => {
 
   return request({
     url: UserApi.RESET_ADMIN_PASSWORD,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 管理员解禁修理厂
+ * @param merchantId 修理厂id
+ */
+export const unlockMerchantApi = (merchantId) => {
+  const data = new FormData()
+  data.append('token', getToken())
+  data.append('merchantId', merchantId)
+
+  return request({
+    url: UserApi.UNBAN_MERCHANT,
     method: 'POST',
     data,
   })

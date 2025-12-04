@@ -12,6 +12,7 @@ import {
   getMerchantInfoApi,
   rejectMerchantApi,
   resetUserPasswordApi,
+  unlockMerchantApi,
 } from '@/apis/userApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma, getLastUsedDate } from '@/utils/dateUtil.js'
@@ -170,6 +171,13 @@ const handleRejectWorkshop = async () => {
   }
 }
 
+// 解禁修理厂
+const handleUnbanWorkshop = async () => {
+  await unlockMerchantApi(workshopId.value)
+  ElMessage.success('Repair shop enabled successfully.')
+  initData()
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -217,6 +225,15 @@ onMounted(async () => {
           @click="handleApproveWorkshop(workshop.id)"
         >
           Re-Approve
+        </el-button>
+
+        <!-- 4. Disabled 状态: 显示 Enable -->
+        <el-button
+          v-if="workshop.state === 'Disabled'"
+          type="primary"
+          @click="handleUnbanWorkshop(workshop.id)"
+        >
+          Enable
         </el-button>
       </div>
     </div>
