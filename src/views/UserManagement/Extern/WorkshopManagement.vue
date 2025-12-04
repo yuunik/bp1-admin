@@ -6,6 +6,7 @@ import { onMounted, reactive, ref } from 'vue'
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
   adminUserStatusApi,
+  approveMerchantApi,
   disableMerchantApi,
   getMerchantInfoApi,
   getUserOBDListApi,
@@ -15,8 +16,23 @@ import {
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
 import { getDateWithDDMMMYYYYhhmma, getLastUsedDate } from '@/utils/dateUtil.js'
 import BaseTag from '@/components/BaseTag.vue'
-
 import StarIcon from '@/assets/specialIcons/fi_star.svg'
+
+// 状态到颜色的映射
+const stateColor = (state) => {
+  switch (state) {
+    case 'Pending':
+      return 'orange'
+    case 'Active':
+      return 'green'
+    case 'Disable':
+      return 'gray'
+    case 'Rejected':
+      return 'red'
+    default:
+      return 'blue' // 默认颜色
+  }
+}
 
 const logAndNoteDataList = ref([
   {
@@ -149,7 +165,7 @@ const handleCopyResetPassword = async () => {
     ElMessage.success(
       'The "Reset Password" information has been successfully copied. You can paste it now.',
     )
-  } catch (err) {
+  } catch (_) {
     ElMessage.error('Failed to copy, try again.')
   } finally {
     // 关闭对话框
@@ -172,6 +188,13 @@ const handleDisabledWorkshop = async () => {
   }
 }
 
+// 批准修理厂
+const handleApproveWorkshop = async (workshopId) => {
+  await approveMerchantApi(workshopId)
+  ElMessage.success('Repair shop approved successfully.')
+  initData()
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -190,12 +213,21 @@ onMounted(async () => {
       <h3 class="heading-h2-20px-medium text-neutrals-off-black">
         {{ workshop.name || '-' }}
       </h3>
-      <el-button
-        @click="dialogDisabledWorkshopVisible = true"
-        v-if="!workshop.isDelete"
-      >
-        Disable
-      </el-button>
+      <div>
+        <el-button
+          v-if="workshop.state === 'Rejected'"
+          type="primary"
+          @click="handleApproveWorkshop(workshop.id)"
+        >
+          Re-Approve
+        </el-button>
+        <!--<el-button-->
+        <!--  v-if="!workshop.isDelete"-->
+        <!--  @click="dialogDisabledWorkshopVisible = true"-->
+        <!--&gt;-->
+        <!--  Disable-->
+        <!--</el-button>-->
+      </div>
     </div>
     <el-tabs v-model="activeTab" class="has-top">
       <el-tab-pane label="Customer Details" name="Customer Details" />
@@ -232,8 +264,8 @@ onMounted(async () => {
         <dt>Status</dt>
         <dd>
           <base-tag
-            :color="workshop.isDelete === 0 ? 'green' : 'gray'"
-            :text="workshop.isDelete === 0 ? 'Active' : 'Disabled'"
+            :text="workshop.state"
+            :color="stateColor(workshop.state)"
           />
         </dd>
       </dl>
@@ -292,7 +324,7 @@ onMounted(async () => {
   >
     <template #content>
       <p class="heading-body-body-12px-medium text-neutrals-grey-3">
-        `Are you sure you want to disable the workshop "{{
+        Are you sure you want to disable the workshop "{{
           workshop.name || '-'
         }}"? Once disabled, it will no longer be accessible to its users or
         linked vehicles until re-enabled.
@@ -379,9 +411,9 @@ onMounted(async () => {
   <base-dialog
     v-model="dialogResetPasswordVisible"
     title="Reset Password"
+    confirm-text="Copy"
     @cancel="dialogResetPasswordVisible = false"
     @confirm="handleCopyResetPassword"
-    confirm-text="Copy"
   >
     <template #content>
       <dl

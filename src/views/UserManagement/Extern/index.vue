@@ -301,7 +301,7 @@ const handleCopyPassword = async () => {
     ElMessage.success(
       'The "Reset Password" information has been successfully copied. You can paste it now.',
     )
-  } catch (err) {
+  } catch (_) {
     ElMessage.error('Failed to copy, try again.')
   } finally {
     // 关闭对话框
@@ -426,7 +426,6 @@ const handleCloseMergeWorkshop = () => {
 
 // 打开拒绝修理厂创建的弹窗
 const handleOpenRejectGroupDialog = (row) => {
-  console.log(row, '@@@@@@@@@@@@@@')
   const { cloned } = useCloned(row)
   Object.assign(rejectWorkshopForm, cloned.value)
   rejectWorkshopForm.clubId = row.id
@@ -827,22 +826,21 @@ cacheView(RouteName.EXTERN)
                     v-else-if="row.state === 'Active'"
                     class="workshops-menu-container"
                   >
-                    <el-dropdown-item>Reset Password</el-dropdown-item>
                     <el-dropdown-item>Disable</el-dropdown-item>
                   </el-dropdown-menu>
                   <el-dropdown-menu
                     v-else-if="row.state === 'Disable'"
                     class="workshops-menu-container"
                   >
-                    <el-dropdown-item>Reset Password</el-dropdown-item>
                     <el-dropdown-item>Disable</el-dropdown-item>
                   </el-dropdown-menu>
                   <el-dropdown-menu
                     v-else-if="row.state === 'Rejected'"
                     class="workshops-menu-container"
                   >
-                    <el-dropdown-item>Reset Password</el-dropdown-item>
-                    <el-dropdown-item>Disable</el-dropdown-item>
+                    <el-dropdown-item @click="handleApproveWorkshop(row.id)">
+                      Re-Approve
+                    </el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
