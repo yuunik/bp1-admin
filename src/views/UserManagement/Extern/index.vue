@@ -1,6 +1,6 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
+import { ref, reactive, watch, computed } from 'vue'
+import { useDebounceFn, useLocalStorage } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
@@ -23,7 +23,6 @@ import BaseTag from '@/components/BaseTag.vue'
 import BaseFilterPanel from '@/components/BaseFilterPanel.vue'
 import BaseFilterInput from '@/components/BaseFilterInput.vue'
 import useCacheView from '@/composables/useCacheView.js'
-
 import StarIcon from '@/assets/specialIcons/fi_star.svg'
 import DefaultAvatar from '@/assets/specialIcons/avatar_default.svg'
 
@@ -65,7 +64,7 @@ const merchantSortParams = reactive({
 })
 
 // 当前tab页
-const activeTab = ref(UserManagementTab.PERSON)
+const activeTab = useLocalStorage('Extern tab name', UserManagementTab.PERSON)
 
 // 重置密码弹窗
 const dialogResetPasswordVisible = ref(false)
@@ -455,16 +454,16 @@ cacheView(RouteName.EXTERN)
       <h3 class="heading-h2-20px-medium">Extern</h3>
       <!-- 创建修理厂按钮 -->
       <el-button
+        v-show="activeTab === UserManagementTab.Workshop"
         type="primary"
         class="w-70 h-32"
         @click="$router.push({ name: 'Create Workshop' })"
-        v-show="activeTab === UserManagementTab.Workshop"
       >
         Create
       </el-button>
     </div>
     <!-- tab 栏 -->
-    <el-tabs v-model="activeTab" @tab-change="handleTabChange" class="my-16">
+    <el-tabs v-model="activeTab" class="my-16" @tab-change="handleTabChange">
       <el-tab-pane
         :label="UserManagementTab.PERSON"
         :name="UserManagementTab.PERSON"
@@ -488,16 +487,16 @@ cacheView(RouteName.EXTERN)
           />
           <!-- 清除按钮 -->
           <el-button
+            v-show="statusList.length"
             text
             class="h-24! text-status-colours-blue!"
             @click="statusList = []"
-            v-show="statusList.length"
           >
             Clear
           </el-button>
         </div>
         <!-- 输入搜索 -->
-        <base-filter-input v-model="searchKey" @inputChange="refresh" />
+        <base-filter-input v-model="searchKey" @input-change="refresh" />
       </div>
       <!-- 分割线 -->
       <el-divider />
@@ -522,9 +521,9 @@ cacheView(RouteName.EXTERN)
         <el-table
           :data="userList"
           class="flex-1"
+          row-class-name="clickable-row"
           @sort-change="handleUserSortChange"
           @row-click="handleUserRowClick"
-          row-class-name="clickable-row"
         >
           <!-- 勾选框 -->
           <el-table-column type="selection" min-width="6%" />
@@ -639,7 +638,7 @@ cacheView(RouteName.EXTERN)
           <!-- 操作栏 -->
           <el-table-column align="center" min-width="11%">
             <template #default="{ row }">
-              <el-dropdown trigger="click" v-if="row.state !== 0">
+              <el-dropdown v-if="row.state !== 0" trigger="click">
                 <i class="icon-more-2-line cursor-pointer" />
                 <template #dropdown>
                   <el-dropdown-menu class="custom-dropdown-menu">
@@ -674,16 +673,19 @@ cacheView(RouteName.EXTERN)
           />
           <!-- 清除按钮 -->
           <el-button
+            v-show="workshopFilterStatusList.length"
             text
             class="h-24! text-status-colours-blue!"
             @click="workshopFilterStatusList = []"
-            v-show="workshopFilterStatusList.length"
           >
             Clear
           </el-button>
         </div>
         <!-- 输入搜索 -->
-        <base-filter-input v-model="workshopSearchKey" @inputChange="refresh" />
+        <base-filter-input
+          v-model="workshopSearchKey"
+          @input-change="refresh"
+        />
       </div>
       <!-- 分割线 -->
       <el-divider />
@@ -693,8 +695,8 @@ cacheView(RouteName.EXTERN)
       >
         <!-- 批量选择栏 -->
         <div
-          class="h-42 flex-between w-full py-4 pl-16"
           v-show="selectedMergeWorkshopList.length"
+          class="h-42 flex-between w-full py-4 pl-16"
         >
           <span
             class="heading-body-body-12px-regular text-neutrals-off-black leading-16"
@@ -714,10 +716,10 @@ cacheView(RouteName.EXTERN)
         <el-table
           :data="merchantList"
           class="flex-1"
+          row-class-name="clickable-row"
           @sort-change="handleMerchantSortChange"
           @row-click="handleMerchantRowClick"
           @selection-change="handleWorkshopSelectionChange"
-          row-class-name="clickable-row"
         >
           <!-- 勾选框 -->
           <el-table-column type="selection" min-width="6%" />
@@ -731,8 +733,8 @@ cacheView(RouteName.EXTERN)
             <!-- 修理厂 logo -->
             <template #default="{ row }">
               <el-image
-                :src="getFullFilePath(row.logo)"
                 v-if="row.logo"
+                :src="getFullFilePath(row.logo)"
                 fit="cover"
                 alt="merchant logo"
                 class="mr-8 h-14 w-14"
@@ -837,10 +839,10 @@ cacheView(RouteName.EXTERN)
   <base-dialog
     v-model="dialogMergeWorkshopVisible"
     title="Merge Workshop"
-    @cancel="handleCloseMergeWorkshop"
-    @confirm="handleMergeWorkshop"
     class="merge-workshop-dialog"
     dialog-width="50%"
+    @cancel="handleCloseMergeWorkshop"
+    @confirm="handleMergeWorkshop"
   >
     <template #content>
       <p
@@ -851,7 +853,7 @@ cacheView(RouteName.EXTERN)
         Choose which details to keep after merging.
       </p>
       <!-- selected card -->
-      <el-radio-group class="w-full!" v-model="selectedMergeWorkshopId">
+      <el-radio-group v-model="selectedMergeWorkshopId" class="w-full!">
         <div
           class="workshops-card-container max-h-520 mt-16 grid w-full grid-cols-2 gap-8 overflow-auto"
         >
