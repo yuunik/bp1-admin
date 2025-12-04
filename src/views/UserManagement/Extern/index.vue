@@ -123,9 +123,6 @@ const workshopFilterParams = ref([
 
 const workshopSearchKey = ref('')
 
-// 勾选的 workshop id
-const selectedWorkshopIdList = ref([])
-
 // 合并修理厂弹窗
 const dialogMergeWorkshopVisible = ref(false)
 
@@ -245,18 +242,6 @@ const handleDropdownItemClick = (action, row) => {
   }
 }
 
-// 处理条件搜索
-const handleSearchByCondition = () => {
-  // 重置为第一页
-  pagination.value.currentPage = 0
-  // 重新获取列表
-  if (activeTab.value === UserManagementTab.PERSON) {
-    getUserList()
-  } else if (activeTab.value === UserManagementTab.Workshop) {
-    getMerchantList()
-  }
-}
-
 // 处理用户列表排序
 const handleUserSortChange = useSort(userSortParams, () => getUserList())
 
@@ -301,7 +286,7 @@ const handleCopyPassword = async () => {
     ElMessage.success(
       'The "Reset Password" information has been successfully copied. You can paste it now.',
     )
-  } catch (_) {
+  } catch {
     ElMessage.error('Failed to copy, try again.')
   } finally {
     // 关闭对话框

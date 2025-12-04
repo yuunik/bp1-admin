@@ -2,6 +2,7 @@
 import { ElMessage } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { onMounted, reactive, ref } from 'vue'
+import { useCloned } from '@vueuse/core'
 
 import BaseDialog from '@/components/BaseDialog.vue'
 import {
@@ -9,8 +10,7 @@ import {
   approveMerchantApi,
   disableMerchantApi,
   getMerchantInfoApi,
-  getUserOBDListApi,
-  getUserVehicleListApi,
+  rejectMerchantApi,
   resetUserPasswordApi,
 } from '@/apis/userApi.js'
 import { getFullFilePath } from '@/utils/dataFormattedUtil.js'
@@ -34,46 +34,11 @@ const stateColor = (state) => {
   }
 }
 
-const logAndNoteDataList = ref([
-  {
-    date: '15 May 2025 9:00 am',
-    user: 'Rhode',
-    action: 'Add Note',
-    detail: 'Replenished 10 OBDs missing after stocktaking.',
-  },
-  {
-    date: '15 May 2025 9:00 am',
-    user: 'Rhode',
-    action: 'Edit',
-    detail: 'Change quantity from 12 to 10.',
-  },
-  {
-    date: '15 May 2025 9:00 am',
-    user: 'Rhode',
-    action: 'Create Inbound Order',
-    detail: 'Inbound order #IN-00017 created, added 10 OBDs to inventory.',
-  },
-])
-
-const dataDetails = ref({
-  name: 'Theresa Webb',
-  email: 'tim.jennings@example.com',
-  role: 'Support',
-  phone: '+65 9876 5432',
-  status: 'Active',
-  isEditing: false,
-})
-
 const route = useRoute()
 
 const workshop = reactive({})
 
 const activeTab = ref('Customer Details')
-
-// obd device list
-const obdDeviceList = ref([])
-
-const vehicleList = ref([])
 
 // 当前用户 id
 const workshopId = ref('')
@@ -97,32 +62,20 @@ const dialogResetPasswordVisible = ref(false)
 // 重置的密码
 const resetPassword = ref('')
 
-// 复制 handleCopyTransactionID
-const handleCopyTransactionID = async () => {
-  try {
-    await navigator.clipboard.writeText('TransactionID: 1234567890 ')
-    ElMessage.success('Copied to clipboard')
-  } catch (error) {
-    console.log(error)
-  }
-}
+// 禁止修理厂创建的弹窗
+const dialogRejectWorkshopVisible = ref(false)
+
+// 拒绝的俱乐部表单
+const rejectWorkshopForm = reactive({
+  id: '',
+  reason: '',
+  name: '',
+})
 
 // 获取用户详情
 const getUserInfo = async () => {
   const { data } = await getMerchantInfoApi(workshopId.value)
   Object.assign(workshop, data)
-}
-
-// 获取用户已绑定的OBD列表
-const getUserOBDList = async () => {
-  const { data } = await getUserOBDListApi(workshopId.value)
-  obdDeviceList.value = data
-}
-
-// 获取用户已绑定的车辆列表
-const getUserVehicleList = async () => {
-  const { data } = await getUserVehicleListApi(workshopId.value)
-  vehicleList.value = data
 }
 
 // avatar加载的错误行为
@@ -165,7 +118,7 @@ const handleCopyResetPassword = async () => {
     ElMessage.success(
       'The "Reset Password" information has been successfully copied. You can paste it now.',
     )
-  } catch (_) {
+  } catch {
     ElMessage.error('Failed to copy, try again.')
   } finally {
     // 关闭对话框
@@ -195,6 +148,28 @@ const handleApproveWorkshop = async (workshopId) => {
   initData()
 }
 
+// 打开拒绝修理厂创建的弹窗
+const handleOpenRejectGroupDialog = (row) => {
+  const { cloned } = useCloned(row)
+  Object.assign(rejectWorkshopForm, cloned.value)
+  rejectWorkshopForm.clubId = row.id
+  dialogRejectWorkshopVisible.value = true
+}
+
+// 拒绝修理厂
+const handleRejectWorkshop = async () => {
+  try {
+    await rejectMerchantApi({
+      merchantId: rejectWorkshopForm.id,
+      reason: rejectWorkshopForm.reason,
+    })
+    ElMessage.success('Repair shop approval rejected successfully.')
+    initData()
+  } finally {
+    dialogRejectWorkshopVisible.value = false
+  }
+}
+
 // 组件创建后, 发起请求
 const {
   params: { id },
@@ -214,6 +189,28 @@ onMounted(async () => {
         {{ workshop.name || '-' }}
       </h3>
       <div>
+        <!-- 1. Pending 状态: 显示 Approve 和 Reject -->
+        <template v-if="workshop.state === 'Pending'">
+          <el-button type="primary" @click="handleApproveWorkshop(workshop.id)">
+            Approve
+          </el-button>
+          <el-button
+            type="danger"
+            @click="handleOpenRejectGroupDialog(workshop)"
+          >
+            Reject
+          </el-button>
+        </template>
+
+        <!-- 2. Active 状态: 显示 Disable -->
+        <el-button
+          v-if="workshop.state === 'Active'"
+          @click="dialogDisabledWorkshopVisible = true"
+        >
+          Disable
+        </el-button>
+
+        <!-- 3. Rejected 状态: 显示 Re-Approve -->
         <el-button
           v-if="workshop.state === 'Rejected'"
           type="primary"
@@ -221,12 +218,6 @@ onMounted(async () => {
         >
           Re-Approve
         </el-button>
-        <!--<el-button-->
-        <!--  v-if="!workshop.isDelete"-->
-        <!--  @click="dialogDisabledWorkshopVisible = true"-->
-        <!--&gt;-->
-        <!--  Disable-->
-        <!--</el-button>-->
       </div>
     </div>
     <el-tabs v-model="activeTab" class="has-top">
@@ -426,6 +417,38 @@ onMounted(async () => {
         <dt>Password</dt>
         <dd>{{ resetPassword }}</dd>
       </dl>
+    </template>
+  </base-dialog>
+  <!-- 禁止修理厂创建的提示框 -->
+  <base-dialog
+    v-model="dialogRejectWorkshopVisible"
+    title="Reject Workshop"
+    button-type="danger"
+    confirm-text="Reject Workshop"
+    @cancel="dialogRejectWorkshopVisible = false"
+    @confirm="handleRejectWorkshop"
+  >
+    <template #content>
+      <dl
+        class="[&>dt]:row-center [&>dd]:row-center grid grid-cols-[80px_1fr] gap-8 [&>dd]:h-32 [&>dt]:h-32"
+      >
+        <dt>Name</dt>
+        <dd>{{ rejectWorkshopForm.name }}</dd>
+      </dl>
+      <el-divider class="my-8!" />
+      <div class="reason-container flex gap-8">
+        <p class="w-112">
+          Reason
+          <span class="text-red">*</span>
+        </p>
+        <el-input
+          v-model="rejectWorkshopForm.reason"
+          placeholder="Enter"
+          class="club-name-input"
+          rows="3"
+          type="textarea"
+        />
+      </div>
     </template>
   </base-dialog>
 </template>
