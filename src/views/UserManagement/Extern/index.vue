@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, watch, computed } from 'vue'
-import { useDebounceFn, useLocalStorage } from '@vueuse/core'
+import { useCloned, useDebounceFn, useLocalStorage } from '@vueuse/core'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
@@ -135,6 +135,9 @@ const selectedMergeWorkshopList = ref([])
 // 需要合并的修理厂的id
 const selectedMergeWorkshopId = ref('')
 
+// 禁止修理厂创建的弹窗
+const dialogRejectWorkshopVisible = ref(false)
+
 const router = useRouter()
 
 // 获取用户列表
@@ -213,6 +216,13 @@ const computedMenuItems = computed(() => (row) => {
   }
 
   return items
+})
+
+// 拒绝的俱乐部表单
+const rejectWorkshopForm = reactive({
+  id: '',
+  reason: '',
+  name: '',
 })
 
 // 处理 操作栏的事件
@@ -392,10 +402,17 @@ const handleApproveWorkshop = async (workshopId) => {
 }
 
 // 拒绝修理厂
-const handleRejectWorkshop = async (workshopId) => {
-  await rejectMerchantApi(workshopId)
-  ElMessage.success('Repair shop approval rejected successfully.')
-  getMerchantList()
+const handleRejectWorkshop = async () => {
+  try {
+    await rejectMerchantApi({
+      merchantId: rejectWorkshopForm.id,
+      reason: rejectWorkshopForm.reason,
+    })
+    ElMessage.success('Repair shop approval rejected successfully.')
+    getMerchantList()
+  } finally {
+    dialogRejectWorkshopVisible.value = false
+  }
 }
 
 // 关闭合并修理厂的弹窗
@@ -405,6 +422,15 @@ const handleCloseMergeWorkshop = () => {
   selectedMergeWorkshopList.value = []
   // 关闭弹窗
   dialogMergeWorkshopVisible.value = false
+}
+
+// 打开拒绝修理厂创建的弹窗
+const handleOpenRejectGroupDialog = (row) => {
+  console.log(row, '@@@@@@@@@@@@@@')
+  const { cloned } = useCloned(row)
+  Object.assign(rejectWorkshopForm, cloned.value)
+  rejectWorkshopForm.clubId = row.id
+  dialogRejectWorkshopVisible.value = true
 }
 
 // 监听tab变化，获取对应列表
@@ -786,23 +812,35 @@ cacheView(RouteName.EXTERN)
               <el-dropdown trigger="click">
                 <i class="icon-more-2-line cursor-pointer" />
                 <template #dropdown>
-                  <el-dropdown-menu v-if="row.state === 'Pending'">
+                  <el-dropdown-menu
+                    v-if="row.state === 'Pending'"
+                    class="workshops-menu-container"
+                  >
                     <el-dropdown-item @click="handleApproveWorkshop(row.id)">
                       Approve
                     </el-dropdown-item>
-                    <el-dropdown-item @click="handleRejectWorkshop(row.id)">
+                    <el-dropdown-item @click="handleOpenRejectGroupDialog(row)">
                       Reject
                     </el-dropdown-item>
                   </el-dropdown-menu>
-                  <el-dropdown-menu v-else-if="row.state === 'Active'">
+                  <el-dropdown-menu
+                    v-else-if="row.state === 'Active'"
+                    class="workshops-menu-container"
+                  >
                     <el-dropdown-item>Reset Password</el-dropdown-item>
                     <el-dropdown-item>Disable</el-dropdown-item>
                   </el-dropdown-menu>
-                  <el-dropdown-menu v-else-if="row.state === 'Disable'">
+                  <el-dropdown-menu
+                    v-else-if="row.state === 'Disable'"
+                    class="workshops-menu-container"
+                  >
                     <el-dropdown-item>Reset Password</el-dropdown-item>
                     <el-dropdown-item>Disable</el-dropdown-item>
                   </el-dropdown-menu>
-                  <el-dropdown-menu v-else-if="row.state === 'Rejected'">
+                  <el-dropdown-menu
+                    v-else-if="row.state === 'Rejected'"
+                    class="workshops-menu-container"
+                  >
                     <el-dropdown-item>Reset Password</el-dropdown-item>
                     <el-dropdown-item>Disable</el-dropdown-item>
                   </el-dropdown-menu>
@@ -907,6 +945,38 @@ cacheView(RouteName.EXTERN)
       </el-radio-group>
     </template>
   </base-dialog>
+  <!-- 禁止修理厂创建的提示框 -->
+  <base-dialog
+    v-model="dialogRejectWorkshopVisible"
+    title="Reject Workshop"
+    button-type="danger"
+    confirm-text="Reject Workshop"
+    @cancel="dialogRejectWorkshopVisible = false"
+    @confirm="handleRejectWorkshop"
+  >
+    <template #content>
+      <dl
+        class="[&>dt]:row-center [&>dd]:row-center grid grid-cols-[80px_1fr] gap-8 [&>dd]:h-32 [&>dt]:h-32"
+      >
+        <dt>Name</dt>
+        <dd>{{ rejectWorkshopForm.name }}</dd>
+      </dl>
+      <el-divider class="my-8!" />
+      <div class="reason-container flex gap-8">
+        <p class="w-112">
+          Reason
+          <span class="text-red">*</span>
+        </p>
+        <el-input
+          v-model="rejectWorkshopForm.reason"
+          placeholder="Enter"
+          class="club-name-input"
+          rows="3"
+          type="textarea"
+        />
+      </div>
+    </template>
+  </base-dialog>
 </template>
 
 <style scoped lang="scss">
@@ -937,5 +1007,10 @@ cacheView(RouteName.EXTERN)
   :deep(.el-radio) {
     @apply absolute right-4 top-4 mr-0 h-20 w-20;
   }
+}
+
+// 菜单栏通用样式
+.workshops-menu-container {
+  @apply rounded-8 bg-neutrals/off-white px-8 py-16 shadow-[0_4px_20px_0_#47474726];
 }
 </style>

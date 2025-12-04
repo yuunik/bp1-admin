@@ -483,14 +483,17 @@ export const approveMerchantApi = (merchantId) => {
 
 /**
  * 管理员拒绝修理厂
- * @param merchantId 修理厂id
+ * @param params
+ * @param params.merchantId 修理厂id
+ * @param params.reason 拒绝理由
  *
  * @returns {Promise}
  */
-export const rejectMerchantApi = (merchantId) => {
+export const rejectMerchantApi = (params) => {
   const data = new FormData()
   data.append('token', getToken())
-  data.append('merchantId', merchantId)
+  data.append('merchantId', params.merchantId)
+  data.append('reason', params.reason)
 
   return request({
     url: UserApi.REJECT_MERCHANT,
