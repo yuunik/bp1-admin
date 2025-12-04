@@ -204,15 +204,22 @@ const firstExpenseBrand = computed(
   () => (expenseBrandList.value && expenseBrandList.value[0]) || 'null',
 )
 
+const weekUserCount = ref(0)
 // 获取数据
 const getDashboardData = async () => {
   // 获取数据
   const {
-    data: { totalUserCount, todayUserCount, obdUserCount: odbUserData },
+    data: {
+      totalUserCount,
+      todayUserCount,
+      obdUserCount: odbUserData,
+      weekUserCount: weekUserData,
+    },
   } = await getDashboardDataApi()
   userCount.value = totalUserCount
   newUserCount.value = todayUserCount
   obdUserCount.value = odbUserData
+  weekUserCount.value = weekUserData
 }
 
 // 获取expense user list数据
@@ -413,6 +420,11 @@ onMounted(async () => {
             class="flex-1"
             metric-label="OBD Users"
             :metric-value="obdUserCount"
+          />
+          <dashboard-card
+            class="flex-1"
+            metric-label="Users Online This Week"
+            :metric-value="`${weekUserCount}/${userCount}`"
           />
         </div>
       </div>
