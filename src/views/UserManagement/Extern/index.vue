@@ -765,12 +765,13 @@ cacheView(RouteName.EXTERN)
             min-width="12%"
           >
             <template #default="{ row }">
-              <div class="row-center gap-8">
+              <div v-if="row.rating" class="row-center gap-8">
                 <!-- 星星图标 -->
                 <el-image :src="StarIcon" size="14" class="row-center!" />
                 <!-- 评分 -->
-                <el-text>{{ row?.rating ?? '-' }}</el-text>
+                <el-text>{{ row.rating }}</el-text>
               </div>
+              <span v-else>-</span>
             </template>
           </el-table-column>
           <!-- 修理厂状态 -->
