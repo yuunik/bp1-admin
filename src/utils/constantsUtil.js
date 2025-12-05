@@ -80,6 +80,8 @@ export const RouteName = Object.freeze({
   EXPENSE: 'Expense',
   // 汽车品牌费用详情页
   CAR_COST_DETAILS: 'Car Cost Details',
+  // 用户皮肤详情页
+  USER_SKIN_DETAILS: 'User Skin Details',
 })
 
 // 分享模块跳转路径

@@ -13,6 +13,14 @@ defineProps({
     type: String,
     default: '',
   },
+  avatarSize: {
+    type: Number,
+    default: 20,
+  },
+  nameStyle: {
+    type: String,
+    default: '',
+  },
 })
 </script>
 
@@ -20,7 +28,7 @@ defineProps({
   <div class="flex items-center">
     <el-avatar
       v-if="logo"
-      :size="20"
+      :size="avatarSize"
       :src="getFullFilePath(logo)"
       alt="brand icon"
       class="mr-8 h-20 w-20"
@@ -32,7 +40,7 @@ defineProps({
         <i class="i-ep:picture" />
       </template>
     </el-avatar>
-    <el-text>{{ name || '-' }}</el-text>
+    <span :class="nameStyle">{{ name || '-' }}</span>
   </div>
 </template>
 

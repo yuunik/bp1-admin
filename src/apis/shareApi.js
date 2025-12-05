@@ -24,6 +24,8 @@ const ShareApi = Object.freeze({
   GET_PHOTO_INFO: '/album/info',
   // 下订单
   POST_ORDER: '/activityorder/add',
+  // 获取用户皮肤详情
+  GET_SKIN_INFO: '/userskin/info',
 })
 
 /**
@@ -181,6 +183,23 @@ export const postOrderApi = (params) => {
 
   return request({
     url: ShareApi.POST_ORDER,
+    method: 'POST',
+    data,
+  })
+}
+
+/**
+ * 获取用户皮肤详情
+ * @param dashboardId
+ *
+ * @returns {Promise<ApiResponse<any>>}
+ */
+export const getSkinInfoApi = (dashboardId) => {
+  const data = new FormData()
+  data.append('dashboardId', dashboardId)
+
+  return request({
+    url: ShareApi.GET_SKIN_INFO,
     method: 'POST',
     data,
   })

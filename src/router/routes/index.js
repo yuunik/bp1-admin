@@ -829,6 +829,17 @@ const constantRoutes = [
           showInBreadcrumb: false,
         },
       },
+      // 用户皮肤详情页
+      {
+        path: '/share/user-skin/:id',
+        name: RouteName.USER_SKIN_DETAILS,
+        component: () => import('@/share/UserSkinInfo.vue'),
+        meta: {
+          title: RouteName.USER_SKIN_DETAILS,
+          showInMenu: false,
+          showInBreadcrumb: false,
+        },
+      },
     ],
     meta: {
       title: RouteName.SHARE,
