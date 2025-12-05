@@ -53,6 +53,7 @@ if (id) {
         :src="getFullFilePath(skinInfo.cover)"
         fit="cover"
         :preview-src-list="[getFullFilePath(skinInfo.cover)]"
+        :max-scale="1"
       />
     </div>
   </app-scaffold>
